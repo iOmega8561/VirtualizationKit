@@ -18,12 +18,8 @@ import Virtualization
 ///    virtualMachine, automaticallyReconfiguresDisplay, capturesSystemKeys
 public struct ConsoleNSVCR<TemplateType: VZKitTemplate>: NSViewControllerRepresentable, VZKitConsoleNSVCR {
     
-    public let result: VZKitResult<TemplateType>?
-    
-    public var isScreenAdaptive: Binding<Bool>
-    
-    public var areKeysCaptured: Binding<Bool>
-    
+    /// A simple computed property to unwrap the `VZVirtualMachine` object from the optional `VZKitResult`
+    /// Very useful to save a few lines of code while implementing `NSViewControllerRepresentable` stubs
     private var unwrappedResult: VZVirtualMachine? {
         switch result {
         case .success(let machine):
@@ -33,6 +29,8 @@ public struct ConsoleNSVCR<TemplateType: VZKitTemplate>: NSViewControllerReprese
         }
     }
     
+    /// An extremely simplified `Coordinator` type with no logic whatsoever.
+    /// What it does is simply set the caller object as it's parent
     public class Coordinator : NSObject {
         var parent: ConsoleNSVCR
         
@@ -41,12 +39,25 @@ public struct ConsoleNSVCR<TemplateType: VZKitTemplate>: NSViewControllerReprese
         }
     }
     
+    /// `VZKitResult` to be unwrapped, in order to attach the virtual machine to a `NSViewController`
+    public let result: VZKitResult<TemplateType>?
+    
+    /// This `Binding` is needed to update the boolean value `automaticallyReconfiguresDisplay` of `VZVirtualMachineView`
+    /// during an update of our `NSViewController`. When it's set to true, the screen of the VM adapts to the window.
+    public var isScreenAdaptive: Binding<Bool>
+    
+    /// This `Binding` is needed to update the boolean value `capturesSystemKeys` of `VZVirtualMachineView`
+    /// during an update of our `NSViewController`. When it's set to true, the guest VM captures keybinds from the host.
+    public var areKeysCaptured: Binding<Bool>
+    
+    /// Implementation of standard method `makeCoordinator`.
+    /// Literally just creates the coordinator. It's actually useless (the coordinator has no use here).
     public func makeCoordinator() -> Coordinator {
         Coordinator(self)
     }
     
     /// Implementation of standard method `makeNSViewController`.
-    /// Creates the `ViewController` and binds the correct virtualMachine to it.
+    /// Creates the `NSViewController` and binds the correct virtualMachine to it.
     public func makeNSViewController(context: Context) -> ConsoleNSVC {
         let nsViewController = ConsoleNSVC()
         nsViewController.vmView.virtualMachine = unwrappedResult

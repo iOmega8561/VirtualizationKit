@@ -5,6 +5,8 @@
 //  Created by Giuseppe Rocco on 12/10/24.
 //
 
+/// The `VZKitTemplateSpecs` protocol defines a common structure for the information that will be stored inside a template
+/// regarding the hardware characteristics of the virtual machine that will be created.
 public protocol VZKitTemplateSpecs: Codable, Hashable, Sendable {
     
     /// The amount of CPU cores that will be available to the VM

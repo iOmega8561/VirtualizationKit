@@ -7,7 +7,7 @@
 
 @preconcurrency import Virtualization
 
-/// The Virtual Machine data structure implementation
+/// The `VirtualMachine` data structure implementation
 ///
 /// @brief
 ///    The choice to make it a struct instead of a class derives from the fact that it is not necessary
@@ -15,6 +15,9 @@
 ///    as required by `VZKitVirtualMachine`.
 ///
 ///    - Important: `VZVirtualMachine` IS NOT sendable. We import the `Virtualization` framework using `@preconcurrency`.
+///
+///    - Important: A VZKitTemplate conforming object is not defined by this framework. It will be responsability of the developer using these
+///                 facilities to implement one and correctly use it with this generc data structure.
 public struct VirtualMachine<TemplateType: VZKitTemplate>: VZKitVirtualMachine {
     
     /// A copy of the DTO to have all the necessary info about the VM template
