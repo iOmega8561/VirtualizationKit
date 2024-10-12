@@ -24,12 +24,14 @@ import Virtualization
 ///    uses SwiftUI this will be wrapped up by a `NSViewControllerRepresentable`.
 public class ConsoleNSVC: NSViewController, VZKitConsoleNSVC {
     
+    /// A new instance of `VZVirtualMachineView` that will be rendered eventually
     public let vmView = VZVirtualMachineView()
     
     override public func loadView() {
         view = NSView()
     }
     
+    /// This override allows to set constraints for `vmView` and adds it to the main `NSView`
     override public func viewDidLoad() {
         super.viewDidLoad()
         

@@ -16,7 +16,7 @@
 
 @preconcurrency import Virtualization
 
-/// VirtualMachineConfigurator data structure
+/// `VirtualMachineConfigurator` data structure
 ///
 /// @brief
 ///    The choice to make it a struct instead of a class derives from the fact that it is not necessary

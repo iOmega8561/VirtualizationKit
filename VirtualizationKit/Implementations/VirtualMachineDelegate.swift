@@ -16,7 +16,7 @@
  
 import Virtualization
 
-/// VirtualMachineDelegate class, implements VirtHandlerMachineDelegate
+/// `VirtualMachineDelegate` class, implements `VirtHandlerMachineDelegate`
 ///
 /// @brief
 ///    This class needs to be both a delegate for `VZVirtualMachine` and a publisher, in order to be able to perform

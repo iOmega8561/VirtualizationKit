@@ -18,7 +18,7 @@ import Combine
 
 @preconcurrency import Virtualization
 
-/// VirtualMachineInstaller struct, implements VZKitMachineInstaller
+/// `VirtualMachineInstaller` struct, implements `VZKitMachineInstaller`
 ///
 /// @brief
 ///    This struct contains the necessary facilities to install macOS, having a valid restore image.
