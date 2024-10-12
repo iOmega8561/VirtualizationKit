@@ -1,0 +1,58 @@
+//
+//  SoundDevice.swift
+//  VirtualizationKit
+//
+//  Created by Giuseppe Rocco on 17/05/24.
+//
+
+import Virtualization
+
+/// This typealias allows for cleaner-looking code
+typealias SoundDevice = VZVirtioSoundDeviceConfiguration
+
+/// Protocol conformation of `VZVirtioSoundDeviceConfiguration` to `VZKitDeviceAttachment`
+///
+/// @brief
+///    The `VirtHandlerMachineDevice` protocol allows for a simpler implementation of the static factory method pattern.
+///    This extension contains the necessary stubs to achieve conformation and defines an appropriare `CaseIterable`
+///    to be used as argument, when calling the factory method.
+extension SoundDevice: VZKitDeviceAttachment {
+    
+    /// StreamType `CaseIterable`
+    ///
+    /// @brief
+    ///    When calling the factory method from the outside, this `CaseIterable` becomes very useful
+    ///    to provide concise information about the audio stream capabilities of the guest machine.
+    enum StreamType: CaseIterable {
+        case input
+        case output
+    }
+    
+    /// This static factory method returns the appropriate audio device attachment.
+    /// Audio configurations are handled the same way across different OSes, but input devices
+    /// have a different setup process from output devices, and vice-versa.
+    ///
+    /// - Parameters:
+    ///   - type: The audio configuration type (input or output)
+    static func createDevice(_ type: StreamType) -> SoundDevice {
+        let dev = SoundDevice()
+        
+        switch type {
+        case .input:
+            
+            let stream = VZVirtioSoundDeviceInputStreamConfiguration()
+            stream.source = VZHostAudioInputStreamSource()
+            
+            dev.streams.append(stream)
+            
+        case .output:
+            
+            let stream = VZVirtioSoundDeviceOutputStreamConfiguration()
+            stream.sink = VZHostAudioOutputStreamSink()
+            
+            dev.streams.append(stream)
+        }
+        
+        return dev
+    }
+}

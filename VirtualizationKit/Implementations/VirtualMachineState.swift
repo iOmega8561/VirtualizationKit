@@ -1,0 +1,80 @@
+//
+//  VirtualMachineState.swift
+//  VirtualizationKit
+//
+//  Created by Giuseppe Rocco on 15/05/24.
+//
+
+import SwiftUI
+import Virtualization
+
+/// This typealias allows for cleaner-looking code
+public typealias VirtualMachineState = VZVirtualMachine.State
+
+/// Conformation to `VirtHandlerMachineState` helps us define two crucial methods that will significally reduce
+/// the bulk of `SwiftUI` statements. We can simply get the assigned color and label of the given
+/// `VirtualMachineState` by callin these methods.
+extension VirtualMachineState: VZKitMachineState {
+    
+    public var color: Color {
+        switch self {
+        case .running:
+            return .green
+            
+        case .stopping:
+            return .orange
+            
+        case .stopped:
+            return .red
+            
+        case .error:
+            return .yellow
+        
+        case .starting:
+            return .blue
+            
+        case .pausing:
+            return .orange
+            
+        case .paused:
+            return .orange
+        
+        case .resuming:
+            return .orange
+               
+        default:
+            return .white
+        }
+    }
+    
+    public var localized: String {
+        switch self {
+        case .running:
+            return String(localized: "details-vmstate-running")
+            
+        case .stopping:
+            return String(localized: "details-vmstate-stopping")
+            
+        case .stopped:
+            return String(localized: "details-vmstate-stopped")
+        
+        case .error:
+            return String(localized: "details-vmstate-error")
+        
+        case .starting:
+            return String(localized: "details-vmstate-starting")
+        
+        case .paused:
+            return String(localized: "details-vmstate-paused")
+        
+        case .pausing:
+            return String(localized: "details-vmstate-pausing")
+            
+        case .resuming:
+            return String(localized: "details-vmstate-resuming")
+               
+        default:
+            return String("default-state")
+        }
+    }
+}

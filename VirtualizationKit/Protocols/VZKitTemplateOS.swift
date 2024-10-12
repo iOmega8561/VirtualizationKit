@@ -1,0 +1,30 @@
+//
+//  VZKitTemplateOS.swift
+//  VirtualizationKit
+//
+//  Created by Giuseppe Rocco on 12/10/24.
+//
+
+import SwiftUI
+
+public protocol VZKitTemplateOS: Codable, Hashable {
+        
+    /// The Operating System of choice
+    var type: VirtualMachineOS { get }
+    
+    /// A boolean value that dictates if an installation procedure is needed
+    var needsInstall: Bool { get set }
+    
+    /// The `URL` of the given installer .ISO or .IPSW file (disk image),
+    var installer: URL? {get set }
+    
+    var image: Image { get }
+    
+    var label: Text { get }
+}
+
+extension VZKitTemplateOS {
+    public var image: Image { type.image }
+    
+    public var label: Text { type.label }
+}
