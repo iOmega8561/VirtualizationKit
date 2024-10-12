@@ -32,7 +32,7 @@ public struct VirtualMachine<TemplateType: VZKitTemplate>: VZKitVirtualMachine {
     /// This is a static factory method that returns a Result type, to allow having the error stored but not thrown
     ///
     /// - Parameters:
-    ///   - templateDTO: the data transfer object containing all the information about the VM.
+    ///   - template: the data transfer object containing all the information about the VM.
     public static func createMachine(_ template: TemplateType) async -> VZKitResult<TemplateType> {
         do {
             return try await .success(VirtualMachine(template: template))

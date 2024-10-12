@@ -24,7 +24,7 @@ extension GraphicsDevice: VZKitDeviceAttachment {
     ///
     /// - Parameters:
     ///   - type: The guest operating system.
-    static func createDevice(_ type: VirtualMachineOS) -> GraphicsDevice {
+    static func createDevice(_ type: OperatingSystem) -> GraphicsDevice {
 
         switch type {
         case .macos:

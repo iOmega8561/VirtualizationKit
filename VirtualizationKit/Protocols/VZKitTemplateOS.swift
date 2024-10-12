@@ -12,7 +12,7 @@ import SwiftUI
 public protocol VZKitTemplateOS: Codable, Hashable, Sendable {
         
     /// The Operating System of choice
-    var type: VirtualMachineOS { get }
+    var type: OperatingSystem { get }
     
     /// A boolean value that dictates if an installation procedure is needed
     var needsInstall: Bool { get set }

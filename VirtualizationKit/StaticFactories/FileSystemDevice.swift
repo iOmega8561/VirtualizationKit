@@ -24,7 +24,7 @@ extension FileSystemDevice: VZKitStorageAttachment {
     /// - Parameters:
     ///   - path: The location at which the shared mount should be created on the host file system.
     ///   - type: The guest operating system.
-    static func createDevice(_ path: String, _ type: VirtualMachineOS) throws -> FileSystemDevice {
+    static func createDevice(_ path: String, _ type: OperatingSystem) throws -> FileSystemDevice {
         
         try FileManager.default.createDirectory(
             atPath: path,

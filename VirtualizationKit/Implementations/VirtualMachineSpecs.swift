@@ -1,5 +1,5 @@
 //
-//  VirtualMachineTemplateSpecs.swift
+//  VirtualMachineSpecs.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 25/04/24.
@@ -12,7 +12,7 @@ import Foundation
 /// @brief
 ///    This struct defines the hardware caracteristics that will be
 ///    chosen by the user at creation time. This will be included in our VM Template configuration
-public struct VirtualMachineTemplateSpecs: VZKitTemplateSpecs {
+public struct VirtualMachineSpecs: VZKitTemplateSpecs {
     
     /// The amount of CPU cores that will be available to the VM
     public var cpuCount: Int

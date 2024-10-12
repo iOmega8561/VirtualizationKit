@@ -23,7 +23,7 @@ extension KeyboardDevice: VZKitDeviceAttachment {
     ///
     /// - Parameters:
     ///   - type: The guest operating system.
-    static func createDevice(_ type: VirtualMachineOS) -> KeyboardDevice {
+    static func createDevice(_ type: OperatingSystem) -> KeyboardDevice {
         
         switch type {
         case .linux:
