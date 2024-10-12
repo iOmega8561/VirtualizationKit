@@ -35,9 +35,7 @@ public struct VirtualMachineConfigurator<TemplateType: VZKitTemplate>: VZKitMach
     
     /// Computed property to get the location of the VM's storage folder inside the application bundle
     private var bundlePath: String {
-        return FileManager.default.homeDirectoryForCurrentUser.path() +
-               "/VirtualizationKit.bundle/"
-               + template.id.uuidString
+        return NSHomeDirectory() + "/VirtualizationKit.bundle/" + template.id.uuidString
     }
 
     /// This method is responsible of building the full fledged virtual machine configuration scheme.
