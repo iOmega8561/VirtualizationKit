@@ -43,4 +43,22 @@ public struct VirtualMachineTemplateSpecs: VZKitTemplateSpecs {
     
     /// A boolean value that dictates if the VM will have access to speakers
     public var hasOutputAudio: Bool
+    
+    public init(
+        cpuCount: Int,
+        ramSizeMB: Int,
+        diskSizeGB: Int,
+        hasNetwork: Bool,
+        hasDirectoryShare: Bool,
+        hasInputAudio: Bool,
+        hasOutputAudio: Bool
+    ) {
+        self.cpuCount = cpuCount
+        self.ramSizeMB = ramSizeMB
+        self.diskSizeGB = diskSizeGB
+        self.hasNetwork = hasNetwork
+        self.hasDirectoryShare = hasDirectoryShare
+        self.hasInputAudio = hasInputAudio
+        self.hasOutputAudio = hasOutputAudio
+    }
 }

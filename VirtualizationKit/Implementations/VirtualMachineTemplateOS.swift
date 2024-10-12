@@ -39,7 +39,7 @@ public struct VirtualMachineTemplateOS: VZKitTemplateOS {
     /// - Parameters:
     ///   - type: The Operating System of choice,
     ///   - installer: The `URL` of the given installer .ISO or .IPSW file (disk image).
-    init(type: VirtualMachineOS, installer: URL) {
+    public init(type: VirtualMachineOS, installer: URL) {
         self.type = type
         self.installer = installer
         

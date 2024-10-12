@@ -5,7 +5,7 @@
 //  Created by Giuseppe Rocco on 12/10/24.
 //
 
-public protocol VZKitTemplateSpecs: Codable, Hashable {
+public protocol VZKitTemplateSpecs: Codable, Hashable, Sendable {
     
     /// The amount of CPU cores that will be available to the VM
     var cpuCount: Int { get }

@@ -16,7 +16,7 @@
 
 import SwiftUI
 
-public protocol VZKitTemplateOS: Codable, Hashable {
+public protocol VZKitTemplateOS: Codable, Hashable, Sendable {
         
     /// The Operating System of choice
     var type: VirtualMachineOS { get }
