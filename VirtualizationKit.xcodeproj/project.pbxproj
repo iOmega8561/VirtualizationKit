@@ -184,9 +184,7 @@
 		E32B66112CBA960000FED006 /* VirtualizationKit */ = {
 			isa = PBXGroup;
 			children = (
-				E32B660E2CBA960000FED006 /* VZKitError.swift */,
-				E32B660F2CBA960000FED006 /* VZKitGlobalActor.swift */,
-				E32B66102CBA960000FED006 /* VZKitResult.swift */,
+				E3D7E87D2CBB3CEB005488C8 /* CoreDefinitions */,
 				E32B65F32CBA960000FED006 /* Implementations */,
 				E32B65FF2CBA960000FED006 /* Protocols */,
 				E32B660D2CBA960000FED006 /* StaticFactories */,
@@ -201,6 +199,16 @@
 				E32B663A2CBA97A100FED006 /* Virtualization.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		E3D7E87D2CBB3CEB005488C8 /* CoreDefinitions */ = {
+			isa = PBXGroup;
+			children = (
+				E32B660E2CBA960000FED006 /* VZKitError.swift */,
+				E32B660F2CBA960000FED006 /* VZKitGlobalActor.swift */,
+				E32B66102CBA960000FED006 /* VZKitResult.swift */,
+			);
+			path = CoreDefinitions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
