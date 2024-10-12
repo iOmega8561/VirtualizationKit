@@ -42,7 +42,7 @@
 		E32B66322CBA960000FED006 /* VZKitError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B660E2CBA960000FED006 /* VZKitError.swift */; };
 		E32B66332CBA960000FED006 /* VZKitGlobalActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B660F2CBA960000FED006 /* VZKitGlobalActor.swift */; };
 		E32B66342CBA960000FED006 /* VZKitResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B66102CBA960000FED006 /* VZKitResult.swift */; };
-		E32B663B2CBA97A100FED006 /* Virtualization.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E32B663A2CBA97A100FED006 /* Virtualization.framework */; };
+		E32B663B2CBA97A100FED006 /* Virtualization.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E32B663A2CBA97A100FED006 /* Virtualization.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		E32B663D2CBA981600FED006 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = E32B663C2CBA981600FED006 /* Localizable.xcstrings */; };
 /* End PBXBuildFile section */
 
@@ -346,6 +346,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
@@ -382,6 +383,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
@@ -440,7 +442,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.6;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -501,7 +503,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.6;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
