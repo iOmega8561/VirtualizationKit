@@ -11,32 +11,43 @@
 //  VirtualMachineOS.swift
 //  VirtualizationKit
 //
-//  Created by Giuseppe Rocco on 16/05/24.
+//  Created by Giuseppe Rocco on 12/10/24.
 //
 
 import SwiftUI
 
-/// This enumeration has been created to define the possible operating systems that can be associated to a virtual machine.
-/// Since Apple Virtualization Framework officially supports only Linux and macOS, only these two are included.
-public enum VirtualMachineOS: VZKitOperatingSystem {
-    case linux
-    case macos
+/// The codable structure that will store the information about our VM's operating system
+///
+/// @brief
+///    It stores the operating system type and a boolean variable that tells us if the OS
+///    needs an installation procedure. The init method sets the latter to true for MacOS.
+///    Conformation to `VZKitTemplateOS` helps us define two crucial methods that will significally reduce
+///    the bulk of `SwiftUI` statements. We can simply get the assets of the given OS by callin these methods.
+public struct VirtualMachineOS: VZKitTemplateOS {
     
-    public var image: Image {
-        switch self {
-        case .linux:
-            return Image("tux")
-        case .macos:
-            return Image(systemName: "apple.logo")
-        }
-    }
+    /// The Operating System of choice
+    public let type: OperatingSystem
     
-    public var label: Text {
-        switch self {
-        case .linux:
-            return Text(verbatim: "Linux")
+    /// A boolean value that dictates if an installation procedure is needed
+    public var needsInstall: Bool
+    
+    /// The `URL` of the given installer .ISO or .IPSW file (disk image),
+    public var installer: URL?
+    
+    /// The initializer of the struct
+    ///
+    /// - Parameters:
+    ///   - type: The Operating System of choice,
+    ///   - installer: The `URL` of the given installer .ISO or .IPSW file (disk image).
+    public init(type: OperatingSystem, installer: URL) {
+        self.type = type
+        self.installer = installer
+        
+        switch type {
         case .macos:
-            return Text(verbatim: "macOS")
+            self.needsInstall = true
+        default:
+            self.needsInstall = false
         }
     }
 }

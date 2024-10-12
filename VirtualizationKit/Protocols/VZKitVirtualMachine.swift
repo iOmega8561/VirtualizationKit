@@ -40,7 +40,7 @@ public protocol VZKitVirtualMachine: Sendable {
     /// Returns a `Result<Self, Error>` type, in order to have a rapresentation of eventual errors, to do something with them in the UI.
     ///
     /// - Parameters:
-    ///   - templateDTO: the data transfer object containing all the information about the VM.
+    ///   - template: the data transfer object containing all the information about the VM.
     static func createMachine(_ template: TemplateType) async -> VZKitResult<TemplateType>
     
     /// This method should stop the `VZVirtualMachine` and eventually update the shared state accordingly.

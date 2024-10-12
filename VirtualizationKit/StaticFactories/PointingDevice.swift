@@ -31,7 +31,7 @@ extension PointingDevice: VZKitDeviceAttachment {
     ///
     /// - Parameters:
     ///   - type: The guest operating system.
-    static func createDevice(_ type: VirtualMachineOS) -> PointingDevice {
+    static func createDevice(_ type: OperatingSystem) -> PointingDevice {
         
         switch type {
         case .linux:
