@@ -1,2 +1,4 @@
 # VirtualizationKit
-Middleware framework that works on top of the existing Apple Virtualization Framework to allow easier implementation of Virtual Machine related applications
+
+VirtualizationKit is a middleware framework born from the VirtHandler project.
+It works on top of the existing Apple Virtualization Framework, to allow for easier implementations of Virtual Machine related applications.
