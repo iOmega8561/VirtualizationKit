@@ -25,7 +25,7 @@ public enum OperatingSystem: VZKitOperatingSystem {
     public var image: Image {
         switch self {
         case .linux:
-            return Image("tux")
+            return Image("tux", bundle: VirtualizationKit.bundle)
         case .macos:
             return Image(systemName: "apple.logo")
         }
