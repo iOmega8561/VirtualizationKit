@@ -35,67 +35,67 @@ enum VZKitError: LocalizedError {
         case .mainDisk:
             return String(
                 localized: "error-configuration-maindisk",
-                bundle: Bundle(identifier: "giusepperocco.VirtualizationKit")
+                bundle: VirtualizationKit.bundle
             )
             
         case .machineId:
             return String(
                 localized: "error-configuration-machineid",
-                bundle: Bundle(identifier: "giusepperocco.VirtualizationKit")
+                bundle: VirtualizationKit.bundle
             )
             
         case .machineIdRetrieve:
             return String(
                 localized: "error-configuration-machineid-retrieve",
-                bundle: Bundle(identifier: "giusepperocco.VirtualizationKit")
+                bundle: VirtualizationKit.bundle
             )
             
         case .efiStore:
             return String(
                 localized: "error-configuration-efistore",
-                bundle: Bundle(identifier: "giusepperocco.VirtualizationKit")
+                bundle: VirtualizationKit.bundle
             )
             
         case .usbDisk:
             return String(
                 localized: "error-configuration-usbdisk",
-                bundle: Bundle(identifier: "giusepperocco.VirtualizationKit")
+                bundle: VirtualizationKit.bundle
             )
             
         case .rosetta:
             return String(
                 localized: "error-configuration-rosetta",
-                bundle: Bundle(identifier: "giusepperocco.VirtualizationKit")
+                bundle: VirtualizationKit.bundle
             )
             
         case .auxiliaryStorage:
             return String(
                 localized: "error-configuration-auxstorage",
-                bundle: Bundle(identifier: "giusepperocco.VirtualizationKit")
+                bundle: VirtualizationKit.bundle
             )
             
         case .macUnsupportedImage:
             return String(
                 localized: "error-configuration-macimage",
-                bundle: Bundle(identifier: "giusepperocco.VirtualizationKit")
+                bundle: VirtualizationKit.bundle
             )
             
         case .macUnsupportedHost:
             return String(
                 localized: "error-configuration-machost",
-                bundle: Bundle(identifier: "giusepperocco.VirtualizationKit")
+                bundle: VirtualizationKit.bundle
             )
             
         case .missingMacImage:
             return String(
                 localized: "error-installer-macimage",
-                bundle: Bundle(identifier: "giusepperocco.VirtualizationKit")
+                bundle: VirtualizationKit.bundle
             )
             
         case .notInitialized:
             return String(
                 localized: "error-machine-notinizialized",
-                bundle: Bundle(identifier: "giusepperocco.VirtualizationKit")
+                bundle: VirtualizationKit.bundle
             )
         }
     }

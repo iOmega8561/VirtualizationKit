@@ -137,7 +137,7 @@ public struct VirtualMachine<TemplateType: VZKitTemplate>: VZKitVirtualMachine {
         
         self.template = template
         
-        let configurator = VirtualMachineConfigurator(template: template)
+        let configurator = await VirtualMachineConfigurator(template: template)
                 
         self.delegate = await VirtualMachineDelegate()
         
