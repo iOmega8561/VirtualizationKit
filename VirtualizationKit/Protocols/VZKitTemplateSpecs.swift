@@ -22,6 +22,8 @@ public protocol VZKitTemplateSpecs: Codable, Hashable, Sendable {
     var hasNetwork: Bool { get }
     
     /// A boolean value that dictates if the VM will have access to a shared directory
+    ///
+    /// - Important: The shared directory will always be located at {VirtualizationKit.bundlePath}/{UUID}/{VM-NAME}
     var hasDirectoryShare: Bool { get }
     
     /// A boolean value that dictates if the VM will have access to microphone

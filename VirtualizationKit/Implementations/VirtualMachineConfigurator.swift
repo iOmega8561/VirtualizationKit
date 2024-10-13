@@ -121,7 +121,7 @@ public struct VirtualMachineConfigurator<TemplateType: VZKitTemplate>: VZKitMach
         if template.specs.hasDirectoryShare {
             configuration.directorySharingDevices.append(
                 try FileSystemDevice.createDevice(
-                    bundlePath + "/SharedDirectory",
+                    bundlePath + "/" + template.name,
                     template.os.type
                 )
             )
