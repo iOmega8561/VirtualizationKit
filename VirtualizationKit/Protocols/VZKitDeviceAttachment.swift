@@ -23,5 +23,5 @@ protocol VZKitDeviceAttachment {
     ///
     /// - Parameters:
     ///   - type: The network configuration of choice
-    static func createDevice(_ type: InputType) -> DeviceType
+    static func createDevice(_ type: InputType) async throws -> DeviceType
 }

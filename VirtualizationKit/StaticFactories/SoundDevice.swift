@@ -7,6 +7,8 @@
 
 import Virtualization
 
+import AVFoundation
+
 /// This typealias allows for cleaner-looking code
 typealias SoundDevice = VZVirtioSoundDeviceConfiguration
 
@@ -28,29 +30,50 @@ extension SoundDevice: VZKitDeviceAttachment {
         case output
     }
     
+    static private func captureDevicePermission(type: AVMediaType) async throws {
+
+        switch AVCaptureDevice.authorizationStatus(for: type) {
+            
+        case .authorized:
+            break
+        
+        case .notDetermined:
+            
+            guard await AVCaptureDevice.requestAccess(for: .audio) else {
+                fallthrough
+            }
+                        
+        default:
+            throw VZKitError.captureDevicePermissionDenied
+        }
+    }
+    
     /// This static factory method returns the appropriate audio device attachment.
     /// Audio configurations are handled the same way across different OSes, but input devices
     /// have a different setup process from output devices, and vice-versa.
     ///
     /// - Parameters:
     ///   - type: The audio configuration type (input or output)
-    static func createDevice(_ type: StreamType) -> SoundDevice {
+    static func createDevice(_ type: StreamType) async throws -> SoundDevice {
         let dev = SoundDevice()
         
         switch type {
-        case .input:
-            
-            let stream = VZVirtioSoundDeviceInputStreamConfiguration()
-            stream.source = VZHostAudioInputStreamSource()
-            
-            dev.streams.append(stream)
-            
         case .output:
             
             let stream = VZVirtioSoundDeviceOutputStreamConfiguration()
             stream.sink = VZHostAudioOutputStreamSink()
             
             dev.streams.append(stream)
+            
+        case .input:
+            
+            try await Self.captureDevicePermission(type: .audio)
+            
+            let stream = VZVirtioSoundDeviceInputStreamConfiguration()
+            stream.source = VZHostAudioInputStreamSource()
+            
+            dev.streams.append(stream)
+            
         }
         
         return dev
