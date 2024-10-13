@@ -52,49 +52,49 @@ extension VirtualMachineState: VZKitMachineState {
         case .running:
             return String(
                 localized: "details-vmstate-running",
-                bundle: Bundle(identifier: "giusepperocco.VirtualizationKit")
+                bundle: VirtualizationKit.bundle
             )
             
         case .stopping:
             return String(
                 localized: "details-vmstate-stopping",
-                bundle: Bundle(identifier: "giusepperocco.VirtualizationKit")
+                bundle: VirtualizationKit.bundle
             )
             
         case .stopped:
             return String(
                 localized: "details-vmstate-stopped",
-                bundle: Bundle(identifier: "giusepperocco.VirtualizationKit")
+                bundle: VirtualizationKit.bundle
             )
         
         case .error:
             return String(
                 localized: "details-vmstate-error",
-                bundle: Bundle(identifier: "giusepperocco.VirtualizationKit")
+                bundle: VirtualizationKit.bundle
             )
         
         case .starting:
             return String(
                 localized: "details-vmstate-starting",
-                bundle: Bundle(identifier: "giusepperocco.VirtualizationKit")
+                bundle: VirtualizationKit.bundle
             )
         
         case .paused:
             return String(
                 localized: "details-vmstate-paused",
-                bundle: Bundle(identifier: "giusepperocco.VirtualizationKit")
+                bundle: VirtualizationKit.bundle
             )
         
         case .pausing:
             return String(
                 localized: "details-vmstate-pausing",
-                bundle: Bundle(identifier: "giusepperocco.VirtualizationKit")
+                bundle: VirtualizationKit.bundle
             )
             
         case .resuming:
             return String(
                 localized: "details-vmstate-resuming",
-                bundle: Bundle(identifier: "giusepperocco.VirtualizationKit")
+                bundle: VirtualizationKit.bundle
             )
                
         default:

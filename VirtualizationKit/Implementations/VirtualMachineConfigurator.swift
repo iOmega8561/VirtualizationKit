@@ -25,9 +25,7 @@ public struct VirtualMachineConfigurator<TemplateType: VZKitTemplate>: VZKitMach
     public let configuration: VZVirtualMachineConfiguration
     
     /// Computed property to get the location of the VM's storage folder inside the application bundle
-    private var bundlePath: String {
-        return NSHomeDirectory() + "/VirtualizationKit.bundle/" + template.id.uuidString
-    }
+    private let bundlePath: String
 
     /// This method is responsible of building the full fledged virtual machine configuration scheme.
     /// To do that it makes a distinction between the different guest operating systems, since they need completely different
@@ -170,8 +168,9 @@ public struct VirtualMachineConfigurator<TemplateType: VZKitTemplate>: VZKitMach
      
     /// - Parameters:
     ///   - template: The data transfer object containing all the info about the virtual machine.
-    init(template: TemplateType) {
+    init(template: TemplateType) async {
         self.template = template
         self.configuration = VZVirtualMachineConfiguration()
+        self.bundlePath = await VirtualizationKit.bundlePath + template.id.uuidString
     }
 }

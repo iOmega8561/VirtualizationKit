@@ -48,6 +48,7 @@
 		E32B66672CBAB57300FED006 /* ConsoleNSVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B66662CBAB57300FED006 /* ConsoleNSVC.swift */; };
 		E32B66692CBAB65A00FED006 /* VZKitConsoleNSVCR.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B66682CBAB65A00FED006 /* VZKitConsoleNSVCR.swift */; };
 		E32B666B2CBAB6F600FED006 /* ConsoleNSVCR.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B666A2CBAB6F600FED006 /* ConsoleNSVCR.swift */; };
+		E3D7E87F2CBB4071005488C8 /* VirtualizationKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D7E87E2CBB4069005488C8 /* VirtualizationKit.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -93,6 +94,7 @@
 		E32B66662CBAB57300FED006 /* ConsoleNSVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleNSVC.swift; sourceTree = "<group>"; };
 		E32B66682CBAB65A00FED006 /* VZKitConsoleNSVCR.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VZKitConsoleNSVCR.swift; sourceTree = "<group>"; };
 		E32B666A2CBAB6F600FED006 /* ConsoleNSVCR.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleNSVCR.swift; sourceTree = "<group>"; };
+		E3D7E87E2CBB4069005488C8 /* VirtualizationKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualizationKit.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -204,6 +206,7 @@
 		E3D7E87D2CBB3CEB005488C8 /* CoreDefinitions */ = {
 			isa = PBXGroup;
 			children = (
+				E3D7E87E2CBB4069005488C8 /* VirtualizationKit.swift */,
 				E32B660E2CBA960000FED006 /* VZKitError.swift */,
 				E32B660F2CBA960000FED006 /* VZKitGlobalActor.swift */,
 				E32B66102CBA960000FED006 /* VZKitResult.swift */,
@@ -325,6 +328,7 @@
 				E32B662C2CBA960000FED006 /* MacintoshPlatform.swift in Sources */,
 				E32B662D2CBA960000FED006 /* NetworkDevice.swift in Sources */,
 				E32B666B2CBAB6F600FED006 /* ConsoleNSVCR.swift in Sources */,
+				E3D7E87F2CBB4071005488C8 /* VirtualizationKit.swift in Sources */,
 				E32B662E2CBA960000FED006 /* PointingDevice.swift in Sources */,
 				E32B662F2CBA960000FED006 /* RosettaDevice.swift in Sources */,
 				E32B66652CBAB34700FED006 /* VZKitConsoleNSVC.swift in Sources */,
