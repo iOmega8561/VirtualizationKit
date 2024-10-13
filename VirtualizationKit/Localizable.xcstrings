@@ -154,6 +154,23 @@
         }
       }
     },
+    "error-configuration-capturedevice" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The virtual machine has been configured with a capture device, but the application does not have permission to use it"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La macchina virtuale è stata configurata con un dispositivo di cattura, ma l’applicazione non ha il permesso di usarlo."
+          }
+        }
+      }
+    },
     "error-configuration-efistore" : {
       "extractionState" : "manual",
       "localizations" : {

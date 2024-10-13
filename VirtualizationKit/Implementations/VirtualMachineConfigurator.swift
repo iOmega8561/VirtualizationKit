@@ -16,6 +16,8 @@
 
 @preconcurrency import Virtualization
 
+import AVFoundation
+
 /// `VirtualMachineConfigurator` data structure
 ///
 /// @brief
@@ -35,7 +37,7 @@ public struct VirtualMachineConfigurator<TemplateType: VZKitTemplate>: VZKitMach
     
     /// Computed property to get the location of the VM's storage folder inside the application bundle
     private let bundlePath: String
-
+    
     /// This method is responsible of building the full fledged virtual machine configuration scheme.
     /// To do that it makes a distinction between the different guest operating systems, since they need completely different
     /// configuration schemes. Its workings are helped by the several static factory methods implemented for every virtual device.
@@ -43,7 +45,7 @@ public struct VirtualMachineConfigurator<TemplateType: VZKitTemplate>: VZKitMach
     ///
     /// - Parameters:
     ///   - image: The macOS restore image object, if needed.
-    private func createConfiguration(_ image: VZMacOSRestoreImage?) throws {
+    private func createConfiguration(_ image: VZMacOSRestoreImage?) async throws {
         
         if !FileManager.default.fileExists(atPath: bundlePath) {
             try FileManager.default.createDirectory(
@@ -115,13 +117,13 @@ public struct VirtualMachineConfigurator<TemplateType: VZKitTemplate>: VZKitMach
         
         if template.specs.hasOutputAudio {
             configuration.audioDevices.append(
-                SoundDevice.createDevice(.output)
+                try await SoundDevice.createDevice(.output)
             )
         }
         
         if template.specs.hasInputAudio {
             configuration.audioDevices.append(
-                SoundDevice.createDevice(.input)
+                try await SoundDevice.createDevice(.input)
             )
         }
         
@@ -162,11 +164,11 @@ public struct VirtualMachineConfigurator<TemplateType: VZKitTemplate>: VZKitMach
                 }
             })
             
-            try createConfiguration(image)
+            try await createConfiguration(image)
             
         default:
             
-            try createConfiguration(nil)
+            try await createConfiguration(nil)
         }
         
         try configuration.validate()

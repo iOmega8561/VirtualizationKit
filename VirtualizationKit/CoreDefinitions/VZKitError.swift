@@ -28,6 +28,7 @@ enum VZKitError: LocalizedError {
     case macUnsupportedHost
     case missingMacImage
     case notInitialized
+    case captureDevicePermissionDenied
 
     public var errorDescription: String? {
         
@@ -95,6 +96,12 @@ enum VZKitError: LocalizedError {
         case .notInitialized:
             return String(
                 localized: "error-machine-notinizialized",
+                bundle: VirtualizationKit.bundle
+            )
+        
+        case .captureDevicePermissionDenied:
+            return String(
+                localized: "error-configuration-capturedevice",
                 bundle: VirtualizationKit.bundle
             )
         }
