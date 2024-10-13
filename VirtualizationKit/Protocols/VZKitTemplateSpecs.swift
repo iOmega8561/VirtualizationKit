@@ -27,6 +27,9 @@ public protocol VZKitTemplateSpecs: Codable, Hashable, Sendable {
     var hasDirectoryShare: Bool { get }
     
     /// A boolean value that dictates if the VM will have access to microphone
+    ///
+    /// - Important: The root application needs NSMicrophoneUsage key in its Info settings.
+    /// Without permission the machine will fail to configure.
     var hasInputAudio: Bool { get }
     
     /// A boolean value that dictates if the VM will have access to speakers
