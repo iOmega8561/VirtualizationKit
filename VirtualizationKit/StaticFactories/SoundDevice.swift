@@ -39,6 +39,11 @@ extension SoundDevice: VZKitDeviceAttachment {
         case output
     }
     
+    /// This static method checks if the application has been granted permission to use the specified capture device
+    /// If not determined asks for permission and throws an exception when it has not been granted
+    ///
+    /// - Parameters:
+    ///   - type: The audio configuration type (input output ecc...)
     static private func captureDevicePermission(type: AVMediaType) async throws {
 
         switch AVCaptureDevice.authorizationStatus(for: type) {
@@ -48,7 +53,7 @@ extension SoundDevice: VZKitDeviceAttachment {
         
         case .notDetermined:
             
-            guard await AVCaptureDevice.requestAccess(for: .audio) else {
+            guard await AVCaptureDevice.requestAccess(for: type) else {
                 fallthrough
             }
                         
