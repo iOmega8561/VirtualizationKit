@@ -16,6 +16,8 @@
 
 import SwiftUI
 
+import UniformTypeIdentifiers
+
 /// This enumeration has been created to define the possible operating systems that can be associated to a virtual machine.
 /// Since Apple Virtualization Framework officially supports only Linux and macOS, only these two are included.
 public enum OperatingSystem: VZKitOperatingSystem {
@@ -37,6 +39,15 @@ public enum OperatingSystem: VZKitOperatingSystem {
             return Text(verbatim: "Linux")
         case .macos:
             return Text(verbatim: "macOS")
+        }
+    }
+    
+    public var fileType: UTType {
+        switch self {
+        case .linux:
+            return .diskImage
+        case .macos:
+            return UTType(filenameExtension: "ipsw")!
         }
     }
 }

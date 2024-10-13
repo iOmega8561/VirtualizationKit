@@ -16,6 +16,8 @@
 
 import SwiftUI
 
+import UniformTypeIdentifiers
+
 /// VirtHandlerMachineOS protocol
 ///
 /// @brief
@@ -27,4 +29,6 @@ public protocol VZKitOperatingSystem: Codable, Hashable, CaseIterable, Sendable 
     var image: Image { get }
     
     var label: Text { get }
+    
+    var fileType: UTType { get }
 }
