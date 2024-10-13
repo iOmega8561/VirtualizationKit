@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+import UniformTypeIdentifiers
+
 /// The `VZKitTemplateOS` protocol defines a common structure for the information that will be stored inside a template
 /// regarding the characteristics of the operating system of a given virtual machine.
 public protocol VZKitTemplateOS: Codable, Hashable, Sendable {
@@ -23,6 +25,8 @@ public protocol VZKitTemplateOS: Codable, Hashable, Sendable {
     var image: Image { get }
     
     var label: Text { get }
+    
+    var fileType: UTType { get }
 }
 
 extension VZKitTemplateOS {
@@ -30,4 +34,6 @@ extension VZKitTemplateOS {
     public var image: Image { type.image }
     
     public var label: Text { type.label }
+    
+    public var fileType: UTType { type.fileType }
 }
