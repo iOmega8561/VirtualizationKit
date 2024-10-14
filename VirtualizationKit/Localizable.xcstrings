@@ -307,6 +307,23 @@
         }
       }
     },
+    "error-configuration-wrongimgversion" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The Virtual Machine has been created using a  macOS %d.%d restore image, but the currently selected image’s version is %d.%d"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La Macchina Virtuale è stata creata utilizzando un’immagine di ripristino di macOS %d.%d, ma la versione dell’immagine attualmente selezionata è %d.%d"
+          }
+        }
+      }
+    },
     "error-installer-macimage" : {
       "extractionState" : "manual",
       "localizations" : {
