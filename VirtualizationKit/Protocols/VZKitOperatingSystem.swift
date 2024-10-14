@@ -36,5 +36,9 @@ public protocol VZKitOperatingSystem: Codable, Hashable, CaseIterable, Sendable 
     
     /// Static factory method to create an `VZKitOperatingSystem` conformable object, using information retrieved by
     /// the provided macOS restore image (if present). It allows to manipulate the enum cases to have them store things like OS version.
+    ///
+    /// - Parameters:
+    ///   - expected: The OS type to be expected in return, will probably be blank (no version)
+    ///   - url: The URL of the installer image provided by the caller.
     static func createOS(expected: Self, _ url: URL) async throws -> FactoryType
 }
