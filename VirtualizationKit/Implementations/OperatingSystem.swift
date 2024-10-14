@@ -15,6 +15,7 @@ import UniformTypeIdentifiers
 /// Since Apple Virtualization Framework officially supports only Linux and macOS, only these two are included.
 public enum OperatingSystem: VZKitOperatingSystem {
     
+    /// Conformation to `CaseIterable`
     public static let allCases: [Self] = [
         .linux,
         .macos()
@@ -23,6 +24,12 @@ public enum OperatingSystem: VZKitOperatingSystem {
     case linux
     case macos(_ major: Int = 12, _ minor: Int = 4)
     
+    /// Static factory method to create an `OperatingSytem` object, using information retrieved by
+    /// the provided macOS restore image (if present). It allows to manipulate the enum cases to have them store things like OS version.
+    ///
+    /// - Parameters:
+    ///   - expected: The OS type to be expected in return, will probably be blank (no version)
+    ///   - url: The URL of the installer image provided by the caller. If expected in not .macos this parameter has no effect.
     public static func createOS(expected: Self, _ url: URL) async throws -> OperatingSystem {
         
         guard expected != .linux else { return .init() }
@@ -74,6 +81,7 @@ public enum OperatingSystem: VZKitOperatingSystem {
         }
     }
     
+    /// This private `init()` will instanciate the right case, depending on if version is `nil` or not
     private init(_ version: (Int, Int)? = nil) {
         
         if let version {
