@@ -41,7 +41,10 @@ extension FileSystemDevice: VZKitStorageAttachment {
         let sharingDevice: FileSystemDevice
         
         switch type {
-        case .macos:
+        case .macos(let major, _):
+            
+            guard major > 12 else { fallthrough }
+            
             sharingDevice = FileSystemDevice(
                 tag: FileSystemDevice.macOSGuestAutomountTag
             )

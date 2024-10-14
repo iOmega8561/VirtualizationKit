@@ -25,10 +25,15 @@ extension PointingDevice: VZKitDeviceAttachment {
     static func createDevice(_ type: OperatingSystem) -> PointingDevice {
         
         switch type {
-        case .linux:
-            return VZUSBScreenCoordinatePointingDeviceConfiguration()
-        case .macos:
+        case .macos(let major, _):
+            
+            guard major > 12  else { fallthrough}
+            
             return VZMacTrackpadConfiguration()
+            
+        case .linux:
+            
+            return VZUSBScreenCoordinatePointingDeviceConfiguration()
         }
     }
 }
