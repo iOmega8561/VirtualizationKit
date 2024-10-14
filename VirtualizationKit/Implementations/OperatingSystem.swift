@@ -90,6 +90,15 @@ public enum OperatingSystem: VZKitOperatingSystem {
         }
     }
     
+    public var version: (Int, Int)? {
+        switch self {
+        case .linux:
+            return nil
+        case .macos(let major, let minor):
+            return (major, minor)
+        }
+    }
+    
     /// This private `init()` will instanciate the right case, depending on if version is `nil` or not
     private init(_ version: (Int, Int)? = nil) {
         

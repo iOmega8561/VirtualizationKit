@@ -29,6 +29,7 @@ enum VZKitError: LocalizedError {
     case missingMacImage
     case notInitialized
     case captureDevicePermissionDenied
+    case wrongMacImageVersion(_ expected: (Int, Int), _ actual: (Int, Int))
 
     public var errorDescription: String? {
         
@@ -103,6 +104,18 @@ enum VZKitError: LocalizedError {
             return String(
                 localized: "error-configuration-capturedevice",
                 bundle: VirtualizationKit.bundle
+            )
+        
+        case .wrongMacImageVersion(let expected, let actual):
+            return String(
+                format: String(
+                    localized: "error-configuration-wrongimgversion",
+                    bundle: VirtualizationKit.bundle
+                ),
+                expected.0,
+                expected.1,
+                actual.0,
+                actual.1
             )
         }
     }

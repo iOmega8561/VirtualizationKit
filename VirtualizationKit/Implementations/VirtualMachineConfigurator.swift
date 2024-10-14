@@ -164,6 +164,15 @@ public struct VirtualMachineConfigurator<TemplateType: VZKitTemplate>: VZKitMach
                 }
             })
             
+            let version = (
+                image.operatingSystemVersion.majorVersion,
+                image.operatingSystemVersion.minorVersion
+            )
+            
+            guard version == template.os.type.version! else {
+                throw VZKitError.wrongMacImageVersion(template.os.type.version!, version)
+            }
+            
             try await createConfiguration(image)
             
         default:
