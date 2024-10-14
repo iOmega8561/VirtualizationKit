@@ -16,13 +16,45 @@
 
 import SwiftUI
 
+import Virtualization
+
 import UniformTypeIdentifiers
 
 /// This enumeration has been created to define the possible operating systems that can be associated to a virtual machine.
 /// Since Apple Virtualization Framework officially supports only Linux and macOS, only these two are included.
 public enum OperatingSystem: VZKitOperatingSystem {
+    
+    public static let allCases: [Self] = [
+        .linux,
+        .macos()
+    ]
+    
     case linux
-    case macos
+    case macos(_ major: Int = 12, _ minor: Int = 4)
+    
+    public static func createOS(expected: Self, _ url: URL) async throws -> OperatingSystem {
+        
+        guard expected != .linux else { return .init() }
+        
+        let version: (Int, Int) = try await withCheckedThrowingContinuation { continuation in
+            VZMacOSRestoreImage.load(from: url) { result in
+                switch result {
+                    
+                case .failure(let error):
+                    continuation.resume(throwing: error)
+                    
+                case .success(let restoreImage):
+                    
+                    let major = restoreImage.operatingSystemVersion.majorVersion
+                    let minor = restoreImage.operatingSystemVersion.minorVersion
+                    
+                    continuation.resume(returning: (major, minor))
+                }
+            }
+        }
+        
+        return .init(version)
+    }
     
     public var image: Image {
         switch self {
@@ -48,6 +80,15 @@ public enum OperatingSystem: VZKitOperatingSystem {
             return .diskImage
         case .macos:
             return UTType(filenameExtension: "ipsw")!
+        }
+    }
+    
+    private init(_ version: (Int, Int)? = nil) {
+        
+        if let version {
+            self = .macos(version.0, version.1)
+        } else {
+            self = .linux
         }
     }
 }

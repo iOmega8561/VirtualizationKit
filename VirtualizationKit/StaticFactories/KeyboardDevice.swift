@@ -26,7 +26,7 @@ typealias KeyboardDevice = VZKeyboardConfiguration
 ///    The `VZKitDeviceAttachment` protocol allows for a simpler implementation of the static factory method pattern.
 ///    This extension contains the necessary stubs to achieve conformation.
 extension KeyboardDevice: VZKitDeviceAttachment {
-   
+    
     /// Much simpler than the other factory methods, this one just returns the appropriate keyboard
     /// configuration according to the OS of choice.
     ///
@@ -35,10 +35,15 @@ extension KeyboardDevice: VZKitDeviceAttachment {
     static func createDevice(_ type: OperatingSystem) -> KeyboardDevice {
         
         switch type {
-        case .linux:
-            return VZUSBKeyboardConfiguration()
-        case .macos:
+        case .macos(let major, _):
+            
+            guard major > 12  else { fallthrough}
+            
             return VZMacKeyboardConfiguration()
+            
+        case .linux:
+            
+            return VZUSBKeyboardConfiguration()
         }
     }
 }

@@ -36,7 +36,7 @@ extension GraphicsDevice: VZKitDeviceAttachment {
     static func createDevice(_ type: OperatingSystem) -> GraphicsDevice {
 
         switch type {
-        case .macos:
+        case .macos(_, _):
             
             let dev = VZMacGraphicsDeviceConfiguration()
             
