@@ -15,7 +15,7 @@
 //
 
 import Virtualization
-    
+
 /// The Virtual machine console AppKit view controller
 ///
 /// @brief
@@ -25,7 +25,7 @@ import Virtualization
 public class ConsoleNSVC: NSViewController, VZKitConsoleNSVC {
     
     /// A new instance of `VZVirtualMachineView` that will be rendered eventually
-    public let vmView = VZVirtualMachineView()
+    public let vmView = ConsoleNSV()
     
     override public func loadView() {
         view = NSView()

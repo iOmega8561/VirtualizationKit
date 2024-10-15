@@ -22,8 +22,10 @@ import Virtualization
 /// An object conforming to this protocol will be wrapped up by a `NSViewControllerRepresentable`.
 public protocol VZKitConsoleNSVC: NSViewController {
     
+    associatedtype ViewType: VZVirtualMachineView
+    
     /// A reference to an instance of `VZVirtualMachineView` that will be rendered eventually
-    var vmView: VZVirtualMachineView { get }
+    var vmView: ViewType  { get }
     
     /// override of `NSViewController` behaviour, should create the `NSView` object
     ///
