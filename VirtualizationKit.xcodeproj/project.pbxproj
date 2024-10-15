@@ -48,6 +48,8 @@
 		E32B66672CBAB57300FED006 /* ConsoleNSVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B66662CBAB57300FED006 /* ConsoleNSVC.swift */; };
 		E32B66692CBAB65A00FED006 /* VZKitConsoleNSVCR.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B66682CBAB65A00FED006 /* VZKitConsoleNSVCR.swift */; };
 		E32B666B2CBAB6F600FED006 /* ConsoleNSVCR.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B666A2CBAB6F600FED006 /* ConsoleNSVCR.swift */; };
+		E3941ECF2CBEFE2900E210E7 /* VZKitConsoleNSV.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3941ECE2CBEFE2100E210E7 /* VZKitConsoleNSV.swift */; };
+		E3941ED12CBEFEE000E210E7 /* ConsoleNSV.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3941ED02CBEFEDD00E210E7 /* ConsoleNSV.swift */; };
 		E3D7E87F2CBB4071005488C8 /* VirtualizationKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D7E87E2CBB4069005488C8 /* VirtualizationKit.swift */; };
 		E3DC75252CBC1EF5006ADCF1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E3DC75242CBC1EF5006ADCF1 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
@@ -95,6 +97,8 @@
 		E32B66662CBAB57300FED006 /* ConsoleNSVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleNSVC.swift; sourceTree = "<group>"; };
 		E32B66682CBAB65A00FED006 /* VZKitConsoleNSVCR.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VZKitConsoleNSVCR.swift; sourceTree = "<group>"; };
 		E32B666A2CBAB6F600FED006 /* ConsoleNSVCR.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleNSVCR.swift; sourceTree = "<group>"; };
+		E3941ECE2CBEFE2100E210E7 /* VZKitConsoleNSV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VZKitConsoleNSV.swift; sourceTree = "<group>"; };
+		E3941ED02CBEFEDD00E210E7 /* ConsoleNSV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleNSV.swift; sourceTree = "<group>"; };
 		E3D7E87E2CBB4069005488C8 /* VirtualizationKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualizationKit.swift; sourceTree = "<group>"; };
 		E3DC75242CBC1EF5006ADCF1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -131,6 +135,7 @@
 		E32B65F32CBA960000FED006 /* Implementations */ = {
 			isa = PBXGroup;
 			children = (
+				E3941ED02CBEFEDD00E210E7 /* ConsoleNSV.swift */,
 				E32B66662CBAB57300FED006 /* ConsoleNSVC.swift */,
 				E32B666A2CBAB6F600FED006 /* ConsoleNSVCR.swift */,
 				E32B65EF2CBA960000FED006 /* OperatingSystem.swift */,
@@ -148,6 +153,7 @@
 		E32B65FF2CBA960000FED006 /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
+				E3941ECE2CBEFE2100E210E7 /* VZKitConsoleNSV.swift */,
 				E32B66642CBAB33F00FED006 /* VZKitConsoleNSVC.swift */,
 				E32B66682CBAB65A00FED006 /* VZKitConsoleNSVCR.swift */,
 				E32B65F42CBA960000FED006 /* VZKitDeviceAttachment.swift */,
@@ -322,6 +328,7 @@
 				E32B66232CBA960000FED006 /* VZKitTemplateSpecs.swift in Sources */,
 				E32B66242CBA960000FED006 /* VZKitVirtualMachine.swift in Sources */,
 				E32B66252CBA960000FED006 /* BlockDevice.swift in Sources */,
+				E3941ED12CBEFEE000E210E7 /* ConsoleNSV.swift in Sources */,
 				E32B66262CBA960000FED006 /* BootLoader.swift in Sources */,
 				E32B66272CBA960000FED006 /* ConsoleDevice.swift in Sources */,
 				E32B66672CBAB57300FED006 /* ConsoleNSVC.swift in Sources */,
@@ -335,6 +342,7 @@
 				E3D7E87F2CBB4071005488C8 /* VirtualizationKit.swift in Sources */,
 				E32B662E2CBA960000FED006 /* PointingDevice.swift in Sources */,
 				E32B662F2CBA960000FED006 /* RosettaDevice.swift in Sources */,
+				E3941ECF2CBEFE2900E210E7 /* VZKitConsoleNSV.swift in Sources */,
 				E32B66652CBAB34700FED006 /* VZKitConsoleNSVC.swift in Sources */,
 				E32B66302CBA960000FED006 /* SoundDevice.swift in Sources */,
 				E32B66312CBA960000FED006 /* USBMassStorageDevice.swift in Sources */,

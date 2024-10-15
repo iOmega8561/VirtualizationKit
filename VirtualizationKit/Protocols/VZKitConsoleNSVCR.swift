@@ -34,13 +34,16 @@ public protocol VZKitConsoleNSVCR: NSViewControllerRepresentable {
     /// `VZKitResult` to be unwrapped, in order to attach the virtual machine to a `NSViewController`
     var result: VZKitResult<TemplateType>? { get }
     
-    /// This `Binding` is needed to update the boolean value `automaticallyReconfiguresDisplay` of `VZVirtualMachineView`
-    /// during an update of our `NSViewController`. When it's set to true, the screen of the VM adapts to the window.
-    var isScreenAdaptive: Binding<Bool> { get set }
+    /// A boolean value to know it this representable will be used in preview contexts
+    var isPreview: Bool { get }
     
-    /// This `Binding` is needed to update the boolean value `capturesSystemKeys` of `VZVirtualMachineView`
+    /// This `Bool` is needed to update the boolean value `automaticallyReconfiguresDisplay` of `VZVirtualMachineView`
+    /// during an update of our `NSViewController`. When it's set to true, the screen of the VM adapts to the window.
+    var isScreenAdaptive: Bool { get }
+    
+    /// This `Bool` is needed to update the boolean value `capturesSystemKeys` of `VZVirtualMachineView`
     /// during an update of our `NSViewController`. When it's set to true, the guest VM captures keybinds from the host.
-    var areKeysCaptured: Binding<Bool> { get set }
+    var areKeysCaptured: Bool { get }
     
     /// Implementation of standard method `makeCoordinator`.
     ///
