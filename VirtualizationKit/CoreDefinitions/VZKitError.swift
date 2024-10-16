@@ -30,6 +30,7 @@ enum VZKitError: LocalizedError {
     case notInitialized
     case captureDevicePermissionDenied
     case wrongMacImageVersion(_ expected: (Int, Int), _ actual: (Int, Int))
+    case appleVMLimitExceeded
 
     public var errorDescription: String? {
         
@@ -116,6 +117,12 @@ enum VZKitError: LocalizedError {
                 expected.1,
                 actual.0,
                 actual.1
+            )
+        
+        case .appleVMLimitExceeded:
+            return String(
+                localized: "error-applevz-limitexceeded",
+                bundle: VirtualizationKit.bundle
             )
         }
     }

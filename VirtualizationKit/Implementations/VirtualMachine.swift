@@ -23,10 +23,10 @@
 ///    to keep track of the identity of the instanciated object. This struct also conforms to `Sendable`,
 ///    as required by `VZKitVirtualMachine`.
 ///
-///    - Important: `VZVirtualMachine` IS NOT sendable. We import the `Virtualization` framework using `@preconcurrency`.
+/// - Important: `VZVirtualMachine` IS NOT sendable. We import the `Virtualization` framework using `@preconcurrency`.
 ///
-///    - Important: A VZKitTemplate conforming object is not defined by this framework. It will be responsability of the developer using these
-///                 facilities to implement one and correctly use it with this generc data structure.
+/// - Important: A VZKitTemplate conforming object is not defined by this framework. It will be responsability of the developer using these
+///              facilities to implement one and correctly use it with this generc data structure.
 public struct VirtualMachine<TemplateType: VZKitTemplate>: VZKitVirtualMachine {
     
     /// A copy of the DTO to have all the necessary info about the VM template
@@ -53,7 +53,7 @@ public struct VirtualMachine<TemplateType: VZKitTemplate>: VZKitVirtualMachine {
     /// This method stops the `VZVirtualMachine` and updates the shared state accordingly.
     /// Provides error handling.
     ///
-    /// - Important: Pinned to `@VirtHandlerActor` for serial dispatch of the commands sent to VMs.
+    /// - Important: Pinned to `@VZKitGlobalActor` for serial dispatch of the commands sent to VMs.
     @VZKitGlobalActor public func stop() async throws {
         let oldState = await delegate.updateState(.stopping)
         
@@ -68,13 +68,16 @@ public struct VirtualMachine<TemplateType: VZKitTemplate>: VZKitVirtualMachine {
     /// This method starts the `VZVirtualMachine` and updates the shared state accordingly.
     /// Provides error handling.
     ///
-    /// - Important: Pinned to `@VirtHandlerActor` for serial dispatch of the commands sent to VMs.
+    /// - Important: Pinned to `@VZKitGlobalActor` for serial dispatch of the commands sent to VMs.
     @VZKitGlobalActor public func start() async throws {
         let oldState = await delegate.updateState(.starting)
         
         do {
             try await wrappedValue.start()
             await delegate.updateState(.running)
+        } catch VZError.virtualMachineLimitExceeded {
+            await delegate.updateState(oldState)
+            throw VZKitError.appleVMLimitExceeded
         } catch {
             await delegate.updateState(oldState); throw error
         }
@@ -83,7 +86,7 @@ public struct VirtualMachine<TemplateType: VZKitTemplate>: VZKitVirtualMachine {
     /// This method pauses the `VZVirtualMachine` and updates the shared state accordingly.
     /// Provides error handling.
     ///
-    /// - Important: Pinned to `@VirtHandlerActor` for serial dispatch of the commands sent to VMs.
+    /// - Important: Pinned to `@VZKitGlobalActor` for serial dispatch of the commands sent to VMs.
     @VZKitGlobalActor public func pause() async throws {
         let oldState = await delegate.updateState(.pausing)
         
@@ -97,7 +100,7 @@ public struct VirtualMachine<TemplateType: VZKitTemplate>: VZKitVirtualMachine {
     
     /// This method resumes the `VZVirtualMachine` and updates the shared state accordingly.
     ///
-    /// - Important: Pinned to `@VirtHandlerActor` for serial dispatch of the commands sent to VMs.
+    /// - Important: Pinned to `@VZKitGlobalActor` for serial dispatch of the commands sent to VMs.
     @VZKitGlobalActor public func resume() async throws {
         let oldState = await delegate.updateState(.resuming)
         
@@ -114,7 +117,7 @@ public struct VirtualMachine<TemplateType: VZKitTemplate>: VZKitVirtualMachine {
     ///
     /// - Important: Allows the caller viewModel to handle the error by re-throwing.
     ///
-    /// - Important: Pinned to `@VirtHandlerActor` for serial dispatch of the commands sent to VMs.
+    /// - Important: Pinned to `@VZKitGlobalActor` for serial dispatch of the commands sent to VMs.
     @VZKitGlobalActor public func install() async throws {
         await delegate.updateState(.starting)
     

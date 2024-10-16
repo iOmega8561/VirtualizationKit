@@ -137,6 +137,23 @@
         }
       }
     },
+    "error-applevz-limitexceeded" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Due to limitations imposed by Apple, it is only possible to run two macOS Virtual Machines at the same time."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A causa di una limitazione imposta da Apple, non è possibile avviare più di due Macchine Virtuali macOS in contemporanea."
+          }
+        }
+      }
+    },
     "error-configuration-auxstorage" : {
       "extractionState" : "manual",
       "localizations" : {
