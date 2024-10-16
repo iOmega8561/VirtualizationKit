@@ -126,6 +126,9 @@ public struct VirtualMachine<TemplateType: VZKitTemplate>: VZKitVirtualMachine {
                 restoreImage: template.os.installer,
                 machine: wrappedValue
             ).startInstallation()
+        } catch VZError.virtualMachineLimitExceeded {
+            await delegate.updateState(.stopped)
+            throw VZKitError.appleVMLimitExceeded
         } catch {
             await delegate.updateState(.stopped); throw error
         }
