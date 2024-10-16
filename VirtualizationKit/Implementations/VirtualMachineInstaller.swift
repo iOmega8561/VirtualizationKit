@@ -35,7 +35,7 @@ public struct VirtualMachineInstaller: VZKitMachineInstaller {
     /// The master installation method.
     ///
     /// @brief
-    ///    The installer is pinned on `@VZKitVirtualMachine` to execute on the same queue as the one provided to the VM initializer
+    ///    The installer is pinned on `@VZKitGlobalActor` to execute on the same queue as the one provided to the VM initializer
     ///    Since the `Virtualization` framework, in this case, does not support structured concurrency, we use a checked continuation.
     @VZKitGlobalActor public func startInstallation() async throws {
                 
@@ -48,8 +48,13 @@ public struct VirtualMachineInstaller: VZKitMachineInstaller {
             
             installer.install { result in
                 switch result {
-                case let .failure(error):
-                    continuation.resume(throwing: error)
+                case let .failure(error as NSError):
+                    
+                    if let underlying = error.underlyingErrors.first {
+                        continuation.resume(throwing: underlying)
+                        
+                    } else { continuation.resume(throwing: error) }
+                        
                 default:
                     continuation.resume()
                 }
