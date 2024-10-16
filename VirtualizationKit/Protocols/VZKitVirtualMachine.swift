@@ -13,6 +13,13 @@ import Virtualization
 ///    This protocol defines how a Virtual Machine should be implemented in this application
 public protocol VZKitVirtualMachine: Sendable {
     
+    /// `CommandType` should be `enum` and it should provide a case for any command
+    /// that the developer using this interface may want to support in their application
+    ///
+    /// An example would be to have `.start`, `.stop`, `.pause`, `.resume`
+    /// It's really up to the dev.
+    associatedtype CommandType: CaseIterable
+    
     associatedtype TemplateType: VZKitTemplate
     
     associatedtype DelegateType: VZKitMachineDelegate
@@ -34,28 +41,9 @@ public protocol VZKitVirtualMachine: Sendable {
     ///   - template: the data transfer object containing all the information about the VM.
     static func createMachine(_ template: TemplateType) async -> VZKitResult<TemplateType>
     
-    /// This method should stop the `VZVirtualMachine` and eventually update the shared state accordingly.
+    /// This method should provide a standard way to send commands to the `VZVirtualMachine`
+    /// and update the shared state accordingly. If an error occurs, the state should be safely reset before propagation.
     ///
-    /// - Important: Pinned to `@VZKitGlobalActor`, since any call to the vm power control methods should be on this queue.
-    @VZKitGlobalActor func stop() async throws
-    
-    /// This method should start the `VZVirtualMachine` and eventually update the shared state accordingly.
-    ///
-    /// - Important: Pinned to `@VZKitGlobalActor`, since any call to the vm power control methods should be on this queue.
-    @VZKitGlobalActor func start() async throws
-    
-    /// This method should pause the `VZVirtualMachine` and eventually update the shared state accordingly.
-    ///
-    /// - Important: Pinned to `@VZKitGlobalActor`, since any call to the vm power control methods should be on this queue.
-    @VZKitGlobalActor func pause() async throws
-    
-    /// This method should resume the `VZVirtualMachine` and eventually update the shared state accordingly.
-    ///
-    /// - Important: Pinned to `@VZKitGlobalActor`, since any call to the vm power control methods should be on this queue.
-    @VZKitGlobalActor func resume() async throws
-    
-    /// This method should handler the installation of the guest operating system.
-    ///
-    /// - Important: Pinned to `@VZKitGlobalActor`, since any call to the vm power control methods should be on this queue.
-    @VZKitGlobalActor func install() async throws
+    /// - Important: Pinned to `@VZKitGlobalActor` for serial dispatch of the commands sent to VMs.
+    @VZKitGlobalActor func sendCommand(_ command: CommandType) async throws
 }
