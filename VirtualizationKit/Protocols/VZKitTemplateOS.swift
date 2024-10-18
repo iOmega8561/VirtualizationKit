@@ -29,7 +29,7 @@ public protocol VZKitTemplateOS: Codable, Hashable, Sendable {
     var needsInstall: Bool { get set }
     
     /// The `URL` of the given installer .ISO or .IPSW file (disk image),
-    var installer: URL? {get set }
+    var installer: URL? { get set }
     
     var image: Image { get }
     
