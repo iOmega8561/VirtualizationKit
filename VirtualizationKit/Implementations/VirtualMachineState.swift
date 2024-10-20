@@ -50,7 +50,10 @@ extension VirtualMachineState: VZKitMachineState {
         
         case .resuming:
             return .orange
-               
+        
+        case .restoring:
+            return .mint
+            
         default:
             return .white
         }
@@ -103,6 +106,12 @@ extension VirtualMachineState: VZKitMachineState {
         case .resuming:
             return String(
                 localized: "details-vmstate-resuming",
+                bundle: VirtualizationKit.bundle
+            )
+        
+        case .restoring:
+            return String(
+                localized: "details-vmstate-restoring",
                 bundle: VirtualizationKit.bundle
             )
                
