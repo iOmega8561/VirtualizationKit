@@ -87,7 +87,7 @@ public struct VirtualMachine<TemplateType: VZKitTemplate>: VZKitVirtualMachine {
                 await delegate.updateState(.running)
                 
             case .install:
-                oldState = await delegate.updateState(.starting)
+                oldState = await delegate.updateState(.restoring)
                 try await VirtualMachineInstaller(
                     restoreImage: template.os.installer,
                     machine: wrappedValue

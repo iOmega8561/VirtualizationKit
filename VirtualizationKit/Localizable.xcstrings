@@ -52,6 +52,23 @@
         }
       }
     },
+    "details-vmstate-restoring" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restoring"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In ripristino"
+          }
+        }
+      }
+    },
     "details-vmstate-resuming" : {
       "extractionState" : "manual",
       "localizations" : {
