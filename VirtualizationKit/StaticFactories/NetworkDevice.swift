@@ -13,7 +13,7 @@ typealias NetworkDevice = VZVirtioNetworkDeviceConfiguration
 /// Protocol conformation of `VZVirtioNetworkDeviceConfiguration` to `VZKitDeviceAttachment`
 ///
 /// @brief
-///    The `VirtHandlerMachineDevice` protocol allows for a simpler implementation of the static factory method pattern.
+///    The `VZKitDeviceAttachment` protocol allows for a simpler implementation of the static factory method pattern.
 ///    This extension contains the necessary stubs to achieve conformation and defines an appropriare `CaseIterable`
 ///    to be used as argument, when calling the factory method.
 extension NetworkDevice: VZKitDeviceAttachment {

@@ -7,11 +7,11 @@
 
 import SwiftUI
 
-/// VirtHandlerMachineState protocol
+/// VZKitMachineState protocol
 ///
 /// @brief
 ///    This protocol defines how a Virtual Machine state enumeration should be implemented in this application.
-///    `VirtHandlerMachineState` helps us define two crucial methods that will significally reduce the bulk of `SwiftUI` statements.
+///    `VZKitMachineState` helps us define two crucial methods that will significally reduce the bulk of `SwiftUI` statements.
 public protocol VZKitMachineState {
     
     var color: Color { get }

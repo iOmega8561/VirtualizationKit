@@ -1,13 +1,13 @@
 //
 //  VZKitMachineDelegate.swift
-//  VirtHandler
+//  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 14/05/24.
 //
 
 import Virtualization
 
-/// VirtHandlerMachineDelegate protocol
+/// VZKitMachineDelegate protocol
 ///
 /// @brief
 ///    This protocol defines how a Virtual Machine delegate should be implemented in this application
