@@ -22,7 +22,7 @@ typealias PointingDevice = VZPointingDeviceConfiguration
 /// Protocol conformation of `VZPointingDeviceConfiguration` to `VZKitDeviceAttachment`
 ///
 /// @brief
-///    The `VirtHandlerMachineDevice` protocol allows for a simpler implementation of the static factory method pattern.
+///    The `VZKitDeviceAttachment` protocol allows for a simpler implementation of the static factory method pattern.
 ///    This extension contains the necessary stubs to achieve conformation.
 extension PointingDevice: VZKitDeviceAttachment {
    

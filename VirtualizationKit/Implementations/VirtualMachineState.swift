@@ -20,7 +20,7 @@ import Virtualization
 /// This typealias allows for cleaner-looking code
 public typealias VirtualMachineState = VZVirtualMachine.State
 
-/// Conformation to `VirtHandlerMachineState` helps us define two crucial methods that will significally reduce
+/// Conformation to `VZKitMachineState` helps us define two crucial methods that will significally reduce
 /// the bulk of `SwiftUI` statements. We can simply get the assigned color and label of the given
 /// `VirtualMachineState` by callin these methods.
 extension VirtualMachineState: VZKitMachineState {
