@@ -24,26 +24,33 @@ import UniformTypeIdentifiers
 /// Since Apple Virtualization Framework officially supports only Linux and macOS, only these two are included.
 public enum OperatingSystem: VZKitOperatingSystem {
     
+    public typealias Version = (major: Int, minor: Int, patch: Int)
+    
     /// Conformation to `CaseIterable`
     public static let allCases: [Self] = [
         .linux,
         .macos()
     ]
     
+    /// Standard case for Linux virtual machines
     case linux
-    case macos(_ major: Int = 12, _ minor: Int = 4)
     
-    /// Static factory method to create an `OperatingSytem` object, using information retrieved by
+    /// Standard case for macOS virtual machines, defaults with minimum supported version
+    case macos(
+        major: Int = VirtualizationKit.macOSGuestMinVersion.major,
+        minor: Int = VirtualizationKit.macOSGuestMinVersion.minor,
+        patch: Int = VirtualizationKit.macOSGuestMinVersion.patch
+    )
+    
+    /// Static utility method to retrieve an `OperatingSytem.Version` tuple, using information parsed from
     /// the provided macOS restore image (if present). It allows to manipulate the enum cases to have them store things like OS version.
     ///
     /// - Parameters:
-    ///   - expected: The OS type to be expected in return, will probably be blank (no version)
-    ///   - url: The URL of the installer image provided by the caller. If expected in not .macos this parameter has no effect.
-    public static func createOS(expected: Self, _ url: URL) async throws -> OperatingSystem {
-        
-        guard expected != .linux else { return .init() }
-        
-        let version: (Int, Int) = try await withCheckedThrowingContinuation { continuation in
+    ///   - url: The URL of the installer image provided by the caller. if the image is not a macOS .ipsw the method will throw
+    public static func getOSVersionFromImage(withURL url: URL) async throws -> Version {
+                
+        return try await withCheckedThrowingContinuation { continuation in
+            
             VZMacOSRestoreImage.load(from: url) { result in
                 switch result {
                     
@@ -52,15 +59,16 @@ public enum OperatingSystem: VZKitOperatingSystem {
                     
                 case .success(let restoreImage):
                     
-                    let major = restoreImage.operatingSystemVersion.majorVersion
-                    let minor = restoreImage.operatingSystemVersion.minorVersion
+                    let version = (
+                        major: restoreImage.operatingSystemVersion.majorVersion,
+                        minor: restoreImage.operatingSystemVersion.minorVersion,
+                        patch: restoreImage.operatingSystemVersion.patchVersion
+                    )
                     
-                    continuation.resume(returning: (major, minor))
+                    continuation.resume(returning: version)
                 }
             }
         }
-        
-        return .init(version)
     }
     
     public var image: Image {
@@ -90,22 +98,33 @@ public enum OperatingSystem: VZKitOperatingSystem {
         }
     }
     
-    public var version: (Int, Int)? {
+    public var version: Version? {
         switch self {
         case .linux:
             return nil
-        case .macos(let major, let minor):
-            return (major, minor)
+            
+        case .macos(let major, let minor, let patch):
+            return Version(
+                major: major,
+                minor: minor,
+                patch: patch
+            )
         }
     }
     
-    /// This private `init()` will instanciate the right case, depending on if version is `nil` or not
-    private init(_ version: (Int, Int)? = nil) {
+    /// This public `init()` will create the right object according to `version` paramenter.
+    /// To correctly instanciate .macOS case, a version not nil is necessary, otherwise it will fallback to .linux, always.
+    ///
+    /// - Parameters:
+    ///   - version: The Version of the operating system in a (major: Int, minor: Int, patch: Int) tuple format.
+    public init(version: Version? = nil) {
         
-        if let version {
-            self = .macos(version.0, version.1)
-        } else {
-            self = .linux
-        }
+        guard let version else { self = .linux; return }
+        
+        self = .macos(
+            major: version.major,
+            minor: version.minor,
+            patch: version.patch
+        )
     }
 }
