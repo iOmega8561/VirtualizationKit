@@ -31,6 +31,7 @@ enum VZKitError: LocalizedError {
     case captureDevicePermissionDenied
     case wrongMacImageVersion(_ expected: OperatingSystem.Version, _ actual: OperatingSystem.Version)
     case appleVMLimitExceeded
+    case macOSGuestFeatureNotSupported(_ feature: String)
 
     public var errorDescription: String? {
         
@@ -100,13 +101,13 @@ enum VZKitError: LocalizedError {
                 localized: "error-machine-notinizialized",
                 bundle: VirtualizationKit.bundle
             )
-        
+            
         case .captureDevicePermissionDenied:
             return String(
                 localized: "error-configuration-capturedevice",
                 bundle: VirtualizationKit.bundle
             )
-        
+            
         case .wrongMacImageVersion(let expected, let actual):
             return String(
                 format: String(
@@ -118,11 +119,20 @@ enum VZKitError: LocalizedError {
                 actual.major,
                 actual.minor
             )
-        
+            
         case .appleVMLimitExceeded:
             return String(
                 localized: "error-applevz-limitexceeded",
                 bundle: VirtualizationKit.bundle
+            )
+            
+        case .macOSGuestFeatureNotSupported(let feature):
+            return String(
+                format: String(
+                    localized: "error-configuration-unsopportedfeature",
+                    bundle: VirtualizationKit.bundle
+                ),
+                feature
             )
         }
     }

@@ -25,10 +25,12 @@ import UniformTypeIdentifiers
 public enum OperatingSystem: VZKitOperatingSystem {
     
     /// This data structure is useful to provide a standardized way to store information about
-    /// the version of the guest operating system. It conforms to Equatable so that two instances can be compared easily.
-    /// Codable is needed so that it can be easily integrated with standard storage systems.
-    /// Sendable is useful to silence the Swift compiler. The struct is thread safe.
-    public struct Version: Codable, Equatable, Sendable {
+    /// the version of the guest operating system. It conforms to:
+    /// - Equatable so that two instances can be compared easily.
+    /// - Codable is needed so that it can be easily integrated with standard storage systems.
+    /// - Sendable is useful to silence the Swift compiler. The struct is thread safe.
+    /// - Hashable so it can be integrated as enum case associated value without complications.
+    public struct Version: Codable, Equatable, Sendable, Hashable {
         public let major: Int
         public let minor: Int
         public let patch: Int
@@ -44,11 +46,7 @@ public enum OperatingSystem: VZKitOperatingSystem {
     case linux
     
     /// Standard case for macOS virtual machines, defaults with minimum supported version
-    case macos(
-        major: Int = VirtualizationKit.macOSGuestMinVersion.major,
-        minor: Int = VirtualizationKit.macOSGuestMinVersion.minor,
-        patch: Int = VirtualizationKit.macOSGuestMinVersion.patch
-    )
+    case macos(version: Version = VirtualizationKit.macOSGuestMinVersion)
     
     /// Static utility method to retrieve an `OperatingSytem.Version` tuple, using information parsed from
     /// the provided macOS restore image (if present). It allows to manipulate the enum cases to have them store things like OS version.
@@ -111,12 +109,8 @@ public enum OperatingSystem: VZKitOperatingSystem {
         case .linux:
             return nil
             
-        case .macos(let major, let minor, let patch):
-            return Version(
-                major: major,
-                minor: minor,
-                patch: patch
-            )
+        case .macos(let version):
+            return version
         }
     }
     
@@ -129,10 +123,6 @@ public enum OperatingSystem: VZKitOperatingSystem {
         
         guard let version else { self = .linux; return }
         
-        self = .macos(
-            major: version.major,
-            minor: version.minor,
-            patch: version.patch
-        )
+        self = .macos(version: version)
     }
 }

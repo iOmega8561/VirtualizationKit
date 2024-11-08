@@ -324,6 +324,23 @@
         }
       }
     },
+    "error-configuration-unsopportedfeature" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The following feature is not supported by the guest macOS version: “%@”"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La seguente funzionalità non è supportata dalla versione del sistema guest macOS: “%@”"
+          }
+        }
+      }
+    },
     "error-configuration-usbdisk" : {
       "extractionState" : "manual",
       "localizations" : {
