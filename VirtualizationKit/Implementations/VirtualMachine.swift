@@ -114,7 +114,7 @@ public struct VirtualMachine<TemplateType: VZKitTemplate>: VZKitVirtualMachine {
         
     }
 
-    /// The explicit, private, asynchronous init of the data structure. Uses an instance of `VirtualMachineConfigurator`
+    /// The explicit, private, asynchronous init of the data structure. Uses an instance of `ConfigurationBuilder`
     /// to setup the `VZVirtualMachine` object and binds a new instance of `VirtualMachineDelegate` to it.
     ///
     /// - Parameters:
@@ -123,7 +123,7 @@ public struct VirtualMachine<TemplateType: VZKitTemplate>: VZKitVirtualMachine {
         
         self.template = template
         
-        let configurator = await VirtualMachineConfigurator(template: template)
+        let configurator = await ConfigurationBuilder(template: template)
                 
         self.delegate = await VirtualMachineDelegate()
         

@@ -8,7 +8,7 @@
 //
 //  -----------------------------------------------------------------------
 //
-//  VirtualMachineConfigurator.swift
+//  ConfigurationBuilder.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 17/05/24.
@@ -18,7 +18,7 @@
 
 import AVFoundation
 
-/// `VirtualMachineConfigurator` data structure
+/// `ConfigurationBuilder` data structure
 ///
 /// @brief
 ///    The choice to make it a struct instead of a class derives from the fact that it is not necessary
@@ -27,7 +27,7 @@ import AVFoundation
 ///
 ///    - Important: `VZVirtualMachineConfiguration` IS NOT sendable.
 ///      We import the `Virtualization` framework using `@preconcurrency`.
-struct VirtualMachineConfigurator<TemplateType: VZKitTemplate>: VZKitMachineConfigurator {
+struct ConfigurationBuilder<TemplateType: VZKitTemplate>: VZKitConfigurationBuilder {
     
     /// A copy of the DTO to have all the necessary info about the VM template
     let template: TemplateType

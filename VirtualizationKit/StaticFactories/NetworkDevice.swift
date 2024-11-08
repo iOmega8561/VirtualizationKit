@@ -51,8 +51,11 @@ extension NetworkDevice: VZKitDeviceAttachment {
                 interface: interface
             )
             
-        default:
+        case .nat:
             dev.attachment = VZNATNetworkDeviceAttachment()
+            
+        default:
+            return dev
         }
                 
         return dev
