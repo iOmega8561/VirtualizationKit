@@ -22,7 +22,7 @@ public final class _VirtualizationKit: Sendable {
     public let version: String = "1.0"
     
     /// The minimum macOS version supported as a guest operating system
-    public let macOSGuestMinVersion = (
+    public let macOSGuestMinVersion: OperatingSystem.Version = .init(
         major: 12,
         minor: 4,
         patch: 0
