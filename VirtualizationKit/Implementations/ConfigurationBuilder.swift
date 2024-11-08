@@ -107,11 +107,11 @@ struct ConfigurationBuilder<TemplateType: VZKitTemplate>: VZKitConfigurationBuil
             VZVirtioEntropyDeviceConfiguration()
         )
         
-        if template.specs.networkTopology != .none {
-            configuration.networkDevices.append(
-                try NetworkDevice.createDevice(template.specs.networkTopology)
-            )
-        }
+        
+        configuration.networkDevices.append(
+            try NetworkDevice.createDevice(template.specs.networkTopology)
+        )
+        
         
         if template.specs.hasOutputAudio {
             configuration.audioDevices.append(
