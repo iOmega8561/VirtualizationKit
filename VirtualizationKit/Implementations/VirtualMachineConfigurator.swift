@@ -27,13 +27,13 @@ import AVFoundation
 ///
 ///    - Important: `VZVirtualMachineConfiguration` IS NOT sendable.
 ///      We import the `Virtualization` framework using `@preconcurrency`.
-public struct VirtualMachineConfigurator<TemplateType: VZKitTemplate>: VZKitMachineConfigurator {
+struct VirtualMachineConfigurator<TemplateType: VZKitTemplate>: VZKitMachineConfigurator {
     
     /// A copy of the DTO to have all the necessary info about the VM template
-    public let template: TemplateType
+    let template: TemplateType
     
     /// Reference to the native `Virtualization` framework configuration object
-    public let configuration: VZVirtualMachineConfiguration
+    let configuration: VZVirtualMachineConfiguration
     
     /// Computed property to get the location of the VM's storage folder inside the application bundle
     private let bundlePath: String
@@ -86,7 +86,7 @@ public struct VirtualMachineConfigurator<TemplateType: VZKitTemplate>: VZKitMach
         )
         
         configuration.consoleDevices.append(
-            ConsoleDevice.createDevice()
+            ConsoleDevice.createDevice(template.os.type)
         )
         
         configuration.graphicsDevices.append(
@@ -109,9 +109,9 @@ public struct VirtualMachineConfigurator<TemplateType: VZKitTemplate>: VZKitMach
             VZVirtioEntropyDeviceConfiguration()
         )
         
-        if template.specs.hasNetwork {
+        if template.specs.networkTopology != .none {
             configuration.networkDevices.append(
-                NetworkDevice.createDevice(.nat)
+                try NetworkDevice.createDevice(template.specs.networkTopology)
             )
         }
         
@@ -144,7 +144,7 @@ public struct VirtualMachineConfigurator<TemplateType: VZKitTemplate>: VZKitMach
     /// This method prepares the macOS restore image for the configuration process.
     /// Only macOS guests need to go through this part, other OSes will skip directly to `createConfiguration(nil)`.
     /// After the synchronous call terminates, the methods validates the configuration scheme and returns it to its caller.
-    public func createConfiguration() async throws -> VZVirtualMachineConfiguration {
+    func createConfiguration() async throws -> VZVirtualMachineConfiguration {
         
         switch template.os.type {
         case .macos:
@@ -186,7 +186,7 @@ public struct VirtualMachineConfigurator<TemplateType: VZKitTemplate>: VZKitMach
     }
     
     /// The explicit initializer of the struct.
-     
+    ///
     /// - Parameters:
     ///   - template: The data transfer object containing all the info about the virtual machine.
     init(template: TemplateType) async {

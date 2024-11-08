@@ -48,6 +48,8 @@
 		E32B66672CBAB57300FED006 /* ConsoleNSVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B66662CBAB57300FED006 /* ConsoleNSVC.swift */; };
 		E32B66692CBAB65A00FED006 /* VZKitConsoleNSVCR.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B66682CBAB65A00FED006 /* VZKitConsoleNSVCR.swift */; };
 		E32B666B2CBAB6F600FED006 /* ConsoleNSVCR.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B666A2CBAB6F600FED006 /* ConsoleNSVCR.swift */; };
+		E3393A342CDE590F00D4E3CE /* VZKitNetworkTopology.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3393A332CDE590000D4E3CE /* VZKitNetworkTopology.swift */; };
+		E3393A362CDE5D5700D4E3CE /* NetworkTopology.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3393A352CDE5D5600D4E3CE /* NetworkTopology.swift */; };
 		E3941ECF2CBEFE2900E210E7 /* VZKitConsoleNSV.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3941ECE2CBEFE2100E210E7 /* VZKitConsoleNSV.swift */; };
 		E3941ED12CBEFEE000E210E7 /* ConsoleNSV.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3941ED02CBEFEDD00E210E7 /* ConsoleNSV.swift */; };
 		E3D7E87F2CBB4071005488C8 /* VirtualizationKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D7E87E2CBB4069005488C8 /* VirtualizationKit.swift */; };
@@ -97,6 +99,8 @@
 		E32B66662CBAB57300FED006 /* ConsoleNSVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleNSVC.swift; sourceTree = "<group>"; };
 		E32B66682CBAB65A00FED006 /* VZKitConsoleNSVCR.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VZKitConsoleNSVCR.swift; sourceTree = "<group>"; };
 		E32B666A2CBAB6F600FED006 /* ConsoleNSVCR.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleNSVCR.swift; sourceTree = "<group>"; };
+		E3393A332CDE590000D4E3CE /* VZKitNetworkTopology.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VZKitNetworkTopology.swift; sourceTree = "<group>"; };
+		E3393A352CDE5D5600D4E3CE /* NetworkTopology.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkTopology.swift; sourceTree = "<group>"; };
 		E3941ECE2CBEFE2100E210E7 /* VZKitConsoleNSV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VZKitConsoleNSV.swift; sourceTree = "<group>"; };
 		E3941ED02CBEFEDD00E210E7 /* ConsoleNSV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleNSV.swift; sourceTree = "<group>"; };
 		E3D7E87E2CBB4069005488C8 /* VirtualizationKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualizationKit.swift; sourceTree = "<group>"; };
@@ -138,6 +142,7 @@
 				E3941ED02CBEFEDD00E210E7 /* ConsoleNSV.swift */,
 				E32B66662CBAB57300FED006 /* ConsoleNSVC.swift */,
 				E32B666A2CBAB6F600FED006 /* ConsoleNSVCR.swift */,
+				E3393A352CDE5D5600D4E3CE /* NetworkTopology.swift */,
 				E32B65EF2CBA960000FED006 /* OperatingSystem.swift */,
 				E32B65EB2CBA960000FED006 /* VirtualMachine.swift */,
 				E32B65EC2CBA960000FED006 /* VirtualMachineConfigurator.swift */,
@@ -161,6 +166,7 @@
 				E32B65F62CBA960000FED006 /* VZKitMachineDelegate.swift */,
 				E32B65F72CBA960000FED006 /* VZKitMachineInstaller.swift */,
 				E32B65F82CBA960000FED006 /* VZKitMachineState.swift */,
+				E3393A332CDE590000D4E3CE /* VZKitNetworkTopology.swift */,
 				E32B65F92CBA960000FED006 /* VZKitOperatingSystem.swift */,
 				E32B65FA2CBA960000FED006 /* VZKitStorageAttachment.swift */,
 				E32B65FB2CBA960000FED006 /* VZKitTemplate.swift */,
@@ -263,7 +269,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastUpgradeCheck = 1600;
+				LastUpgradeCheck = 1610;
 				TargetAttributes = {
 					E32B65472CBA93C200FED006 = {
 						CreatedOnToolsVersion = 16.0;
@@ -313,6 +319,7 @@
 				E32B66152CBA960000FED006 /* VirtualMachineInstaller.swift in Sources */,
 				E32B66162CBA960000FED006 /* OperatingSystem.swift in Sources */,
 				E32B66172CBA960000FED006 /* VirtualMachineState.swift in Sources */,
+				E3393A362CDE5D5700D4E3CE /* NetworkTopology.swift in Sources */,
 				E32B66182CBA960000FED006 /* VirtualMachineOS.swift in Sources */,
 				E32B66192CBA960000FED006 /* VirtualMachineSpecs.swift in Sources */,
 				E32B661A2CBA960000FED006 /* VZKitDeviceAttachment.swift in Sources */,
@@ -336,6 +343,7 @@
 				E32B66292CBA960000FED006 /* GenericPlatform.swift in Sources */,
 				E32B662A2CBA960000FED006 /* GraphicsDevice.swift in Sources */,
 				E32B662B2CBA960000FED006 /* KeyboardDevice.swift in Sources */,
+				E3393A342CDE590F00D4E3CE /* VZKitNetworkTopology.swift in Sources */,
 				E32B662C2CBA960000FED006 /* MacintoshPlatform.swift in Sources */,
 				E32B662D2CBA960000FED006 /* NetworkDevice.swift in Sources */,
 				E32B666B2CBAB6F600FED006 /* ConsoleNSVCR.swift in Sources */,
@@ -361,9 +369,11 @@
 				ARCHS = arm64;
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = NO;
 				DEVELOPMENT_TEAM = T8HX5554JX;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -398,9 +408,11 @@
 				ARCHS = arm64;
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = NO;
 				DEVELOPMENT_TEAM = T8HX5554JX;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -435,6 +447,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -465,6 +478,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -502,6 +516,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -532,6 +547,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;

@@ -22,7 +22,7 @@ import Virtualization
 /// This will be used in this framework to serve as a better replacement for `VZVirtualMachineView`, to have
 /// awareness of preview context, in order to not capture mouse inputs. Since both the protocol and the class
 /// expect inheritance from `NSView`, this class is pinned to `@MainActor`.
-public final class ConsoleNSV: VZVirtualMachineView, VZKitConsoleNSV {
+final class ConsoleNSV: VZVirtualMachineView, VZKitConsoleNSV {
     
     /// A boolean value to know it this representable will be used in preview contexts
     ///

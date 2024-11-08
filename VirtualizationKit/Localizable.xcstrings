@@ -307,6 +307,23 @@
         }
       }
     },
+    "error-configuration-netinterface" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The following network interface is not available on the host system: “%@”"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La seguente interfaccia di rete non è disponibile sul sistema host: “%@”"
+          }
+        }
+      }
+    },
     "error-configuration-rosetta" : {
       "extractionState" : "manual",
       "localizations" : {

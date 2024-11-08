@@ -22,10 +22,10 @@ import Virtualization
 ///    This is just a simple `AppKit` view controller that should
 ///    manage our `VZVirtualMachineView` object. Since the application
 ///    uses SwiftUI this will be wrapped up by a `NSViewControllerRepresentable`.
-public class ConsoleNSVC: NSViewController, VZKitConsoleNSVC {
+public final class ConsoleNSVC: NSViewController, VZKitConsoleNSVC {
     
     /// A new instance of `VZVirtualMachineView` that will be rendered eventually
-    public let vmView = ConsoleNSV()
+    let vmView = ConsoleNSV()
     
     override public func loadView() {
         view = NSView()
