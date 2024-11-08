@@ -25,9 +25,9 @@ extension PointingDevice: VZKitDeviceAttachment {
     static func createDevice(_ type: OperatingSystem) -> PointingDevice {
         
         switch type {
-        case .macos(let major, _, _):
+        case .macos(let version):
             
-            guard major > 12  else { fallthrough}
+            guard version.major > 12  else { fallthrough }
             
             return VZMacTrackpadConfiguration()
             
