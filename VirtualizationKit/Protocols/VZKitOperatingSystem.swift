@@ -17,7 +17,7 @@ import UniformTypeIdentifiers
 ///    the bulk of `SwiftUI` statements. We can simply get the assets of the given OS by callin these methods.
 public protocol VZKitOperatingSystem: Codable, Hashable, CaseIterable, Sendable {
     
-    associatedtype FactoryType: VZKitOperatingSystem
+    associatedtype VersionType
     
     var image: Image { get }
     
@@ -25,11 +25,9 @@ public protocol VZKitOperatingSystem: Codable, Hashable, CaseIterable, Sendable 
     
     var fileType: UTType { get }
     
-    /// Static factory method to create an `VZKitOperatingSystem` conformable object, using information retrieved by
-    /// the provided macOS restore image (if present). It allows to manipulate the enum cases to have them store things like OS version.
+    /// Static utility method that should return a `VersionType` information, using a macOS restore image.
     ///
     /// - Parameters:
-    ///   - expected: The OS type to be expected in return, will probably be blank (no version)
-    ///   - url: The URL of the installer image provided by the caller.
-    static func createOS(expected: Self, _ url: URL) async throws -> FactoryType
+    ///   - url: The URL of the installer image provided by the caller. if the image is not a macOS .ipsw the method should throw
+    static func getOSVersionFromImage(withURL url: URL) async throws -> VersionType
 }

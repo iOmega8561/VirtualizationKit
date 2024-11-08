@@ -41,7 +41,7 @@ extension FileSystemDevice: VZKitStorageAttachment {
         let sharingDevice: FileSystemDevice
         
         switch type {
-        case .macos(let major, _):
+        case .macos(let major, _, _):
             
             guard major > 12 else { fallthrough }
             

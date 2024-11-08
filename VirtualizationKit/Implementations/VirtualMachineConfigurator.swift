@@ -155,9 +155,10 @@ public struct VirtualMachineConfigurator<TemplateType: VZKitTemplate>: VZKitMach
                 }
             })
             
-            let version = (
-                image.operatingSystemVersion.majorVersion,
-                image.operatingSystemVersion.minorVersion
+            let version = OperatingSystem.Version(
+                major: image.operatingSystemVersion.majorVersion,
+                minor: image.operatingSystemVersion.minorVersion,
+                patch: image.operatingSystemVersion.patchVersion
             )
             
             guard version == template.os.type.version! else {

@@ -26,7 +26,7 @@ extension KeyboardDevice: VZKitDeviceAttachment {
     static func createDevice(_ type: OperatingSystem) -> KeyboardDevice {
         
         switch type {
-        case .macos(let major, _):
+        case .macos(let major, _, _):
             
             guard major > 12  else { fallthrough}
             
