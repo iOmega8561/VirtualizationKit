@@ -86,6 +86,7 @@ public enum OperatingSystem: VZKitOperatingSystem {
         switch self {
         case .linux:
             return Image("tux", bundle: VirtualizationKit.bundle)
+            
         case .macos:
             return Image(systemName: "apple.logo")
         }
@@ -100,6 +101,7 @@ public enum OperatingSystem: VZKitOperatingSystem {
         switch self {
         case .linux:
             return Text(verbatim: "Linux")
+            
         case .macos:
             return Text(verbatim: "macOS")
         }
@@ -114,6 +116,7 @@ public enum OperatingSystem: VZKitOperatingSystem {
         switch self {
         case .linux:
             return .diskImage
+            
         case .macos:
             return UTType(filenameExtension: "ipsw")!
         }
