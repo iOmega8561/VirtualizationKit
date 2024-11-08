@@ -15,8 +15,16 @@ import UniformTypeIdentifiers
 /// Since Apple Virtualization Framework officially supports only Linux and macOS, only these two are included.
 public enum OperatingSystem: VZKitOperatingSystem {
     
-    public typealias Version = (major: Int, minor: Int, patch: Int)
-    
+    /// This data structure is useful to provide a standardized way to store information about
+    /// the version of the guest operating system. It conforms to Equatable so that two instances can be compared easily.
+    /// Codable is needed so that it can be easily integrated with standard storage systems.
+    /// Sendable is useful to silence the Swift compiler. The struct is thread safe.
+    public struct Version: Codable, Equatable, Sendable {
+        public let major: Int
+        public let minor: Int
+        public let patch: Int
+    }
+        
     /// Conformation to `CaseIterable`
     public static let allCases: [Self] = [
         .linux,
@@ -50,7 +58,7 @@ public enum OperatingSystem: VZKitOperatingSystem {
                     
                 case .success(let restoreImage):
                     
-                    let version = (
+                    let version: Version = .init(
                         major: restoreImage.operatingSystemVersion.majorVersion,
                         minor: restoreImage.operatingSystemVersion.minorVersion,
                         patch: restoreImage.operatingSystemVersion.patchVersion
