@@ -14,27 +14,49 @@
 //  Created by Giuseppe Rocco on 08/11/24.
 //
 
-/// This enumeration is well suited represent the possible network configurations available for the virtual machines.
-/// This implementation just follows very closely the public interface that is `VZKitNetworkTopology`
+/// `NetworkTopology` is an enumeration that represents the possible network configurations
+/// available for virtual machines. This enumeration closely follows the interface defined
+/// by the `VZKitNetworkTopology` protocol, providing specific cases for each network topology option.
 public enum NetworkTopology: VZKitNetworkTopology {
     
-    /// This static constant represents a default value for system network interface indentifier
-    /// The value has been set to "lo0", which is not a valid interface for Apple Virtualization.
+    /// The default value for the system network interface identifier.
+    ///
+    /// This is set to `"lo0"`, which is a loopback interface and not a valid network
+    /// interface for Apple Virtualization. This value acts as a placeholder.
     private static let defaultInterfaceID: String = "lo0"
     
-    /// This is needed to be able to conform CaseIterable
+    /// A collection of all available network topology cases.
+    ///
+    /// This static array includes `.none`, `.nat`, and `.bridged` (using the `defaultInterfaceID`)
+    /// to satisfy the `CaseIterable` conformance required by the protocol.
     public static let allCases: [Self] = [
         .none,
         .nat,
         .bridged(Self.defaultInterfaceID),
     ]
     
-    /// The VM should not have a network interface
+    /// No network interface for the virtual machine.
+    ///
+    /// When this case is selected, the virtual machine will not be assigned any network
+    /// connectivity, effectively isolating it from both the host and external networks.
     case none
     
-    /// The VM should be connected to the host network by NAT
+    /// A NAT (Network Address Translation) network interface for the virtual machine.
+    ///
+    /// This case provides the virtual machine with network access via the host’s IP address,
+    /// while isolating it from the rest of the host's local network. This is typically used to
+    /// allow external network access without exposing the virtual machine to other devices on the same network.
     case nat
     
-    /// The VM should have a bridge interface
+    /// A bridged network interface for the virtual machine.
+    ///
+    /// - Parameter hostInterfaceID: The identifier of the host network interface to use for
+    ///   bridging. This allows the virtual machine to appear as a separate device on the
+    ///   local network, with its own IP address, making it directly accessible to other
+    ///   devices on the same network.
+    ///
+    /// The bridged mode is useful for cases where the virtual machine needs to interact with
+    /// other devices on the network as if it were a standalone device. The specified
+    /// `hostInterfaceID` determines which host interface is used for this connection.
     case bridged(_ hostInterfaceID: String)
 }

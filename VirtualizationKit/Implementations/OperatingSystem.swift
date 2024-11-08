@@ -121,8 +121,9 @@ public enum OperatingSystem: VZKitOperatingSystem {
     ///   - version: The Version of the operating system in a (major: Int, minor: Int, patch: Int) tuple format.
     public init(version: Version? = nil) {
         
-        guard let version else { self = .linux; return }
-        
-        self = .macos(version: version)
+        if let version {
+            self = .macos(version: version)
+            
+        } else { self = .linux }
     }
 }
