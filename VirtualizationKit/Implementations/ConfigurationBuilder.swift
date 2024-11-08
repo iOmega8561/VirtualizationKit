@@ -16,14 +16,12 @@
 
 @preconcurrency import Virtualization
 
-import AVFoundation
-
 /// `ConfigurationBuilder` data structure
 ///
 /// @brief
 ///    The choice to make it a struct instead of a class derives from the fact that it is not necessary
 ///    to keep track of the identity of the instanciated object. This struct also conforms to `Sendable`,
-///    as required by `VZKitMachineConfigurator`.
+///    as required by `VZKitMachineConfigurator`. This is the default implementation of the Builder pattern
 ///
 ///    - Important: `VZVirtualMachineConfiguration` IS NOT sendable.
 ///      We import the `Virtualization` framework using `@preconcurrency`.
