@@ -11,7 +11,7 @@ import Virtualization
 
 /// The `VZKitConsoleNSVC` protocol defines an interface to be used by our custom `NSViewController`.
 /// An object conforming to this protocol will be wrapped up by a `NSViewControllerRepresentable`.
-public protocol VZKitConsoleNSVC: NSViewController {
+protocol VZKitConsoleNSVC: NSViewController {
     
     associatedtype ViewType: VZVirtualMachineView
     

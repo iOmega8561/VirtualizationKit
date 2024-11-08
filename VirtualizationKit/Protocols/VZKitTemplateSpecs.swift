@@ -5,10 +5,12 @@
 //  Created by Giuseppe Rocco on 12/10/24.
 //
 
+import Virtualization
+
 /// The `VZKitTemplateSpecs` protocol defines a common structure for the information that will be stored inside a template
 /// regarding the hardware characteristics of the virtual machine that will be created.
 public protocol VZKitTemplateSpecs: Codable, Hashable, Sendable {
-    
+        
     /// The amount of CPU cores that will be available to the VM
     var cpuCount: Int { get }
     
@@ -19,7 +21,7 @@ public protocol VZKitTemplateSpecs: Codable, Hashable, Sendable {
     var diskSizeGB: Int { get }
     
     /// A boolean value that dictates if the VM will have access to network
-    var hasNetwork: Bool { get }
+    var networkTopology: NetworkTopology { get }
     
     /// A boolean value that dictates if the VM will have access to a shared directory
     ///

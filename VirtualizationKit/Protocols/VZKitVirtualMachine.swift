@@ -18,7 +18,7 @@ public protocol VZKitVirtualMachine: Sendable {
     ///
     /// An example would be to have `.start`, `.stop`, `.pause`, `.resume`
     /// It's really up to the dev.
-    associatedtype CommandType: CaseIterable
+    associatedtype CommandIterable: CaseIterable
     
     associatedtype TemplateType: VZKitTemplate
     
@@ -45,5 +45,5 @@ public protocol VZKitVirtualMachine: Sendable {
     /// and update the shared state accordingly. If an error occurs, the state should be safely reset before propagation.
     ///
     /// - Important: Pinned to `@VZKitGlobalActor` for serial dispatch of the commands sent to VMs.
-    @VZKitGlobalActor func sendCommand(_ command: CommandType) async throws
+    @VZKitGlobalActor func sendCommand(_ command: CommandIterable) async throws
 }

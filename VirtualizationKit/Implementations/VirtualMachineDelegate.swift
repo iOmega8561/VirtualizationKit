@@ -21,16 +21,16 @@ import Virtualization
     ///
     /// - Important: This variable is pinned to @MainActor for thread-safe access.
     ///   We used a `DispatchSemaphore` before this aproach. Not the best solution.
-    @MainActor public var state: VirtualMachineState = .stopped
+    @MainActor private(set) public var state: VirtualMachineState = .stopped
     
     /// Setter method for the `state` property
     ///
     /// - Important: pinned to `@MainActor` to have synchronous access to the `state` property
-    @discardableResult
-    @MainActor public func updateState(_ newState: VirtualMachineState) -> VirtualMachineState {
-        let oldState = state
-        state = newState
-        return oldState
+    @discardableResult @MainActor
+    public func updateState(_ newState: VirtualMachineState) -> VirtualMachineState {
+        defer { state = newState }
+        
+        return state
     }
     
     /// `VZVirtualMachineDelegate` stub

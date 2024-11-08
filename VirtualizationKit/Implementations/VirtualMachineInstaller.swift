@@ -15,20 +15,20 @@ import Combine
 ///    This struct contains the necessary facilities to install macOS, having a valid restore image.
 ///
 ///    - Important: `VZVirtualMachine` IS NOT sendable. We import the `Virtualization` framework using `@preconcurrency`.
-public struct VirtualMachineInstaller: VZKitMachineInstaller {
+struct VirtualMachineInstaller: VZKitMachineInstaller {
     
     /// Reference to a `URL` that will point to the location of the restore image, on the host file system.
-    public let restoreImage: URL
+    let restoreImage: URL
     
     /// Reference to a `VZVirtualMachine` on which will be performed the installation process.
-    public let machine: VZVirtualMachine
-    
+    let machine: VZVirtualMachine
+            
     /// The master installation method.
     ///
     /// @brief
     ///    The installer is pinned on `@VZKitGlobalActor` to execute on the same queue as the one provided to the VM initializer
     ///    Since the `Virtualization` framework, in this case, does not support structured concurrency, we use a checked continuation.
-    @VZKitGlobalActor public func startInstallation() async throws {
+    @VZKitGlobalActor func startInstallation() async throws {
                 
         return try await withCheckedThrowingContinuation { continuation in
             
@@ -60,11 +60,7 @@ public struct VirtualMachineInstaller: VZKitMachineInstaller {
     ///   - machine: The`VZVirtualMachine` on which will be performed the installation process.
     init(restoreImage: URL?, machine: VZVirtualMachine) throws {
         
-        guard let restoreImage else {
-            throw VZKitError.missingMacImage
-        }
-        
-        guard FileManager.default.fileExists(atPath: restoreImage.path) else {
+        guard let restoreImage, FileManager.default.fileExists(atPath: restoreImage.path) else {
             throw VZKitError.missingMacImage
         }
         

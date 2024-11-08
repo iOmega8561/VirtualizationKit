@@ -23,7 +23,7 @@ import Virtualization
 ///    This should give birth to `SwiftUI` wrappers for our `AppKit` console view controller component.
 ///    During the view controller update, this UI element will set the right values for the following keys:
 ///    virtualMachine, automaticallyReconfiguresDisplay, capturesSystemKeys
-public protocol VZKitConsoleNSVCR: NSViewControllerRepresentable {
+protocol VZKitConsoleNSVCR: NSViewControllerRepresentable {
     
     associatedtype CoordinatorType: NSObject
     

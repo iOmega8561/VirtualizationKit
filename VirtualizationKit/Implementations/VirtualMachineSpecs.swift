@@ -7,6 +7,8 @@
 
 import Foundation
 
+import Virtualization
+
 /// The hardware specifications struct of our Virtual Machine
 ///
 /// @brief
@@ -24,8 +26,8 @@ public struct VirtualMachineSpecs: VZKitTemplateSpecs {
     public var diskSizeGB: Int
     
     /// A boolean value that dictates if the VM will have access to network
-    public var hasNetwork: Bool
-    
+    public var networkTopology: NetworkTopology
+
     /// A boolean value that dictates if the VM will have access to a shared directory
     public var hasDirectoryShare: Bool
     
@@ -39,7 +41,7 @@ public struct VirtualMachineSpecs: VZKitTemplateSpecs {
         cpuCount: Int,
         ramSizeMB: Int,
         diskSizeGB: Int,
-        hasNetwork: Bool,
+        networkTopology: NetworkTopology,
         hasDirectoryShare: Bool,
         hasInputAudio: Bool,
         hasOutputAudio: Bool
@@ -47,7 +49,7 @@ public struct VirtualMachineSpecs: VZKitTemplateSpecs {
         self.cpuCount = cpuCount
         self.ramSizeMB = ramSizeMB
         self.diskSizeGB = diskSizeGB
-        self.hasNetwork = hasNetwork
+        self.networkTopology = networkTopology
         self.hasDirectoryShare = hasDirectoryShare
         self.hasInputAudio = hasInputAudio
         self.hasOutputAudio = hasOutputAudio

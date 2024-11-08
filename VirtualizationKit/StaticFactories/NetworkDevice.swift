@@ -17,33 +17,35 @@ typealias NetworkDevice = VZVirtioNetworkDeviceConfiguration
 ///    This extension contains the necessary stubs to achieve conformation and defines an appropriare `CaseIterable`
 ///    to be used as argument, when calling the factory method.
 extension NetworkDevice: VZKitDeviceAttachment {
-    
-    /// NetworkType `CaseIterable`
-    ///
-    /// @brief
-    ///    When calling the factory method from the outside, this `CaseIterable` becomes very useful
-    ///    to provide concise information about the network capabilities of the guest machine.
-    enum NetworkType: CaseIterable {
-        case nat
-        case bridge
-    }
-    
+        
     /// This static factory method returns the appropriate network attachment.
     /// Network configurations are handled the same way across different OSes, but themselves may need
     /// to be created differently in order to account for, eventually, different virtual network topologies.
     ///
     /// - Parameters:
     ///   - type: The network configuration of choice
-    static func createDevice(_ type: NetworkType) -> NetworkDevice {
+    static func createDevice(_ type: NetworkTopology) throws -> NetworkDevice {
         let dev = NetworkDevice()
-        
+                
         switch type {
+        case .bridged(let hostInterfaceID):
+            
+            let interface = VZBridgedNetworkInterface.networkInterfaces.first(
+                where: { $0.identifier == hostInterfaceID }
+            )
+            
+            guard let interface else {
+                throw VZKitError.bridgeInterfaceNotAvailable(hostInterfaceID)
+            }
+            
+            dev.attachment = VZBridgedNetworkDeviceAttachment(
+                interface: interface
+            )
+            
         default:
             dev.attachment = VZNATNetworkDeviceAttachment()
         }
-        
-        // TBD Bridge network (requires entitlements)
-        
+                
         return dev
     }
 }

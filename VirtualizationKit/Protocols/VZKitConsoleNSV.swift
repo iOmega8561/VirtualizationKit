@@ -13,7 +13,7 @@ import Virtualization
 /// The object should be aware if it's being used in a preview context, so it can apply the correct logic.
 ///
 /// - Important: Object conforming to this protocol are also conforming to `NSView`, which is pinned to `@MainActor`
-@MainActor public protocol VZKitConsoleNSV: VZVirtualMachineView {
+@MainActor protocol VZKitConsoleNSV: VZVirtualMachineView {
     
     /// A boolean value to know it this representable will be used in preview contexts
     ///
