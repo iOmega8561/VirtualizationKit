@@ -24,40 +24,31 @@ import Virtualization
     
     /// The current execution state of the virtual machine.
     ///
-    /// The `wrapped` property represents the active `MachineState` of the virtual machine.
+    /// The `currentState` property represents the active `MachineState` of the virtual machine.
     /// It is marked as `private(set)` to restrict external modification, while still allowing
     /// observers to access the current state. This property updates whenever a new state is received,
     /// and the `StateManager` automatically notifies observers of any changes.
-    var wrapped: StateType { get set }
+    var currentState: StateType { get }
     
     /// A value representing the current progress of the virtual machine operation.
     ///
     /// `progress` is a `Double` value that can be used to track the progress of operations like
     /// installation or restoration. It is marked `private(set)` to restrict external modifications
-    /// while allowing read access. Changes to this property can be observed by SwiftUI views to update
-    /// UI elements like progress bars.
-    var progress: Double { get set }
+    /// while allowing read access.
+    var progress: Double { get }
     
     /// The previous execution state of the virtual machine, used for rollback purposes.
     ///
-    /// `last` temporarily stores the prior state of the virtual machine. It is marked with
-    /// `@ObservationIgnored` to prevent this property from triggering any observer notifications
-    /// since it’s only used internally to manage rollbacks.
-    var last: StateType? { get set }
-    
-    /// A set of Combine cancellables used to store subscriptions.
-    ///
-    /// `cancellables` holds the Combine subscriptions associated with the state updates. It is marked
-    /// with `@ObservationIgnored` to prevent notifications from being triggered when changes occur.
-    var cancellables: Set<AnyCancellable> { get set }
+    /// `lastState` temporarily stores the prior state of the virtual machine.
+    var lastState: StateType? { get }
     
     /// Updates the current state to a new execution state.
     ///
-    /// The `update(with:)` method changes the `wrapped` property to the provided `new` state
-    /// and stores the previous state in `last` to allow for potential rollback.
+    /// The `update(with:)` method changes the `currentState` property to the provided `new` state
+    /// and stores the previous state in `lastState` to allow for potential rollback.
     ///
     /// - Parameter new: The new `MachineState` to update to.
-    func update(with new: StateType)
+    func update(with newState: StateType)
     
     /// Rolls back to the previous execution state.
     ///

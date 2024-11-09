@@ -26,10 +26,10 @@ struct MachineInstaller: VZKitMachineInstaller {
     
     /// A reference to the `VZVirtualMachine` instance on which the installation process will be performed.
     ///
-    /// The `machine` property provides access to the virtual machine where macOS will be installed. It is essential
+    /// The `vzVirtualMachine` property provides access to the virtual machine where macOS will be installed. It is essential
     /// that this `VZVirtualMachine` instance is properly initialized and ready to accept the installation image.
     /// Note that `VZVirtualMachine` is not `Sendable`, so it should be managed with care in concurrent contexts.
-    let machine: VZVirtualMachine
+    let vzVirtualMachine: VZVirtualMachine
             
     /// Initiates the macOS installation process on the virtual machine, tracking progress and handling errors.
     ///
@@ -47,7 +47,7 @@ struct MachineInstaller: VZKitMachineInstaller {
     @VZKitGlobalActor func startInstallation(_ stateManager: MachineStateManager) async throws {
                 
         let installer = VZMacOSInstaller(
-            virtualMachine: machine,
+            virtualMachine: vzVirtualMachine,
             restoringFromImageAt: self.restoreImage
         )
         
@@ -81,13 +81,13 @@ struct MachineInstaller: VZKitMachineInstaller {
     ///   - machine: The `VZVirtualMachine` instance where the installation will occur.
     ///
     /// - Throws: `VZKitError.missingMacImage` if the specified `restoreImage` URL is nil or does not point to an existing file.
-    init(restoreImage: URL?, machine: VZVirtualMachine) throws {
+    init(restoreImage: URL?, vzVirtualMachine: VZVirtualMachine) throws {
         
         guard let restoreImage, FileManager.default.fileExists(atPath: restoreImage.path) else {
             throw VZKitError.missingMacImage
         }
         
         self.restoreImage = restoreImage
-        self.machine = machine
+        self.vzVirtualMachine = vzVirtualMachine
     }
 }

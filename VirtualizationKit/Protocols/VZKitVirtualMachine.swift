@@ -58,10 +58,10 @@ public protocol VZKitVirtualMachine: Sendable {
 
     /// A reference to the `VZVirtualMachine` instance, providing core functionality for VM management.
     ///
-    /// `wrappedValue` is the main object from the `Virtualization` framework that encapsulates the virtual machine.
+    /// `vzVirtualMachine` is the main object from the `Virtualization` framework that encapsulates the virtual machine.
     /// It provides essential controls for starting, stopping, and configuring the VM, as well as handling tasks like
     /// installation and graphical output. This property allows the conforming type to control the VM directly.
-    var wrappedValue: VZVirtualMachine { get }
+    var vzVirtualMachine: VZVirtualMachine { get }
     
     /// A reference to the state manager responsible for tracking the VM’s execution state.
     ///

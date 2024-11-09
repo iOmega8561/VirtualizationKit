@@ -23,7 +23,7 @@ public struct ConsoleNSVCR<TemplateType: VZKitTemplate>: NSViewControllerReprese
     private var unwrappedResult: VZVirtualMachine? {
         switch result {
         case .success(let machine):
-            return machine.wrappedValue
+            return machine.vzVirtualMachine
         default:
             return nil
         }
