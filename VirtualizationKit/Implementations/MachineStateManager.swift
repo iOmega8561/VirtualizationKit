@@ -29,11 +29,11 @@ import Virtualization
     
     /// The current execution state of the virtual machine.
     ///
-    /// The `wrapped` property represents the active `MachineState` of the virtual machine.
+    /// The `currentState` property represents the active `MachineState` of the virtual machine.
     /// It is marked as `private(set)` to restrict external modification, while still allowing
     /// observers to access the current state. This property updates whenever a new state is received,
     /// and the `StateManager` automatically notifies observers of any changes.
-    public var wrapped: MachineState = .stopped
+    public private(set) var currentState: MachineState = .stopped
     
     /// A value representing the current progress of the virtual machine operation.
     ///
@@ -41,20 +41,20 @@ import Virtualization
     /// installation or restoration. It is marked `private(set)` to restrict external modifications
     /// while allowing read access. Changes to this property can be observed by SwiftUI views to update
     /// UI elements like progress bars.
-    public var progress: Double = 0
+    public private(set) var progress: Double = 0
     
     /// The previous execution state of the virtual machine, used for rollback purposes.
     ///
-    /// `last` temporarily stores the prior state of the virtual machine. It is marked with
+    /// `lastState` temporarily stores the prior state of the virtual machine. It is marked with
     /// `@ObservationIgnored` to prevent this property from triggering any observer notifications
     /// since it’s only used internally to manage rollbacks.
-    @ObservationIgnored public var last: MachineState?
+    @ObservationIgnored public private(set) var lastState: MachineState?
     
     /// A set of Combine cancellables used to store subscriptions.
     ///
     /// `cancellables` holds the Combine subscriptions associated with the state updates. It is marked
     /// with `@ObservationIgnored` to prevent notifications from being triggered when changes occur.
-    @ObservationIgnored public var cancellables = Set<AnyCancellable>()
+    @ObservationIgnored private var cancellables = Set<AnyCancellable>()
     
     /// Updates the current state to a new execution state.
     ///
@@ -62,9 +62,9 @@ import Virtualization
     /// and stores the previous state in `last` to allow for potential rollback.
     ///
     /// - Parameter new: The new `MachineState` to update to.
-    public func update(with new: MachineState) {
-        last = wrapped
-        wrapped = new
+    public func update(with newState: MachineState) {
+        lastState = currentState
+        currentState = newState
     }
     
     /// Rolls back to the previous execution state.
@@ -72,9 +72,9 @@ import Virtualization
     /// The `rollback()` method reverts `wrapped` to the `last` saved state, or defaults to `.stopped`
     /// if there is no previous state. This provides a simple way to undo recent state changes.
     public func rollback() {
-        wrapped = last ?? .stopped
+        currentState = lastState ?? .stopped
     }
-    
+        
     /// Registers an external `Progress` instance to update the progress property of the virtual machine.
     ///
     /// The `registerProgress(_:)` method subscribes to a `Progress` object’s `fractionCompleted` property.
@@ -96,7 +96,7 @@ import Virtualization
     ///   `wrapped` whenever a new state is published.
     init(_ delegate: MachineDelegate) {
         delegate.statePublisher
-            .assign(to: \.wrapped, on: self)
+            .assign(to: \.currentState, on: self)
             .store(in: &cancellables)
     }
 }

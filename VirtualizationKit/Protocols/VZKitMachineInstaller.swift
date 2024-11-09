@@ -42,10 +42,10 @@ protocol VZKitMachineInstaller: Sendable {
     
     /// A reference to the `VZVirtualMachine` instance associated with the installation.
     ///
-    /// `machine` represents the virtual machine that will be set up or configured by the installer. This reference allows
+    /// `vzVirtualMachine` represents the virtual machine that will be set up or configured by the installer. This reference allows
     /// the installer to perform operations directly on the VM instance, such as starting and stopping the machine or applying
     /// configuration changes during the installation process.
-    var machine: VZVirtualMachine { get }
+    var vzVirtualMachine: VZVirtualMachine { get }
     
     /// Starts the installation process on the specified state manager.
     ///

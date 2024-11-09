@@ -62,10 +62,10 @@ public struct VirtualMachine<TemplateType: VZKitTemplate>: VZKitVirtualMachine {
     
     /// A reference to the core `VZVirtualMachine` instance from the Virtualization framework.
     ///
-    /// `wrappedValue` serves as the primary interface for controlling the virtual machine, including
+    /// `vzVirtualMachine` serves as the primary interface for controlling the virtual machine, including
     /// operations like starting, stopping, installation procedures, and managing the graphical console.
     /// It encapsulates the underlying `VZVirtualMachine`, giving direct access to essential lifecycle management functionality.
-    public let wrappedValue: VZVirtualMachine
+    public let vzVirtualMachine: VZVirtualMachine
     
     /// Manages and tracks the current execution state of the virtual machine, pinned to the main actor.
     ///
@@ -97,29 +97,29 @@ public struct VirtualMachine<TemplateType: VZKitTemplate>: VZKitVirtualMachine {
             switch command {
             case .start:
                 await stateManager.update(with: .starting)
-                try await wrappedValue.start()
+                try await vzVirtualMachine.start()
                 await stateManager.update(with: .running)
                 
             case .stop:
                 await stateManager.update(with: .stopping)
-                try await wrappedValue.stop()
+                try await vzVirtualMachine.stop()
                 await stateManager.update(with: .stopped)
                 
             case .pause:
                 await stateManager.update(with: .pausing)
-                try await wrappedValue.pause()
+                try await vzVirtualMachine.pause()
                 await stateManager.update(with: .paused)
                 
             case .resume:
                 await stateManager.update(with: .resuming)
-                try await wrappedValue.resume()
+                try await vzVirtualMachine.resume()
                 await stateManager.update(with: .running)
                 
             case .install:
                 await stateManager.update(with: .restoring)
                 try await MachineInstaller(
                     restoreImage: template.os.installer,
-                    machine: wrappedValue
+                    vzVirtualMachine: vzVirtualMachine
                 ).startInstallation(stateManager)
             }
             
@@ -145,7 +145,7 @@ public struct VirtualMachine<TemplateType: VZKitTemplate>: VZKitVirtualMachine {
         
         let builder = await ConfigurationBuilder(template: template)
         
-        self.wrappedValue = VZVirtualMachine(
+        self.vzVirtualMachine = VZVirtualMachine(
             configuration: try await builder.createConfiguration(),
             queue: VZKitGlobalActor.queue
         )
@@ -154,6 +154,6 @@ public struct VirtualMachine<TemplateType: VZKitTemplate>: VZKitVirtualMachine {
         
         await self.stateManager = .init(self.delegate)
         
-        self.wrappedValue.delegate = delegate
+        self.vzVirtualMachine.delegate = delegate
     }
 }
