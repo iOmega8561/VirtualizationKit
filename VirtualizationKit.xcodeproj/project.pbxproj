@@ -9,10 +9,9 @@
 /* Begin PBXBuildFile section */
 		E32B66122CBA960000FED006 /* VirtualMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B65EB2CBA960000FED006 /* VirtualMachine.swift */; };
 		E32B66132CBA960000FED006 /* ConfigurationBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B65EC2CBA960000FED006 /* ConfigurationBuilder.swift */; };
-		E32B66142CBA960000FED006 /* VirtualMachineDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B65ED2CBA960000FED006 /* VirtualMachineDelegate.swift */; };
-		E32B66152CBA960000FED006 /* VirtualMachineInstaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B65EE2CBA960000FED006 /* VirtualMachineInstaller.swift */; };
+		E32B66152CBA960000FED006 /* MachineInstaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B65EE2CBA960000FED006 /* MachineInstaller.swift */; };
 		E32B66162CBA960000FED006 /* OperatingSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B65EF2CBA960000FED006 /* OperatingSystem.swift */; };
-		E32B66172CBA960000FED006 /* VirtualMachineState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B65F02CBA960000FED006 /* VirtualMachineState.swift */; };
+		E32B66172CBA960000FED006 /* MachineState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B65F02CBA960000FED006 /* MachineState.swift */; };
 		E32B66182CBA960000FED006 /* VirtualMachineOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B65F12CBA960000FED006 /* VirtualMachineOS.swift */; };
 		E32B66192CBA960000FED006 /* VirtualMachineSpecs.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B65F22CBA960000FED006 /* VirtualMachineSpecs.swift */; };
 		E32B661A2CBA960000FED006 /* VZKitDeviceAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B65F42CBA960000FED006 /* VZKitDeviceAttachment.swift */; };
@@ -50,6 +49,9 @@
 		E32B666B2CBAB6F600FED006 /* ConsoleNSVCR.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B666A2CBAB6F600FED006 /* ConsoleNSVCR.swift */; };
 		E3393A342CDE590F00D4E3CE /* VZKitNetworkTopology.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3393A332CDE590000D4E3CE /* VZKitNetworkTopology.swift */; };
 		E3393A362CDE5D5700D4E3CE /* NetworkTopology.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3393A352CDE5D5600D4E3CE /* NetworkTopology.swift */; };
+		E3393A382CDEAF3F00D4E3CE /* MachineStateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3393A372CDEAF3200D4E3CE /* MachineStateManager.swift */; };
+		E3393A3A2CDEB22E00D4E3CE /* MachineDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3393A392CDEB22900D4E3CE /* MachineDelegate.swift */; };
+		E3393A3C2CDEE4CB00D4E3CE /* VZKitMachineStateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3393A3B2CDEE4C300D4E3CE /* VZKitMachineStateManager.swift */; };
 		E3941ECF2CBEFE2900E210E7 /* VZKitConsoleNSV.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3941ECE2CBEFE2100E210E7 /* VZKitConsoleNSV.swift */; };
 		E3941ED12CBEFEE000E210E7 /* ConsoleNSV.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3941ED02CBEFEDD00E210E7 /* ConsoleNSV.swift */; };
 		E3D7E87F2CBB4071005488C8 /* VirtualizationKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D7E87E2CBB4069005488C8 /* VirtualizationKit.swift */; };
@@ -60,10 +62,9 @@
 		E32B65482CBA93C200FED006 /* VirtualizationKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VirtualizationKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E32B65EB2CBA960000FED006 /* VirtualMachine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualMachine.swift; sourceTree = "<group>"; };
 		E32B65EC2CBA960000FED006 /* ConfigurationBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationBuilder.swift; sourceTree = "<group>"; };
-		E32B65ED2CBA960000FED006 /* VirtualMachineDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualMachineDelegate.swift; sourceTree = "<group>"; };
-		E32B65EE2CBA960000FED006 /* VirtualMachineInstaller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualMachineInstaller.swift; sourceTree = "<group>"; };
+		E32B65EE2CBA960000FED006 /* MachineInstaller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MachineInstaller.swift; sourceTree = "<group>"; };
 		E32B65EF2CBA960000FED006 /* OperatingSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperatingSystem.swift; sourceTree = "<group>"; };
-		E32B65F02CBA960000FED006 /* VirtualMachineState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualMachineState.swift; sourceTree = "<group>"; };
+		E32B65F02CBA960000FED006 /* MachineState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MachineState.swift; sourceTree = "<group>"; };
 		E32B65F12CBA960000FED006 /* VirtualMachineOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualMachineOS.swift; sourceTree = "<group>"; };
 		E32B65F22CBA960000FED006 /* VirtualMachineSpecs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualMachineSpecs.swift; sourceTree = "<group>"; };
 		E32B65F42CBA960000FED006 /* VZKitDeviceAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VZKitDeviceAttachment.swift; sourceTree = "<group>"; };
@@ -101,6 +102,9 @@
 		E32B666A2CBAB6F600FED006 /* ConsoleNSVCR.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleNSVCR.swift; sourceTree = "<group>"; };
 		E3393A332CDE590000D4E3CE /* VZKitNetworkTopology.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VZKitNetworkTopology.swift; sourceTree = "<group>"; };
 		E3393A352CDE5D5600D4E3CE /* NetworkTopology.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkTopology.swift; sourceTree = "<group>"; };
+		E3393A372CDEAF3200D4E3CE /* MachineStateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MachineStateManager.swift; sourceTree = "<group>"; };
+		E3393A392CDEB22900D4E3CE /* MachineDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MachineDelegate.swift; sourceTree = "<group>"; };
+		E3393A3B2CDEE4C300D4E3CE /* VZKitMachineStateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VZKitMachineStateManager.swift; sourceTree = "<group>"; };
 		E3941ECE2CBEFE2100E210E7 /* VZKitConsoleNSV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VZKitConsoleNSV.swift; sourceTree = "<group>"; };
 		E3941ED02CBEFEDD00E210E7 /* ConsoleNSV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleNSV.swift; sourceTree = "<group>"; };
 		E3D7E87E2CBB4069005488C8 /* VirtualizationKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualizationKit.swift; sourceTree = "<group>"; };
@@ -143,13 +147,14 @@
 				E3941ED02CBEFEDD00E210E7 /* ConsoleNSV.swift */,
 				E32B66662CBAB57300FED006 /* ConsoleNSVC.swift */,
 				E32B666A2CBAB6F600FED006 /* ConsoleNSVCR.swift */,
+				E3393A392CDEB22900D4E3CE /* MachineDelegate.swift */,
+				E32B65EE2CBA960000FED006 /* MachineInstaller.swift */,
+				E32B65F02CBA960000FED006 /* MachineState.swift */,
+				E3393A372CDEAF3200D4E3CE /* MachineStateManager.swift */,
 				E3393A352CDE5D5600D4E3CE /* NetworkTopology.swift */,
 				E32B65EF2CBA960000FED006 /* OperatingSystem.swift */,
 				E32B65EB2CBA960000FED006 /* VirtualMachine.swift */,
-				E32B65ED2CBA960000FED006 /* VirtualMachineDelegate.swift */,
-				E32B65EE2CBA960000FED006 /* VirtualMachineInstaller.swift */,
 				E32B65F12CBA960000FED006 /* VirtualMachineOS.swift */,
-				E32B65F02CBA960000FED006 /* VirtualMachineState.swift */,
 				E32B65F22CBA960000FED006 /* VirtualMachineSpecs.swift */,
 			);
 			path = Implementations;
@@ -164,8 +169,9 @@
 				E32B66682CBAB65A00FED006 /* VZKitConsoleNSVCR.swift */,
 				E32B65F42CBA960000FED006 /* VZKitDeviceAttachment.swift */,
 				E32B65F62CBA960000FED006 /* VZKitMachineDelegate.swift */,
-				E32B65F72CBA960000FED006 /* VZKitMachineInstaller.swift */,
 				E32B65F82CBA960000FED006 /* VZKitMachineState.swift */,
+				E3393A3B2CDEE4C300D4E3CE /* VZKitMachineStateManager.swift */,
+				E32B65F72CBA960000FED006 /* VZKitMachineInstaller.swift */,
 				E3393A332CDE590000D4E3CE /* VZKitNetworkTopology.swift */,
 				E32B65F92CBA960000FED006 /* VZKitOperatingSystem.swift */,
 				E32B65FA2CBA960000FED006 /* VZKitStorageAttachment.swift */,
@@ -315,10 +321,9 @@
 			files = (
 				E32B66122CBA960000FED006 /* VirtualMachine.swift in Sources */,
 				E32B66132CBA960000FED006 /* ConfigurationBuilder.swift in Sources */,
-				E32B66142CBA960000FED006 /* VirtualMachineDelegate.swift in Sources */,
-				E32B66152CBA960000FED006 /* VirtualMachineInstaller.swift in Sources */,
+				E32B66152CBA960000FED006 /* MachineInstaller.swift in Sources */,
 				E32B66162CBA960000FED006 /* OperatingSystem.swift in Sources */,
-				E32B66172CBA960000FED006 /* VirtualMachineState.swift in Sources */,
+				E32B66172CBA960000FED006 /* MachineState.swift in Sources */,
 				E3393A362CDE5D5700D4E3CE /* NetworkTopology.swift in Sources */,
 				E32B66182CBA960000FED006 /* VirtualMachineOS.swift in Sources */,
 				E32B66192CBA960000FED006 /* VirtualMachineSpecs.swift in Sources */,
@@ -334,6 +339,7 @@
 				E32B66222CBA960000FED006 /* VZKitTemplateOS.swift in Sources */,
 				E32B66232CBA960000FED006 /* VZKitTemplateSpecs.swift in Sources */,
 				E32B66242CBA960000FED006 /* VZKitVirtualMachine.swift in Sources */,
+				E3393A382CDEAF3F00D4E3CE /* MachineStateManager.swift in Sources */,
 				E32B66252CBA960000FED006 /* BlockDevice.swift in Sources */,
 				E3941ED12CBEFEE000E210E7 /* ConsoleNSV.swift in Sources */,
 				E32B66262CBA960000FED006 /* BootLoader.swift in Sources */,
@@ -354,8 +360,10 @@
 				E32B66652CBAB34700FED006 /* VZKitConsoleNSVC.swift in Sources */,
 				E32B66302CBA960000FED006 /* SoundDevice.swift in Sources */,
 				E32B66312CBA960000FED006 /* USBMassStorageDevice.swift in Sources */,
+				E3393A3A2CDEB22E00D4E3CE /* MachineDelegate.swift in Sources */,
 				E32B66322CBA960000FED006 /* VZKitError.swift in Sources */,
 				E32B66332CBA960000FED006 /* VZKitGlobalActor.swift in Sources */,
+				E3393A3C2CDEE4CB00D4E3CE /* VZKitMachineStateManager.swift in Sources */,
 				E32B66342CBA960000FED006 /* VZKitResult.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
