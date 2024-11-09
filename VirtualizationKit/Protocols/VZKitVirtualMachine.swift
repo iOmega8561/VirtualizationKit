@@ -7,43 +7,91 @@
 
 import Virtualization
 
-/// VZKitVirtualMachine protocol
+/// The `VZKitVirtualMachine` protocol defines the requirements for implementing a virtual machine (VM) within this application.
+/// This protocol specifies the essential properties and methods needed to manage and control a virtual machine, including
+/// handling commands, accessing configuration information, managing state, and supporting delegation for event handling.
 ///
-/// @brief
-///    This protocol defines how a Virtual Machine should be implemented in this application
+/// Conforming types must provide specific types for VM templates, state management, and delegates, enabling flexible
+/// implementations that integrate seamlessly with the `Virtualization` framework.
 public protocol VZKitVirtualMachine: Sendable {
     
-    /// `CommandType` should be `enum` and it should provide a case for any command
-    /// that the developer using this interface may want to support in their application
+    /// A type representing the possible commands that can be sent to the virtual machine.
     ///
-    /// An example would be to have `.start`, `.stop`, `.pause`, `.resume`
-    /// It's really up to the dev.
+    /// `CommandIterable` should be an `enum` conforming to `CaseIterable`, with cases for each command that
+    /// the developer wishes to support in their VM implementation. For example, commands might include:
+    /// `.start`, `.stop`, `.pause`, and `.resume`. The specific cases are left to the developer’s discretion
+    /// to suit the application’s needs.
     associatedtype CommandIterable: CaseIterable
     
+    /// A type representing the template data required to configure the virtual machine.
+    ///
+    /// `TemplateType` must conform to `VZKitTemplate`, which provides the essential configuration details
+    /// for initializing or managing a virtual machine, such as resource allocations and other setup parameters.
     associatedtype TemplateType: VZKitTemplate
     
+    /// A type representing the delegate responsible for handling virtual machine events.
+    ///
+    /// `DelegateType` must conform to `VZKitMachineDelegate` and is used to manage VM-specific events
+    /// like state transitions, errors, and other lifecycle notifications. The delegate acts as an intermediary
+    /// between the VM and other parts of the application that need to respond to VM events.
     associatedtype DelegateType: VZKitMachineDelegate
     
-    /// A copy of the DTO to have all the necessary info about the VM template
+    /// A type representing the state manager responsible for tracking the virtual machine’s execution state.
+    ///
+    /// `StateManagerType` must conform to `VZKitMachineStateManager` and is responsible for holding and
+    /// updating the VM’s state information. The state manager ensures that any state changes are safely managed,
+    /// supporting UI updates and other components that depend on the VM’s current state.
+    associatedtype StateManagerType: VZKitMachineStateManager
+    
+    /// The template data used to configure the virtual machine.
+    ///
+    /// `template` holds a copy of the data transfer object (DTO) required to initialize and manage the virtual machine.
+    /// It provides configuration information, such as memory size, CPU count, and storage configuration.
     var template: TemplateType { get }
     
-    /// Reference to an instance of `VZKitMachineDelegate` conforming class.
-    /// that will effectively be also bound to the `VZVirtualMachine` instance.
+    /// A reference to the VM’s delegate, responsible for handling events and notifications from the virtual machine.
+    ///
+    /// `delegate` is an instance conforming to `VZKitMachineDelegate` and is associated with the virtual machine.
+    /// It listens for and processes events from the VM, facilitating communication between the VM and other parts
+    /// of the application that need to respond to VM lifecycle events or state changes.
     var delegate: DelegateType { get }
 
-    /// Reference to the `Virtualization` framework object, mainly for running controls, installation and graphical console.
-    var wrappedValue: VZVirtualMachine { get }
-
-    /// Static factory method.
-    /// Returns a `Result<Self, Error>` type, in order to have a rapresentation of eventual errors, to do something with them in the UI.
+    /// A reference to the `VZVirtualMachine` instance, providing core functionality for VM management.
     ///
-    /// - Parameters:
-    ///   - template: the data transfer object containing all the information about the VM.
+    /// `wrappedValue` is the main object from the `Virtualization` framework that encapsulates the virtual machine.
+    /// It provides essential controls for starting, stopping, and configuring the VM, as well as handling tasks like
+    /// installation and graphical output. This property allows the conforming type to control the VM directly.
+    var wrappedValue: VZVirtualMachine { get }
+    
+    /// A reference to the state manager responsible for tracking the VM’s execution state.
+    ///
+    /// `stateManager` is an instance of `StateManagerType` that manages access to and updates the VM’s execution state.
+    /// This property provides centralized control over state management, helping ensure that the VM’s state is safely
+    /// updated and accessible to observers, such as the UI.
+    var stateManager: StateManagerType { get }
+    
+    /// Creates a new virtual machine instance based on the specified template.
+    ///
+    /// This static factory method returns a result containing either a new instance of the conforming type or an error
+    /// if the creation process fails. By using `Result<Self, Error>`, this method provides a mechanism for handling
+    /// errors that may occur during VM creation, allowing the caller to take action (e.g., showing an error message)
+    /// if needed.
+    ///
+    /// - Parameter template: The data transfer object containing the configuration information for the VM.
+    /// - Returns: A `VZKitResult<TemplateType>` containing either a new virtual machine instance or an error.
     static func createMachine(_ template: TemplateType) async -> VZKitResult<TemplateType>
     
-    /// This method should provide a standard way to send commands to the `VZVirtualMachine`
-    /// and update the shared state accordingly. If an error occurs, the state should be safely reset before propagation.
+    /// Sends a command to the virtual machine and updates the shared state accordingly.
     ///
-    /// - Important: Pinned to `@VZKitGlobalActor` for serial dispatch of the commands sent to VMs.
+    /// This method provides a standard way to interact with the `VZVirtualMachine` instance by sending specific commands,
+    /// such as starting, stopping, or pausing the VM. The `sendCommand(_:)` method should handle updating the
+    /// `stateManager` to reflect any changes to the VM’s state. In the event of an error, the state should be
+    /// safely reset before the error is propagated.
+    ///
+    /// - Important: This method is pinned to `@VZKitGlobalActor` to ensure serial execution of commands, which helps
+    ///   maintain consistency and avoid race conditions when controlling the VM.
+    ///
+    /// - Parameter command: A `CommandIterable` case representing the command to be executed on the VM.
+    /// - Throws: An error if the command execution fails, with the state reset as needed before propagation.
     @VZKitGlobalActor func sendCommand(_ command: CommandIterable) async throws
 }
