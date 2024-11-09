@@ -39,15 +39,6 @@ public struct VirtualMachine<TemplateType: VZKitTemplate>: VZKitVirtualMachine {
         case install
     }
     
-    /// A copy of the DTO to have all the necessary info about the VM template
-    public let template: TemplateType
-    
-    /// Reference to the `Virtualization` framework object, mainly for running controls, installation and graphical console.
-    public let wrappedValue: VZVirtualMachine
-    
-    /// Reference to an instance of `VirtualMachineDelegate` that will effectively be also bound to the `VZVirtualMachine`
-    public let delegate: VirtualMachineDelegate
-    
     /// Static factory method of this default implementation,
     ///
     /// - Parameters:
@@ -62,6 +53,37 @@ public struct VirtualMachine<TemplateType: VZKitTemplate>: VZKitVirtualMachine {
         }
     }
     
+    /// A copy of the Data Transfer Object (DTO) that contains all essential information about the virtual machine (VM) template.
+    ///
+    /// This property holds an instance of `TemplateType`, which provides the configuration details required
+    /// for initializing and managing the virtual machine. The template includes specific settings and parameters
+    /// that define the VM’s resources, behavior, and setup.
+    public let template: TemplateType
+    
+    /// A reference to the core `VZVirtualMachine` instance from the Virtualization framework.
+    ///
+    /// `wrappedValue` serves as the primary interface for controlling the virtual machine, including
+    /// operations like starting, stopping, installation procedures, and managing the graphical console.
+    /// It encapsulates the underlying `VZVirtualMachine`, giving direct access to essential lifecycle management functionality.
+    public let wrappedValue: VZVirtualMachine
+    
+    /// Manages and tracks the current execution state of the virtual machine, pinned to the main actor.
+    ///
+    /// `stateManager` is an instance of `StateManager` responsible for observing and updating the `MachineState`
+    /// of the virtual machine. Since `stateManager` is tied to `@MainActor`, all state changes and updates are
+    /// handled on the main thread, ensuring thread safety for UI updates and other main-thread operations.
+    /// The `stateManager` helps centralize and simplify state management within the VM, reducing the need
+    /// for manual state tracking within the main view model.
+    public let stateManager: MachineStateManager
+    
+    /// A reference to an instance of `VirtualMachineDelegate`, responsible for handling VM events and updates.
+    ///
+    /// The `delegate` serves as an intermediary for receiving updates from the `VZVirtualMachine`,
+    /// communicating events and state changes to other parts of the application. By connecting directly to
+    /// the `VZVirtualMachine` instance, the `delegate` enables efficient event handling for lifecycle transitions
+    /// and other VM-related activities.
+    public let delegate: MachineDelegate
+    
     /// This method provides a standard way to send commands to the `VZVirtualMachine`
     /// and updates the shared state accordingly. If an error occurs, the state is safely reset before propagation.
     /// Since `VZError.virtualMachineLimitExceeded` has a confusing localizedDescription, this method traps it
@@ -70,45 +92,43 @@ public struct VirtualMachine<TemplateType: VZKitTemplate>: VZKitVirtualMachine {
     ///
     /// - Important: Pinned to `@VZKitGlobalActor` for serial dispatch of the commands sent to VMs.
     @VZKitGlobalActor public func sendCommand(_ command: Command) async throws {
-        
-        let oldState: VirtualMachineState
-        
+                
         do {
             switch command {
             case .start:
-                oldState = await delegate.updateState(.starting)
+                await stateManager.update(with: .starting)
                 try await wrappedValue.start()
-                await delegate.updateState(.running)
+                await stateManager.update(with: .running)
                 
             case .stop:
-                oldState = await delegate.updateState(.stopping)
+                await stateManager.update(with: .stopping)
                 try await wrappedValue.stop()
-                await delegate.updateState(.stopped)
+                await stateManager.update(with: .stopped)
                 
             case .pause:
-                oldState = await delegate.updateState(.pausing)
+                await stateManager.update(with: .pausing)
                 try await wrappedValue.pause()
-                await delegate.updateState(.paused)
+                await stateManager.update(with: .paused)
                 
             case .resume:
-                oldState = await delegate.updateState(.resuming)
+                await stateManager.update(with: .resuming)
                 try await wrappedValue.resume()
-                await delegate.updateState(.running)
+                await stateManager.update(with: .running)
                 
             case .install:
-                oldState = await delegate.updateState(.restoring)
-                try await VirtualMachineInstaller(
+                await stateManager.update(with: .restoring)
+                try await MachineInstaller(
                     restoreImage: template.os.installer,
                     machine: wrappedValue
-                ).startInstallation()
+                ).startInstallation(stateManager)
             }
             
         } catch VZError.virtualMachineLimitExceeded {
-            await delegate.updateState(oldState)
+            await stateManager.rollback()
             throw VZKitError.appleVMLimitExceeded
             
         } catch {
-            await delegate.updateState(oldState)
+            await stateManager.rollback()
             throw error
         }
         
@@ -123,14 +143,16 @@ public struct VirtualMachine<TemplateType: VZKitTemplate>: VZKitVirtualMachine {
         
         self.template = template
         
-        let configurator = await ConfigurationBuilder(template: template)
-                
-        self.delegate = await VirtualMachineDelegate()
+        let builder = await ConfigurationBuilder(template: template)
         
         self.wrappedValue = VZVirtualMachine(
-            configuration: try await configurator.createConfiguration(),
+            configuration: try await builder.createConfiguration(),
             queue: VZKitGlobalActor.queue
         )
+        
+        self.delegate = .init()
+        
+        await self.stateManager = .init(self.delegate)
         
         self.wrappedValue.delegate = delegate
     }
