@@ -5,33 +5,48 @@
 //  Created by Giuseppe Rocco on 14/05/24.
 //
 
+import Combine
+
 import Virtualization
 
-/// VZKitMachineDelegate protocol
+/// The `VZKitMachineDelegate` protocol.
 ///
-/// @brief
-///    This protocol defines how a Virtual Machine delegate should be implemented in this application
+/// Defines a common interface for delegates conforming to `VZVirtualMachineDelegate`.
+/// It should act as an intermediary to handle virtual machine state changes, broadcasting these changes through a Combine
+/// publisher. The protocol also requires conformation to `Sendable`, making it safe for concurrent use in Swift’s structured concurrency.
+///
+/// The implementation should be responsible for monitoring the lifecycle of a virtual machine, capturing both graceful shutdowns
+/// and forced shutdowns due to errors. When such events occur, the delegate should broadcast updates using `statePublisher`,
+/// allowing other parts of the app (such as a view model) to observe and react to state changes.
 public protocol VZKitMachineDelegate: VZVirtualMachineDelegate, Sendable {
     
-    associatedtype StateType : VZKitMachineState
+    associatedtype StateType: VZKitMachineState
     
-    /// This variable holds the shared state that will be used to update views (specifically `MachineView`).
-    /// Only the parent class should be able to set its value (private setter).
+    /// A publisher that emits updates on the virtual machine’s execution state.
     ///
-    /// - Important: This variable is pinned to @MainActor for thread-safe access.
-    @MainActor var state: StateType { get }
+    /// `statePublisher` is a `PassthroughSubject` that broadcasts `StateType` updates when the virtual
+    /// machine undergoes state changes, such as stopping gracefully or due to an error. Observing this publisher
+    /// allows other components, such as a view model, to stay in sync with the virtual machine’s current state.
+    var statePublisher: PassthroughSubject<StateType, Never> { get }
     
-    /// Setter method for the `state` property
+    /// Called when the virtual machine has stopped gracefully.
     ///
-    /// - Important: pinned to `@MainActor` to have synchronous access to the `state` property.
-    ///   Returns the old value of `state`, can be eventually discarded without having the compiler complain.
-    @discardableResult @MainActor func updateState(_ newState: StateType) -> StateType
-    
-    /// `VZVirtualMachineDelegate` stub
-    /// This is called after a graceful shutdown.
+    /// This method is a stub required by the `VZVirtualMachineDelegate` protocol. It is invoked by the virtual
+    /// machine after a graceful shutdown. Upon receiving this event, the delegate should send the current state
+    /// through the `statePublisher` so that observers can update accordingly.
+    ///
+    /// - Parameter virtualMachine: The virtual machine instance that stopped.
     func guestDidStop(_ virtualMachine: VZVirtualMachine)
     
-    /// `VZVirtualMachineDelegate` stub
-    /// This is called after a forceful shutdown (error).
+    /// Called when the virtual machine has stopped due to an error.
+    ///
+    /// This method is a stub required by the `VZVirtualMachineDelegate` protocol. It is invoked when the virtual
+    /// machine encounters an error and shuts down forcefully. The delegate should send the current state through the
+    /// `statePublisher` to notify observers of the change. Additionally, a task can be launched to present the
+    /// error to the user, if desired.
+    ///
+    /// - Parameters:
+    ///   - virtualMachine: The virtual machine instance that stopped.
+    ///   - error: The error that caused the virtual machine to stop unexpectedly.
     func virtualMachine(_ virtualMachine: VZVirtualMachine, didStopWithError error: any Error)
 }
