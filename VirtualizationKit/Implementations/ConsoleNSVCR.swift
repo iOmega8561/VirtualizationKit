@@ -18,17 +18,6 @@ import Virtualization
 ///    virtualMachine, automaticallyReconfiguresDisplay, capturesSystemKeys
 public struct ConsoleNSVCR<TemplateType: VZKitTemplate>: NSViewControllerRepresentable, VZKitConsoleNSVCR {
     
-    /// A simple computed property to unwrap the `VZVirtualMachine` object from the optional `VZKitResult`
-    /// Very useful to save a few lines of code while implementing `NSViewControllerRepresentable` stubs
-    private var unwrappedResult: VZVirtualMachine? {
-        switch result {
-        case .success(let machine):
-            return machine.vzVirtualMachine
-        default:
-            return nil
-        }
-    }
-    
     /// An extremely simplified `Coordinator` type with no logic whatsoever.
     /// What it does is simply set the caller object as it's parent
     public class Coordinator : NSObject {
@@ -39,8 +28,8 @@ public struct ConsoleNSVCR<TemplateType: VZKitTemplate>: NSViewControllerReprese
         }
     }
     
-    /// `VZKitResult` to be unwrapped, in order to attach the virtual machine to a `NSViewController`
-    public let result: VZKitResult<TemplateType>?
+    /// `vzVirtualMachine` to be unwrapped and attached to the`NSViewController`
+    public let vzVirtualMachine: VZVirtualMachine?
     
     /// A boolean value to know it this representable will be used in preview contexts
     public let isPreview: Bool
@@ -63,7 +52,7 @@ public struct ConsoleNSVCR<TemplateType: VZKitTemplate>: NSViewControllerReprese
     /// Creates the `NSViewController` and binds the correct virtualMachine to it.
     public func makeNSViewController(context: Context) -> ConsoleNSVC {
         let nsViewController = ConsoleNSVC()
-        nsViewController.vmView.virtualMachine = unwrappedResult
+        nsViewController.vmView.virtualMachine = vzVirtualMachine
         nsViewController.vmView.isPreview = isPreview
         return nsViewController
     }
@@ -74,8 +63,8 @@ public struct ConsoleNSVCR<TemplateType: VZKitTemplate>: NSViewControllerReprese
         
         // This check is needed because in some context the same object may be used
         // to operate on different virtual machines. Here we make sure it's the right one
-        if nsViewController.vmView.virtualMachine != unwrappedResult {
-            nsViewController.vmView.virtualMachine = unwrappedResult
+        if nsViewController.vmView.virtualMachine != vzVirtualMachine {
+            nsViewController.vmView.virtualMachine = vzVirtualMachine
         }
         
         nsViewController.vmView.automaticallyReconfiguresDisplay = isScreenAdaptive
@@ -89,11 +78,11 @@ public struct ConsoleNSVCR<TemplateType: VZKitTemplate>: NSViewControllerReprese
     ///   - isScreenAdaptive: A boolean stating if the virtual machine view should automatically reconfigure the display
     ///   - areKeysCaptured: A boolean stating if the virtual machine view should capture system hotkeys
     public init(
-        result: VZKitResult<TemplateType>?,
+        machine: VirtualMachine<TemplateType>,
         isScreenAdaptive: Bool,
         areKeysCaptured: Bool
     ) {
-        self.result = result
+        self.vzVirtualMachine = machine.vzVirtualMachine
         self.isPreview = false
         self.isScreenAdaptive = isScreenAdaptive
         self.areKeysCaptured = areKeysCaptured
@@ -104,8 +93,9 @@ public struct ConsoleNSVCR<TemplateType: VZKitTemplate>: NSViewControllerReprese
     /// - Parameters:
     ///   - result: the VZKitResult to be unwrapped in order to retrieve the VZVirtualMachine reference
     ///   - isPreview: the boolean stating that this will be used i a preview context
-    public init(result: VZKitResult<TemplateType>?, isPreview: Bool = true) {
-        self.result = result
+    public init(machine: VirtualMachine<TemplateType>, isPreview: Bool = true) {
+        
+        self.vzVirtualMachine = machine.vzVirtualMachine
         self.isPreview = isPreview
         self.isScreenAdaptive = false
         self.areKeysCaptured = false
