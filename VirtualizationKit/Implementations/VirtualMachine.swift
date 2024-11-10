@@ -7,17 +7,24 @@
 
 @preconcurrency import Virtualization
 
-/// The `VirtualMachine` data structure implementation
+/// A data structure representing a Virtual Machine.
 ///
-/// @brief
-///    The choice to make it a struct instead of a class derives from the fact that it is not necessary
-///    to keep track of the identity of the instanciated object. This struct also conforms to `Sendable`,
-///    as required by `VZKitVirtualMachine`.
+/// The `VirtualMachine` type is implemented as a struct to provide a lightweight, value-oriented
+/// representation of a virtual machine instance. Rather than holding state directly, this struct
+/// maintains references to other objects that are specifically designed to manage the virtual machine's
+/// state. This approach ensures a clear separation of responsibilities: `VirtualMachine` serves as a
+/// convenient interface for interacting with the virtual machine's state without itself being responsible
+/// for state management. Using a struct here allows for efficient copying and passing of instances without
+/// retaining a unique reference, and the conformance to `Sendable` ensures safe usage across concurrency
+/// domains, as required by the `VZKitVirtualMachine` protocol interface.
 ///
-/// - Important: `VZVirtualMachine` IS NOT sendable. We import the `Virtualization` framework using `@preconcurrency`.
+/// - Note: This object can be created by calling the async `init()` directly, or by using the static factory method `createMachine()`.
+///   The difference is that using the latter, the outcome of the initialization procedure will be encapsulated inside
+///   a VZKitResult, allowing for graceful management of eventual errors. This is especially useful when working with a SwiftUI context,
+///   in which you would need to store the error and later present this error to the user, so they can take action if needed.
 ///
-/// - Important: A VZKitTemplate conforming object is not defined by this framework. It will be responsability of the developer using these
-///              facilities to implement one and correctly use it with this generc data structure.
+/// - Important: A VZKitTemplate conforming object is not defined by this framework. It will be responsability of the
+///   developer using these facilities to implement one and correctly use it with this generc data structure.
 public struct VirtualMachine<TemplateType: VZKitTemplate>: VZKitVirtualMachine {
     
     /// `Command` is a `CaseIterable` conforming `enum` and it provides a case for any command
@@ -130,7 +137,7 @@ public struct VirtualMachine<TemplateType: VZKitTemplate>: VZKitVirtualMachine {
     ///
     /// - Parameters:
     ///   - template: the data transfer object containing all the information about the VM.
-    private init(template: TemplateType) async throws {
+    public init(template: TemplateType) async throws {
         
         self.template = template
         
