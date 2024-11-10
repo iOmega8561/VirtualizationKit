@@ -32,7 +32,7 @@ import Virtualization
 ///    This should give birth to `SwiftUI` wrappers for our `AppKit` console view controller component.
 ///    During the view controller update, this UI element will set the right values for the following keys:
 ///    virtualMachine, automaticallyReconfiguresDisplay, capturesSystemKeys
-protocol VZKitConsoleNSVCR: NSViewControllerRepresentable {
+@MainActor protocol VZKitConsoleNSVCR: NSViewControllerRepresentable {
     
     associatedtype CoordinatorType: NSObject
     
@@ -40,8 +40,8 @@ protocol VZKitConsoleNSVCR: NSViewControllerRepresentable {
     
     associatedtype TemplateType: VZKitTemplate
     
-    /// `VZKitResult` to be unwrapped, in order to attach the virtual machine to a `NSViewController`
-    var result: VZKitResult<TemplateType>? { get }
+    /// `vzVirtualMachine` to be unwrapped and attached to the`NSViewController`
+    var vzVirtualMachine: VZVirtualMachine? { get }
     
     /// A boolean value to know it this representable will be used in preview contexts
     var isPreview: Bool { get }
@@ -57,15 +57,15 @@ protocol VZKitConsoleNSVCR: NSViewControllerRepresentable {
     /// Implementation of standard method `makeCoordinator`.
     ///
     /// - Important: Rendering queue, pinned to @MainActor for thread-safe access.
-    @MainActor func makeCoordinator() -> CoordinatorType
+    func makeCoordinator() -> CoordinatorType
     
     /// Implementation of standard method `makeNSViewController`.
     ///
     /// - Important: Rendering queue, pinned to @MainActor for thread-safe access.
-    @MainActor func makeNSViewController(context: Context) -> ControllerType
+    func makeNSViewController(context: Context) -> ControllerType
     
     /// Implementation of standard method `updateNSViewController`.
     /// 
     /// - Important: Rendering queue, pinned to @MainActor for thread-safe access.
-    @MainActor func updateNSViewController(_ nsViewController: ControllerType, context: Context)
+    func updateNSViewController(_ nsViewController: ControllerType, context: Context)
 }
