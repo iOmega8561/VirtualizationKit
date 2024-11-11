@@ -5,7 +5,7 @@
 //  Created by Giuseppe Rocco on 08/11/24.
 //
 
-import Combine
+@preconcurrency import Combine
 
 import Virtualization
     
@@ -45,7 +45,7 @@ import Virtualization
     ///
     /// `cancellables` holds the Combine subscriptions associated with the state updates. It is marked
     /// with `@ObservationIgnored` to prevent notifications from being triggered when changes occur.
-    @ObservationIgnored private var cancellables = Set<AnyCancellable>()
+    @ObservationIgnored private var cancellables: Set<AnyCancellable>! = .init()
     
     /// Updates the current state to a new execution state.
     ///
@@ -76,7 +76,9 @@ import Virtualization
     public func registerProgress(_ progress: Progress) {
         progress
             .publisher(for: \.fractionCompleted)
-            .assign(to: \.progress, on: self)
+            .sink { [weak self] progress in
+                self?.progress = progress
+            }
             .store(in: &cancellables)
     }
     
@@ -86,8 +88,23 @@ import Virtualization
     ///   The `MachineStateManager` subscribes to the delegate’s `statePublisher` and automatically updates
     ///   `wrapped` whenever a new state is published.
     init(_ delegate: MachineDelegate) {
+        
         delegate.statePublisher
-            .assign(to: \.currentState, on: self)
+            .sink { [weak self] state in
+                self?.currentState = state
+            }
             .store(in: &cancellables)
     }
+    
+    /// Explicitly sets `cancellables` to `nil` to release any subscriptions in this object.
+    ///
+    /// In Combine, cancelling a subscription removes the closure's reference to `self`, breaking potential retain cycles.
+    /// Setting `cancellables` to `nil` ensures that all stored subscriptions are released immediately,
+    /// allowing `deinit` to free up memory more predictably and prevent lingering references.
+    ///
+    /// This explicit release can be beneficial for:
+    /// - Ensuring that asynchronous Combine pipelines do not retain `self` longer than expected.
+    /// - Preventing certain Combine operators (like `sink`) from delaying deallocation.
+    /// - Helping tools like Instruments confirm that no lingering retain cycles exist.
+    deinit { cancellables = nil }
 }
