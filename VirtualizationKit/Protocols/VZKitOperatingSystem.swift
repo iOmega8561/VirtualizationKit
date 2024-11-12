@@ -17,7 +17,7 @@ import UniformTypeIdentifiers
 ///    the bulk of `SwiftUI` statements. We can simply get the assets of the given OS by callin these methods.
 public protocol VZKitOperatingSystem: Codable, Hashable, CaseIterable, Sendable {
     
-    associatedtype VersionType
+    associatedtype VersionType: VZKitOperatingSystemVersion
     
     var image: Image { get }
     
@@ -25,9 +25,5 @@ public protocol VZKitOperatingSystem: Codable, Hashable, CaseIterable, Sendable 
     
     var fileType: UTType { get }
     
-    /// Static utility method that should return a `VersionType` information, using a macOS restore image.
-    ///
-    /// - Parameters:
-    ///   - url: The URL of the installer image provided by the caller. if the image is not a macOS .ipsw the method should throw
-    static func getOSVersionFromImage(withURL url: URL) async throws -> VersionType
+    var version: VersionType? { get }
 }
