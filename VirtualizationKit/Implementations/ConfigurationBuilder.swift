@@ -43,7 +43,7 @@ struct ConfigurationBuilder<TemplateType: VZKitTemplate>: VZKitConfigurationBuil
     ///
     /// - Parameters:
     ///   - image: The macOS restore image object, if needed.
-    private func createConfiguration(_ image: VZMacOSRestoreImage?) async throws {
+    private func createConfiguration(_ image: MacOSRestoreImage?) async throws {
         
         if !FileManager.default.fileExists(atPath: bundlePath) {
             try FileManager.default.createDirectory(
@@ -149,7 +149,7 @@ struct ConfigurationBuilder<TemplateType: VZKitTemplate>: VZKitConfigurationBuil
                 throw VZKitError.missingMacImage
             }
             
-            let image: VZMacOSRestoreImage = try await .load(from: url)
+            let image: MacOSRestoreImage = try await .load(from: url)
             
             guard image.osVersion == version else {
                 throw VZKitError.wrongMacImageVersion(version, image.osVersion)
