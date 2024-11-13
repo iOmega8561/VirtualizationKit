@@ -37,57 +37,54 @@ extension BlockDevice: VZKitStorageAttachment {
     /// If a disk image already exists at the given location, it simply returns.
     ///
     /// - Parameters:
-    ///   - path: The location at which the disk image should be created on the host file system.
+    ///   - url: The location at which the disk image should be created on the host file system.
     ///   - size: The integer size of the virtual disk image, in gigabytes.
-    static private func createDiskImage(_ path: String, _ size: Int) throws {
+    static private func createDiskImage(_ url: URL, _ size: Int) throws {
         
-        guard !FileManager.default.fileExists(atPath: path) else {
-            return
-        }
+        guard !FileManager.default.fileExists(
+            atPath: url.path(percentEncoded: false)
+        ) else { return }
+        
+        FileManager.default.createFile(
+            atPath: url.path(percentEncoded: false),
+            contents: nil,
+            attributes: nil
+        )
         
         do {
-            FileManager.default.createFile(
-                atPath: path,
-                contents: nil,
-                attributes: nil
+            try FileHandle(forWritingTo: url).truncate(
+                atOffset: UInt64(size * 1024 * 1024 * 1024)
             )
             
-            let handle = try FileHandle(forWritingTo: URL(filePath: path))
-            try handle.truncate(atOffset: UInt64(size * 1024 * 1024 * 1024))
-        } catch {
-            throw VZKitError.mainDisk
-        }
+        } catch { throw VZKitError.mainDisk }
     }
     
     /// This is the static factory method for `VZVirtioBlockDeviceConfiguration`. It creates a block device based
     /// on the input parameters, and returns the attachment to the caller.
     ///
     /// - Parameters:
-    ///   - path: The location at which the disk image should be created on the host file system.
+    ///   - url: The location at which the disk image should be created on the host file system.
     ///   - type: Mounting permissions with integer size of the virtual disk image, in gigabytes.
-    static func createDevice(_ path: String, _ type: MountType) throws -> BlockDevice {
+    static func createDevice(_ url: URL, _ type: MountType) throws -> BlockDevice {
         
         let attachment: VZDiskImageStorageDeviceAttachment
         
+        let isReadOnly: Bool
+        
         switch type {
         case .readOnly(let size):
+            try createDiskImage(url, size)
+            isReadOnly = true
             
-            try createDiskImage(path, size)
-            
-            attachment = try VZDiskImageStorageDeviceAttachment(
-                url: URL(filePath: path),
-                readOnly: true
-            )
-                        
         case .readWrite(let size):
-            
-            try createDiskImage(path, size)
-            
-            attachment = try VZDiskImageStorageDeviceAttachment(
-                url: URL(filePath: path),
-                readOnly: false
-            )
+            try createDiskImage(url, size)
+            isReadOnly = false
         }
+        
+        attachment = try VZDiskImageStorageDeviceAttachment(
+            url: url,
+            readOnly: isReadOnly
+        )
         
         return BlockDevice(attachment: attachment)
     }

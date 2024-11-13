@@ -17,17 +17,17 @@ extension GenericPlatform {
     /// and eventually returns that instance, otherwise a new file is created.
     ///
     /// - Parameters:
-    ///   - path: Location of the machine identifier storage on the host file system.
-    private static func generateMachineId(_ path: String) throws -> VZGenericMachineIdentifier {
+    ///   - url: Location of the machine identifier storage on the host file system.
+    private static func generateMachineId(_ url: URL) throws -> VZGenericMachineIdentifier {
         
-        guard FileManager.default.fileExists(atPath: path) else {
+        guard FileManager.default.fileExists(atPath: url.path(percentEncoded: false)) else {
             let machineId = VZGenericMachineIdentifier()
             
-            try machineId.dataRepresentation.write(to: URL(filePath: path))
+            try machineId.dataRepresentation.write(to: url)
             return machineId
         }
         
-        guard let machineIdData = try? Data(contentsOf: URL(filePath: path)) else {
+        guard let machineIdData = try? Data(contentsOf: url) else {
             throw VZKitError.machineIdRetrieve
         }
         
@@ -42,11 +42,10 @@ extension GenericPlatform {
     /// It also takes care of calling the appropriate method to generate a machine identifier, then returns the full object, ready to use.
     ///
     /// - Parameters:
-    ///   - path: Location on disk of the Virtual Machine storage directory.
-    static func createDevice(_ path: String) throws -> GenericPlatform {
+    ///   - url: Location on disk of the Virtual Machine storage directory.
+    static func createDevice(_ url: URL) throws -> GenericPlatform {
         let platform = VZGenericPlatformConfiguration()
-        
-        platform.machineIdentifier = try generateMachineId(path + "/MachineIdentifier")
+        platform.machineIdentifier = try generateMachineId(url)
         
         return platform
     }

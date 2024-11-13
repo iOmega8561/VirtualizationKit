@@ -22,17 +22,17 @@ extension FileSystemDevice: VZKitStorageAttachment {
     /// auto-mounting features on macOS guests, and returns the attachment to the caller.
     ///
     /// - Parameters:
-    ///   - path: The location at which the shared mount should be created on the host file system.
+    ///   - url: The location at which the shared mount should be created on the host file system.
     ///   - type: The guest operating system.
-    static func createDevice(_ path: String, _ type: OperatingSystem) throws -> FileSystemDevice {
+    static func createDevice(_ url: URL, _ type: OperatingSystem) throws -> FileSystemDevice {
         
         try FileManager.default.createDirectory(
-            atPath: path,
+            atPath: url.path(percentEncoded: false),
             withIntermediateDirectories: true
         )
         
         let sharedDirectory = VZSharedDirectory(
-            url: URL(filePath: path),
+            url: url,
             readOnly: false
         )
         

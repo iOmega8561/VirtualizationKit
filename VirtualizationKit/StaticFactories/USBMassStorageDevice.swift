@@ -41,7 +41,7 @@ extension USBMassStorageDevice: VZKitStorageAttachment {
     /// Useful to simulate optical drives with .ISO files.
     ///
     /// - Parameters:
-    ///   - path: The location at which the disk image is located on the host file system.
+    ///   - url: The location at which the disk image is located on the host file system.
     ///   - type: The mounting permissions of the disk image.
     static func createDevice(_ path: URL, _ type: MountType) throws -> USBMassStorageDevice {
         

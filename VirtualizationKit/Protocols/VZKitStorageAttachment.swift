@@ -15,16 +15,14 @@ import Virtualization
 protocol VZKitStorageAttachment {
     
     associatedtype DeviceType: VZKitStorageAttachment
-    
-    associatedtype InputPath
-    
+        
     associatedtype InputType: CaseIterable
     
     /// This is the static, standard factory method for any `VZKitStorageAttachment` conforming class.
     /// It creates a block device based on the input parameters, and returns the attachment to the caller.
     ///
     /// - Parameters:
-    ///   - path: The location at which the disk image should be created on the host file system.
+    ///   - url: The location at which the disk image should be created on the host file system.
     ///   - type: Mounting permissions with integer size of the virtual disk image, in gigabytes.
-    static func createDevice(_ path: InputPath, _ type: InputType) throws -> DeviceType
+    static func createDevice(_ url: URL, _ type: InputType) throws -> DeviceType
 }

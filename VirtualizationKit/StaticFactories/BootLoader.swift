@@ -17,17 +17,18 @@ extension BootLoader {
     /// The input argument is needed to create the appropriate EFI variable store on the host file system.
     ///
     /// - Parameters:
-    ///   - path: Location on disk of the Virtual Machine storage directory.
-    public static func createDevice(_ path: String) throws -> BootLoader {
+    ///   - url: Location on disk of the Virtual Machine storage directory.
+    public static func createDevice(_ url: URL) throws -> BootLoader {
         let efiBootLoader = VZEFIBootLoader()
         
-        if FileManager.default.fileExists(atPath: path) {
+        if FileManager.default.fileExists(atPath: url.path(percentEncoded: false)) {
             efiBootLoader.variableStore = VZEFIVariableStore(
-                url: URL(filePath: path)
+                url: url
             )
+            
         } else {
             efiBootLoader.variableStore = try VZEFIVariableStore(
-                creatingVariableStoreAt: URL(filePath: path)
+                creatingVariableStoreAt: url
             )
         }
         
