@@ -19,7 +19,7 @@ import Foundation
 public final class _VirtualizationKit: Sendable {
     
     /// The version string of this framework
-    public let version: String = "1.2.1"
+    public let version: String = "1.2.2"
     
     /// The minimum macOS version supported as a guest operating system
     public let macOSGuestMinVersion: OperatingSystem.Version = .init(
