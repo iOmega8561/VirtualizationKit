@@ -54,6 +54,8 @@
 		E3393A3C2CDEE4CB00D4E3CE /* VZKitMachineStateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3393A3B2CDEE4C300D4E3CE /* VZKitMachineStateManager.swift */; };
 		E33DEB3E2CE39F8100B206B8 /* OperatingSystem.Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = E33DEB3D2CE39F7900B206B8 /* OperatingSystem.Version.swift */; };
 		E33DEB402CE3A03B00B206B8 /* VZKitOperatingSystemVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = E33DEB3F2CE3A03600B206B8 /* VZKitOperatingSystemVersion.swift */; };
+		E33DEB492CE4DAD500B206B8 /* MacOSRestoreImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E33DEB482CE4DAD500B206B8 /* MacOSRestoreImage.swift */; };
+		E33DEB4B2CE4DAFE00B206B8 /* VZKitRestoreImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E33DEB4A2CE4DAFE00B206B8 /* VZKitRestoreImage.swift */; };
 		E3941ECF2CBEFE2900E210E7 /* VZKitConsoleNSV.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3941ECE2CBEFE2100E210E7 /* VZKitConsoleNSV.swift */; };
 		E3941ED12CBEFEE000E210E7 /* ConsoleNSV.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3941ED02CBEFEDD00E210E7 /* ConsoleNSV.swift */; };
 		E3D7E87F2CBB4071005488C8 /* VirtualizationKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D7E87E2CBB4069005488C8 /* VirtualizationKit.swift */; };
@@ -109,6 +111,8 @@
 		E3393A3B2CDEE4C300D4E3CE /* VZKitMachineStateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VZKitMachineStateManager.swift; sourceTree = "<group>"; };
 		E33DEB3D2CE39F7900B206B8 /* OperatingSystem.Version.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperatingSystem.Version.swift; sourceTree = "<group>"; };
 		E33DEB3F2CE3A03600B206B8 /* VZKitOperatingSystemVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VZKitOperatingSystemVersion.swift; sourceTree = "<group>"; };
+		E33DEB482CE4DAD500B206B8 /* MacOSRestoreImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSRestoreImage.swift; sourceTree = "<group>"; };
+		E33DEB4A2CE4DAFE00B206B8 /* VZKitRestoreImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VZKitRestoreImage.swift; sourceTree = "<group>"; };
 		E3941ECE2CBEFE2100E210E7 /* VZKitConsoleNSV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VZKitConsoleNSV.swift; sourceTree = "<group>"; };
 		E3941ED02CBEFEDD00E210E7 /* ConsoleNSV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleNSV.swift; sourceTree = "<group>"; };
 		E3D7E87E2CBB4069005488C8 /* VirtualizationKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualizationKit.swift; sourceTree = "<group>"; };
@@ -155,6 +159,7 @@
 				E32B65EE2CBA960000FED006 /* MachineInstaller.swift */,
 				E32B65F02CBA960000FED006 /* MachineState.swift */,
 				E3393A372CDEAF3200D4E3CE /* MachineStateManager.swift */,
+				E33DEB482CE4DAD500B206B8 /* MacOSRestoreImage.swift */,
 				E3393A352CDE5D5600D4E3CE /* NetworkTopology.swift */,
 				E32B65EF2CBA960000FED006 /* OperatingSystem.swift */,
 				E33DEB3D2CE39F7900B206B8 /* OperatingSystem.Version.swift */,
@@ -180,6 +185,7 @@
 				E3393A332CDE590000D4E3CE /* VZKitNetworkTopology.swift */,
 				E32B65F92CBA960000FED006 /* VZKitOperatingSystem.swift */,
 				E33DEB3F2CE3A03600B206B8 /* VZKitOperatingSystemVersion.swift */,
+				E33DEB4A2CE4DAFE00B206B8 /* VZKitRestoreImage.swift */,
 				E32B65FA2CBA960000FED006 /* VZKitStorageAttachment.swift */,
 				E32B65FB2CBA960000FED006 /* VZKitTemplate.swift */,
 				E32B65FC2CBA960000FED006 /* VZKitTemplateOS.swift */,
@@ -329,6 +335,7 @@
 				E32B66132CBA960000FED006 /* ConfigurationBuilder.swift in Sources */,
 				E32B66152CBA960000FED006 /* MachineInstaller.swift in Sources */,
 				E32B66162CBA960000FED006 /* OperatingSystem.swift in Sources */,
+				E33DEB492CE4DAD500B206B8 /* MacOSRestoreImage.swift in Sources */,
 				E32B66172CBA960000FED006 /* MachineState.swift in Sources */,
 				E3393A362CDE5D5700D4E3CE /* NetworkTopology.swift in Sources */,
 				E32B66182CBA960000FED006 /* VirtualMachineOS.swift in Sources */,
@@ -371,6 +378,7 @@
 				E3393A3A2CDEB22E00D4E3CE /* MachineDelegate.swift in Sources */,
 				E32B66322CBA960000FED006 /* VZKitError.swift in Sources */,
 				E32B66332CBA960000FED006 /* VZKitGlobalActor.swift in Sources */,
+				E33DEB4B2CE4DAFE00B206B8 /* VZKitRestoreImage.swift in Sources */,
 				E3393A3C2CDEE4CB00D4E3CE /* VZKitMachineStateManager.swift in Sources */,
 				E32B66342CBA960000FED006 /* VZKitResult.swift in Sources */,
 			);
