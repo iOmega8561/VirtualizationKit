@@ -32,22 +32,7 @@ extension OperatingSystem {
         /// - Throws: An error if the restore image could not be loaded or is invalid.
         public static func fromImage(withURL url: URL) async throws -> Self {
             
-            return try await withCheckedThrowingContinuation { continuation in
-                
-                VZMacOSRestoreImage.load(from: url) { result in
-                    switch result {
-                        
-                    case .failure(let error):
-                        continuation.resume(throwing: error)
-                        
-                    case .success(let restoreImage):
-                        continuation.resume(
-                            returning: .init(restoreImage.operatingSystemVersion)
-                        )
-                    }
-                }
-            }
-            
+            return try await VZMacOSRestoreImage.load(from: url).osVersion
         }
         
         /// The major version number of the operating system.

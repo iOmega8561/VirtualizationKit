@@ -134,31 +134,16 @@ struct ConfigurationBuilder<TemplateType: VZKitTemplate>: VZKitConfigurationBuil
     func createConfiguration() async throws -> VZVirtualMachineConfiguration {
         
         switch template.os.type {
-        case .macos:
+        case .macos(let version):
             
             guard let url = template.os.installer else {
                 throw VZKitError.missingMacImage
             }
             
-            let image: VZMacOSRestoreImage = try await withCheckedThrowingContinuation({ continuation in
-                VZMacOSRestoreImage.load(from: url) { result in
-                    switch result {
-                    case let .failure(error):
-                        continuation.resume(throwing: error)
-                    case let .success(systemImage):
-                        continuation.resume(returning: systemImage)
-                    }
-                }
-            })
+            let image: VZMacOSRestoreImage = try await .load(from: url)
             
-            let version = OperatingSystem.Version(
-                major: image.operatingSystemVersion.majorVersion,
-                minor: image.operatingSystemVersion.minorVersion,
-                patch: image.operatingSystemVersion.patchVersion
-            )
-            
-            guard version == template.os.type.version! else {
-                throw VZKitError.wrongMacImageVersion(template.os.type.version!, version)
+            guard image.osVersion == version else {
+                throw VZKitError.wrongMacImageVersion(version, image.osVersion)
             }
             
             try await createConfiguration(image)
