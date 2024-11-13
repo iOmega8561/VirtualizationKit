@@ -41,7 +41,8 @@ public final class _VirtualizationKit: Sendable {
     /// This property will only be used internally.
     ///
     /// - Important: Pinned to `@MainActor` for thread safe access and `Sendable` conformance.
-    @MainActor private(set) var bundlePath: String = NSHomeDirectory() + "/VirtualizationKit.bundle/"
+    @MainActor private(set) var supportDirectory: URL = .applicationSupportDirectory
+        .appendingPathComponent("com.giusepperocco.VirtualizationKit")
     
     /// The public setter method for `bundlePath`. The application that wants to override
     /// `bundlePath` needs to call this setter providing a `String` path
@@ -49,8 +50,8 @@ public final class _VirtualizationKit: Sendable {
     /// - Important: Executes on `@MainActor` to be able to edit `bundlePath` synchronously
     ///
     /// - Parameters:
-    ///   - path: A `String` representing the destination path.
-    @MainActor public func setBundlePath(_ path: String) { bundlePath = path }
+    ///   - url: A `URL` representing the destination path.
+    @MainActor public func setSupportDirectory(_ url: URL) { supportDirectory = url }
     
     fileprivate init() {}
 }

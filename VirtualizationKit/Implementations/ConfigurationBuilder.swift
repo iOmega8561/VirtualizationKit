@@ -34,7 +34,7 @@ struct ConfigurationBuilder<TemplateType: VZKitTemplate>: VZKitConfigurationBuil
     let configuration: VZVirtualMachineConfiguration
     
     /// Computed property to get the location of the VM's storage folder inside the application bundle
-    private let bundlePath: String
+    private let vmSupportDirectory: URL
     
     /// This method is responsible of building the full fledged virtual machine configuration scheme.
     /// To do that it makes a distinction between the different guest operating systems, since they need completely different
@@ -45,25 +45,27 @@ struct ConfigurationBuilder<TemplateType: VZKitTemplate>: VZKitConfigurationBuil
     ///   - image: The macOS restore image object, if needed.
     private func createConfiguration(_ image: MacOSRestoreImage?) async throws {
         
-        if !FileManager.default.fileExists(atPath: bundlePath) {
-            try FileManager.default.createDirectory(
-                atPath: bundlePath,
-                withIntermediateDirectories: true
-            )
-        }
+        try FileManager.default.createDirectory(
+            atPath: vmSupportDirectory.path(percentEncoded: false),
+            withIntermediateDirectories: true
+        )
         
         switch template.os.type {
         case .macos:
             
-            configuration.platform = try MacintoshPlatform.createDevice(image!, bundlePath)
+            configuration.platform = try MacintoshPlatform.createDevice(image!, vmSupportDirectory)
             
             configuration.bootLoader = try BootLoader.createDevice()
             
         case .linux:
             
-            configuration.platform = try GenericPlatform.createDevice(bundlePath)
+            configuration.platform = try GenericPlatform.createDevice(
+                vmSupportDirectory.appendingPathComponent("MachineIdentifier")
+            )
             
-            configuration.bootLoader = try BootLoader.createDevice(bundlePath + "/NVRAM")
+            configuration.bootLoader = try BootLoader.createDevice(
+                vmSupportDirectory.appendingPathComponent("NVRAM")
+            )
             
             configuration.directorySharingDevices.append(
                 try RosettaDevice.createDevice()
@@ -78,7 +80,7 @@ struct ConfigurationBuilder<TemplateType: VZKitTemplate>: VZKitConfigurationBuil
         
         configuration.storageDevices.append(
             try BlockDevice.createDevice(
-                bundlePath + "/Disk.img",
+                vmSupportDirectory.appendingPathComponent("Disk.img"),
                 .readWrite(size: template.specs.diskSizeGB)
             )
         )
@@ -126,7 +128,7 @@ struct ConfigurationBuilder<TemplateType: VZKitTemplate>: VZKitConfigurationBuil
         if template.specs.hasDirectoryShare {
             configuration.directorySharingDevices.append(
                 try FileSystemDevice.createDevice(
-                    bundlePath + "/" + template.name,
+                    vmSupportDirectory.appendingPathComponent(template.name),
                     template.os.type
                 )
             )
@@ -172,7 +174,11 @@ struct ConfigurationBuilder<TemplateType: VZKitTemplate>: VZKitConfigurationBuil
     ///   - template: The data transfer object containing all the info about the virtual machine.
     init(template: TemplateType) async {
         self.template = template
+        
         self.configuration = VZVirtualMachineConfiguration()
-        self.bundlePath = await VirtualizationKit.bundlePath + template.id.uuidString
+        
+        self.vmSupportDirectory = await VirtualizationKit.supportDirectory.appendingPathComponent(
+            template.id.uuidString
+        )
     }
 }

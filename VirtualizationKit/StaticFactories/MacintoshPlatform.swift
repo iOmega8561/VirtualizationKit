@@ -25,17 +25,17 @@ extension MacintoshPlatform {
     /// and eventually returns that instance, otherwise a new file is created.
     ///
     /// - Parameters:
-    ///   - path: Location of the machine identifier storage on the host file system.
-    private static func generateMacMachineId(_ path: String) throws -> VZMacMachineIdentifier {
+    ///   - url: Location of the machine identifier storage on the host file system.
+    private static func generateMacMachineId(_ url: URL) throws -> VZMacMachineIdentifier {
         
-        guard FileManager.default.fileExists(atPath: path) else {
+        guard FileManager.default.fileExists(atPath: url.path(percentEncoded: false)) else {
             let machineId = VZMacMachineIdentifier()
             
-            try machineId.dataRepresentation.write(to: URL(filePath: path))
+            try machineId.dataRepresentation.write(to: url)
             return machineId
         }
         
-        guard let machineIdData = try? Data(contentsOf: URL(filePath: path)) else {
+        guard let machineIdData = try? Data(contentsOf: url) else {
             throw VZKitError.machineIdRetrieve
         }
         
@@ -51,18 +51,18 @@ extension MacintoshPlatform {
     ///
     /// - Parameters:
     ///   - hwModel: The macOS restore image most featureful supported hardware model.
-    ///   - path: Location of the auxiliary storage on the host file system.
+    ///   - url: Location of the auxiliary storage on the host file system.
     private static func generateMacAuxiliaryStorage(
         _ hwModel: VZMacHardwareModel,
-        _ path: String
+        _ url: URL
     ) throws -> VZMacAuxiliaryStorage {
         
-        guard !FileManager.default.fileExists(atPath: path)  else {
-            return VZMacAuxiliaryStorage(url: URL(filePath: path))
+        guard !FileManager.default.fileExists(atPath: url.path(percentEncoded: false))  else {
+            return VZMacAuxiliaryStorage(url: url)
         }
         
         let auxStore = try VZMacAuxiliaryStorage(
-            creatingStorageAt: URL(filePath: path),
+            creatingStorageAt: url,
             hardwareModel: hwModel
         )
         
@@ -77,8 +77,8 @@ extension MacintoshPlatform {
     ///
     /// - Parameters:
     ///   - image: The macOS guest restore image, as a ready to go MacOSRestoreImage object.
-    ///   - path: Location on disk of the Virtual Machine storage directory.
-    static func createDevice(_ image: MacOSRestoreImage, _ path: String) throws -> MacintoshPlatform {
+    ///   - url: Location on disk of the Virtual Machine storage directory.
+    static func createDevice(_ image: MacOSRestoreImage, _ url: URL) throws -> MacintoshPlatform {
         
         guard let requirements = image.mostFeaturefulSupportedConfiguration else {
             throw VZKitError.macUnsupportedImage
@@ -92,11 +92,13 @@ extension MacintoshPlatform {
         
         platform.hardwareModel = requirements.hardwareModel
         
-        platform.machineIdentifier = try generateMacMachineId(path + "/MachineIdentifier")
+        platform.machineIdentifier = try generateMacMachineId(
+            url.appendingPathComponent("MachineIdentifier")
+        )
         
         platform.auxiliaryStorage = try generateMacAuxiliaryStorage(
             platform.hardwareModel,
-            path + "/AuxiliaryStorage"
+            url.appendingPathComponent("AuxiliaryStorage")
         )
         
         return platform
