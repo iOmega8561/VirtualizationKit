@@ -67,9 +67,9 @@ extension MacintoshPlatform {
     /// to create an `VZMacAuxiliaryStorage` and bind it to the platform, before returning the full object to the caller.
     ///
     /// - Parameters:
-    ///   - image: The macOS guest restore image, as a ready to go VZMacOSRestoreImage object.
+    ///   - image: The macOS guest restore image, as a ready to go MacOSRestoreImage object.
     ///   - path: Location on disk of the Virtual Machine storage directory.
-    static func createDevice(_ image: VZMacOSRestoreImage, _ path: String) throws -> MacintoshPlatform {
+    static func createDevice(_ image: MacOSRestoreImage, _ path: String) throws -> MacintoshPlatform {
         
         guard let requirements = image.mostFeaturefulSupportedConfiguration else {
             throw VZKitError.macUnsupportedImage
