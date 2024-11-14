@@ -21,7 +21,9 @@ extension BootLoader {
     public static func createDevice(_ url: URL) throws -> BootLoader {
         let efiBootLoader = VZEFIBootLoader()
         
-        if FileManager.default.fileExists(atPath: url.path(percentEncoded: false)) {
+        if FileManager.default.fileExists(
+            atPath: url.path(percentEncoded: false)
+        ) {
             efiBootLoader.variableStore = VZEFIVariableStore(
                 url: url
             )

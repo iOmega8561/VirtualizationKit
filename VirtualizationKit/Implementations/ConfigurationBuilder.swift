@@ -37,7 +37,7 @@ struct ConfigurationBuilder<TemplateType: VZKitTemplate>: VZKitConfigurationBuil
     private func createConfiguration(_ image: MacOSRestoreImage?) async throws {
         
         try FileManager.default.createDirectory(
-            atPath: vmSupportDirectory.path(percentEncoded: false),
+            at: vmSupportDirectory,
             withIntermediateDirectories: true
         )
         
