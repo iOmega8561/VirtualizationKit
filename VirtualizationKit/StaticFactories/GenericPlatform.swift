@@ -29,7 +29,10 @@ extension GenericPlatform {
     ///   - url: Location of the machine identifier storage on the host file system.
     private static func generateMachineId(_ url: URL) throws -> VZGenericMachineIdentifier {
         
-        guard FileManager.default.fileExists(atPath: url.path(percentEncoded: false)) else {
+        guard FileManager.default.fileExists(
+            atPath: url.path(percentEncoded: false)
+            
+        ) else {
             let machineId = VZGenericMachineIdentifier()
             
             try machineId.dataRepresentation.write(to: url)

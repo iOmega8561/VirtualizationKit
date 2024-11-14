@@ -28,7 +28,10 @@ extension MacintoshPlatform {
     ///   - url: Location of the machine identifier storage on the host file system.
     private static func generateMacMachineId(_ url: URL) throws -> VZMacMachineIdentifier {
         
-        guard FileManager.default.fileExists(atPath: url.path(percentEncoded: false)) else {
+        guard FileManager.default.fileExists(
+            atPath: url.path(percentEncoded: false)
+            
+        ) else {
             let machineId = VZMacMachineIdentifier()
             
             try machineId.dataRepresentation.write(to: url)
@@ -57,9 +60,10 @@ extension MacintoshPlatform {
         _ url: URL
     ) throws -> VZMacAuxiliaryStorage {
         
-        guard !FileManager.default.fileExists(atPath: url.path(percentEncoded: false))  else {
-            return VZMacAuxiliaryStorage(url: url)
-        }
+        guard !FileManager.default.fileExists(
+            atPath: url.path(percentEncoded: false)
+            
+        )  else { return VZMacAuxiliaryStorage(url: url) }
         
         let auxStore = try VZMacAuxiliaryStorage(
             creatingStorageAt: url,

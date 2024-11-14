@@ -52,6 +52,7 @@ extension BlockDevice: VZKitStorageAttachment {
         
         guard !FileManager.default.fileExists(
             atPath: url.path(percentEncoded: false)
+            
         ) else { return }
         
         FileManager.default.createFile(
