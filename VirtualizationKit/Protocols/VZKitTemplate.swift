@@ -27,20 +27,17 @@ public protocol VZKitTemplate: Identifiable, Hashable, Sendable, Codable {
     /// Unique identifier for the template instance.
     var id: UUID { get }
     
-    /// Timestamp marking the creation or last modification date of the template.
-    var timestamp: Date { get }
-    
     /// Descriptive name of the template.
     var name: String { get }
-    
-    /// Array of URLs pointing to CD-ROM images or media to be used with the VM.
-    var cdRomArray: [URL] { get }
     
     /// The operating system type and configuration associated with this template.
     var operatingSystem: OperatingSystem { get }
     
-    /// Optional URL pointing to a system image from which the VM can be restored, if available.
-    var restoreFromImage: URL? { get }
+    /// A URL pointing to the chosen CD-ROM image or media to be used with the VM, if available
+    var removableDiskImage: URL? { get }
+    
+    /// A Boolean value that allows to understeand if the virtual machine needs to be processed through an Installer facility.
+    var restoreFromDiskImage: Bool { get }
     
     /// The network topology setup for the VM, defining its network configuration.
     var networkTopology: NetworkTopology { get }

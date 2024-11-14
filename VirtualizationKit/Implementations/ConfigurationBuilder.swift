@@ -73,14 +73,14 @@ struct ConfigurationBuilder<TemplateType: VZKitTemplate>: VZKitConfigurationBuil
             configuration.directorySharingDevices.append(
                 try RosettaDevice.createDevice()
             )
+            
+            if let url = template.removableDiskImage {
+                configuration.storageDevices.append(
+                    try USBMassStorageDevice.createDevice(url, .readOnly)
+                )
+            }
         }
-        
-        for cdRomURL in template.cdRomArray {
-            configuration.storageDevices.append(
-                try USBMassStorageDevice.createDevice(cdRomURL, .readOnly)
-            )
-        }
-        
+      
         configuration.storageDevices.append(
             try BlockDevice.createDevice(
                 vmSupportDirectory.appendingPathComponent("Disk.img"),
@@ -150,7 +150,7 @@ struct ConfigurationBuilder<TemplateType: VZKitTemplate>: VZKitConfigurationBuil
         switch template.operatingSystem {
         case .macos(let version):
             
-            guard let url = template.restoreFromImage else {
+            guard let url = template.removableDiskImage else {
                 throw VZKitError.missingMacImage
             }
             
@@ -167,8 +167,7 @@ struct ConfigurationBuilder<TemplateType: VZKitTemplate>: VZKitConfigurationBuil
             try await createConfiguration(nil)
         }
         
-        try configuration.validate()
-        return configuration
+        try configuration.validate(); return configuration
     }
     
     /// The explicit initializer of the struct.
