@@ -116,7 +116,7 @@ public struct VirtualMachine<TemplateType: VZKitTemplate>: VZKitVirtualMachine {
             case .install:
                 await stateManager.update(with: .restoring)
                 try await MachineInstaller(
-                    restoreImage: template.restoreFromImage,
+                    restoreImage: template.removableDiskImage,
                     vzVirtualMachine: vzVirtualMachine
                 ).startInstallation(stateManager)
             }
