@@ -7,28 +7,50 @@
 
 import Foundation
 
-/// The `VZKitTemplate` protocl defines a common interface for templates to be used with this framework
+/// The `VZKitTemplate` protocol defines a common interface for VM templates in the framework.
 ///
 /// @brief
-///    The framework relys on the concept of VM Templates. A Template is a simple and concise stored configuration of our VM.
-///    Every Template contains only the necessary information for the creation of a VM without carrying all of `Virtualization Framework` bulk.
+///    The framework relies on VM Templates to define virtual machine configurations. A Template is a streamlined
+///    and minimal stored configuration containing essential details for VM creation, omitting the full `Virtualization Framework`
+///    data. Templates ensure a simple yet complete setup for defining VMs within the framework.
 public protocol VZKitTemplate: Identifiable, Hashable, Sendable, Codable {
     
-    associatedtype OperatingSystemType: VZKitTemplateOS
-    
-    associatedtype TemplateSpecsType: VZKitTemplateSpecs
-    
-    var timestamp: Date { get }
-    
-    /// Unique identifier for the model
+    /// Unique identifier for the template instance.
     var id: UUID { get }
     
-    /// The name of the new Virtual Machine
+    /// Timestamp marking the creation or last modification date of the template.
+    var timestamp: Date { get }
+    
+    /// Descriptive name of the template.
     var name: String { get }
     
-    /// The Operating System of choice, properly wrapped as a `VZKitTemplateOS` conforming object
-    var os: OperatingSystemType { get }
+    /// Array of URLs pointing to CD-ROM images or media to be used with the VM.
+    var cdRomArray: [URL] { get }
     
-    /// The VM hardware specs, properly wrapped as a `VZKitTemplateSpecs` conforming object.
-    var specs: TemplateSpecsType { get }
+    /// The operating system type and configuration associated with this template.
+    var operatingSystem: OperatingSystem { get }
+    
+    /// Optional URL pointing to a system image from which the VM can be restored, if available.
+    var restoreFromImage: URL? { get }
+    
+    /// The network topology setup for the VM, defining its network configuration.
+    var networkTopology: NetworkTopology { get }
+    
+    /// The number of CPU cores to allocate to the VM.
+    var cpuCoreCount: Int { get }
+    
+    /// The size of memory, in megabytes, to allocate to the VM.
+    var memorySizeMegaBytes: Int { get }
+    
+    /// The size of disk storage, in gigabytes, to allocate to the VM.
+    var diskSizeGigaBytes: Int { get }
+    
+    /// A Boolean value that indicates whether a shared directory is enabled between the host and VM.
+    var enablesSharedDirectory: Bool { get }
+    
+    /// A Boolean value that indicates whether input audio support is enabled for the VM.
+    var enablesInputAudio: Bool { get }
+    
+    /// A Boolean value that indicates whether output audio support is enabled for the VM.
+    var enablesOutputAudio: Bool { get }
 }
