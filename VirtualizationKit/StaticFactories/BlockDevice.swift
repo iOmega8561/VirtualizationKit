@@ -29,8 +29,8 @@ extension BlockDevice: VZKitStorageAttachment {
             .readWrite(size: 0)
         ]
         
-        case readWrite(size: Int)
-        case readOnly(size: Int)
+        case readWrite(size: UInt64)
+        case readOnly(size: UInt64)
     }
     
     /// This method can create a disk image and write it to the host file system.
@@ -39,7 +39,7 @@ extension BlockDevice: VZKitStorageAttachment {
     /// - Parameters:
     ///   - url: The location at which the disk image should be created on the host file system.
     ///   - size: The integer size of the virtual disk image, in gigabytes.
-    static private func createDiskImage(_ url: URL, _ size: Int) throws {
+    static private func createDiskImage(_ url: URL, _ size: UInt64) throws {
         
         guard !FileManager.default.fileExists(
             atPath: url.path(percentEncoded: false)
@@ -54,7 +54,7 @@ extension BlockDevice: VZKitStorageAttachment {
         
         do {
             try FileHandle(forWritingTo: url).truncate(
-                atOffset: UInt64(size * 1024 * 1024 * 1024)
+                atOffset: size
             )
             
         } catch { throw VZKitError.mainDisk }
