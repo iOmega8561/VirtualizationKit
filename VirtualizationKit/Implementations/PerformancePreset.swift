@@ -52,30 +52,36 @@ public enum PerformancePreset: CaseIterable, Codable, Sendable, Hashable {
     )
     
     /// Maximum allowed CPU core count for the host system.
-    private static var maxCpuCoreCount: Int {
+    public static var maximumAllowedCPUCount: Int {
         min(ProcessInfo.processInfo.processorCount, Configuration.maximumAllowedCPUCount)
     }
     
     /// Maximum allowed memory size for the host system in bytes.
-    private static var maxMemorySize: UInt64 {
+    public static var maximumAllowedMemorySize: UInt64 {
         min(ProcessInfo.processInfo.physicalMemory, Configuration.maximumAllowedMemorySize)
     }
+    
+    /// Minimum allowed CPU core count for the host system.
+    public static var minimumAllowedCPUCount: Int { Configuration.minimumAllowedCPUCount }
+    
+    /// Minimum allowed memory size for the host system in bytes.
+    public static var minimumAllowedMemorySize: UInt64 { Configuration.minimumAllowedMemorySize }
     
     /// Number of CPU cores for the selected preset.
     /// Ensures the value is between minimum and maximum allowed core counts.
     public var cpuCoreCount: Int {
         switch self {
         case .basic:
-            return max(Configuration.minimumAllowedCPUCount, Self.maxCpuCoreCount / 4)
+            return max(Configuration.maximumAllowedCPUCount, Self.maximumAllowedCPUCount / 4)
             
         case .balanced:
-            return max(Configuration.minimumAllowedCPUCount, Self.maxCpuCoreCount / 2)
+            return max(Configuration.minimumAllowedCPUCount, Self.maximumAllowedCPUCount / 2)
             
         case .performance:
-            return max(Configuration.minimumAllowedCPUCount, Self.maxCpuCoreCount - 2)
+            return max(Configuration.minimumAllowedCPUCount, Self.maximumAllowedCPUCount - 2)
             
-        case .custom(let desiderCoreCount, _, _):
-            return max(min(desiderCoreCount, Self.maxCpuCoreCount), Configuration.minimumAllowedCPUCount)
+        case .custom(let desideredCoreCount, _, _):
+            return max(min(desideredCoreCount, Self.maximumAllowedCPUCount), Configuration.minimumAllowedCPUCount)
         }
     }
     
@@ -84,16 +90,16 @@ public enum PerformancePreset: CaseIterable, Codable, Sendable, Hashable {
     public var memorySize: UInt64 {
         switch self {
         case .basic:
-            return max(Configuration.minimumAllowedMemorySize, Self.maxMemorySize / 8)
+            return max(Configuration.minimumAllowedMemorySize, Self.maximumAllowedMemorySize / 8)
             
         case .balanced:
-            return max(Configuration.minimumAllowedMemorySize, Self.maxMemorySize / 4)
+            return max(Configuration.minimumAllowedMemorySize, Self.maximumAllowedMemorySize / 4)
             
         case .performance:
-            return max(Configuration.minimumAllowedMemorySize, Self.maxMemorySize / 2)
+            return max(Configuration.minimumAllowedMemorySize, Self.maximumAllowedMemorySize / 2)
             
         case .custom(_, let desiredMemorySize, _):
-            return max(min(desiredMemorySize, Self.maxMemorySize), Configuration.minimumAllowedMemorySize)
+            return max(min(desiredMemorySize, Self.maximumAllowedMemorySize), Configuration.minimumAllowedMemorySize)
         }
     }
     
