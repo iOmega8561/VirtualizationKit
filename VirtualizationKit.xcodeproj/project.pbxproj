@@ -51,6 +51,7 @@
 		E33DEB492CE4DAD500B206B8 /* MacOSRestoreImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E33DEB482CE4DAD500B206B8 /* MacOSRestoreImage.swift */; };
 		E33DEB4B2CE4DAFE00B206B8 /* VZKitRestoreImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E33DEB4A2CE4DAFE00B206B8 /* VZKitRestoreImage.swift */; };
 		E3941ED12CBEFEE000E210E7 /* GraphicalConsole.Framebuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3941ED02CBEFEDD00E210E7 /* GraphicalConsole.Framebuffer.swift */; };
+		E3D3AA9D2CE74FA00062B5FB /* PerformancePreset.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D3AA9C2CE74F9A0062B5FB /* PerformancePreset.swift */; };
 		E3D7E87F2CBB4071005488C8 /* VirtualizationKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D7E87E2CBB4069005488C8 /* VirtualizationKit.swift */; };
 		E3DC75252CBC1EF5006ADCF1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E3DC75242CBC1EF5006ADCF1 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
@@ -101,6 +102,7 @@
 		E33DEB482CE4DAD500B206B8 /* MacOSRestoreImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSRestoreImage.swift; sourceTree = "<group>"; };
 		E33DEB4A2CE4DAFE00B206B8 /* VZKitRestoreImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VZKitRestoreImage.swift; sourceTree = "<group>"; };
 		E3941ED02CBEFEDD00E210E7 /* GraphicalConsole.Framebuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphicalConsole.Framebuffer.swift; sourceTree = "<group>"; };
+		E3D3AA9C2CE74F9A0062B5FB /* PerformancePreset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformancePreset.swift; sourceTree = "<group>"; };
 		E3D7E87E2CBB4069005488C8 /* VirtualizationKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualizationKit.swift; sourceTree = "<group>"; };
 		E3DC75242CBC1EF5006ADCF1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -148,6 +150,7 @@
 				E3393A352CDE5D5600D4E3CE /* NetworkTopology.swift */,
 				E32B65EF2CBA960000FED006 /* OperatingSystem.swift */,
 				E33DEB3D2CE39F7900B206B8 /* OperatingSystem.Version.swift */,
+				E3D3AA9C2CE74F9A0062B5FB /* PerformancePreset.swift */,
 				E32B65EB2CBA960000FED006 /* VirtualMachine.swift */,
 			);
 			path = Implementations;
@@ -313,6 +316,7 @@
 				E32B66122CBA960000FED006 /* VirtualMachine.swift in Sources */,
 				E32B66132CBA960000FED006 /* ConfigurationBuilder.swift in Sources */,
 				E32B66152CBA960000FED006 /* MachineInstaller.swift in Sources */,
+				E3D3AA9D2CE74FA00062B5FB /* PerformancePreset.swift in Sources */,
 				E32B66162CBA960000FED006 /* OperatingSystem.swift in Sources */,
 				E33DEB492CE4DAD500B206B8 /* MacOSRestoreImage.swift in Sources */,
 				E32B66172CBA960000FED006 /* MachineState.swift in Sources */,
