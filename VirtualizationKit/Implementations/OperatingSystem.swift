@@ -95,17 +95,4 @@ public enum OperatingSystem: VZKitOperatingSystem {
             return version
         }
     }
-    
-    /// This public `init()` will create the right object according to `version` paramenter.
-    /// To correctly instanciate .macOS case, a version not nil is necessary, otherwise it will fallback to .linux, always.
-    ///
-    /// - Parameters:
-    ///   - version: The Version of the operating system in a (major: Int, minor: Int, patch: Int) tuple format.
-    public init(version: Version? = nil) {
-        
-        if let version {
-            self = .macos(version: version)
-            
-        } else { self = .linux }
-    }
 }
