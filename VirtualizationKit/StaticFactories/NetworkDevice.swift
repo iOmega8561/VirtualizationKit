@@ -46,9 +46,11 @@ extension NetworkDevice: VZKitDeviceAttachment {
             dev.attachment = VZNATNetworkDeviceAttachment()
             
         default:
-            return dev
+            break
         }
                 
+        dev.macAddress = .randomLocallyAdministered()
+        
         return dev
     }
 }
