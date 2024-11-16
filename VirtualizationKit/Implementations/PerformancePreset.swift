@@ -21,8 +21,6 @@ import Virtualization
 /// UInt64 values for memorySize and diskSize are multiples of 1 MB.
 public enum PerformancePreset: CaseIterable, Codable, Sendable, Hashable {
     
-    private typealias Configuration = VZVirtualMachineConfiguration
-    
     /// List of all performance presets.
     public static let allCases: [PerformancePreset] = [
         .basic,
@@ -53,35 +51,60 @@ public enum PerformancePreset: CaseIterable, Codable, Sendable, Hashable {
     
     /// Maximum allowed CPU core count for the host system.
     public static var maximumAllowedCPUCount: Int {
-        min(ProcessInfo.processInfo.processorCount, Configuration.maximumAllowedCPUCount)
+        min(
+            ProcessInfo.processInfo.processorCount,
+            VZVirtualMachineConfiguration.maximumAllowedCPUCount
+        )
     }
     
     /// Maximum allowed memory size for the host system in bytes.
     public static var maximumAllowedMemorySize: UInt64 {
-        min(ProcessInfo.processInfo.physicalMemory, Configuration.maximumAllowedMemorySize)
+        min(
+            ProcessInfo.processInfo.physicalMemory,
+            VZVirtualMachineConfiguration.maximumAllowedMemorySize
+        )
     }
     
     /// Minimum allowed CPU core count for the host system.
-    public static var minimumAllowedCPUCount: Int { Configuration.minimumAllowedCPUCount }
+    public static var minimumAllowedCPUCount: Int {
+        VZVirtualMachineConfiguration.minimumAllowedCPUCount
+    }
     
     /// Minimum allowed memory size for the host system in bytes.
-    public static var minimumAllowedMemorySize: UInt64 { Configuration.minimumAllowedMemorySize }
+    public static var minimumAllowedMemorySize: UInt64 {
+        VZVirtualMachineConfiguration.minimumAllowedMemorySize
+    }
     
     /// Number of CPU cores for the selected preset.
     /// Ensures the value is between minimum and maximum allowed core counts.
     public var cpuCoreCount: Int {
         switch self {
         case .basic:
-            return max(Configuration.maximumAllowedCPUCount, Self.maximumAllowedCPUCount / 4)
+            return max(
+                VZVirtualMachineConfiguration.maximumAllowedCPUCount,
+                Self.maximumAllowedCPUCount / 4
+            )
             
         case .balanced:
-            return max(Configuration.minimumAllowedCPUCount, Self.maximumAllowedCPUCount / 2)
+            return max(
+                VZVirtualMachineConfiguration.minimumAllowedCPUCount,
+                Self.maximumAllowedCPUCount / 2
+            )
             
         case .performance:
-            return max(Configuration.minimumAllowedCPUCount, Self.maximumAllowedCPUCount - 2)
+            return max(
+                VZVirtualMachineConfiguration.minimumAllowedCPUCount,
+                Self.maximumAllowedCPUCount - 2
+            )
             
         case .custom(let desideredCoreCount, _, _):
-            return max(min(desideredCoreCount, Self.maximumAllowedCPUCount), Configuration.minimumAllowedCPUCount)
+            return max(
+                min(
+                    desideredCoreCount,
+                    Self.maximumAllowedCPUCount
+                ),
+                VZVirtualMachineConfiguration.minimumAllowedCPUCount
+            )
         }
     }
     
@@ -90,16 +113,31 @@ public enum PerformancePreset: CaseIterable, Codable, Sendable, Hashable {
     public var memorySize: UInt64 {
         switch self {
         case .basic:
-            return max(Configuration.minimumAllowedMemorySize, Self.maximumAllowedMemorySize / 8)
+            return max(
+                VZVirtualMachineConfiguration.minimumAllowedMemorySize,
+                Self.maximumAllowedMemorySize / 8
+            )
             
         case .balanced:
-            return max(Configuration.minimumAllowedMemorySize, Self.maximumAllowedMemorySize / 4)
+            return max(
+                VZVirtualMachineConfiguration.minimumAllowedMemorySize,
+                Self.maximumAllowedMemorySize / 4
+            )
             
         case .performance:
-            return max(Configuration.minimumAllowedMemorySize, Self.maximumAllowedMemorySize / 2)
+            return max(
+                VZVirtualMachineConfiguration.minimumAllowedMemorySize,
+                Self.maximumAllowedMemorySize / 2
+            )
             
         case .custom(_, let desiredMemorySize, _):
-            return max(min(desiredMemorySize, Self.maximumAllowedMemorySize), Configuration.minimumAllowedMemorySize)
+            return max(
+                min(
+                    desiredMemorySize,
+                    Self.maximumAllowedMemorySize
+                ),
+                VZVirtualMachineConfiguration.minimumAllowedMemorySize
+            )
         }
     }
     
