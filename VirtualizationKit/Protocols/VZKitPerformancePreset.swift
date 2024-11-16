@@ -82,4 +82,12 @@ public protocol VZKitPerformancePreset: CaseIterable, Codable, Sendable, Hashabl
     /// Choose a size that accommodates the intended usage while considering storage constraints
     /// on the host machine.
     var diskSize: UInt64 { get }
+    
+    /// A localized string representing the label of the selected performance preset
+    ///
+    /// This string provides a human-readable, localized description of the virtual machine's performance preset.
+    /// It can be displayed in SwiftUI views to give users contextual information about the configuration.
+    /// Localization support ensures that this description is accessible in multiple languages,
+    /// improving internationalization and user comprehension.
+    var localized: String { get }
 }
