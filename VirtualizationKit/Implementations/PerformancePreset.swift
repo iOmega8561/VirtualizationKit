@@ -19,7 +19,7 @@ import Virtualization
 /// - `custom`: User-defined configuration.
 ///
 /// UInt64 values for memorySize and diskSize are multiples of 1 MB.
-public enum PerformancePreset: CaseIterable, Codable, Sendable, Hashable {
+public enum PerformancePreset: VZKitPerformancePreset {
     
     /// List of all performance presets.
     public static let allCases: [PerformancePreset] = [
