@@ -88,65 +88,38 @@ extension MachineState: VZKitMachineState {
     ///   - `details-vmstate-resuming`: for `.resuming` state
     ///   - `details-vmstate-restoring`: for `.restoring` state
     ///
-    /// If the state does not match any defined case, it defaults to `"default-state"`.
+    /// If the state does not match any defined case, it defaults to `"undefined-state"`.
     public var localized: String {
         switch self {
         case .running:
-            return String(
-                localized: "details-vmstate-running",
-                bundle: VirtualizationKit.bundle
-            )
+            return VirtualizationKit.localized("vmstate-running")
             
         case .stopping:
-            return String(
-                localized: "details-vmstate-stopping",
-                bundle: VirtualizationKit.bundle
-            )
+            return VirtualizationKit.localized("vmstate-stopping")
             
         case .stopped:
-            return String(
-                localized: "details-vmstate-stopped",
-                bundle: VirtualizationKit.bundle
-            )
+            return VirtualizationKit.localized("vmstate-stopped")
         
         case .error:
-            return String(
-                localized: "details-vmstate-error",
-                bundle: VirtualizationKit.bundle
-            )
+            return VirtualizationKit.localized("vmstate-error")
         
         case .starting:
-            return String(
-                localized: "details-vmstate-starting",
-                bundle: VirtualizationKit.bundle
-            )
+            return VirtualizationKit.localized("vmstate-starting")
         
         case .paused:
-            return String(
-                localized: "details-vmstate-paused",
-                bundle: VirtualizationKit.bundle
-            )
+            return VirtualizationKit.localized("vmstate-paused")
         
         case .pausing:
-            return String(
-                localized: "details-vmstate-pausing",
-                bundle: VirtualizationKit.bundle
-            )
+            return VirtualizationKit.localized("vmstate-pausing")
             
         case .resuming:
-            return String(
-                localized: "details-vmstate-resuming",
-                bundle: VirtualizationKit.bundle
-            )
+            return VirtualizationKit.localized("vmstate-resuming")
         
         case .restoring:
-            return String(
-                localized: "details-vmstate-restoring",
-                bundle: VirtualizationKit.bundle
-            )
+            return VirtualizationKit.localized("vmstate-restoring")
                
         default:
-            return String("default-state")
+            return "undefined-state"
         }
     }
 }
