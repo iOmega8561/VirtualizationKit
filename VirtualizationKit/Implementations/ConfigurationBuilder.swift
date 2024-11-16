@@ -75,7 +75,7 @@ struct ConfigurationBuilder<TemplateType: VZKitTemplate>: VZKitConfigurationBuil
         configuration.storageDevices.append(
             try BlockDevice.createDevice(
                 vmSupportDirectory.appendingPathComponent("Disk.img"),
-                .readWrite(size: template.diskSizeGigaBytes)
+                .readWrite(size: template.performancePreset.diskSize)
             )
         )
         
@@ -128,9 +128,9 @@ struct ConfigurationBuilder<TemplateType: VZKitTemplate>: VZKitConfigurationBuil
             )
         }
         
-        configuration.cpuCount = template.cpuCoreCount
+        configuration.cpuCount = template.performancePreset.cpuCoreCount
         
-        configuration.memorySize = UInt64(template.memorySizeMegaBytes * 1024 * 1024)
+        configuration.memorySize = template.performancePreset.memorySize
     }
     
     /// This method prepares the macOS restore image for the configuration process.

@@ -33,14 +33,8 @@ public protocol VZKitTemplate: Identifiable, Hashable, Sendable, Codable {
     /// The network topology setup for the VM, defining its network configuration.
     var networkTopology: NetworkTopology { get }
     
-    /// The number of CPU cores to allocate to the VM.
-    var cpuCoreCount: Int { get }
-    
-    /// The size of memory, in megabytes, to allocate to the VM.
-    var memorySizeMegaBytes: Int { get }
-    
-    /// The size of disk storage, in gigabytes, to allocate to the VM.
-    var diskSizeGigaBytes: Int { get }
+    /// The performance preset that better descrives the capabilities that the VM should have, hardware wise.
+    var performancePreset: PerformancePreset { get }
     
     /// A Boolean value that indicates whether a shared directory is enabled between the host and VM.
     var enablesSharedDirectory: Bool { get }
