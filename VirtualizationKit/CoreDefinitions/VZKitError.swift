@@ -29,83 +29,44 @@ enum VZKitError: LocalizedError {
         
         switch self {
         case .mainDisk:
-            return String(
-                localized: "error-configuration-maindisk",
-                bundle: VirtualizationKit.bundle
-            )
+            return VirtualizationKit.localized("error-configuration-maindisk")
             
         case .machineId:
-            return String(
-                localized: "error-configuration-machineid",
-                bundle: VirtualizationKit.bundle
-            )
+            return VirtualizationKit.localized("error-configuration-machineid")
             
         case .machineIdRetrieve:
-            return String(
-                localized: "error-configuration-machineid-retrieve",
-                bundle: VirtualizationKit.bundle
-            )
+            return VirtualizationKit.localized("error-configuration-machineid-retrieve")
             
         case .efiStore:
-            return String(
-                localized: "error-configuration-efistore",
-                bundle: VirtualizationKit.bundle
-            )
+            return VirtualizationKit.localized("error-configuration-efistore")
             
         case .usbDisk:
-            return String(
-                localized: "error-configuration-usbdisk",
-                bundle: VirtualizationKit.bundle
-            )
+            return VirtualizationKit.localized("error-configuration-usbdisk")
             
         case .rosetta:
-            return String(
-                localized: "error-configuration-rosetta",
-                bundle: VirtualizationKit.bundle
-            )
+            return VirtualizationKit.localized("error-configuration-rosetta")
             
         case .auxiliaryStorage:
-            return String(
-                localized: "error-configuration-auxstorage",
-                bundle: VirtualizationKit.bundle
-            )
+            return VirtualizationKit.localized("error-configuration-auxstorage")
             
         case .macUnsupportedImage:
-            return String(
-                localized: "error-configuration-macimage",
-                bundle: VirtualizationKit.bundle
-            )
+            return VirtualizationKit.localized("error-configuration-macimage")
             
         case .macUnsupportedHost:
-            return String(
-                localized: "error-configuration-machost",
-                bundle: VirtualizationKit.bundle
-            )
+            return VirtualizationKit.localized("error-configuration-machost")
             
         case .missingMacImage:
-            return String(
-                localized: "error-installer-macimage",
-                bundle: VirtualizationKit.bundle
-            )
+            return VirtualizationKit.localized("error-installer-macimage")
             
         case .notInitialized:
-            return String(
-                localized: "error-machine-notinizialized",
-                bundle: VirtualizationKit.bundle
-            )
+            return VirtualizationKit.localized("error-machine-notinizialized")
             
         case .captureDevicePermissionDenied:
-            return String(
-                localized: "error-configuration-capturedevice",
-                bundle: VirtualizationKit.bundle
-            )
+            return VirtualizationKit.localized("error-configuration-capturedevice")
             
         case .wrongMacImageVersion(let expected, let actual):
-            return String(
-                format: String(
-                    localized: "error-configuration-wrongimgversion",
-                    bundle: VirtualizationKit.bundle
-                ),
+            return .init(
+                format: VirtualizationKit.localized("error-configuration-wrongimgversion"),
                 expected.major,
                 expected.minor,
                 actual.major,
@@ -113,27 +74,13 @@ enum VZKitError: LocalizedError {
             )
             
         case .appleVMLimitExceeded:
-            return String(
-                localized: "error-applevz-limitexceeded",
-                bundle: VirtualizationKit.bundle
-            )
+            return VirtualizationKit.localized("error-applevz-limitexceeded")
             
         case .macOSGuestFeatureNotSupported(let feature):
-            return String(
-                format: String(
-                    localized: "error-configuration-unsopportedfeature",
-                    bundle: VirtualizationKit.bundle
-                ),
-                feature
-            )
+            return .init(format: VirtualizationKit.localized("error-configuration-unsopportedfeature"), feature)
+            
         case .bridgeInterfaceNotAvailable(let id):
-            return String(
-                format: String(
-                    localized: "error-configuration-netinterface",
-                    bundle: VirtualizationKit.bundle
-                ),
-                id
-            )
+            return .init(format: VirtualizationKit.localized("error-configuration-netinterface"), id)
         }
     }
 }
