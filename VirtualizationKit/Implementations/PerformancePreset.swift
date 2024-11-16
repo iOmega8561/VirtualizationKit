@@ -66,6 +66,11 @@ public enum PerformancePreset: VZKitPerformancePreset {
     )
     
     /// Maximum allowed CPU core count for the host system.
+    /// - Returns: The smaller of:
+    ///   - The total number of processor cores available on the host system (`ProcessInfo.processInfo.processorCount`).
+    ///   - The maximum CPU core count permitted by the `VZVirtualMachineConfiguration` class.
+    /// - Criteria: Ensures that the virtual machine does not attempt to use more cores than the host system has available or
+    ///   exceed the virtualization framework's limits.
     public static var maximumAllowedCPUCount: Int {
         min(
             ProcessInfo.processInfo.processorCount,
@@ -74,6 +79,11 @@ public enum PerformancePreset: VZKitPerformancePreset {
     }
     
     /// Maximum allowed memory size for the host system in bytes.
+    /// - Returns: The smaller of:
+    ///   - The total physical memory available on the host system (`ProcessInfo.processInfo.physicalMemory`).
+    ///   - The maximum memory size permitted by the `VZVirtualMachineConfiguration` class.
+    /// - Criteria: Ensures that the virtual machine does not allocate more memory than the host system has available or
+    ///   exceed the virtualization framework's limits.
     public static var maximumAllowedMemorySize: UInt64 {
         min(
             ProcessInfo.processInfo.physicalMemory,
@@ -82,11 +92,17 @@ public enum PerformancePreset: VZKitPerformancePreset {
     }
     
     /// Minimum allowed CPU core count for the host system.
+    /// - Returns: The minimum CPU core count required by the `VZVirtualMachineConfiguration` class.
+    /// - Criteria: Guarantees that the virtual machine configuration meets the virtualization framework's minimum requirement
+    ///   for CPU cores, independent of the host system's hardware.
     public static var minimumAllowedCPUCount: Int {
         VZVirtualMachineConfiguration.minimumAllowedCPUCount
     }
     
     /// Minimum allowed memory size for the host system in bytes.
+    /// - Returns: The minimum memory size required by the `VZVirtualMachineConfiguration` class.
+    /// - Criteria: Guarantees that the virtual machine configuration meets the virtualization framework's minimum requirement
+    ///   for memory size, independent of the host system's hardware.
     public static var minimumAllowedMemorySize: UInt64 {
         VZVirtualMachineConfiguration.minimumAllowedMemorySize
     }
