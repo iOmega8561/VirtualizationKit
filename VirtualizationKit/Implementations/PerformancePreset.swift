@@ -48,6 +48,13 @@ public enum PerformancePreset: CaseIterable, Codable, Sendable, Hashable {
     case performance
     
     /// Custom configuration with user-defined hardware capabilities.
+    ///
+    /// - Important: It is responsability of the developer using this framework to ensure that parameter values for custom case
+    ///  are within boundaries of the user's host system. Out of boundary values will be handled gracefully by this framework simply by
+    ///  respecting the host capabilities, but it's not recommended to allow the user to go beyond what his system can do.
+    ///
+    /// - Important: it's especially necessary to avoid setting negative values on UInt64 since this will result in runtime crashes.
+    ///
     /// - Parameters:
     ///   - desiderCoreCount: Desired number of CPU cores (defaults to `balanced` preset).
     ///   - desiredMemorySize: Desired memory size in bytes (defaults to `balanced` preset).
