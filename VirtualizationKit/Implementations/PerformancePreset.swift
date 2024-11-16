@@ -298,4 +298,24 @@ public enum PerformancePreset: VZKitPerformancePreset {
             return desiredDiskSize
         }
     }
+    
+    /// A computed property that provides a localized string for different performance presets.
+    ///
+    /// The localization keys are determined by the case of the enum instance.
+    /// - Returns: A `String` containing the localized value for the performance preset.
+    public var localized: String {
+        switch self {
+        case .basic:
+            return VirtualizationKit.localized("perfpreset-basic")
+            
+        case .balanced:
+            return VirtualizationKit.localized("perfpreset-balanced")
+            
+        case .performance:
+            return VirtualizationKit.localized("perfpreset-performance")
+            
+        case .custom(_, _, _):
+            return VirtualizationKit.localized("perfpreset-custom")
+        }
+    }
 }
