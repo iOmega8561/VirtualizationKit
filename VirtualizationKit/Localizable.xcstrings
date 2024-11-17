@@ -69,6 +69,22 @@
         }
       }
     },
+    "error-configuration-macaddress" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The specified MAC Address is not valid: “%@”"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il MAC Address specificato non è valido: “%@”"
+          }
+        }
+      }
+    },
     "error-configuration-machineid" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -167,6 +183,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "La seguente interfaccia di rete non è disponibile sul sistema host: “%@”"
+          }
+        }
+      }
+    },
+    "error-configuration-netinterfaces" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There isn’t any available network interface to setup Bridged networking"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non esistono interfacce di rete disponibili per costruire una rete Bridged"
           }
         }
       }
