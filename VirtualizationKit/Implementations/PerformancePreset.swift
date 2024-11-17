@@ -142,7 +142,7 @@ public enum PerformancePreset: VZKitPerformancePreset {
         switch self {
         case .basic:
             return max(
-                VZVirtualMachineConfiguration.maximumAllowedCPUCount,
+                VZVirtualMachineConfiguration.minimumAllowedCPUCount,
                 Self.maximumAllowedCPUCount / 4
             )
             
