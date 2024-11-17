@@ -133,6 +133,36 @@ public enum NetworkTopology: VZKitNetworkTopology {
         }
     }
     
+    /// The network interface associated with the current network configuration.
+    ///
+    /// This computed property retrieves the specific network interface identifier based on the network topology:
+    /// - `.bridged`: Returns the host interface ID if explicitly provided. If no specific interface is set, it returns
+    /// a localized string indicating that the interface is automatically selected.
+    /// - Other configurations: Returns `nil` as the interface is not applicable.
+    ///
+    /// - Returns:
+    ///   - A `String` representing the network interface identifier (e.g., `en0`, `en1`) for a `.bridged` configuration.
+    ///   - A localized string (e.g., "Automatic") if the `.bridged` configuration is set to use an automatically selected interface.
+    ///   - `nil` if the configuration does not involve a bridged network.
+    ///
+    /// ## Criteria:
+    /// - For `.bridged` configurations:
+    ///   - Returns the `hostInterfaceID` when explicitly provided.
+    ///   - Defaults to a localized string indicating automatic selection if no `hostInterfaceID` is provided.
+    /// - For all other configurations, the interface is not applicable, and the property returns `nil`.
+    ///
+    /// ## Localization:
+    /// - The string `"networktopo-interfaceauto"` is localized to represent "Automatic" or similar
+    /// wording in the user's language, indicating that the system chooses the interface.
+    public var interface: String? {
+        switch self {
+        case .bridged(let hostInterfaceID, _):
+            return hostInterfaceID ?? VirtualizationKit.localized("networktopo-interfaceauto")
+            
+        default: return nil
+        }
+    }
+    
     /// A computed property that provides a localized string representation of the network configuration.
     ///
     /// The `localized` property maps network configuration cases to corresponding localized
