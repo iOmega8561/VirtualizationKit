@@ -69,6 +69,22 @@
         }
       }
     },
+    "error-configuration-macaddress" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The specified MAC Address is not valid: “%@”"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il MAC Address specificato non è valido: “%@”"
+          }
+        }
+      }
+    },
     "error-configuration-machineid" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -171,6 +187,22 @@
         }
       }
     },
+    "error-configuration-netinterfaces" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There isn’t any available network interface to setup Bridged networking"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non esistono interfacce di rete disponibili per costruire una rete Bridged"
+          }
+        }
+      }
+    },
     "error-configuration-rosetta" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -269,6 +301,71 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "La Macchina Virtuale non è ancora stata inizializzata"
+          }
+        }
+      }
+    },
+    "networktopo-bridged" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Advanced"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avanzata"
+          }
+        }
+      }
+    },
+    "networktopo-interfaceauto" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Automatic"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Automatica"
+          }
+        }
+      }
+    },
+    "networktopo-nat" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shared"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Condivisa"
+          }
+        }
+      }
+    },
+    "networktopo-none" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "None"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nessuna"
           }
         }
       }
