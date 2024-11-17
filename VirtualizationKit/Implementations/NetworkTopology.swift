@@ -5,25 +5,41 @@
 //  Created by Giuseppe Rocco on 08/11/24.
 //
 
+import Virtualization
+
 /// `NetworkTopology` is an enumeration that represents the possible network configurations
 /// available for virtual machines. This enumeration closely follows the interface defined
 /// by the `VZKitNetworkTopology` protocol, providing specific cases for each network topology option.
 public enum NetworkTopology: VZKitNetworkTopology {
     
-    /// The default value for the system network interface identifier.
+    /// A static property that retrieves the list of network interface identifiers available for bridging.
     ///
-    /// This is set to `"lo0"`, which is a loopback interface and not a valid network
-    /// interface for Apple Virtualization. This value acts as a placeholder.
-    private static let defaultInterfaceID: String = "lo0"
+    /// This property uses the `VZBridgedNetworkInterface` class to access all available network interfaces
+    /// on the host machine. It maps each interface to its unique identifier string.
+    ///
+    /// - Returns: An array of `String` values, each representing the identifier of a network interface.
+    public static var networkInterfaces: [String] {
+        VZBridgedNetworkInterface.networkInterfaces.map { $0.identifier }
+    }
+    
+    /// A static property that generates a random MAC address suitable for locally administered use.
+    ///
+    /// This property utilizes the `VZMACAddress` class to create a random MAC address marked as
+    /// locally administered. The address is then converted to its string representation.
+    ///
+    /// - Returns: A `String` representing the random, locally administered MAC address.
+    public static var randomMacAddress: String {
+        VZMACAddress.randomLocallyAdministered().string
+    }
     
     /// A collection of all available network topology cases.
     ///
-    /// This static array includes `.none`, `.nat`, and `.bridged` (using the `defaultInterfaceID`)
+    /// This static array includes `.none`, `.nat`, and `.bridged`
     /// to satisfy the `CaseIterable` conformance required by the protocol.
     public static let allCases: [Self] = [
         .none,
-        .nat,
-        .bridged(Self.defaultInterfaceID),
+        .nat(),
+        .bridged(),
     ]
     
     /// No network interface for the virtual machine.
@@ -37,17 +53,47 @@ public enum NetworkTopology: VZKitNetworkTopology {
     /// This case provides the virtual machine with network access via the host’s IP address,
     /// while isolating it from the rest of the host's local network. This is typically used to
     /// allow external network access without exposing the virtual machine to other devices on the same network.
-    case nat
+    ///
+    ///
+    /// - Parameter macAddress: The machine hardware address to assign to the VM.
+    ///   If not set this falls back to a default, random, value and is considered to be automatically managed by the framerowk.
+    case nat(macAddress: String = Self.randomMacAddress)
     
     /// A bridged network interface for the virtual machine.
     ///
-    /// - Parameter hostInterfaceID: The identifier of the host network interface to use for
+    /// - Parameters:
+    ///   - hostInterfaceID: The identifier of the host network interface to use for
     ///   bridging. This allows the virtual machine to appear as a separate device on the
     ///   local network, with its own IP address, making it directly accessible to other
-    ///   devices on the same network.
+    ///   devices on the same network. If nil this value is considered automatically managed
+    ///
+    ///   - macAddress: The machine hardware address to assign to the VM.
+    ///   If not set this falls back to a default, random, value and is considered to be automatically managed by the framerowk.
     ///
     /// The bridged mode is useful for cases where the virtual machine needs to interact with
     /// other devices on the network as if it were a standalone device. The specified
     /// `hostInterfaceID` determines which host interface is used for this connection.
-    case bridged(_ hostInterfaceID: String)
+    case bridged(hostInterfaceID: String? = nil, macAddress: String = Self.randomMacAddress)
+    
+    /// A computed property that provides a localized string representation of the network configuration.
+    ///
+    /// The `localized` property maps network configuration cases to corresponding localized
+    /// strings using the `VirtualizationKit.localized` function. Each case is tied to a specific localization key:
+    /// - `.none` corresponds to the key `networktopo-none`.
+    /// - `.nat` corresponds to the key `networktopo-nat`.
+    /// - `.bridged(_, _)` corresponds to the key `networktopo-bridged`.
+    ///
+    /// - Returns: A `String` that is the localized representation of the network configuration.
+    public var localized: String {
+        switch self {
+            case .none:
+                return VirtualizationKit.localized("networktopo-none")
+            
+            case .nat:
+                return VirtualizationKit.localized("networktopo-nat")
+            
+            case .bridged(_, _):
+                return VirtualizationKit.localized("networktopo-bridged")
+        }
+    }
 }

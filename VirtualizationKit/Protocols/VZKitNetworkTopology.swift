@@ -25,16 +25,30 @@ public protocol VZKitNetworkTopology: CaseIterable, Codable, Hashable, Sendable 
     /// as a gateway, while remaining isolated from the local network. This option is useful
     /// for maintaining the privacy of the virtual machine, preventing interference with other
     /// devices on the same local network.
-    static var nat: Self { get }
+    ///
+    /// - Parameter macAddress: The machine hardware address to assign to the VM.
+    static func nat(macAddress: String) -> Self
     
     /// Configures a bridged network with a specific host network interface.
     ///
-    /// - Parameter hostInterfaceID: The identifier of the host network interface to use
-    ///   for the bridged connection. This allows the virtual machine to appear as an
-    ///   independent device on the same network as the host.
+    /// - Parameters:
+    ///   - hostInterfaceID: The identifier of the host network interface to use for
+    ///   bridging. This allows the virtual machine to appear as a separate device on the
+    ///   local network, with its own IP address, making it directly accessible to other
+    ///   devices on the same network.
+    ///
+    ///   - macAddress: The machine hardware address to assign to the VM.
     ///
     /// Bridged mode enables the virtual machine to be visible on the local network as a
     /// separate device, useful for advanced configurations or when the virtual machine
     /// needs its own IP address to interact with other devices on the same network.
-    static func bridged(_ hostInterfaceID: String) -> Self
+    static func bridged(hostInterfaceID: String?, macAddress: String) -> Self
+    
+    /// A localized string representing the label of the selected network topology
+    ///
+    /// This string provides a human-readable, localized description of the virtual machine's network topology
+    /// It can be displayed in SwiftUI views to give users contextual information about the configuration.
+    /// Localization support ensures that this description is accessible in multiple languages,
+    /// improving internationalization and user comprehension.
+    var localized: String { get }
 }
