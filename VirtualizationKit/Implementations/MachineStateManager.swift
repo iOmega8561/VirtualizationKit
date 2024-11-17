@@ -76,6 +76,7 @@ import Virtualization
     public func registerProgress(_ progress: Progress) {
         progress
             .publisher(for: \.fractionCompleted)
+            .receive(on: RunLoop.main)
             .sink { [weak self] progress in
                 self?.progress = progress
             }
@@ -90,8 +91,9 @@ import Virtualization
     init(_ delegate: MachineDelegate) {
         
         delegate.statePublisher
+            .receive(on: RunLoop.main)
             .sink { [weak self] state in
-                self?.currentState = state
+                self?.update(with: state)
             }
             .store(in: &cancellables)
     }
