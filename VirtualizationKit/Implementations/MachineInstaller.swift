@@ -83,9 +83,10 @@ struct MachineInstaller: VZKitMachineInstaller {
     /// - Throws: `VZKitError.missingMacImage` if the specified `restoreImage` URL is nil or does not point to an existing file.
     init(restoreImage: URL?, vzVirtualMachine: VZVirtualMachine) throws {
         
-        guard let restoreImage, FileManager.default.fileExists(atPath: restoreImage.path) else {
-            throw VZKitError.missingMacImage
-        }
+        guard let restoreImage, FileManager.default.fileExists(
+            atPath: restoreImage.path(percentEncoded: false)
+            
+        ) else { throw VZKitError.missingMacImage }
         
         self.restoreImage = restoreImage
         self.vzVirtualMachine = vzVirtualMachine
