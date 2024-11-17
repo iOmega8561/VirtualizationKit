@@ -43,11 +43,13 @@ public enum VZKitResult<TemplateType: VZKitTemplate>: Sendable {
     /// - Returns: the associated `Error` if the result is `.failure`; otherwise, returns `nil`.
     public var error: Error? {
         
-        if case .failure(let error) = self {
+        switch self {
+        case .failure(let error):
             return error
+            
+        default:
+            return nil
         }
-        
-        return nil
     }
     
     /// The successfully created virtual machine, if available.
@@ -55,11 +57,13 @@ public enum VZKitResult<TemplateType: VZKitTemplate>: Sendable {
     /// - Returns: the associated `VirtualMachine<TemplateType>` if the result is `.success`; otherwise, returns `nil`.
     public var machine: VirtualMachine<TemplateType>? {
         
-        if case .success(let machine) = self {
+        switch self {
+        case .success(let machine):
             return machine
+            
+        default:
+            return nil
         }
-        
-        return nil
     }
     
     /// The current state of the virtual machine, suitable for display in views.
@@ -71,11 +75,13 @@ public enum VZKitResult<TemplateType: VZKitTemplate>: Sendable {
     /// - Returns: Either a `MachineState` forwarded directly from the virtual machine state manager, or `.error` in case o failure.
     @MainActor public var state: MachineState {
         
-        if case .success(let machine) = self {
+        switch self {
+        case .success(let machine):
             return machine.stateManager.currentState
+            
+        default:
+            return .error
         }
-        
-        return .error
      }
     
     /// The `progress` computed property provides the current progress of the virtual machine’s operation as a percentage.
@@ -88,10 +94,12 @@ public enum VZKitResult<TemplateType: VZKitTemplate>: Sendable {
     /// - Returns: An integer representing the progress percentage (0-100) if available; otherwise, 0 if progress data is not accessible.
     @MainActor public var progress: Int {
         
-        if case .success(let machine) = self {
+        switch self {
+        case .success(let machine):
             return Int(machine.stateManager.progress * 100)
+            
+        default:
+            return 0
         }
-        
-        return 0
     }
 }

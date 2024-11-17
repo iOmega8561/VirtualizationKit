@@ -34,7 +34,7 @@ struct ConfigurationBuilder<TemplateType: VZKitTemplate>: VZKitConfigurationBuil
     let configuration: VZVirtualMachineConfiguration
     
     /// Computed property to get the location of the VM's storage folder inside the application bundle
-    private let bundlePath: String
+    private let vmSupportDirectory: URL
     
     /// This method is responsible of building the full fledged virtual machine configuration scheme.
     /// To do that it makes a distinction between the different guest operating systems, since they need completely different
@@ -43,60 +43,65 @@ struct ConfigurationBuilder<TemplateType: VZKitTemplate>: VZKitConfigurationBuil
     ///
     /// - Parameters:
     ///   - image: The macOS restore image object, if needed.
-    private func createConfiguration(_ image: MacOSRestoreImage?) async throws {
+    private func createConfiguration(_ restoreImage: MacOSRestoreImage?) async throws {
         
-        if !FileManager.default.fileExists(atPath: bundlePath) {
-            try FileManager.default.createDirectory(
-                atPath: bundlePath,
-                withIntermediateDirectories: true
-            )
-        }
+        try FileManager.default.createDirectory(
+            at: vmSupportDirectory,
+            withIntermediateDirectories: true
+        )
         
-        switch template.os.type {
+        switch template.operatingSystem {
         case .macos:
             
-            configuration.platform = try MacintoshPlatform.createDevice(image!, bundlePath)
+            configuration.platform = try MacintoshPlatform.createDevice(
+                restoreImage!,
+                vmSupportDirectory
+            )
             
             configuration.bootLoader = try BootLoader.createDevice()
             
         case .linux:
             
-            configuration.platform = try GenericPlatform.createDevice(bundlePath)
+            configuration.platform = try GenericPlatform.createDevice(
+                vmSupportDirectory.appendingPathComponent("MachineIdentifier")
+            )
             
-            configuration.bootLoader = try BootLoader.createDevice(bundlePath + "/NVRAM")
+            configuration.bootLoader = try BootLoader.createDevice(
+                vmSupportDirectory.appendingPathComponent("NVRAM")
+            )
             
             configuration.directorySharingDevices.append(
                 try RosettaDevice.createDevice()
             )
             
-            if let url = template.os.installer {
+            if let url = template.removableDiskImage {
                 configuration.storageDevices.append(
                     try USBMassStorageDevice.createDevice(url, .readOnly)
                 )
             }
         }
-        
+      
         configuration.storageDevices.append(
             try BlockDevice.createDevice(
-                bundlePath + "/Disk.img",
-                .readWrite(size: template.specs.diskSizeGB)
+                vmSupportDirectory.appendingPathComponent("Disk.img"),
+                .readWrite(size: template.performancePreset.diskSize)
             )
         )
         
         configuration.consoleDevices.append(
-            ConsoleDevice.createDevice(template.os.type)
+            ConsoleDevice.createDevice(template.operatingSystem)
         )
         
         configuration.graphicsDevices.append(
-            GraphicsDevice.createDevice(template.os.type)
+            GraphicsDevice.createDevice(template.operatingSystem)
         )
         
         configuration.keyboards.append(
-            KeyboardDevice.createDevice(template.os.type)
+            KeyboardDevice.createDevice(template.operatingSystem)
         )
         
         configuration.pointingDevices.append(
-            PointingDevice.createDevice(template.os.type)
+            PointingDevice.createDevice(template.operatingSystem)
         )
         
         configuration.memoryBalloonDevices.append(
@@ -108,33 +113,33 @@ struct ConfigurationBuilder<TemplateType: VZKitTemplate>: VZKitConfigurationBuil
         )
         
         configuration.networkDevices.append(
-            try NetworkDevice.createDevice(template.specs.networkTopology)
+            try NetworkDevice.createDevice(template.networkTopology)
         )
         
-        if template.specs.hasOutputAudio {
+        if template.enablesOutputAudio {
             configuration.audioDevices.append(
                 try await SoundDevice.createDevice(.output)
             )
         }
         
-        if template.specs.hasInputAudio {
+        if template.enablesInputAudio {
             configuration.audioDevices.append(
                 try await SoundDevice.createDevice(.input)
             )
         }
         
-        if template.specs.hasDirectoryShare {
+        if template.enablesSharedDirectory {
             configuration.directorySharingDevices.append(
                 try FileSystemDevice.createDevice(
-                    bundlePath + "/" + template.name,
-                    template.os.type
+                    vmSupportDirectory.appendingPathComponent(template.name),
+                    template.operatingSystem
                 )
             )
         }
         
-        configuration.cpuCount = template.specs.cpuCount
+        configuration.cpuCount = template.performancePreset.cpuCoreCount
         
-        configuration.memorySize = UInt64(template.specs.ramSizeMB * 1024 * 1024)
+        configuration.memorySize = template.performancePreset.memorySize
     }
     
     /// This method prepares the macOS restore image for the configuration process.
@@ -142,10 +147,10 @@ struct ConfigurationBuilder<TemplateType: VZKitTemplate>: VZKitConfigurationBuil
     /// After the synchronous call terminates, the methods validates the configuration scheme and returns it to its caller.
     func createConfiguration() async throws -> VZVirtualMachineConfiguration {
         
-        switch template.os.type {
+        switch template.operatingSystem {
         case .macos(let version):
             
-            guard let url = template.os.installer else {
+            guard let url = template.removableDiskImage else {
                 throw VZKitError.missingMacImage
             }
             
@@ -162,8 +167,7 @@ struct ConfigurationBuilder<TemplateType: VZKitTemplate>: VZKitConfigurationBuil
             try await createConfiguration(nil)
         }
         
-        try configuration.validate()
-        return configuration
+        try configuration.validate(); return configuration
     }
     
     /// The explicit initializer of the struct.
@@ -172,7 +176,11 @@ struct ConfigurationBuilder<TemplateType: VZKitTemplate>: VZKitConfigurationBuil
     ///   - template: The data transfer object containing all the info about the virtual machine.
     init(template: TemplateType) async {
         self.template = template
+        
         self.configuration = VZVirtualMachineConfiguration()
-        self.bundlePath = await VirtualizationKit.bundlePath + template.id.uuidString
+        
+        self.vmSupportDirectory = await VirtualizationKit.supportDirectory.appendingPathComponent(
+            template.id.uuidString
+        )
     }
 }
