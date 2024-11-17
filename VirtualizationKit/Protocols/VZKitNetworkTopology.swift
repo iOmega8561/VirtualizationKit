@@ -53,6 +53,20 @@ public protocol VZKitNetworkTopology: CaseIterable, Codable, Hashable, Sendable 
     /// needs its own IP address to interact with other devices on the same network.
     static func bridged(hostInterfaceID: String?, macAddress: String) -> Self
     
+    /// The MAC (Media Access Control) address associated with the network device or node.
+    ///
+    /// This property provides the unique hardware address assigned to the network interface.
+    /// It is commonly used for identifying devices at the data link layer within a network topology.
+    /// - Returns:
+    ///   - A `String` representation of the MAC address if available.
+    ///   - `nil` if the MAC address is not set or applicable for the current context.
+    ///
+    /// ## Criteria:
+    /// - A valid MAC address consists of six pairs of hexadecimal digits, separated by colons (e.g., `00:1A:2B:3C:4D:5E`).
+    /// - This property may return `nil` if the network device does not have a MAC address (e.g., network set to ".none")
+    /// - This property is typically read-only and used to uniquely identify a node or interface within a network.
+    var macAddress: String? { get }
+    
     /// A localized string representing the label of the selected network topology
     ///
     /// This string provides a human-readable, localized description of the virtual machine's network topology
