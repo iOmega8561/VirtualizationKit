@@ -58,6 +58,22 @@ public protocol VZKitNetworkTopology: CaseIterable, Codable, Hashable, Sendable 
     /// - This property is typically read-only and used to uniquely identify a node or interface within a network.
     var macAddress: String? { get }
     
+    /// The network interface associated with the current network configuration.
+    ///
+    /// This property identifies the specific network interface used in the topology. The interface can
+    /// represent a physical or virtual network device, such as `en0` for Ethernet or `en1` for Wi-Fi.
+    ///
+    /// - Returns:
+    ///   - A `String` representing the network interface identifier (e.g., `en0`, `en1`) if available.
+    ///   - `nil` if no interface is configured or the current topology does not require an interface.
+    ///
+    /// ## Criteria:
+    /// - The value depends on the active network configuration:
+    ///   - For configurations that involve a bridged network, this property typically represents the selected network interface.
+    ///   - For configurations like NAT or no network (`.none`), the interface may not be applicable and return `nil`.
+    /// - The returned interface string should match the identifiers commonly used by the operating system to represent network devices.
+    var interface: String? { get }
+    
     /// A localized string representing the label of the selected network topology
     ///
     /// This string provides a human-readable, localized description of the virtual machine's network topology
