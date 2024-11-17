@@ -75,6 +75,55 @@ public enum NetworkTopology: VZKitNetworkTopology {
     /// `hostInterfaceID` determines which host interface is used for this connection.
     case bridged(hostInterfaceID: String? = nil, macAddress: String = Self.randomMacAddress)
     
+    /// Validates the format of a MAC (Media Access Control) address string.
+    ///
+    /// This function checks whether the provided string represents a valid MAC address by attempting to initialize
+    /// a `VZMACAddress` object with it. If the string is not a valid MAC address, an error is thrown.
+    ///
+    /// - Parameter value: A `String` representing the MAC address to be validated.
+    ///
+    /// - Throws:
+    ///   - `VZKitError.invalidMacAddress` if the provided string does not conform to a valid MAC address format.
+    ///
+    /// ## Criteria:
+    /// - A valid MAC address must:
+    ///   - Consist of six pairs of hexadecimal digits (0–9, A–F) separated by colons (`:`), e.g., `00:1A:2B:3C:4D:5E`.
+    ///   - Be compatible with the `VZMACAddress` initializer.
+    /// - If the validation fails, the `VZKitError.invalidMacAddress` error is thrown with the invalid value included in the error message.
+    public static func macAddressValidation(_ value: String) throws {
+        guard let _ = VZMACAddress(string: value) else { throw VZKitError.invalidMacAddress(value) }
+    }
+    
+    /// The MAC (Media Access Control) address associated with the network configuration.
+    ///
+    /// This computed property retrieves the MAC address based on the specific network topology:
+    /// - `.none`: Returns `nil` since no network is configured.
+    /// - `.nat`: Returns the MAC address associated with the NAT configuration.
+    /// - `.bridged`: Returns the MAC address associated with the bridged configuration.
+    ///
+    /// - Returns:
+    ///   - A `String` representation of the MAC address for `.nat` or `.bridged` configurations.
+    ///   - `nil` if the network configuration is `.none` or no MAC address is assigned.
+    ///
+    /// ## Criteria:
+    /// - The returned MAC address depends on the active network configuration:
+    ///   - For `.none`, it explicitly returns `nil` since no MAC address is applicable.
+    ///   - For `.nat`, it uses the `macAddress` tied to the NAT configuration.
+    ///   - For `.bridged`, it uses the `macAddress` tied to the bridged configuration.
+    /// - A valid MAC address consists of six pairs of hexadecimal digits separated by colons (e.g., `00:1A:2B:3C:4D:5E`).
+    /// - The value is read-only and dynamically derived based on the network topology.
+    public var macAddress: String? {
+        switch self {
+        case .none: return nil
+            
+        case .nat(let macAddress):
+            return macAddress
+            
+        case .bridged(_, let macAddress):
+            return macAddress
+        }
+    }
+    
     /// A computed property that provides a localized string representation of the network configuration.
     ///
     /// The `localized` property maps network configuration cases to corresponding localized
