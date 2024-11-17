@@ -310,13 +310,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bridged (Advanced)"
+            "value" : "Advanced"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bridged (Avanzato)"
+            "value" : "Avanzata"
           }
         }
       }
@@ -326,13 +326,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Shared Network"
+            "value" : "Shared"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rete Condivisa"
+            "value" : "Condivisa"
           }
         }
       }
