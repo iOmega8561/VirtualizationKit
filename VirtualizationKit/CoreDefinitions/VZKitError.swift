@@ -23,7 +23,8 @@ enum VZKitError: LocalizedError {
     case wrongMacImageVersion(_ expected: OperatingSystem.Version, _ actual: OperatingSystem.Version)
     case appleVMLimitExceeded
     case macOSGuestFeatureNotSupported(_ feature: String)
-    case bridgeInterfaceNotAvailable(_ id: String)
+    case bridgeInterfaceNotAvailable(_ id: String?)
+    case invalidMacAddress(_ macAddress: String)
 
     public var errorDescription: String? {
         
@@ -80,7 +81,14 @@ enum VZKitError: LocalizedError {
             return .init(format: VirtualizationKit.localized("error-configuration-unsopportedfeature"), feature)
             
         case .bridgeInterfaceNotAvailable(let id):
+            guard let id else {
+                return VirtualizationKit.localized("error-configuration-netinterfaces")
+            }
+            
             return .init(format: VirtualizationKit.localized("error-configuration-netinterface"), id)
+        
+        case .invalidMacAddress(let macAddress):
+            return .init(format: VirtualizationKit.localized("error-configuration-macaddress"), macAddress)
         }
     }
 }
