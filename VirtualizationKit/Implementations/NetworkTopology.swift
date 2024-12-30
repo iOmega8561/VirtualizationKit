@@ -26,9 +26,14 @@ public enum NetworkTopology: VZKitNetworkTopology {
     /// This property uses the `VZBridgedNetworkInterface` class to access all available network interfaces
     /// on the host machine. It maps each interface to its unique identifier string.
     ///
-    /// - Returns: An array of `String` values, each representing the identifier of a network interface.
-    public static var networkInterfaces: [String] {
-        VZBridgedNetworkInterface.networkInterfaces.map { $0.identifier }
+    /// - Returns: An array of `(String, String?)` where the left value is the identifier of the network interface, and the right
+    /// value is a localized string representing the display name of the network interface (Wi-Fi or Ethernet, for example).
+    /// If a localized name is not available, the right value is simply set to `nil`.
+    public static var networkInterfaces: [(String, String?)] {
+        
+        return VZBridgedNetworkInterface.networkInterfaces.map {
+            ($0.identifier, $0.localizedDisplayName)
+        }
     }
     
     /// A static property that generates a random MAC address suitable for locally administered use.
@@ -134,30 +139,22 @@ public enum NetworkTopology: VZKitNetworkTopology {
     }
     
     /// The network interface associated with the current network configuration.
-    ///
-    /// This computed property retrieves the specific network interface identifier based on the network topology:
-    /// - `.bridged`: Returns the host interface ID if explicitly provided. If no specific interface is set, it returns
-    /// a localized string indicating that the interface is automatically selected.
-    /// - Other configurations: Returns `nil` as the interface is not applicable.
+    /// This computed property retrieves the specific network interface identifier based on the network topology
     ///
     /// - Returns:
     ///   - A `String` representing the network interface identifier (e.g., `en0`, `en1`) for a `.bridged` configuration.
-    ///   - A localized string (e.g., "Automatic") if the `.bridged` configuration is set to use an automatically selected interface.
+    ///   - A `nil` value when the `.bridged` configuration is set to use an automatically selected interface.
     ///   - `nil` if the configuration does not involve a bridged network.
     ///
     /// ## Criteria:
     /// - For `.bridged` configurations:
     ///   - Returns the `hostInterfaceID` when explicitly provided.
-    ///   - Defaults to a localized string indicating automatic selection if no `hostInterfaceID` is provided.
+    ///   - Defaults to a nil value indicating automatic selection if no `hostInterfaceID` is provided.
     /// - For all other configurations, the interface is not applicable, and the property returns `nil`.
-    ///
-    /// ## Localization:
-    /// - The string `"networktopo-interfaceauto"` is localized to represent "Automatic" or similar
-    /// wording in the user's language, indicating that the system chooses the interface.
     public var interface: String? {
         switch self {
         case .bridged(let hostInterfaceID, _):
-            return hostInterfaceID ?? VirtualizationKit.localized("networktopo-interfaceauto")
+            return hostInterfaceID
             
         default: return nil
         }
