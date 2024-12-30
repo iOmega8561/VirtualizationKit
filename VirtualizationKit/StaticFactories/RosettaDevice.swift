@@ -17,32 +17,55 @@
 import Virtualization
 
 
-/// This typealias allows for cleaner-looking code
+/// A typealias for `VZLinuxRosettaDirectoryShare`, providing a concise and readable name for Rosetta directory shares.
+///
+/// `RosettaDevice` simplifies code when working with Rosetta-specific directory shares.
 typealias RosettaDevice = VZLinuxRosettaDirectoryShare
 
 extension RosettaDevice {
     
-    /// This method can create an Apple Rosetta specific shared directory mount between the host and the guest systems.
+    /// Creates a shared directory mount between the host and the guest systems using Apple Rosetta.
+    ///
+    /// This method checks the availability of Rosetta on the host system and, if supported, initializes a shared
+    /// directory using `VZLinuxRosettaDirectoryShare`. The shared directory is configured with caching options and
+    /// returned as a `FileSystemDevice`.
+    ///
+    /// - Returns: A configured `FileSystemDevice` representing the shared directory mount.
+    ///
+    /// - Throws:
+    ///   - `VZKitError.rosettaUnsupported` if Rosetta is not supported on the host system.
+    ///   - `VZKitError.rosettaUnavailable` if Rosetta is not installed or another unsupported state is encountered.
+    ///   - Errors thrown by `VZLinuxRosettaDirectoryShare` during initialization or configuration.
+    ///
+    /// - Note:
+    ///   Ensure that Rosetta is installed and supported on the host system before calling this method.
     static func createDevice() throws -> FileSystemDevice {
                 
         switch RosettaDevice.availability {
         case .installed:
             
-            // We try to initialize the directory share and enable caching options
             let rosettaDirectoryShare = try RosettaDevice()
-            try rosettaDirectoryShare.setCachingOptions(.abstractSocket("rosettaSocket"))
             
-            // Now we create the actual sharing device
-            let sharingDevice = FileSystemDevice(tag: "ROSETTA_SHARE")
+            try rosettaDirectoryShare.setCachingOptions(
+                .abstractSocket("rosettaSocket")
+            )
+            
+            let sharingDevice = FileSystemDevice(
+                tag: "ROSETTA_SHARE"
+            )
+            
             sharingDevice.share = rosettaDirectoryShare
             
             return sharingDevice
+            
+        case .notSupported:
+            throw VZKitError.rosettaUnsupported
+            
+        case .notInstalled:
+            fallthrough
+            
         default:
-            
-            // TBD Handling Rosetta installation
-            
-            // Rosetta is not available
-            throw VZKitError.rosetta
+            throw VZKitError.rosettaUnavailable
         }
     }
 }

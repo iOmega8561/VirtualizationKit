@@ -203,19 +203,36 @@
         }
       }
     },
-    "error-configuration-rosetta" : {
+    "error-configuration-rosettaunavailable" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rosetta 2 is unavailable on this system"
+            "value" : "Rosetta is unavailable on the host Macintosh"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rosetta 2 non è disponibile su questo sistema"
+            "value" : "Rosetta non è disponibile sul Macintosh Host"
+          }
+        }
+      }
+    },
+    "error-configuration-rosettaunsupported" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rosetta is not supported by the host Macintosh"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rosetta non è supportato dal Macintosh Host"
           }
         }
       }
