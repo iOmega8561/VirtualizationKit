@@ -70,9 +70,11 @@ struct ConfigurationBuilder<TemplateType: VZKitTemplate>: VZKitConfigurationBuil
                 vmSupportDirectory.appendingPathComponent("NVRAM")
             )
             
-            configuration.directorySharingDevices.append(
-                try RosettaDevice.createDevice()
-            )
+            if template.enablesRosettaDirectoryShare {
+                configuration.directorySharingDevices.append(
+                    try RosettaDevice.createDevice()
+                )
+            }
             
             if let url = template.removableDiskImage {
                 configuration.storageDevices.append(
