@@ -22,7 +22,8 @@ enum VZKitError: LocalizedError {
     case machineIdRetrieve
     case efiStore
     case usbDisk
-    case rosetta
+    case rosettaUnsupported
+    case rosettaUnavailable
     case auxiliaryStorage
     case macUnsupportedImage
     case macUnsupportedHost
@@ -53,8 +54,11 @@ enum VZKitError: LocalizedError {
         case .usbDisk:
             return VirtualizationKit.localized("error-configuration-usbdisk")
             
-        case .rosetta:
-            return VirtualizationKit.localized("error-configuration-rosetta")
+        case .rosettaUnsupported:
+            return VirtualizationKit.localized("error-configuration-rosettaunsupported")
+        
+        case .rosettaUnavailable:
+            return VirtualizationKit.localized("error-configuration-rosettaunavailable")
             
         case .auxiliaryStorage:
             return VirtualizationKit.localized("error-configuration-auxstorage")
