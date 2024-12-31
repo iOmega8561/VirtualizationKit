@@ -44,4 +44,8 @@ public protocol VZKitTemplate: Identifiable, Hashable, Sendable, Codable {
     
     /// A Boolean value that indicates whether output audio support is enabled for the VM.
     var enablesOutputAudio: Bool { get }
+    
+    /// A Boolean value that indicates whether the Rosetta directory share should be exposed to the VM.
+    /// - Note: This value should be `true` only for Linux virtual machines. It will should be ignored if otherwise.
+    var enablesRosettaDirectoryShare: Bool { get }
 }
