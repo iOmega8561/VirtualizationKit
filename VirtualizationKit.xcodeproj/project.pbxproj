@@ -206,9 +206,8 @@
 				E3D7E87D2CBB3CEB005488C8 /* CoreDefinitions */,
 				E32B65F32CBA960000FED006 /* Implementations */,
 				E32B65FF2CBA960000FED006 /* Protocols */,
+				E3CE73A42D26271700A4DD45 /* Resources */,
 				E32B660D2CBA960000FED006 /* StaticFactories */,
-				E3DC75242CBC1EF5006ADCF1 /* Assets.xcassets */,
-				E32B663C2CBA981600FED006 /* Localizable.xcstrings */,
 			);
 			path = VirtualizationKit;
 			sourceTree = "<group>";
@@ -219,6 +218,15 @@
 				E32B663A2CBA97A100FED006 /* Virtualization.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		E3CE73A42D26271700A4DD45 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				E3DC75242CBC1EF5006ADCF1 /* Assets.xcassets */,
+				E32B663C2CBA981600FED006 /* Localizable.xcstrings */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		E3D7E87D2CBB3CEB005488C8 /* CoreDefinitions */ = {
@@ -450,6 +458,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -519,6 +528,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
