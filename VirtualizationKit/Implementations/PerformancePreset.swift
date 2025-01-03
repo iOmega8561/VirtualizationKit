@@ -51,7 +51,7 @@ public enum PerformancePreset: VZKitPerformancePreset {
     ///   - desiredMemorySize: Desired memory size in bytes (defaults to `balanced` preset).
     ///   - desiredDiskSize: Desired disk size in bytes (defaults to `balanced` preset).
     case custom(
-        desiderCoreCount: Int = Self.balanced.cpuCoreCount,
+        desiredCoreCount: Int = Self.balanced.cpuCoreCount,
         desiredMemorySize: UInt64 = Self.balanced.memorySize,
         desiredDiskSize: UInt64 = Self.balanced.diskSize
     )
