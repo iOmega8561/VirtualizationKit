@@ -47,11 +47,11 @@ public enum PerformancePreset: VZKitPerformancePreset {
     /// - Important: it's especially necessary to avoid setting negative values on UInt64 since this will result in runtime crashes.
     ///
     /// - Parameters:
-    ///   - desiderCoreCount: Desired number of CPU cores (defaults to `balanced` preset).
+    ///   - desiredCoreCount: Desired number of CPU cores (defaults to `balanced` preset).
     ///   - desiredMemorySize: Desired memory size in bytes (defaults to `balanced` preset).
     ///   - desiredDiskSize: Desired disk size in bytes (defaults to `balanced` preset).
     case custom(
-        desiderCoreCount: Int = Self.balanced.cpuCoreCount,
+        desiredCoreCount: Int = Self.balanced.cpuCoreCount,
         desiredMemorySize: UInt64 = Self.balanced.memorySize,
         desiredDiskSize: UInt64 = Self.balanced.diskSize
     )
