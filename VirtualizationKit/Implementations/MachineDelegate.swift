@@ -14,6 +14,8 @@
 //  Created by Giuseppe Rocco on 08/11/24.
 //
 
+import os
+
 import Virtualization
 
 @preconcurrency import Combine
@@ -51,13 +53,14 @@ public final class MachineDelegate: NSObject, VZKitMachineDelegate {
     ///
     /// This method is a stub required by the `VZVirtualMachineDelegate` protocol. It is invoked when the virtual
     /// machine encounters an error and shuts down forcefully. The delegate sends the current state through the
-    /// `statePublisher` to notify observers of the change. Additionally, a task can be launched to present the
-    /// error to the user, if desired.
+    /// `statePublisher` to notify observers of the change. The error is logged using macOS `os_log` facility, making
+    /// it viewable in the Console application. Additionally, a task can be launched to present the error to the user, if desired.
     ///
     /// - Parameters:
     ///   - virtualMachine: The virtual machine instance that stopped.
     ///   - error: The error that caused the virtual machine to stop unexpectedly.
     public func virtualMachine(_ virtualMachine: VZVirtualMachine, didStopWithError error: any Error) {
-        statePublisher.send(virtualMachine.state)
+        statePublisher.send(.stopped)
+        os_log("VirtualizationKit: Virtual Machine stopped with error: ", type: .error, error.localizedDescription)
     }
 }
