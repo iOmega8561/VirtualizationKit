@@ -22,7 +22,7 @@ public final class _VirtualizationKit: Sendable {
     public let bundleIdentifier: String = "giusepperocco.VirtualizationKit"
     
     /// The version string of this framework
-    public let version: String = "1.3.3"
+    public let version: String = "1.4"
     
     /// The minimum macOS version supported as a guest operating system
     public let macOSGuestMinVersion: OperatingSystem.Version = .init(major: 12, minor: 4, patch: 0)
@@ -58,6 +58,16 @@ public final class _VirtualizationKit: Sendable {
     fileprivate init() {
         self.bundle = .init(identifier: bundleIdentifier)
         self.supportDirectory = .applicationSupportDirectory.appendingPathComponent(bundleIdentifier)
+    }
+}
+
+@available(macOS 15.0, *)
+extension _VirtualizationKit {
+    
+    /// Determines whether or not the Nested Virtualization feature is supported by the Host Mac
+    /// - Note: This is only available starting with macOS 15
+    public var isNestedVirtualizationSupported: Bool {
+        GenericPlatform.isNestedVirtualizationSupported
     }
 }
 
