@@ -54,7 +54,8 @@ struct ConfigurationBuilder<TemplateType: VZKitTemplate>: VZKitConfigurationBuil
         case .linux:
             
             configuration.platform = try GenericPlatform.createDevice(
-                vmSupportDirectory.appendingPathComponent("MachineIdentifier")
+                vmSupportDirectory.appendingPathComponent("MachineIdentifier"),
+                template.enablesNestedVirtualization
             )
             
             configuration.bootLoader = try BootLoader.createDevice(

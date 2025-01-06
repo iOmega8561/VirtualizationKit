@@ -7,13 +7,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Due to limitations imposed by Apple, it is only possible to run two macOS Virtual Machines at the same time."
+            "value" : "Due to limitations imposed by Apple, it is only possible to run %d macOS Virtual Machines at the same time."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A causa di una limitazione imposta da Apple, non è possibile avviare più di due Macchine Virtuali macOS in contemporanea."
+            "value" : "A causa di una limitazione imposta da Apple, non è possibile avviare più di %d Macchine Virtuali macOS in contemporanea."
           }
         }
       }
@@ -65,6 +65,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Non è stato possibile creare il file di salvataggio delle variabili EFI"
+          }
+        }
+      }
+    },
+    "error-configuration-guest-feature-unsupported" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The following feature is not supported by the guest operating system: “%@”"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La seguente funzionalità non è supportata dal sistema operativo guest: “%@”"
+          }
+        }
+      }
+    },
+    "error-configuration-host-feature-unsupported" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The following feature is not supported by the host Macintosh: “%@”"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La seguente funzionalità non è supportata dal Macintosh Host: “%@”"
           }
         }
       }
@@ -216,40 +250,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rosetta non è disponibile sul Macintosh Host"
-          }
-        }
-      }
-    },
-    "error-configuration-rosettaunsupported" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rosetta is not supported by the host Macintosh"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rosetta non è supportato dal Macintosh Host"
-          }
-        }
-      }
-    },
-    "error-configuration-unsopportedfeature" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The following feature is not supported by the guest macOS version: “%@”"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La seguente funzionalità non è supportata dalla versione del sistema guest macOS: “%@”"
           }
         }
       }

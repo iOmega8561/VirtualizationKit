@@ -50,7 +50,7 @@ extension RosettaDevice {
             return sharingDevice
             
         case .notSupported:
-            throw VZKitError.rosettaUnsupported
+            throw VZKitError.hostFeatureUnsupported("Rosetta")
             
         case .notInstalled:
             fallthrough

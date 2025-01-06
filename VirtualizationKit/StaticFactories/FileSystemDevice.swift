@@ -44,7 +44,7 @@ extension FileSystemDevice: VZKitStorageAttachment {
         case .macos(let version):
             
             guard version.major > 12 else {
-                throw VZKitError.macOSGuestFeatureNotSupported("VZDirectoryShare")
+                throw VZKitError.guestFeatureNotSupported("VZDirectoryShare")
             }
             
             sharingDevice = FileSystemDevice(
