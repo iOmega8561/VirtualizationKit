@@ -13,7 +13,8 @@ enum VZKitError: LocalizedError {
     case machineIdRetrieve
     case efiStore
     case usbDisk
-    case rosettaUnsupported
+    case hostFeatureUnsupported(_ feature: String)
+    case guestFeatureNotSupported(_ feature: String)
     case rosettaUnavailable
     case auxiliaryStorage
     case macUnsupportedImage
@@ -23,7 +24,6 @@ enum VZKitError: LocalizedError {
     case captureDevicePermissionDenied
     case wrongMacImageVersion(_ expected: OperatingSystem.Version, _ actual: OperatingSystem.Version)
     case appleVMLimitExceeded
-    case macOSGuestFeatureNotSupported(_ feature: String)
     case bridgeInterfaceNotAvailable(_ id: String?)
     case invalidMacAddress(_ macAddress: String)
 
@@ -45,8 +45,13 @@ enum VZKitError: LocalizedError {
         case .usbDisk:
             return VirtualizationKit.localized("error-configuration-usbdisk")
             
-        case .rosettaUnsupported:
-            return VirtualizationKit.localized("error-configuration-rosettaunsupported")
+        case .hostFeatureUnsupported(let feature):
+            return .init(format: VirtualizationKit.localized("error-configuration-host-feature-unsupported"),
+                         feature)
+            
+        case .guestFeatureNotSupported(let feature):
+            return .init(format: VirtualizationKit.localized("error-configuration-guest-feature-unsupported"),
+                         feature)
         
         case .rosettaUnavailable:
             return VirtualizationKit.localized("error-configuration-rosettaunavailable")
@@ -70,19 +75,15 @@ enum VZKitError: LocalizedError {
             return VirtualizationKit.localized("error-configuration-capturedevice")
             
         case .wrongMacImageVersion(let expected, let actual):
-            return .init(
-                format: VirtualizationKit.localized("error-configuration-wrongimgversion"),
-                expected.major,
-                expected.minor,
-                actual.major,
-                actual.minor
-            )
+            return .init(format: VirtualizationKit.localized("error-configuration-wrongimgversion"),
+                         expected.major,
+                         expected.minor,
+                         actual.major,
+                         actual.minor)
             
         case .appleVMLimitExceeded:
-            return VirtualizationKit.localized("error-applevz-limitexceeded")
-            
-        case .macOSGuestFeatureNotSupported(let feature):
-            return .init(format: VirtualizationKit.localized("error-configuration-unsopportedfeature"), feature)
+            return .init(format: VirtualizationKit.localized("error-applevz-limitexceeded"),
+                         VirtualizationKit.appleMaxVMs)
             
         case .bridgeInterfaceNotAvailable(let id):
             guard let id else {

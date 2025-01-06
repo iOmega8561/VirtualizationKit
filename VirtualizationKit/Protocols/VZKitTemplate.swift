@@ -48,4 +48,10 @@ public protocol VZKitTemplate: Identifiable, Hashable, Sendable, Codable {
     /// A Boolean value that indicates whether the Rosetta directory share should be exposed to the VM.
     /// - Note: This value should be `true` only for Linux virtual machines. It will should be ignored if otherwise.
     var enablesRosettaDirectoryShare: Bool { get }
+
+    /// A Boolean value that indicates whether the Virtual Machine should enable nested virtualization.
+    /// - Note: Nested virtualization is supported starting from macOS 15.0 and only available for
+    /// generic platform configurations (Linux). This will have no effect with macOS as guest operating system.
+    @available(macOS 15.0, *)
+    var enablesNestedVirtualization: Bool { get }
 }
