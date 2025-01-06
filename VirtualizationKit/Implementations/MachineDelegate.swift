@@ -52,6 +52,6 @@ public final class MachineDelegate: NSObject, VZKitMachineDelegate {
     ///   - error: The error that caused the virtual machine to stop unexpectedly.
     public func virtualMachine(_ virtualMachine: VZVirtualMachine, didStopWithError error: any Error) {
         statePublisher.send(.stopped)
-        os_log("VirtualizationKit: %@", type: .error, error.localizedDescription)
+        VZKitLogger.default.error(error.localizedDescription)
     }
 }
