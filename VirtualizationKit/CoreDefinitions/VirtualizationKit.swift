@@ -61,4 +61,12 @@ public final class _VirtualizationKit: Sendable {
     }
 }
 
+@available(macOS 15.0, *)
+extension _VirtualizationKit {
+    
+    public var isNestedVirtualizationSupported: Bool {
+        GenericPlatform.isNestedVirtualizationSupported
+    }
+}
+
 public let VirtualizationKit: _VirtualizationKit = .init()

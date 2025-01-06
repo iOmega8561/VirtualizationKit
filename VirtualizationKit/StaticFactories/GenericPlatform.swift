@@ -55,9 +55,19 @@ extension GenericPlatform {
     ///
     /// - Parameters:
     ///   - url: Location on disk of the Virtual Machine storage directory.
-    static func createDevice(_ url: URL) throws -> GenericPlatform {
-        let platform = VZGenericPlatformConfiguration()
+    ///   - nestedVZ: Whether the platform should enable nested virtualization
+    static func createDevice(_ url: URL, _ nestedVZ: Bool) throws -> GenericPlatform {
+        
+        let platform = GenericPlatform()
         platform.machineIdentifier = try generateMachineId(url)
+        
+        guard nestedVZ else { return platform }
+        
+        guard #available(macOS 15.0, *), GenericPlatform.isNestedVirtualizationSupported else {
+            throw VZKitError.hostFeatureUnsupported("Nested Virtualization")
+        }
+        
+        platform.isNestedVirtualizationEnabled = nestedVZ
         
         return platform
     }
