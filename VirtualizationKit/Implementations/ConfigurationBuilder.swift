@@ -64,7 +64,7 @@ struct ConfigurationBuilder<TemplateType: VZKitTemplate>: VZKitConfigurationBuil
             
             configuration.platform = try GenericPlatform.createDevice(
                 vmSupportDirectory.appendingPathComponent("MachineIdentifier"),
-                template.enablesNestedVirtualization
+                { if #available(macOS 15.0, *) { template.enablesNestedVirtualization } else { false } }()
             )
             
             configuration.bootLoader = try BootLoader.createDevice(
