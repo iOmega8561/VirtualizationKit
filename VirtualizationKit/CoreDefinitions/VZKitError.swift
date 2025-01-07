@@ -18,10 +18,8 @@ import Foundation
 
 enum VZKitError: LocalizedError {
     case mainDisk
-    case machineId
-    case machineIdRetrieve
-    case efiStore
-    case usbDisk
+    case machineIdCorrupt
+    case machineIdMissing
     case hostFeatureUnsupported(_ feature: String)
     case guestFeatureNotSupported(_ feature: String)
     case rosettaUnavailable
@@ -29,12 +27,12 @@ enum VZKitError: LocalizedError {
     case macUnsupportedImage
     case macUnsupportedHost
     case missingMacImage
-    case notInitialized
     case captureDevicePermissionDenied
     case wrongMacImageVersion(_ expected: OperatingSystem.Version, _ actual: OperatingSystem.Version)
     case appleVMLimitExceeded
     case bridgeInterfaceNotAvailable(_ id: String?)
     case invalidMacAddress(_ macAddress: String)
+    case usbDeviceNotFound(_ id: UUID)
 
     public var errorDescription: String? {
         
@@ -42,17 +40,11 @@ enum VZKitError: LocalizedError {
         case .mainDisk:
             return VirtualizationKit.localized("error-configuration-maindisk")
             
-        case .machineId:
-            return VirtualizationKit.localized("error-configuration-machineid")
+        case .machineIdCorrupt:
+            return VirtualizationKit.localized("error-configuration-machineid-corrupt")
             
-        case .machineIdRetrieve:
-            return VirtualizationKit.localized("error-configuration-machineid-retrieve")
-            
-        case .efiStore:
-            return VirtualizationKit.localized("error-configuration-efistore")
-            
-        case .usbDisk:
-            return VirtualizationKit.localized("error-configuration-usbdisk")
+        case .machineIdMissing:
+            return VirtualizationKit.localized("error-configuration-machineid-missing")
             
         case .hostFeatureUnsupported(let feature):
             return .init(format: VirtualizationKit.localized("error-configuration-host-feature-unsupported"),
@@ -61,7 +53,7 @@ enum VZKitError: LocalizedError {
         case .guestFeatureNotSupported(let feature):
             return .init(format: VirtualizationKit.localized("error-configuration-guest-feature-unsupported"),
                          feature)
-        
+            
         case .rosettaUnavailable:
             return VirtualizationKit.localized("error-configuration-rosettaunavailable")
             
@@ -76,9 +68,6 @@ enum VZKitError: LocalizedError {
             
         case .missingMacImage:
             return VirtualizationKit.localized("error-installer-macimage")
-            
-        case .notInitialized:
-            return VirtualizationKit.localized("error-machine-notinizialized")
             
         case .captureDevicePermissionDenied:
             return VirtualizationKit.localized("error-configuration-capturedevice")
@@ -100,9 +89,12 @@ enum VZKitError: LocalizedError {
             }
             
             return .init(format: VirtualizationKit.localized("error-configuration-netinterface"), id)
-        
+            
         case .invalidMacAddress(let macAddress):
             return .init(format: VirtualizationKit.localized("error-configuration-macaddress"), macAddress)
+            
+        case .usbDeviceNotFound(let id):
+            return .init(format: VirtualizationKit.localized("error-usbdev-notfound"), id.uuidString)
         }
     }
 }

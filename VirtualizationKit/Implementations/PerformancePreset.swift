@@ -72,10 +72,8 @@ public enum PerformancePreset: VZKitPerformancePreset {
     /// - Criteria: Ensures that the virtual machine does not attempt to use more cores than the host system has available or
     ///   exceed the virtualization framework's limits.
     public static var maximumAllowedCPUCount: Int {
-        min(
-            ProcessInfo.processInfo.processorCount,
-            VZVirtualMachineConfiguration.maximumAllowedCPUCount
-        )
+        min(ProcessInfo.processInfo.processorCount,
+            VZVirtualMachineConfiguration.maximumAllowedCPUCount)
     }
     
     /// Maximum allowed memory size for the host system in bytes.
@@ -85,10 +83,8 @@ public enum PerformancePreset: VZKitPerformancePreset {
     /// - Criteria: Ensures that the virtual machine does not allocate more memory than the host system has available or
     ///   exceed the virtualization framework's limits.
     public static var maximumAllowedMemorySize: UInt64 {
-        min(
-            ProcessInfo.processInfo.physicalMemory,
-            VZVirtualMachineConfiguration.maximumAllowedMemorySize
-        )
+        min(ProcessInfo.processInfo.physicalMemory,
+            VZVirtualMachineConfiguration.maximumAllowedMemorySize)
     }
     
     /// Minimum allowed CPU core count for the host system.
@@ -150,31 +146,20 @@ public enum PerformancePreset: VZKitPerformancePreset {
     public var cpuCoreCount: Int {
         switch self {
         case .basic:
-            return max(
-                VZVirtualMachineConfiguration.minimumAllowedCPUCount,
-                Self.maximumAllowedCPUCount / 4
-            )
+             max(VZVirtualMachineConfiguration.minimumAllowedCPUCount,
+                 Self.maximumAllowedCPUCount / 4)
             
         case .balanced:
-            return max(
-                VZVirtualMachineConfiguration.minimumAllowedCPUCount,
-                Self.maximumAllowedCPUCount / 2
-            )
+             max(VZVirtualMachineConfiguration.minimumAllowedCPUCount,
+                 Self.maximumAllowedCPUCount / 2)
             
         case .performance:
-            return max(
-                VZVirtualMachineConfiguration.minimumAllowedCPUCount,
-                Self.maximumAllowedCPUCount - 2
-            )
+             max(VZVirtualMachineConfiguration.minimumAllowedCPUCount,
+                 Self.maximumAllowedCPUCount - 2)
             
         case .custom(let desideredCoreCount, _, _):
-            return max(
-                min(
-                    desideredCoreCount,
-                    Self.maximumAllowedCPUCount
-                ),
-                VZVirtualMachineConfiguration.minimumAllowedCPUCount
-            )
+             max(min(desideredCoreCount, Self.maximumAllowedCPUCount),
+                 VZVirtualMachineConfiguration.minimumAllowedCPUCount)
         }
     }
     
@@ -221,31 +206,20 @@ public enum PerformancePreset: VZKitPerformancePreset {
     public var memorySize: UInt64 {
         switch self {
         case .basic:
-            return max(
-                VZVirtualMachineConfiguration.minimumAllowedMemorySize,
-                Self.maximumAllowedMemorySize / 8
-            )
+            max(VZVirtualMachineConfiguration.minimumAllowedMemorySize,
+                Self.maximumAllowedMemorySize / 8)
             
         case .balanced:
-            return max(
-                VZVirtualMachineConfiguration.minimumAllowedMemorySize,
-                Self.maximumAllowedMemorySize / 4
-            )
+            max(VZVirtualMachineConfiguration.minimumAllowedMemorySize,
+                Self.maximumAllowedMemorySize / 4)
             
         case .performance:
-            return max(
-                VZVirtualMachineConfiguration.minimumAllowedMemorySize,
-                Self.maximumAllowedMemorySize / 2
-            )
+            max(VZVirtualMachineConfiguration.minimumAllowedMemorySize,
+                Self.maximumAllowedMemorySize / 2)
             
         case .custom(_, let desiredMemorySize, _):
-            return max(
-                min(
-                    desiredMemorySize,
-                    Self.maximumAllowedMemorySize
-                ),
-                VZVirtualMachineConfiguration.minimumAllowedMemorySize
-            )
+            max(min(desiredMemorySize, Self.maximumAllowedMemorySize),
+                VZVirtualMachineConfiguration.minimumAllowedMemorySize)
         }
     }
     
@@ -285,17 +259,10 @@ public enum PerformancePreset: VZKitPerformancePreset {
     /// particularly useful for ensuring quick setup with standard presets or detailed control with the custom preset.
     public var diskSize: UInt64 {
         switch self {
-        case .basic:
-            return 32 * 1024 * 1024 * 1024
-            
-        case .balanced:
-            return 64 * 1024 * 1024 * 1024
-            
-        case .performance:
-            return 128 * 1024 * 1024 * 1024
-            
-        case .custom(_, _, let desiredDiskSize):
-            return desiredDiskSize
+        case .basic: 32 * 1024 * 1024 * 1024
+        case .balanced: 64 * 1024 * 1024 * 1024
+        case .performance: 128 * 1024 * 1024 * 1024
+        case .custom(_, _, let desiredDiskSize): desiredDiskSize
         }
     }
     
@@ -305,17 +272,10 @@ public enum PerformancePreset: VZKitPerformancePreset {
     /// - Returns: A `String` containing the localized value for the performance preset.
     public var localized: String {
         switch self {
-        case .basic:
-            return VirtualizationKit.localized("perfpreset-basic")
-            
-        case .balanced:
-            return VirtualizationKit.localized("perfpreset-balanced")
-            
-        case .performance:
-            return VirtualizationKit.localized("perfpreset-performance")
-            
-        case .custom(_, _, _):
-            return VirtualizationKit.localized("perfpreset-custom")
+        case .basic: VirtualizationKit.localized("perfpreset-basic")
+        case .balanced: VirtualizationKit.localized("perfpreset-balanced")
+        case .performance: VirtualizationKit.localized("perfpreset-performance")
+        case .custom: VirtualizationKit.localized("perfpreset-custom")
         }
     }
 }

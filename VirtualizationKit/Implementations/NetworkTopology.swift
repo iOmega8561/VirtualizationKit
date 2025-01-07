@@ -30,8 +30,7 @@ public enum NetworkTopology: VZKitNetworkTopology {
     /// value is a localized string representing the display name of the network interface (Wi-Fi or Ethernet, for example).
     /// If a localized name is not available, the right value is simply set to `nil`.
     public static var networkInterfaces: [(String, String?)] {
-        
-        return VZBridgedNetworkInterface.networkInterfaces.map {
+        VZBridgedNetworkInterface.networkInterfaces.map {
             ($0.identifier, $0.localizedDisplayName)
         }
     }
@@ -128,13 +127,9 @@ public enum NetworkTopology: VZKitNetworkTopology {
     /// - The value is read-only and dynamically derived based on the network topology.
     public var macAddress: String? {
         switch self {
-        case .none: return nil
-            
-        case .nat(let macAddress):
-            return macAddress
-            
-        case .bridged(_, let macAddress):
-            return macAddress
+        case .none: nil
+        case .nat(let macAddress): macAddress
+        case .bridged(_, let macAddress): macAddress
         }
     }
     
@@ -153,10 +148,8 @@ public enum NetworkTopology: VZKitNetworkTopology {
     /// - For all other configurations, the interface is not applicable, and the property returns `nil`.
     public var interface: String? {
         switch self {
-        case .bridged(let hostInterfaceID, _):
-            return hostInterfaceID
-            
-        default: return nil
+        case .bridged(let hostInterfaceID, _): hostInterfaceID
+        default: nil
         }
     }
     
@@ -171,14 +164,9 @@ public enum NetworkTopology: VZKitNetworkTopology {
     /// - Returns: A `String` that is the localized representation of the network configuration.
     public var localized: String {
         switch self {
-            case .none:
-                return VirtualizationKit.localized("networktopo-none")
-            
-            case .nat:
-                return VirtualizationKit.localized("networktopo-nat")
-            
-            case .bridged(_, _):
-                return VirtualizationKit.localized("networktopo-bridged")
+            case .none: VirtualizationKit.localized("networktopo-none")
+            case .nat: VirtualizationKit.localized("networktopo-nat")
+            case .bridged: VirtualizationKit.localized("networktopo-bridged")
         }
     }
 }
