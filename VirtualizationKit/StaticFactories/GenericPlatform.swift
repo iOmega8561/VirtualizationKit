@@ -31,11 +31,11 @@ extension GenericPlatform {
         }
         
         guard let machineIdData = try? Data(contentsOf: url) else {
-            throw VZKitError.machineIdRetrieve
+            throw VZKitError.machineIdMissing
         }
         
         guard let machineId = VZGenericMachineIdentifier(dataRepresentation: machineIdData) else {
-            throw VZKitError.machineId
+            throw VZKitError.machineIdCorrupt
         }
         
         return machineId
