@@ -148,8 +148,6 @@ public struct VirtualMachine<TemplateType: VZKitTemplate>: VZKitVirtualMachine {
     ///   - template: the data transfer object containing all the information about the VM.
     public init(template: TemplateType) async throws {
         
-        self.template = template
-        
         let builder = await ConfigurationBuilder(template: template)
         
         self.vzVirtualMachine = VZVirtualMachine(
@@ -158,10 +156,9 @@ public struct VirtualMachine<TemplateType: VZKitTemplate>: VZKitVirtualMachine {
         )
         
         self.delegate = .init()
-        
-        await self.stateManager = .init(self.delegate)
-        
+        self.template = template
         self.vzVirtualMachine.delegate = delegate
+        await self.stateManager = .init(self.delegate)
     }
 }
 

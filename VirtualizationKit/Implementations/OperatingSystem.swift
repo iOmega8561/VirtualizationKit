@@ -43,11 +43,8 @@ public enum OperatingSystem: VZKitOperatingSystem {
     ///   - For `.macos`, returns a system image with the "apple.logo" symbol, representing macOS.
     public var image: Image {
         switch self {
-        case .linux:
-            return Image("tux", bundle: VirtualizationKit.bundle)
-            
-        case .macos:
-            return Image(systemName: "apple.logo")
+        case .linux: Image("tux", bundle: VirtualizationKit.bundle)
+        case .macos: Image(systemName: "apple.logo")
         }
     }
     
@@ -58,11 +55,8 @@ public enum OperatingSystem: VZKitOperatingSystem {
     ///   - For `.macos`, returns a `Text` object with the label "macOS".
     public var label: Text {
         switch self {
-        case .linux:
-            return Text(verbatim: "Linux")
-            
-        case .macos:
-            return Text(verbatim: "macOS")
+        case .linux: Text(verbatim: "Linux")
+        case .macos: Text(verbatim: "macOS")
         }
     }
     
@@ -73,11 +67,8 @@ public enum OperatingSystem: VZKitOperatingSystem {
     ///   - For `.macos`, returns a `UTType` for files with the "ipsw" extension, commonly used for macOS firmware packages.
     public var fileType: UTType {
         switch self {
-        case .linux:
-            return .diskImage
-            
-        case .macos:
-            return UTType(filenameExtension: "ipsw")!
+        case .linux: .diskImage
+        case .macos: UTType(filenameExtension: "ipsw")!
         }
     }
     
@@ -88,11 +79,8 @@ public enum OperatingSystem: VZKitOperatingSystem {
     ///   - For `.macos`, returns the specified `Version` instance, indicating the macOS version.
     public var version: Version? {
         switch self {
-        case .linux:
-            return nil
-            
-        case .macos(let version):
-            return version
+        case .linux: nil
+        case .macos(let version): version
         }
     }
 }

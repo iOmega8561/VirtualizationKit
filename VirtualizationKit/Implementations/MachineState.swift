@@ -38,35 +38,17 @@ extension MachineState: VZKitMachineState {
     /// For instance, `.green` for `.running` and `.red` for `.stopped`.
     public var color: Color {
         switch self {
-        case .running:
-            return .green
-            
-        case .stopping:
-            return .orange
-            
-        case .stopped:
-            return .red
-            
-        case .error:
-            return .yellow
-        
-        case .starting:
-            return .blue
-            
-        case .pausing:
-            return .orange
-            
-        case .paused:
-            return .orange
-        
-        case .resuming:
-            return .orange
-        
-        case .restoring:
-            return .mint
-            
-        default:
-            return .white
+        case .starting: .blue
+        case .running: .green
+        case .restoring: .mint
+        case .stopping: .orange
+        case .pausing: .orange
+        case .paused: .orange
+        case .resuming: .orange
+        case .saving: .orange
+        case .stopped: .red
+        case .error: .yellow
+        default: .white
         }
     }
     
@@ -78,48 +60,31 @@ extension MachineState: VZKitMachineState {
     /// by eliminating the need for additional localization logic within the view.
     ///
     /// - Localization keys:
-    ///   - `details-vmstate-running`: for `.running` state
-    ///   - `details-vmstate-stopping`: for `.stopping` state
-    ///   - `details-vmstate-stopped`: for `.stopped` state
-    ///   - `details-vmstate-error`: for `.error` state
-    ///   - `details-vmstate-starting`: for `.starting` state
-    ///   - `details-vmstate-paused`: for `.paused` state
-    ///   - `details-vmstate-pausing`: for `.pausing` state
-    ///   - `details-vmstate-resuming`: for `.resuming` state
-    ///   - `details-vmstate-restoring`: for `.restoring` state
+    ///   - `vmstate-running`: for `.running` state
+    ///   - `vmstate-stopping`: for `.stopping` state
+    ///   - `vmstate-stopped`: for `.stopped` state
+    ///   - `vmstate-error`: for `.error` state
+    ///   - `vmstate-starting`: for `.starting` state
+    ///   - `vmstate-paused`: for `.paused` state
+    ///   - `vmstate-pausing`: for `.pausing` state
+    ///   - `vmstate-resuming`: for `.resuming` state
+    ///   - `vmstate-restoring`: for `.restoring` state
+    ///   - `vmstate-saving`: for `.saving` state
     ///
     /// If the state does not match any defined case, it defaults to `"undefined-state"`.
     public var localized: String {
         switch self {
-        case .running:
-            return VirtualizationKit.localized("vmstate-running")
-            
-        case .stopping:
-            return VirtualizationKit.localized("vmstate-stopping")
-            
-        case .stopped:
-            return VirtualizationKit.localized("vmstate-stopped")
-        
-        case .error:
-            return VirtualizationKit.localized("vmstate-error")
-        
-        case .starting:
-            return VirtualizationKit.localized("vmstate-starting")
-        
-        case .paused:
-            return VirtualizationKit.localized("vmstate-paused")
-        
-        case .pausing:
-            return VirtualizationKit.localized("vmstate-pausing")
-            
-        case .resuming:
-            return VirtualizationKit.localized("vmstate-resuming")
-        
-        case .restoring:
-            return VirtualizationKit.localized("vmstate-restoring")
-               
-        default:
-            return "undefined-state"
+        case .running:  VirtualizationKit.localized("vmstate-running")
+        case .stopping: VirtualizationKit.localized("vmstate-stopping")
+        case .stopped: VirtualizationKit.localized("vmstate-stopped")
+        case .error: VirtualizationKit.localized("vmstate-error")
+        case .starting: VirtualizationKit.localized("vmstate-starting")
+        case .paused: VirtualizationKit.localized("vmstate-paused")
+        case .pausing: VirtualizationKit.localized("vmstate-pausing")
+        case .resuming: VirtualizationKit.localized("vmstate-resuming")
+        case .restoring: VirtualizationKit.localized("vmstate-restoring")
+        case .saving: VirtualizationKit.localized("vmstate-saving")
+        default: "undefined-state"
         }
     }
 }
