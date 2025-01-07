@@ -131,6 +131,10 @@ struct ConfigurationBuilder<TemplateType: VZKitTemplate>: VZKitConfigurationBuil
             )
         }
         
+        if #available(macOS 15.0, *) {
+            configuration.usbControllers.append(VZXHCIControllerConfiguration())
+        }
+        
         configuration.cpuCount = template.performancePreset.cpuCoreCount
         
         configuration.memorySize = template.performancePreset.memorySize

@@ -50,6 +50,7 @@
 		E33DEB402CE3A03B00B206B8 /* VZKitOperatingSystemVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = E33DEB3F2CE3A03600B206B8 /* VZKitOperatingSystemVersion.swift */; };
 		E33DEB492CE4DAD500B206B8 /* MacOSRestoreImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E33DEB482CE4DAD500B206B8 /* MacOSRestoreImage.swift */; };
 		E33DEB4B2CE4DAFE00B206B8 /* VZKitRestoreImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E33DEB4A2CE4DAFE00B206B8 /* VZKitRestoreImage.swift */; };
+		E34A3DCB2D2D1AC4003D8789 /* RemovableUSBDisk.swift in Sources */ = {isa = PBXBuildFile; fileRef = E34A3DCA2D2D1ABE003D8789 /* RemovableUSBDisk.swift */; };
 		E36413702D2BC89700CFD722 /* VZKitLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = E364136F2D2BC89000CFD722 /* VZKitLogger.swift */; };
 		E3941ED12CBEFEE000E210E7 /* GraphicalConsole.Framebuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3941ED02CBEFEDD00E210E7 /* GraphicalConsole.Framebuffer.swift */; };
 		E3CE81312CE8F1CC00AC7FDE /* VZKitPerformancePreset.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3CE81302CE8F1C600AC7FDE /* VZKitPerformancePreset.swift */; };
@@ -103,6 +104,7 @@
 		E33DEB3F2CE3A03600B206B8 /* VZKitOperatingSystemVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VZKitOperatingSystemVersion.swift; sourceTree = "<group>"; };
 		E33DEB482CE4DAD500B206B8 /* MacOSRestoreImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSRestoreImage.swift; sourceTree = "<group>"; };
 		E33DEB4A2CE4DAFE00B206B8 /* VZKitRestoreImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VZKitRestoreImage.swift; sourceTree = "<group>"; };
+		E34A3DCA2D2D1ABE003D8789 /* RemovableUSBDisk.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemovableUSBDisk.swift; sourceTree = "<group>"; };
 		E364136F2D2BC89000CFD722 /* VZKitLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VZKitLogger.swift; sourceTree = "<group>"; };
 		E3941ED02CBEFEDD00E210E7 /* GraphicalConsole.Framebuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphicalConsole.Framebuffer.swift; sourceTree = "<group>"; };
 		E3CE81302CE8F1C600AC7FDE /* VZKitPerformancePreset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VZKitPerformancePreset.swift; sourceTree = "<group>"; };
@@ -155,6 +157,7 @@
 				E32B65EF2CBA960000FED006 /* OperatingSystem.swift */,
 				E33DEB3D2CE39F7900B206B8 /* OperatingSystem.Version.swift */,
 				E3D3AA9C2CE74F9A0062B5FB /* PerformancePreset.swift */,
+				E34A3DCA2D2D1ABE003D8789 /* RemovableUSBDisk.swift */,
 				E32B65EB2CBA960000FED006 /* VirtualMachine.swift */,
 			);
 			path = Implementations;
@@ -338,6 +341,7 @@
 				E32B661A2CBA960000FED006 /* VZKitDeviceAttachment.swift in Sources */,
 				E32B661B2CBA960000FED006 /* VZKitConfigurationBuilder.swift in Sources */,
 				E32B661C2CBA960000FED006 /* VZKitMachineDelegate.swift in Sources */,
+				E34A3DCB2D2D1AC4003D8789 /* RemovableUSBDisk.swift in Sources */,
 				E32B661D2CBA960000FED006 /* VZKitMachineInstaller.swift in Sources */,
 				E32B661E2CBA960000FED006 /* VZKitMachineState.swift in Sources */,
 				E36413702D2BC89700CFD722 /* VZKitLogger.swift in Sources */,
