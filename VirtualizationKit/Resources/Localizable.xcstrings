@@ -258,7 +258,20 @@
       }
     },
     "error-usbdev-notfound" : {
-      "extractionState" : "manual"
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The para-virtualized USB device with the following identifier does not exist: “%@”"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il dispositivo USB para-virtualizzato con il seguente identificativo non esiste: “%@”"
+          }
+        }
+      }
     },
     "networktopo-bridged" : {
       "localizations" : {
@@ -464,6 +477,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "In esecuzione"
+          }
+        }
+      }
+    },
+    "vmstate-saving" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saving state"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salvando lo stato"
           }
         }
       }

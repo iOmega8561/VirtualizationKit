@@ -107,9 +107,8 @@ public protocol VZKitVirtualMachine: Sendable {
     /// - Parameter url: A `URL` pointing to the disk image file to be attached. The file can be in a read-only
     ///   or writable configuration, depending on implementation details.
     /// - Returns: A `UUID` uniquely identifying the attached USB device.
-    /// - Throws: An error if the attachment fails, such as:
-    ///   - `VZKitError.guestFeatureNotSupported`: If the virtual machine does not support XHCI USB controllers.
-    ///   - Other errors related to device creation or attachment.
+    /// - Throws: An error if the attachment fails, such as if the virtual machine does not support XHCI USB
+    ///   controllers. Possibly other errors related to device creation or attachment.
     @available(macOS 15.0, *)
     @VZKitGlobalActor func attachRemovableUSBDisk(usingImageAt url: URL) async throws -> UUID
 
@@ -124,11 +123,8 @@ public protocol VZKitVirtualMachine: Sendable {
     ///
     /// - Parameter id: The `UUID` identifying the USB device to be detached. This value should correspond to
     ///   a device previously attached to the VM.
-    /// - Throws: An error if the detachment fails, such as:
-    ///   - `VZKitError.guestFeatureNotSupported`: If the virtual machine does not support XHCI USB controllers,
-    ///     or if the specified device cannot be found.
-    ///   - `VZKitError.usbDeviceNotFound`: If the supplied id doesn't match any device that is currently attached to the VM.
-    ///   - Other errors related to the detachment process.
+    /// - Throws: Should throw an error if the detachment fails, such as iif the virtual machine does not support XHCI USB controllers,
+    ///   or the supplied id doesn't match any device that is currently attached to the VM. Possibly also other errors related to the detachment process.
     @available(macOS 15.0, *)
     @VZKitGlobalActor func detachRemovableUSBDisk(identifiedBy id: UUID) async throws
 }
