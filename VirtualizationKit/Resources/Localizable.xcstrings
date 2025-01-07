@@ -2,7 +2,6 @@
   "sourceLanguage" : "en",
   "strings" : {
     "error-applevz-limitexceeded" : {
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -19,7 +18,6 @@
       }
     },
     "error-configuration-auxstorage" : {
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -36,7 +34,6 @@
       }
     },
     "error-configuration-capturedevice" : {
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -52,25 +49,7 @@
         }
       }
     },
-    "error-configuration-efistore" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Could not create EFI variable store"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non è stato possibile creare il file di salvataggio delle variabili EFI"
-          }
-        }
-      }
-    },
     "error-configuration-guest-feature-unsupported" : {
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -87,7 +66,6 @@
       }
     },
     "error-configuration-host-feature-unsupported" : {
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -119,42 +97,39 @@
         }
       }
     },
-    "error-configuration-machineid" : {
-      "extractionState" : "manual",
+    "error-configuration-machineid-corrupt" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Could not create machine identifier"
+            "value" : "The Unique Identifier of the Virtual Machine appears to be corrupt. Please re-create this Virtual Machine."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Non è stato possibile creare l'identificativo della macchina"
+            "value" : "L’Identificativo Univoco della Macchina Virtuale sembra corrotto. Per favore ricreare la Macchina. "
           }
         }
       }
     },
-    "error-configuration-machineid-retrieve" : {
-      "extractionState" : "manual",
+    "error-configuration-machineid-missing" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Could not retrieve machine identifier from file"
+            "value" : "The Unique Identifier file of the Virtual Machine could not be found (could have been deleted). Please re-create this Virtual Machine"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Non è stato possibile recuperare l'identificativo della macchina dal file"
+            "value" : "Non è stato possibile trovare il file contenente l’Identificativo Univoco della Macchina Virtuale (potrebbe essere stato rimosso). Per favore ricreare la Macchina."
           }
         }
       }
     },
     "error-configuration-machost" : {
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -171,7 +146,6 @@
       }
     },
     "error-configuration-macimage" : {
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -188,7 +162,6 @@
       }
     },
     "error-configuration-maindisk" : {
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -205,7 +178,6 @@
       }
     },
     "error-configuration-netinterface" : {
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -238,7 +210,6 @@
       }
     },
     "error-configuration-rosettaunavailable" : {
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -254,25 +225,7 @@
         }
       }
     },
-    "error-configuration-usbdisk" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Could not attach the .ISO file to the Virtual Machine. Maybe you deleted it by any chance?"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non è stato possibile montare il file .ISO nella Macchina Virtuale. E' possibile che il file sia stato eliminato?"
-          }
-        }
-      }
-    },
     "error-configuration-wrongimgversion" : {
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -289,7 +242,6 @@
       }
     },
     "error-installer-macimage" : {
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -305,22 +257,8 @@
         }
       }
     },
-    "error-machine-notinizialized" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Virtual Machine has not been initialized yet"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La Macchina Virtuale non è ancora stata inizializzata"
-          }
-        }
-      }
+    "error-usbdev-notfound" : {
+      "extractionState" : "manual"
     },
     "networktopo-bridged" : {
       "localizations" : {
@@ -435,7 +373,6 @@
       }
     },
     "vmstate-error" : {
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -452,7 +389,6 @@
       }
     },
     "vmstate-paused" : {
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -469,7 +405,6 @@
       }
     },
     "vmstate-pausing" : {
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -486,7 +421,6 @@
       }
     },
     "vmstate-restoring" : {
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -503,7 +437,6 @@
       }
     },
     "vmstate-resuming" : {
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -520,7 +453,6 @@
       }
     },
     "vmstate-running" : {
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -537,7 +469,6 @@
       }
     },
     "vmstate-starting" : {
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -554,7 +485,6 @@
       }
     },
     "vmstate-stopped" : {
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -571,7 +501,6 @@
       }
     },
     "vmstate-stopping" : {
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
