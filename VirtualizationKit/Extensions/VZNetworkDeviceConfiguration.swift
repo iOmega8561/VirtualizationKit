@@ -90,7 +90,7 @@ extension VZNetworkDeviceConfiguration: VZKitSpecializedConstructible {
     ///
     /// - Parameters:
     ///   - type: The network configuration of choice
-    static func create(type: NetworkTopology) throws -> Constructible {
+    static func create(type: VZKitNetworkTopology) throws -> Constructible {
         let dev = Constructible()
                 
         switch type {

@@ -27,7 +27,7 @@ public final class _VirtualizationKit: Sendable {
     public let version: String = "1.4.1"
     
     /// The minimum macOS version supported as a guest operating system
-    public let macOSGuestMinVersion: OperatingSystem.Version = .init(major: 12, minor: 4, patch: 0)
+    public let macOSGuestMinVersion: VZKitOperatingSystem.Version = .init(major: 12, minor: 4, patch: 0)
     
     /// The maximum amount of macOS virtual machines that can run simultaneously.
     /// Unfortunately Apple Virtualization Framework limits this amount to two VMs at once :(

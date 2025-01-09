@@ -8,7 +8,7 @@
 //
 //  -----------------------------------------------------------------------
 //
-//  NetworkTopology.swift
+//  VZKitNetworkTopology.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 08/11/24.
@@ -16,10 +16,9 @@
 
 import Virtualization
 
-/// `NetworkTopology` is an enumeration that represents the possible network configurations
-/// available for virtual machines. This enumeration closely follows the interface defined
-/// by the `VZKitNetworkTopology` protocol, providing specific cases for each network topology option.
-public enum NetworkTopology: VZKitNetworkTopology {
+/// `VZKitNetworkTopology` is an enumeration that represents the possible network configurations
+/// available for virtual machines. This enumeration conforms to Sendable
+public enum VZKitNetworkTopology: Sendable {
     
     /// A static property that retrieves the list of network interface identifiers available for bridging.
     ///
@@ -29,9 +28,9 @@ public enum NetworkTopology: VZKitNetworkTopology {
     /// - Returns: An array of `(String, String?)` where the left value is the identifier of the network interface, and the right
     /// value is a localized string representing the display name of the network interface (Wi-Fi or Ethernet, for example).
     /// If a localized name is not available, the right value is simply set to `nil`.
-    public static var networkInterfaces: [(String, String?)] {
+    public static var networkInterfaces: [(id: String, localized: String?)] {
         VZBridgedNetworkInterface.networkInterfaces.map {
-            ($0.identifier, $0.localizedDisplayName)
+            (id: $0.identifier, localized: $0.localizedDisplayName)
         }
     }
     
@@ -44,16 +43,6 @@ public enum NetworkTopology: VZKitNetworkTopology {
     public static var randomMacAddress: String {
         VZMACAddress.randomLocallyAdministered().string
     }
-    
-    /// A collection of all available network topology cases.
-    ///
-    /// This static array includes `.none`, `.nat`, and `.bridged`
-    /// to satisfy the `CaseIterable` conformance required by the protocol.
-    public static let allCases: [Self] = [
-        .none,
-        .nat(),
-        .bridged(),
-    ]
     
     /// No network interface for the virtual machine.
     ///

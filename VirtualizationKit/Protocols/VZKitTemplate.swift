@@ -31,7 +31,7 @@ public protocol VZKitTemplate: Identifiable, Hashable, Sendable, Codable {
     var name: String { get }
     
     /// The operating system type and configuration associated with this template.
-    var operatingSystem: OperatingSystem { get }
+    var operatingSystem: VZKitOperatingSystem { get }
     
     /// A URL pointing to the chosen CD-ROM image or media to be used with the VM, if available
     var removableDiskImage: URL? { get }
@@ -40,10 +40,10 @@ public protocol VZKitTemplate: Identifiable, Hashable, Sendable, Codable {
     var restoreFromDiskImage: Bool { get }
     
     /// The network topology setup for the VM, defining its network configuration.
-    var networkTopology: NetworkTopology { get }
+    var networkTopology: VZKitNetworkTopology { get }
     
     /// The performance preset that better descrives the capabilities that the VM should have, hardware wise.
-    var performancePreset: PerformancePreset { get }
+    var performancePreset: VZKitPerformancePreset { get }
     
     /// A Boolean value that indicates whether a shared directory is enabled between the host and VM.
     var enablesSharedDirectory: Bool { get }
