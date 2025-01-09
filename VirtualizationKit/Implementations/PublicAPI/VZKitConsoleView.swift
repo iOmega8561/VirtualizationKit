@@ -54,12 +54,12 @@ public struct VZKitConsoleView<Template: VZKitTemplate>: NSViewRepresentable, VZ
     /// Creates and configures the `NSView` for this console view.
     ///
     /// This method is part of the standard `NSViewRepresentable` protocol and initializes the
-    /// `VZKitConsoleFramebuffer` instance, binding the appropriate virtual machine and context state.
+    /// `VZKitFramebuffer` instance, binding the appropriate virtual machine and context state.
     ///
     /// - Parameter context: The context provided by `NSViewRepresentable`, which manages lifecycle and coordination.
-    /// - Returns: A configured instance of `VZKitConsoleFramebuffer` displaying the virtual machine's output.
-    public func makeNSView(context: Context) -> VZKitConsoleFramebuffer {
-        let vmView = VZKitConsoleFramebuffer()
+    /// - Returns: A configured instance of `VZKitFramebuffer` displaying the virtual machine's output.
+    public func makeNSView(context: Context) -> VZKitFramebuffer {
+        let vmView = VZKitFramebuffer()
         vmView.virtualMachine = vzVirtualMachine
         vmView.isPreviewContext = isPreviewContext
         return vmView
@@ -69,12 +69,12 @@ public struct VZKitConsoleView<Template: VZKitTemplate>: NSViewRepresentable, VZ
     ///
     /// This method is called automatically when SwiftUI detects a state change, and it ensures that properties
     /// such as `automaticallyReconfiguresDisplay` and `capturesSystemKeys`
-    /// are synchronized with the `VZKitConsoleFramebuffer`.
+    /// are synchronized with the `VZKitFramebuffer`.
     ///
     /// - Parameters:
-    ///   - vmView: The existing `VZKitConsoleFramebuffer` view instance to update.
+    ///   - vmView: The existing `VZKitFramebuffer` view instance to update.
     ///   - context: The context provided by `NSViewRepresentable` for managing state and interactions.
-    public func updateNSView(_ vmView: VZKitConsoleFramebuffer, context: Context) {
+    public func updateNSView(_ vmView: VZKitFramebuffer, context: Context) {
         vmView.virtualMachine = vzVirtualMachine
         vmView.automaticallyReconfiguresDisplay = automaticallyReconfiguresDisplay
         vmView.capturesSystemKeys = capturesSystemKeys
