@@ -20,49 +20,53 @@ extension OperatingSystem {
     ///
     /// This struct also includes a static utility method to retrieve a `Version` instance based on a macOS restore image,
     /// enabling streamlined extraction of version information from provided image files.
-    public struct Version: VZKitOperatingSystemVersion {
-        
-        /// Asynchronously retrieves a `Version` instance from a specified macOS restore image URL.
-        ///
-        /// This method loads a macOS restore image from the provided URL, then extracts version information
-        /// if the image is valid. If the image is not a macOS `.ipsw` file, or if loading fails, the method will throw an error.
-        ///
-        /// - Parameter url: The URL of the macOS installer image file. This should be an `.ipsw` image to parse successfully.
-        /// - Returns: A `Version` instance containing the parsed version information from the restore image.
-        /// - Throws: An error if the restore image could not be loaded or is invalid.
-        public static func fromImage(withURL url: URL) async throws -> Self {
-            
-            return try await MacOSRestoreImage.load(from: url).osVersion
-        }
+    public struct Version: Equatable, Codable, Sendable, Hashable {
         
         /// The major version number of the operating system.
         public let major: Int
         
         /// The minor version number of the operating system.
-        public let minor: Int
+        public let minor: Int?
         
         /// The patch version number of the operating system.
-        public let patch: Int
+        public let patch: Int?
+        
+        /// The build identifier string of the operating system
+        public let build: String?
+        
+        /// The full qualified version & build description of the operating system
+        public var description: String {
+            var version = "\(major)"
+            
+            if let minor = self.minor { version += ".\(minor)" }
+            if let patch = self.patch { version += ".\(patch)" }
+            if let build = self.build { version += " (\(build))" }
+            
+            return version
+        }
         
         /// Initializes a `Version` instance with specific major, minor, and patch version numbers.
         ///
         /// - Parameters:
         ///   - major: The major version number.
-        ///   - minor: The minor version number.
-        ///   - patch: The patch version number.
-        public init(major: Int, minor: Int, patch: Int) {
+        ///   - minor: The minor version number, if applicable.
+        ///   - patch: The patch version number, if applicable.
+        ///   - build: The build version string, if applicable.
+        public init(major: Int, minor: Int? = nil, patch: Int? = nil, build: String? = nil) {
             self.major = major
             self.minor = minor
             self.patch = patch
+            self.build = build
         }
         
         /// Initializes a `Version` instance from an `OperatingSystemVersion` object.
         ///
         /// - Parameter version: An `OperatingSystemVersion` instance from which to derive the `Version` instance.
-        public init(_ version: OperatingSystemVersion) {
+        init(_ version: OperatingSystemVersion, _ build: String? = nil) {
             self.major = version.majorVersion
             self.minor = version.minorVersion
             self.patch = version.patchVersion
+            self.build = build
         }
     }
     

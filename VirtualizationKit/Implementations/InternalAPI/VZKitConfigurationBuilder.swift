@@ -1,5 +1,5 @@
 //
-//  ConfigurationBuilder.swift
+//  VZKitConfigurationBuilder.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 17/05/24.
@@ -7,7 +7,7 @@
 
 @preconcurrency import Virtualization
 
-/// `ConfigurationBuilder` data structure
+/// `VZKitConfigurationBuilder` data structure
 ///
 /// @brief
 ///    The choice to make it a struct instead of a class derives from the fact that it is not necessary
@@ -16,7 +16,7 @@
 ///
 ///    - Important: `VZVirtualMachineConfiguration` IS NOT sendable.
 ///      We import the `Virtualization` framework using `@preconcurrency`.
-struct ConfigurationBuilder<Template: VZKitTemplate>: VZKitConfigurationBuilder {
+struct VZKitConfigurationBuilder<Template: VZKitTemplate> {
     
     /// A copy of the DTO to have all the necessary info about the VM template
     let template: Template
@@ -40,7 +40,7 @@ struct ConfigurationBuilder<Template: VZKitTemplate>: VZKitConfigurationBuilder 
     ///
     /// - Parameters:
     ///   - image: The macOS restore image object, if needed.
-    private func createConfiguration(_ restoreImage: MacOSRestoreImage?) async throws {
+    private func createConfiguration(using restoreImage: VZMacOSRestoreImage?) async throws {
         
         try FileManager.default.createDirectory(
             at: vmSupportDirectory,
@@ -130,17 +130,17 @@ struct ConfigurationBuilder<Template: VZKitTemplate>: VZKitConfigurationBuilder 
                 throw VZKitError.missingMacImage
             }
             
-            let image: MacOSRestoreImage = try await .load(from: url)
+            let restoreImage: VZMacOSRestoreImage = try await .load(from: url)
             
-            guard image.osVersion == version else {
-                throw VZKitError.wrongMacImageVersion(version, image.osVersion)
+            guard restoreImage.osVersion == version else {
+                throw VZKitError.wrongMacImageVersion(version, restoreImage.osVersion)
             }
             
-            try await createConfiguration(image)
+            try await createConfiguration(using: restoreImage)
             
         default:
             
-            try await createConfiguration(nil)
+            try await createConfiguration(using: nil)
         }
         
         try configuration.validate(); return configuration
