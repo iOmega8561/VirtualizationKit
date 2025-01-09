@@ -34,15 +34,15 @@
 ///
 /// - Important: A VZKitTemplate conforming object is not defined by this framework. It will be responsability of the
 ///   developer using these facilities to implement one and correctly use it with this generc data structure.
-public struct VirtualMachine<TemplateType: VZKitTemplate>: VZKitVirtualMachine {
+public struct VirtualMachine<Template: VZKitTemplate>: VZKitVirtualMachine {
     
     /// Static factory method of this default implementation,
     ///
     /// - Parameters:
     ///   - template: the data transfer object containing all the information about the VM.
     ///
-    /// - Returns:VZKitResult<TemplateType> so that the caller can store any eventual error to something with it.
-    public static func createMachine(_ template: TemplateType) async -> VZKitResult<TemplateType> {
+    /// - Returns:VZKitResult<Template> so that the caller can store any eventual error to something with it.
+    public static func createMachine(_ template: Template) async -> VZKitResult<Template> {
         do {
             return try await .success(VirtualMachine(template: template))
         } catch {
@@ -52,10 +52,10 @@ public struct VirtualMachine<TemplateType: VZKitTemplate>: VZKitVirtualMachine {
     
     /// A copy of the Data Transfer Object (DTO) that contains all essential information about the virtual machine (VM) template.
     ///
-    /// This property holds an instance of `TemplateType`, which provides the configuration details required
+    /// This property holds an instance of `Template`, which provides the configuration details required
     /// for initializing and managing the virtual machine. The template includes specific settings and parameters
     /// that define the VM’s resources, behavior, and setup.
-    public let template: TemplateType
+    public let template: Template
     
     /// A reference to the core `VZVirtualMachine` instance from the Virtualization framework.
     ///
@@ -121,7 +121,7 @@ public struct VirtualMachine<TemplateType: VZKitTemplate>: VZKitVirtualMachine {
     ///
     /// - Parameters:
     ///   - template: the data transfer object containing all the information about the VM.
-    public init(template: TemplateType) async throws {
+    public init(template: Template) async throws {
         
         let builder = await ConfigurationBuilder(template: template)
         

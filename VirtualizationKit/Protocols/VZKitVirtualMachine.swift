@@ -34,9 +34,9 @@ public protocol VZKitVirtualMachine: Sendable {
     
     /// A type representing the template data required to configure the virtual machine.
     ///
-    /// `TemplateType` must conform to `VZKitTemplate`, which provides the essential configuration details
+    /// `Template` must conform to `VZKitTemplate`, which provides the essential configuration details
     /// for initializing or managing a virtual machine, such as resource allocations and other setup parameters.
-    associatedtype TemplateType: VZKitTemplate
+    associatedtype Template: VZKitTemplate
     
     /// A type representing the delegate responsible for handling virtual machine events.
     ///
@@ -56,7 +56,7 @@ public protocol VZKitVirtualMachine: Sendable {
     ///
     /// `template` holds a copy of the data transfer object (DTO) required to initialize and manage the virtual machine.
     /// It provides configuration information, such as memory size, CPU count, and storage configuration.
-    var template: TemplateType { get }
+    var template: Template { get }
     
     /// A reference to the VM’s delegate, responsible for handling events and notifications from the virtual machine.
     ///
@@ -87,8 +87,8 @@ public protocol VZKitVirtualMachine: Sendable {
     /// if needed.
     ///
     /// - Parameter template: The data transfer object containing the configuration information for the VM.
-    /// - Returns: A `VZKitResult<TemplateType>` containing either a new virtual machine instance or an error.
-    static func createMachine(_ template: TemplateType) async -> VZKitResult<TemplateType>
+    /// - Returns: A `VZKitResult<Template>` containing either a new virtual machine instance or an error.
+    static func createMachine(_ template: Template) async -> VZKitResult<Template>
     
     /// Sends a command to the virtual machine and updates the shared state accordingly.
     ///

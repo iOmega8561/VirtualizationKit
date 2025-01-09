@@ -25,10 +25,10 @@
 ///
 ///    - Important: `VZVirtualMachineConfiguration` IS NOT sendable.
 ///      We import the `Virtualization` framework using `@preconcurrency`.
-struct ConfigurationBuilder<TemplateType: VZKitTemplate>: VZKitConfigurationBuilder {
+struct ConfigurationBuilder<Template: VZKitTemplate>: VZKitConfigurationBuilder {
     
     /// A copy of the DTO to have all the necessary info about the VM template
-    let template: TemplateType
+    let template: Template
     
     /// Reference to the native `Virtualization` framework configuration object
     let configuration: VZVirtualMachineConfiguration
@@ -159,7 +159,7 @@ struct ConfigurationBuilder<TemplateType: VZKitTemplate>: VZKitConfigurationBuil
     ///
     /// - Parameters:
     ///   - template: The data transfer object containing all the info about the virtual machine.
-    init(template: TemplateType) async {
+    init(template: Template) async {
         self.template = template
         
         self.configuration = VZVirtualMachineConfiguration()
