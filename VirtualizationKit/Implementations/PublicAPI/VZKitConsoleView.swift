@@ -21,7 +21,7 @@ import Virtualization
 /// A SwiftUI-compatible wrapper for an AppKit-based virtual machine console view.
 ///
 /// `VZKitConsoleView` is a wrapper around an AppKit `NSView` that provides a graphical console for a virtual machine.
-/// It conforms to `VZKitPreviewableComponent` and can be used as a SwiftUI view through `NSViewRepresentable`.
+/// It conforms to `VZKitPreviewable` and can be used as a SwiftUI view through `NSViewRepresentable`.
 /// This structure is designed to configure and present the virtual machine's display within a SwiftUI application.
 ///
 /// # Overview
@@ -38,7 +38,7 @@ import Virtualization
 ///
 /// - Parameters:
 ///   - Template: A type conforming to `VZKitTemplate`, which provides the necessary configuration for the virtual machine.
-public struct VZKitConsoleView<Template: VZKitTemplate>: NSViewRepresentable, VZKitPreviewableComponent {
+public struct VZKitConsoleView<Template: VZKitTemplate>: NSViewRepresentable, VZKitPreviewable {
     
     /// Indicates if the view is used in a preview context.
     ///

@@ -24,7 +24,7 @@ import Virtualization
 /// `VZKitFramebuffer` serves as a custom view for displaying virtual machine output, providing a replacement for
 /// `VZVirtualMachineView` with added awareness of SwiftUI preview contexts. This class disables mouse interactions
 /// when in preview mode, ensuring the view doesn't capture inputs that could interfere with development previews.
-public final class VZKitFramebuffer: VZVirtualMachineView, VZKitPreviewableComponent {
+public final class VZKitFramebuffer: VZVirtualMachineView, VZKitPreviewable {
     
     /// Indicates if the view is in a SwiftUI preview context, controlling whether it should capture user interactions.
     ///

@@ -100,11 +100,7 @@ public struct VirtualMachine<Template: VZKitTemplate>: VZKitVirtualMachine {
             case .stop: try await vzVirtualMachine.stop()
             case .pause: try await vzVirtualMachine.pause()
             case .resume: try await vzVirtualMachine.resume()
-            case .install:
-                try await MachineInstaller(
-                    restoreImage: template.removableDiskImage,
-                    vzVirtualMachine: vzVirtualMachine
-                ).startInstallation(stateManager)
+            case .install: try await VZKitMacOSInstaller(virtualMachine: self).restoreFromDiskImage()
             }
             
             if let state = command.finalState {

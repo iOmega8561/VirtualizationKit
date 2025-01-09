@@ -8,7 +8,7 @@
 //
 //  -----------------------------------------------------------------------
 //
-//  VZKitRestoreImage.swift
+//  VZKitRestorableImage.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 13/11/24.
@@ -18,13 +18,13 @@ import Foundation
 
 /// A protocol defining a restore image for use in virtualization configurations, providing
 /// properties and methods to manage macOS restore images in a type-safe and extensible way.
-public protocol VZKitRestoreImage {
+public protocol VZKitRestorableImage {
     
-    /// An associated type representing the specific type of restore image that conforms to `VZKitRestoreImage`.
+    /// An associated type representing the specific type of restore image that conforms to `VZKitRestorableImage`.
     ///
     /// This type allows implementations to specify their own restore image type, providing flexibility
     /// for different restore image implementations while adhering to the protocol.
-    associatedtype RestoreImage: VZKitRestoreImage
+    associatedtype RestoreImage: VZKitRestorableImage
     
     /// The version of the operating system associated with the restore image.
     ///
