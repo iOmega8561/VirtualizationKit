@@ -7,23 +7,37 @@
 
 import Virtualization
 
-/// This is a utility protocol that help to accomunate the two exisint Virtualization.framework
-/// Machine Identifier classes, that are VZMacMachineIdentifier and VZGenericMachineIdentifier.
-/// This can be extremely useful to write generic code that can handle both using their common properties.
+/// A utility protocol that unifies the functionality of `VZMacMachineIdentifier`
+/// and `VZGenericMachineIdentifier`.
+///
+/// This protocol allows generic code to work with both classes by exposing common
+/// properties and initialization methods. It is particularly useful when handling
+/// identifiers in the Virtualization framework.
 protocol MachineIdentifier {
     
-    /// Explicitly requires the Machine Identifier to be instanciable without any input,
-    /// this will be used to create new objects from scratch without reading anything from disk
+    /// Creates a new instance of the machine identifier.
+    ///
+    /// This initializer is used to create new machine identifier objects from scratch,
+    /// without relying on any pre-existing data.
     init()
     
-    /// Explicitly requires the Machine Identifier to be instanciable with input data,
-    /// this will be used to create objects based on existing MachineIdentifier data stored on disk
+    /// Creates a new instance of the machine identifier from existing data.
+    ///
+    /// This initializer is used to create machine identifier objects based on data
+    /// that has been previously stored, such as when reading from disk.
+    ///
+    /// - Parameter dataRepresentation: A data representation of the machine identifier.
     init?(dataRepresentation: Data)
     
-    /// Requires the object to have a data rapresentation property, in order to be able to write it to disk
+    /// A data representation of the machine identifier.
+    ///
+    /// This property provides a way to serialize the machine identifier for storage,
+    /// such as writing it to a file on disk.
     var dataRepresentation: Data { get }
 }
 
+/// Extends `VZMacMachineIdentifier` to conform to the `MachineIdentifier` protocol.
 extension VZMacMachineIdentifier: MachineIdentifier {}
 
+/// Extends `VZGenericMachineIdentifier` to conform to the `MachineIdentifier` protocol.
 extension VZGenericMachineIdentifier: MachineIdentifier {}
