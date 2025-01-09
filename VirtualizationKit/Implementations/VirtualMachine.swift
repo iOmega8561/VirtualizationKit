@@ -36,9 +36,8 @@ public struct VirtualMachine<Template: VZKitTemplate>: VZKitVirtualMachine {
     public static func createMachine(_ template: Template) async -> VZKitResult<Template> {
         do {
             return try await .success(VirtualMachine(template: template))
-        } catch {
-            return .failure(error)
-        }
+            
+        } catch { return .failure(error) }
     }
     
     /// A copy of the Data Transfer Object (DTO) that contains all essential information about the virtual machine (VM) template.
