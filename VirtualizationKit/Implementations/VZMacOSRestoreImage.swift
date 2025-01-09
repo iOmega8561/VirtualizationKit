@@ -16,7 +16,6 @@
 
 @preconcurrency import Virtualization
 
-/// Extension to provide additional functionality to `MacOSRestoreImage`, conforming it to `VZKitRestoreImage`.
 extension VZMacOSRestoreImage: VZKitRestoreImage {
     
     /// The version of the macOS operating system associated with this restore image.
