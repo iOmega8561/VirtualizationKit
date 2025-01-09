@@ -7,7 +7,7 @@
 
 @preconcurrency import Virtualization
 
-extension VZMacOSRestoreImage: VZKitRestoreImage {
+extension VZMacOSRestoreImage: VZKitRestorableImage {
     
     /// The version of the macOS operating system associated with this restore image.
     ///

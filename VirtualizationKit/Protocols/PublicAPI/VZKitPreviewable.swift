@@ -7,7 +7,7 @@
 
 
 //
-//  VZKitPreviewableComponent.swift
+//  VZKitPreviewable.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 12/10/24.
@@ -15,7 +15,7 @@
 
 import Foundation
 
-/// The `VZKitPreviewableComponent` protocol defines a common interface to create representable objects with
+/// The `VZKitPreviewable` protocol defines a common interface to create representable objects with
 /// the most common available frameworks for macOS (SwiftUI mainly and AppKit) that are aware of possible preview contexts.
 /// During state updates, the UI element that uses this inferface will have to set the right values for the following keys:
 /// virtualMachine, automaticallyReconfiguresDisplay, capturesSystemKeys
@@ -26,7 +26,7 @@ import Foundation
 ///
 /// - Important: This interface expects the conforming types to be UI elements, like NSView, NSViewRepresentable or SwiftUI's View.
 /// These components are processed on the main thread, therefore this protocol expects this behaviour too.
-@MainActor public protocol VZKitPreviewableComponent {
+@MainActor public protocol VZKitPreviewable {
     
     /// A boolean value to know it this representable will be used in preview contexts
     var isPreviewContext: Bool { get }
