@@ -19,10 +19,10 @@ protocol VZKitMachineInstaller: Sendable {
     
     /// The associated type that specifies the type of state manager required for managing the installation process.
     ///
-    /// `StateManagerType` must conform to `VZKitMachineStateManager`, which defines the necessary functionality for tracking
+    /// `StateManagerType` must conform to `VZKitStateCoordinator`, which defines the necessary functionality for tracking
     /// the VM's execution state throughout the installation. This associated type allows the installer to interact with
     /// state managers of varying implementations, providing flexibility and reuse.
-    associatedtype StateManagerType: VZKitMachineStateManager
+    associatedtype StateManagerType: VZKitStateCoordinator
     
     /// The URL pointing to the restore image needed for the VM installation.
     ///

@@ -31,10 +31,10 @@ public protocol VZKitVirtualMachine: Sendable {
     
     /// A type representing the state manager responsible for tracking the virtual machine’s execution state.
     ///
-    /// `StateManagerType` must conform to `VZKitMachineStateManager` and is responsible for holding and
+    /// `StateManagerType` must conform to `VZKitStateCoordinator` and is responsible for holding and
     /// updating the VM’s state information. The state manager ensures that any state changes are safely managed,
     /// supporting UI updates and other components that depend on the VM’s current state.
-    associatedtype StateManagerType: VZKitMachineStateManager
+    associatedtype StateManagerType: VZKitStateCoordinator
     
     /// The template data used to configure the virtual machine.
     ///
