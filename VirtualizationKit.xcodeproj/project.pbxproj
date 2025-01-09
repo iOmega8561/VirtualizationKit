@@ -50,6 +50,7 @@
 		E33DEB402CE3A03B00B206B8 /* VZKitOperatingSystemVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = E33DEB3F2CE3A03600B206B8 /* VZKitOperatingSystemVersion.swift */; };
 		E33DEB492CE4DAD500B206B8 /* MacOSRestoreImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E33DEB482CE4DAD500B206B8 /* MacOSRestoreImage.swift */; };
 		E33DEB4B2CE4DAFE00B206B8 /* VZKitRestoreImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E33DEB4A2CE4DAFE00B206B8 /* VZKitRestoreImage.swift */; };
+		E345080E2D2FCC9A00286A37 /* VirtualMachine.Command.swift in Sources */ = {isa = PBXBuildFile; fileRef = E345080D2D2FCC9A00286A37 /* VirtualMachine.Command.swift */; };
 		E36413702D2BC89700CFD722 /* VZKitLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = E364136F2D2BC89000CFD722 /* VZKitLogger.swift */; };
 		E3941ED12CBEFEE000E210E7 /* GraphicalConsole.Framebuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3941ED02CBEFEDD00E210E7 /* GraphicalConsole.Framebuffer.swift */; };
 		E3CE81312CE8F1CC00AC7FDE /* VZKitPerformancePreset.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3CE81302CE8F1C600AC7FDE /* VZKitPerformancePreset.swift */; };
@@ -103,6 +104,7 @@
 		E33DEB3F2CE3A03600B206B8 /* VZKitOperatingSystemVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VZKitOperatingSystemVersion.swift; sourceTree = "<group>"; };
 		E33DEB482CE4DAD500B206B8 /* MacOSRestoreImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSRestoreImage.swift; sourceTree = "<group>"; };
 		E33DEB4A2CE4DAFE00B206B8 /* VZKitRestoreImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VZKitRestoreImage.swift; sourceTree = "<group>"; };
+		E345080D2D2FCC9A00286A37 /* VirtualMachine.Command.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualMachine.Command.swift; sourceTree = "<group>"; };
 		E364136F2D2BC89000CFD722 /* VZKitLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VZKitLogger.swift; sourceTree = "<group>"; };
 		E3941ED02CBEFEDD00E210E7 /* GraphicalConsole.Framebuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphicalConsole.Framebuffer.swift; sourceTree = "<group>"; };
 		E3CE81302CE8F1C600AC7FDE /* VZKitPerformancePreset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VZKitPerformancePreset.swift; sourceTree = "<group>"; };
@@ -156,6 +158,7 @@
 				E33DEB3D2CE39F7900B206B8 /* OperatingSystem.Version.swift */,
 				E3D3AA9C2CE74F9A0062B5FB /* PerformancePreset.swift */,
 				E32B65EB2CBA960000FED006 /* VirtualMachine.swift */,
+				E345080D2D2FCC9A00286A37 /* VirtualMachine.Command.swift */,
 			);
 			path = Implementations;
 			sourceTree = "<group>";
@@ -354,6 +357,7 @@
 				E32B66262CBA960000FED006 /* BootLoader.swift in Sources */,
 				E32B66272CBA960000FED006 /* ConsoleDevice.swift in Sources */,
 				E32B66282CBA960000FED006 /* FileSystemDevice.swift in Sources */,
+				E345080E2D2FCC9A00286A37 /* VirtualMachine.Command.swift in Sources */,
 				E32B66292CBA960000FED006 /* GenericPlatform.swift in Sources */,
 				E32B662A2CBA960000FED006 /* GraphicsDevice.swift in Sources */,
 				E32B662B2CBA960000FED006 /* KeyboardDevice.swift in Sources */,
