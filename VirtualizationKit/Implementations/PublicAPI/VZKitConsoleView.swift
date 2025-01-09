@@ -8,7 +8,7 @@
 //
 //  -----------------------------------------------------------------------
 //
-//  GraphicalConsole.swift
+//  VZKitConsoleView.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 12/10/24.
@@ -20,8 +20,8 @@ import Virtualization
 
 /// A SwiftUI-compatible wrapper for an AppKit-based virtual machine console view.
 ///
-/// `GraphicalConsole` is a wrapper around an AppKit `NSView` that provides a graphical console for a virtual machine.
-/// It conforms to `VZKitGraphicalConsole` and can be used as a SwiftUI view through `NSViewRepresentable`.
+/// `VZKitConsoleView` is a wrapper around an AppKit `NSView` that provides a graphical console for a virtual machine.
+/// It conforms to `VZKitPreviewableComponent` and can be used as a SwiftUI view through `NSViewRepresentable`.
 /// This structure is designed to configure and present the virtual machine's display within a SwiftUI application.
 ///
 /// # Overview
@@ -30,15 +30,15 @@ import Virtualization
 /// - `automaticallyReconfiguresDisplay`: Determines if the console should adjust the display configuration based on window size.
 /// - `capturesSystemKeys`: Determines if the console should capture system-wide key combinations.
 ///
-/// `GraphicalConsole` is intended to be wrapped by a `ConsoleView` for direct use in SwiftUI layouts. The view is
+/// `VZKitConsoleView` is intended to be wrapped by a `ConsoleView` for direct use in SwiftUI layouts. The view is
 /// configurable based on whether it is running in a preview context, allowing for a customized experience in development
 /// previews.
 ///
-/// - Note: `GraphicalConsole` should only be used within a SwiftUI context and is not designed for standalone usage.
+/// - Note: `VZKitConsoleView` should only be used within a SwiftUI context and is not designed for standalone usage.
 ///
 /// - Parameters:
 ///   - Template: A type conforming to `VZKitTemplate`, which provides the necessary configuration for the virtual machine.
-public struct GraphicalConsole<Template: VZKitTemplate>: VZKitGraphicalConsole {
+public struct VZKitConsoleView<Template: VZKitTemplate>: NSViewRepresentable, VZKitPreviewableComponent {
     
     /// Indicates if the view is used in a preview context.
     ///
@@ -62,13 +62,13 @@ public struct GraphicalConsole<Template: VZKitTemplate>: VZKitGraphicalConsole {
     
     /// Creates and configures the `NSView` for this console view.
     ///
-    /// This method is part of the standard `NSViewRepresentable` protocol and initializes the `Framebuffer` instance,
-    /// binding the appropriate virtual machine and context state.
+    /// This method is part of the standard `NSViewRepresentable` protocol and initializes the
+    /// `VZKitConsoleFramebuffer` instance, binding the appropriate virtual machine and context state.
     ///
     /// - Parameter context: The context provided by `NSViewRepresentable`, which manages lifecycle and coordination.
-    /// - Returns: A configured instance of `Framebuffer` displaying the virtual machine's output.
-    public func makeNSView(context: Context) -> Framebuffer {
-        let vmView = Framebuffer()
+    /// - Returns: A configured instance of `VZKitConsoleFramebuffer` displaying the virtual machine's output.
+    public func makeNSView(context: Context) -> VZKitConsoleFramebuffer {
+        let vmView = VZKitConsoleFramebuffer()
         vmView.virtualMachine = vzVirtualMachine
         vmView.isPreviewContext = isPreviewContext
         return vmView
@@ -77,12 +77,13 @@ public struct GraphicalConsole<Template: VZKitTemplate>: VZKitGraphicalConsole {
     /// Updates the console view with new state or configuration changes.
     ///
     /// This method is called automatically when SwiftUI detects a state change, and it ensures that properties
-    /// such as `automaticallyReconfiguresDisplay` and `capturesSystemKeys` are synchronized with the `Framebuffer`.
+    /// such as `automaticallyReconfiguresDisplay` and `capturesSystemKeys`
+    /// are synchronized with the `VZKitConsoleFramebuffer`.
     ///
     /// - Parameters:
-    ///   - vmView: The existing `Framebuffer` view instance to update.
+    ///   - vmView: The existing `VZKitConsoleFramebuffer` view instance to update.
     ///   - context: The context provided by `NSViewRepresentable` for managing state and interactions.
-    public func updateNSView(_ vmView: Framebuffer, context: Context) {
+    public func updateNSView(_ vmView: VZKitConsoleFramebuffer, context: Context) {
         vmView.virtualMachine = vzVirtualMachine
         vmView.automaticallyReconfiguresDisplay = automaticallyReconfiguresDisplay
         vmView.capturesSystemKeys = capturesSystemKeys
