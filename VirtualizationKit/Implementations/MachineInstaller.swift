@@ -42,7 +42,7 @@ struct MachineInstaller: VZKitMachineInstaller {
             
     /// Initiates the macOS installation process on the virtual machine, tracking progress and handling errors.
     ///
-    /// This method is marked with `@VZKitGlobalActor`, ensuring it executes on the same actor queue as the virtual
+    /// This method is marked with `@VZKitActor`, ensuring it executes on the same actor queue as the virtual
     /// machine’s initializer, maintaining thread safety and sequence consistency. Due to limitations in the
     /// `Virtualization` framework’s concurrency model, this method uses a checked continuation to bridge the asynchronous
     /// API with Swift’s structured concurrency.
@@ -53,7 +53,7 @@ struct MachineInstaller: VZKitMachineInstaller {
     ///
     /// - Throws: An error if the installation process encounters an issue. If the installer fails with an underlying error,
     ///   it attempts to throw the root cause.
-    @VZKitGlobalActor func startInstallation(_ stateManager: MachineStateManager) async throws {
+    @VZKitActor func startInstallation(_ stateManager: MachineStateManager) async throws {
                 
         let installer = VZMacOSInstaller(
             virtualMachine: vzVirtualMachine,

@@ -97,8 +97,8 @@ public struct VirtualMachine<TemplateType: VZKitTemplate>: VZKitVirtualMachine {
     /// instead of propagating and throws `VZKitError.appleVMLimitExceeded`. Any case that `Command` provides
     /// is supported by this implementation.
     ///
-    /// - Important: Pinned to `@VZKitGlobalActor` for serial dispatch of the commands sent to VMs.
-    @VZKitGlobalActor public func sendCommand(_ command: Command) async throws {
+    /// - Important: Pinned to `@VZKitActor` for serial dispatch of the commands sent to VMs.
+    @VZKitActor public func sendCommand(_ command: Command) async throws {
                 
         do {
             switch command {
@@ -152,7 +152,7 @@ public struct VirtualMachine<TemplateType: VZKitTemplate>: VZKitVirtualMachine {
         
         self.vzVirtualMachine = VZVirtualMachine(
             configuration: try await builder.createConfiguration(),
-            queue: VZKitGlobalActor.queue
+            queue: VZKitActor.queue
         )
         
         self.delegate = .init()
@@ -163,7 +163,7 @@ public struct VirtualMachine<TemplateType: VZKitTemplate>: VZKitVirtualMachine {
 }
 
 @available(macOS 15.0, *)
-@VZKitGlobalActor extension VirtualMachine {
+@VZKitActor extension VirtualMachine {
     
     /// Attaches a removable USB disk to the virtual machine using a specified disk image.
     ///
