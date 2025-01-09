@@ -72,7 +72,7 @@ public struct VirtualMachine<Template: VZKitTemplate>: VZKitVirtualMachine {
     /// for manual state tracking within the main view model.
     public let stateManager: MachineStateManager
     
-    /// A reference to an instance of `VirtualVZKitMachineDelegate`, responsible for handling VM events and updates.
+    /// A reference to an instance of `VZKitMachineDelegate`, responsible for handling VM events and updates.
     ///
     /// The `delegate` serves as an intermediary for receiving updates from the `VZVirtualMachine`,
     /// communicating events and state changes to other parts of the application. By connecting directly to
