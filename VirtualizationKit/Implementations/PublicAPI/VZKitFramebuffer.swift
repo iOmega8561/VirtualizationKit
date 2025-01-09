@@ -5,10 +5,7 @@
 //  Created by Giuseppe Rocco on 15/10/24.
 //
 
-import AppKit
-
 import Virtualization
-
 
 /// A custom implementation of `VZVirtualMachineView`.
 ///
