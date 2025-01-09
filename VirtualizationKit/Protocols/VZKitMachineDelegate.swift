@@ -49,4 +49,16 @@ public protocol VZKitMachineDelegate: VZVirtualMachineDelegate, Sendable {
     ///   - virtualMachine: The virtual machine instance that stopped.
     ///   - error: The error that caused the virtual machine to stop unexpectedly.
     func virtualMachine(_ virtualMachine: VZVirtualMachine, didStopWithError error: any Error)
+    
+    /// Called when a network attachment disconnects from the virtual machine, throwing an error
+    ///
+    /// This method is a stub optionally required by the `VZVirtualMachineDelegate` protocol. It is invoked when twhen
+    /// a network attachment disconnects from the virtual machine, throwing an error. The delegate should log the error. Additionally
+    /// a task can be initiated to present the error to the the user, if desired
+    ///
+    /// - Parameters:
+    ///   - virtualMachine: The virtual machine instance that stopped.
+    ///   - networkDevice: The network device that has been detached.
+    ///   - attachmentWasDisconnectedWithError: The error that has been encountered.
+    func virtualMachine(_ virtualMachine: VZVirtualMachine, networkDevice: VZNetworkDevice, attachmentWasDisconnectedWithError error: any Error)
 }
