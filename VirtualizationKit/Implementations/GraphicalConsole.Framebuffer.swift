@@ -39,7 +39,7 @@ extension GraphicalConsole {
         /// If `isPreviewContext` is `true`, this method suppresses the event to prevent interaction; otherwise, it
         /// forwards the event to the superclass.
         public override func mouseUp(with event: NSEvent) {
-            if !self.isPreviewContext { super.mouseUp(with: event) }
+            isPreviewContext ? () : super.mouseUp(with: event)
         }
         
         /// Handles the `mouseDown` event, conditionally passing it to the superclass.
@@ -49,7 +49,7 @@ extension GraphicalConsole {
         /// If `isPreviewContext` is `true`, this method suppresses the event to prevent interaction; otherwise, it
         /// forwards the event to the superclass.
         public override func mouseDown(with event: NSEvent) {
-            if !self.isPreviewContext { super.mouseDown(with: event) }
+            isPreviewContext ? () : super.mouseDown(with: event)
         }
         
         /// Handles the `mouseMoved` event, conditionally passing it to the superclass.
@@ -59,7 +59,7 @@ extension GraphicalConsole {
         /// If `isPreviewContext` is `true`, this method suppresses the event to prevent interaction; otherwise, it
         /// forwards the event to the superclass.
         public override func mouseMoved(with event: NSEvent) {
-            if !self.isPreviewContext { super.mouseMoved(with: event) }
+            isPreviewContext ? () : super.mouseMoved(with: event)
         }
         
         /// Handles the `mouseExited` event, conditionally passing it to the superclass.
@@ -69,7 +69,7 @@ extension GraphicalConsole {
         /// If `isPreviewContext` is `true`, this method suppresses the event to prevent interaction; otherwise, it
         /// forwards the event to the superclass.
         public override func mouseExited(with event: NSEvent) {
-            if !self.isPreviewContext { super.mouseExited(with: event) }
+            isPreviewContext ? () : super.mouseExited(with: event)
         }
         
         /// Handles the `mouseDragged` event, conditionally passing it to the superclass.
@@ -79,7 +79,7 @@ extension GraphicalConsole {
         /// If `isPreviewContext` is `true`, this method suppresses the event to prevent interaction; otherwise, it
         /// forwards the event to the superclass.
         public override func mouseDragged(with event: NSEvent) {
-            if !self.isPreviewContext { super.mouseDragged(with: event) }
+            isPreviewContext ? () : super.mouseDragged(with: event)
         }
         
         /// Handles the `mouseEntered` event, conditionally passing it to the superclass.
@@ -89,7 +89,7 @@ extension GraphicalConsole {
         /// If `isPreviewContext` is `true`, this method suppresses the event to prevent interaction; otherwise, it
         /// forwards the event to the superclass.
         public override func mouseEntered(with event: NSEvent) {
-            if !self.isPreviewContext { super.mouseEntered(with: event) }
+            isPreviewContext ? () : super.mouseEntered(with: event)
         }
         
         /// Handles hit testing, returning `nil` if `isPreviewContext` is `true`.
@@ -99,8 +99,7 @@ extension GraphicalConsole {
         ///
         /// If `isPreviewContext` is `true`, this method returns `nil` to ignore hits during preview.
         public override func hitTest(_ point: NSPoint) -> NSView? {
-            if !self.isPreviewContext { return super.hitTest(point) }
-            return nil
+            isPreviewContext ? nil : super.hitTest(point)
         }
     }
 }
