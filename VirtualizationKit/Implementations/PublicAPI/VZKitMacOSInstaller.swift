@@ -75,13 +75,17 @@ struct VZKitMacOSInstaller<Template: VZKitTemplate>: VZKitStatefulInstaller {
     /// performs the macOS installation process using `async/await`.
     ///
     /// - Throws: An error if the installation process encounters an issue.
+    /// - Note: Every operation that is dispatched on a `VZVirtualMachine` **is required**
+    /// to be executed on the same thread on which the `VZVirtualMachine` was first created. Since
+    /// the default implementation that this frameworks provides uses `VZKitActor`, this method starts the
+    /// installation process in a `VZKitActor.run {...}` closure
     public func restoreFromDiskImage() async throws {
         
         await vzKitStateCoordinator.registerPublisher(
             vzMacOSInstaller.progress.publisher(for: \.fractionCompleted)
         )
         
-        try await vzMacOSInstaller.install()
+        try await VZKitActor.run { try await vzMacOSInstaller.install() }
     }
 
     // MARK: - Initializers
