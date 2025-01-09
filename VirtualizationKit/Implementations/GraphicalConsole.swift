@@ -28,8 +28,8 @@ import Virtualization
 /// - Note: `GraphicalConsole` should only be used within a SwiftUI context and is not designed for standalone usage.
 ///
 /// - Parameters:
-///   - TemplateType: A type conforming to `VZKitTemplate`, which provides the necessary configuration for the virtual machine.
-public struct GraphicalConsole<TemplateType: VZKitTemplate>: VZKitGraphicalConsole {
+///   - Template: A type conforming to `VZKitTemplate`, which provides the necessary configuration for the virtual machine.
+public struct GraphicalConsole<Template: VZKitTemplate>: VZKitGraphicalConsole {
     
     /// Indicates if the view is used in a preview context.
     ///
@@ -84,11 +84,11 @@ public struct GraphicalConsole<TemplateType: VZKitTemplate>: VZKitGraphicalConso
     /// This initializer should be used when the console view is part of a live app instance.
     ///
     /// - Parameters:
-    ///   - machine: A virtual machine instance of type `VirtualMachine<TemplateType>` to display in the console.
+    ///   - machine: A virtual machine instance of type `VirtualMachine<Template>` to display in the console.
     ///   - automaticallyReconfiguresDisplay: Specifies if the console view should auto-resize to match window dimensions.
     ///   - capturesSystemKeys: Specifies if the console view should capture system-wide key commands.
     public init(
-        machine: VirtualMachine<TemplateType>,
+        machine: VirtualMachine<Template>,
         automaticallyReconfiguresDisplay: Bool,
         capturesSystemKeys: Bool
     ) {
@@ -103,9 +103,9 @@ public struct GraphicalConsole<TemplateType: VZKitTemplate>: VZKitGraphicalConso
     /// This initializer is designed for SwiftUI Preview configurations and allows disabling automatic display and key capture settings.
     ///
     /// - Parameters:
-    ///   - machine: A virtual machine instance of type `VirtualMachine<TemplateType>` to display in the console.
+    ///   - machine: A virtual machine instance of type `VirtualMachine<Template>` to display in the console.
     ///   - isPreviewContext: Boolean indicating whether this instance is in a preview environment (defaults to `true`).
-    public init(machine: VirtualMachine<TemplateType>, isPreviewContext: Bool = true) {
+    public init(machine: VirtualMachine<Template>, isPreviewContext: Bool = true) {
         self.vzVirtualMachine = machine.vzVirtualMachine
         self.isPreviewContext = isPreviewContext
         self.automaticallyReconfiguresDisplay = false

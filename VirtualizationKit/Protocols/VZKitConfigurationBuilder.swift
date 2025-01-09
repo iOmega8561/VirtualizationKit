@@ -22,14 +22,14 @@ public protocol VZKitConfigurationBuilder: Sendable {
     /// This associated type represents a concrete template conforming to `VZKitTemplate`. The template
     /// contains all the necessary information required to configure the virtual machine, such as hardware
     /// specifications, storage, and network settings.
-    associatedtype TemplateType: VZKitTemplate
+    associatedtype Template: VZKitTemplate
     
     /// A copy of the template containing all the essential information about the virtual machine setup.
     ///
-    /// This property holds an instance of `TemplateType`, which provides the details needed to
+    /// This property holds an instance of `Template`, which provides the details needed to
     /// construct a virtual machine configuration. The builder relies on this template to gather
     /// data specific to the desired virtual machine setup.
-    var template: TemplateType { get }
+    var template: Template { get }
     
     /// A reference to the `VZVirtualMachineConfiguration` object from the `Virtualization` framework.
     ///

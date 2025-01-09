@@ -14,10 +14,10 @@ import Virtualization
 /// the initialization process. This design simplifies error propagation and handling by eliminating the need
 /// to throw or catch errors explicitly, allowing for more straightforward control flow in your application.
 ///
-/// - Note: The `TemplateType` must conform to `VZKitTemplate`.
+/// - Note: The `Template` must conform to `VZKitTemplate`.
 ///
 /// - Important: You generally don't create this object directly, but use the VirtualMachine.createMachine static factory method instead.
-public enum VZKitResult<TemplateType: VZKitTemplate>: Sendable {
+public enum VZKitResult<Template: VZKitTemplate>: Sendable {
     
     /// A case representing a failed attempt to initialize a virtual machine.
     ///
@@ -26,8 +26,8 @@ public enum VZKitResult<TemplateType: VZKitTemplate>: Sendable {
     
     /// A case representing a successful initialization of a virtual machine.
     ///
-    /// - Parameter machine: An instance of `VirtualMachine` parameterized by `TemplateType`, indicating successful creation.
-    case success(VirtualMachine<TemplateType>)
+    /// - Parameter machine: An instance of `VirtualMachine` parameterized by `Template`, indicating successful creation.
+    case success(VirtualMachine<Template>)
     
     /// The error encountered during virtual machine initialization, if any.
     ///
@@ -45,8 +45,8 @@ public enum VZKitResult<TemplateType: VZKitTemplate>: Sendable {
     
     /// The successfully created virtual machine, if available.
     ///
-    /// - Returns: the associated `VirtualMachine<TemplateType>` if the result is `.success`; otherwise, returns `nil`.
-    public var machine: VirtualMachine<TemplateType>? {
+    /// - Returns: the associated `VirtualMachine<Template>` if the result is `.success`; otherwise, returns `nil`.
+    public var machine: VirtualMachine<Template>? {
         
         switch self {
         case .success(let machine):
