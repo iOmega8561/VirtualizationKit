@@ -63,4 +63,18 @@ public final class MachineDelegate: NSObject, VZKitMachineDelegate {
         statePublisher.send(.stopped)
         VZKitLogger.default.error(error.localizedDescription)
     }
+    
+    /// Called when a network attachment disconnects from the virtual machine, throwing an error
+    ///
+    /// This method is a stub optionally required by the `VZVirtualMachineDelegate` protocol. It is invoked when twhen
+    /// a network attachment disconnects from the virtual machine, throwing an error. The methods logs the error using VZKitLogger
+    /// making it viewable in the Console application. Additionally, a task can be launched to present the error to the user, if desired.
+    ///
+    /// - Parameters:
+    ///   - virtualMachine: The virtual machine instance that stopped.
+    ///   - networkDevice: The network device that has been detached.
+    ///   - attachmentWasDisconnectedWithError: The error that has been encountered.
+    public func virtualMachine(_ virtualMachine: VZVirtualMachine, networkDevice: VZNetworkDevice, attachmentWasDisconnectedWithError error: any Error) {
+        VZKitLogger.default.error(error.localizedDescription)
+    }
 }
