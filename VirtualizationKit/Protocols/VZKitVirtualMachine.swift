@@ -38,13 +38,6 @@ public protocol VZKitVirtualMachine: Sendable {
     /// for initializing or managing a virtual machine, such as resource allocations and other setup parameters.
     associatedtype Template: VZKitTemplate
     
-    /// A type representing the delegate responsible for handling virtual machine events.
-    ///
-    /// `DelegateType` must conform to `VZKitMachineDelegate` and is used to manage VM-specific events
-    /// like state transitions, errors, and other lifecycle notifications. The delegate acts as an intermediary
-    /// between the VM and other parts of the application that need to respond to VM events.
-    associatedtype DelegateType: VZKitMachineDelegate
-    
     /// A type representing the state manager responsible for tracking the virtual machine’s execution state.
     ///
     /// `StateManagerType` must conform to `VZKitMachineStateManager` and is responsible for holding and
@@ -57,13 +50,6 @@ public protocol VZKitVirtualMachine: Sendable {
     /// `template` holds a copy of the data transfer object (DTO) required to initialize and manage the virtual machine.
     /// It provides configuration information, such as memory size, CPU count, and storage configuration.
     var template: Template { get }
-    
-    /// A reference to the VM’s delegate, responsible for handling events and notifications from the virtual machine.
-    ///
-    /// `delegate` is an instance conforming to `VZKitMachineDelegate` and is associated with the virtual machine.
-    /// It listens for and processes events from the VM, facilitating communication between the VM and other parts
-    /// of the application that need to respond to VM lifecycle events or state changes.
-    var delegate: DelegateType { get }
 
     /// A reference to the `VZVirtualMachine` instance, providing core functionality for VM management.
     ///

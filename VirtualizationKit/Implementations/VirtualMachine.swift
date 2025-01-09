@@ -66,20 +66,20 @@ public struct VirtualMachine<Template: VZKitTemplate>: VZKitVirtualMachine {
     
     /// Manages and tracks the current execution state of the virtual machine, pinned to the main actor.
     ///
-    /// `stateManager` is an instance of `StateManager` responsible for observing and updating the `MachineState`
+    /// `stateManager` is an instance of `StateManager` responsible for observing and updating the `VZVirtualMachine.State`
     /// of the virtual machine. Since `stateManager` is tied to `@MainActor`, all state changes and updates are
     /// handled on the main thread, ensuring thread safety for UI updates and other main-thread operations.
     /// The `stateManager` helps centralize and simplify state management within the VM, reducing the need
     /// for manual state tracking within the main view model.
     public let stateManager: MachineStateManager
     
-    /// A reference to an instance of `VirtualMachineDelegate`, responsible for handling VM events and updates.
+    /// A reference to an instance of `VirtualVZKitMachineDelegate`, responsible for handling VM events and updates.
     ///
     /// The `delegate` serves as an intermediary for receiving updates from the `VZVirtualMachine`,
     /// communicating events and state changes to other parts of the application. By connecting directly to
     /// the `VZVirtualMachine` instance, the `delegate` enables efficient event handling for lifecycle transitions
     /// and other VM-related activities.
-    public let delegate: MachineDelegate
+    private let delegate: VZKitMachineDelegate
     
     /// This method provides a standard way to send commands to the `VZVirtualMachine`
     /// and updates the shared state accordingly. If an error occurs, the state is safely reset before propagation.
@@ -117,7 +117,7 @@ public struct VirtualMachine<Template: VZKitTemplate>: VZKitVirtualMachine {
     }
 
     /// The explicit, private, asynchronous init of the data structure. Uses an instance of `VZKitConfigurationBuilder`
-    /// to setup the `VZVirtualMachine` object and binds a new instance of `VirtualMachineDelegate` to it.
+    /// to setup the `VZVirtualMachine` object and binds a new instance of `VirtualVZKitMachineDelegate` to it.
     ///
     /// - Parameters:
     ///   - template: the data transfer object containing all the information about the VM.
