@@ -27,16 +27,6 @@
 ///   developer using these facilities to implement one and correctly use it with this generc data structure.
 public struct VirtualMachine<TemplateType: VZKitTemplate>: VZKitVirtualMachine {
     
-    /// `Command` is a `CaseIterable` conforming `enum` and it provides a case for any command
-    /// that is supported by this default implementation of `VZKitVirtualMachine`
-    public enum Command: CaseIterable {
-        case start
-        case stop
-        case pause
-        case resume
-        case install
-    }
-    
     /// Static factory method of this default implementation,
     ///
     /// - Parameters:
@@ -90,46 +80,31 @@ public struct VirtualMachine<TemplateType: VZKitTemplate>: VZKitVirtualMachine {
     ///
     /// - Important: Pinned to `@VZKitActor` for serial dispatch of the commands sent to VMs.
     @VZKitActor public func sendCommand(_ command: Command) async throws {
-                
+            
+        await stateManager.update(with: command.transitionState)
+        
         do {
             switch command {
-            case .start:
-                await stateManager.update(with: .starting)
-                try await vzVirtualMachine.start()
-                await stateManager.update(with: .running)
-                
-            case .stop:
-                await stateManager.update(with: .stopping)
-                try await vzVirtualMachine.stop()
-                await stateManager.update(with: .stopped)
-                
-            case .pause:
-                await stateManager.update(with: .pausing)
-                try await vzVirtualMachine.pause()
-                await stateManager.update(with: .paused)
-                
-            case .resume:
-                await stateManager.update(with: .resuming)
-                try await vzVirtualMachine.resume()
-                await stateManager.update(with: .running)
-                
+            case .start: try await vzVirtualMachine.start()
+            case .stop: try await vzVirtualMachine.stop()
+            case .pause: try await vzVirtualMachine.pause()
+            case .resume: try await vzVirtualMachine.resume()
             case .install:
-                await stateManager.update(with: .restoring)
                 try await MachineInstaller(
                     restoreImage: template.removableDiskImage,
                     vzVirtualMachine: vzVirtualMachine
                 ).startInstallation(stateManager)
             }
             
+            if let state = command.finalState {
+                await stateManager.update(with: state)
+            }
+            
         } catch VZError.virtualMachineLimitExceeded {
             await stateManager.rollback()
             throw VZKitError.appleVMLimitExceeded
             
-        } catch {
-            await stateManager.rollback()
-            throw error
-        }
-        
+        } catch { await stateManager.rollback(); throw error }
     }
 
     /// The explicit, private, asynchronous init of the data structure. Uses an instance of `ConfigurationBuilder`
