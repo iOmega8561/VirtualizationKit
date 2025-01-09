@@ -23,8 +23,8 @@ extension VirtualMachine {
         
         /// Encapsulates metadata for a command, including its transition and final states.
         private struct MetaData: Equatable {
-            let transitionState: MachineState
-            let finalState: MachineState?
+            let transitionState: VZVirtualMachine.State
+            let finalState: VZVirtualMachine.State?
         }
         
         case start
@@ -45,9 +45,9 @@ extension VirtualMachine {
         }
         
         /// The transition state associated with the command.
-        var transitionState: MachineState { metaData.transitionState }
+        var transitionState: VZVirtualMachine.State { metaData.transitionState }
         
         /// The final state associated with the command.
-        var finalState: MachineState? { metaData.finalState }
+        var finalState: VZVirtualMachine.State? { metaData.finalState }
     }
 }

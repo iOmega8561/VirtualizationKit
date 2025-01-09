@@ -7,7 +7,7 @@
 
 @_exported import Foundation
 
-import Virtualization
+@_exported import Virtualization
 
 public final class _VirtualizationKit: Sendable {
     

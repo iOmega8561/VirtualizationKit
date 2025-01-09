@@ -19,16 +19,14 @@ import Virtualization
 ///
 /// - Important: This is pinned to @MainActor because everything should be used to update the UI
 @MainActor public protocol VZKitMachineStateManager {
-    
-    associatedtype StateType: VZKitMachineState
-    
+        
     /// The current execution state of the virtual machine.
     ///
-    /// The `currentState` property represents the active `MachineState` of the virtual machine.
+    /// The `currentState` property represents the active `VZVirtualMachine.State` of the virtual machine.
     /// It is marked as `private(set)` to restrict external modification, while still allowing
     /// observers to access the current state. This property updates whenever a new state is received,
     /// and the `StateManager` automatically notifies observers of any changes.
-    var currentState: StateType { get }
+    var currentState: VZVirtualMachine.State { get }
     
     /// A value representing the current progress of the virtual machine operation.
     ///
@@ -40,15 +38,15 @@ import Virtualization
     /// The previous execution state of the virtual machine, used for rollback purposes.
     ///
     /// `lastState` temporarily stores the prior state of the virtual machine.
-    var lastState: StateType? { get }
+    var lastState: VZVirtualMachine.State? { get }
     
     /// Updates the current state to a new execution state.
     ///
     /// The `update(with:)` method changes the `currentState` property to the provided `new` state
     /// and stores the previous state in `lastState` to allow for potential rollback.
     ///
-    /// - Parameter new: The new `MachineState` to update to.
-    func update(with newState: StateType)
+    /// - Parameter new: The new `VZVirtualMachine.State` to update to.
+    func update(with newState: VZVirtualMachine.State)
     
     /// Rolls back to the previous execution state.
     ///

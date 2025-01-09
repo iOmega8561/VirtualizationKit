@@ -63,8 +63,9 @@ public enum VZKitResult<Template: VZKitTemplate>: Sendable {
     /// `MachineStateManager` instance. If the outcome is a failure it returns `.error`.
     ///
     /// - Important: This property must be accessed on the main thread.
-    /// - Returns: Either a `MachineState` forwarded directly from the virtual machine state manager, or `.error` in case o failure.
-    @MainActor public var state: MachineState {
+    /// - Returns: Either a `VZVirtualMachine.State` forwarded directly from the virtual machine state manager,
+    /// or `.error` in case o failure.
+    @MainActor public var state: VZVirtualMachine.State {
         
         switch self {
         case .success(let machine):

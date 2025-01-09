@@ -1,26 +1,21 @@
 //
-//  MachineState.swift
+//  VZVirtualMachine.State.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 15/05/24.
 //
 
 import SwiftUI
+
 import Virtualization
 
-/// A typealias for `VZVirtualMachine.State` that simplifies code readability within the `VirtualizationKit`.
+/// Extension on `VZVirtualMachine.State` providing color and label representations.
 ///
-/// Using `MachineState` instead of `VZVirtualMachine.State` allows for cleaner code
-/// and helps convey the purpose of the state in the context of virtual machine management.
-public typealias MachineState = VZVirtualMachine.State
-
-/// Extension on `MachineState` to conform to `VZKitMachineState`, providing color and label representations.
-///
-/// By conforming `MachineState` to `VZKitMachineState`, this extension defines two methods—`color` and `localized`—
+/// This extension defines two methods—`color` and `localized`—
 /// that return color and text representations for different states of a virtual machine. This extension simplifies SwiftUI views
 /// by allowing the state-based color and label to be retrieved directly from the state, reducing the need for
 /// verbose conditional statements in the view code.
-extension MachineState: VZKitMachineState {
+extension VZVirtualMachine.State {
     
     /// Returns the color associated with the current state of the virtual machine.
     ///

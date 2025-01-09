@@ -20,11 +20,11 @@ import Virtualization
     
     /// The current execution state of the virtual machine.
     ///
-    /// The `currentState` property represents the active `MachineState` of the virtual machine.
+    /// The `currentState` property represents the active `VZVirtualMachine.State` of the virtual machine.
     /// It is marked as `private(set)` to restrict external modification, while still allowing
     /// observers to access the current state. This property updates whenever a new state is received,
     /// and the `StateManager` automatically notifies observers of any changes.
-    public private(set) var currentState: MachineState = .stopped
+    public private(set) var currentState: VZVirtualMachine.State = .stopped
     
     /// A value representing the current progress of the virtual machine operation.
     ///
@@ -39,7 +39,7 @@ import Virtualization
     /// `lastState` temporarily stores the prior state of the virtual machine. It is marked with
     /// `@ObservationIgnored` to prevent this property from triggering any observer notifications
     /// since it’s only used internally to manage rollbacks.
-    @ObservationIgnored public private(set) var lastState: MachineState?
+    @ObservationIgnored public private(set) var lastState: VZVirtualMachine.State?
     
     /// A set of Combine cancellables used to store subscriptions.
     ///
@@ -52,8 +52,8 @@ import Virtualization
     /// The `update(with:)` method changes the `wrapped` property to the provided `new` state
     /// and stores the previous state in `last` to allow for potential rollback.
     ///
-    /// - Parameter new: The new `MachineState` to update to.
-    public func update(with newState: MachineState) {
+    /// - Parameter new: The new `VZVirtualMachine.State` to update to.
+    public func update(with newState: VZVirtualMachine.State) {
         lastState = currentState
         currentState = newState
     }
@@ -88,7 +88,7 @@ import Virtualization
     /// - Parameter delegate: The `Delegate` instance responsible for broadcasting state changes.
     ///   The `MachineStateManager` subscribes to the delegate’s `statePublisher` and automatically updates
     ///   `wrapped` whenever a new state is published.
-    init(_ delegate: MachineDelegate) {
+    init(_ delegate: VZKitMachineDelegate) {
         
         delegate.statePublisher
             .receive(on: RunLoop.main)
