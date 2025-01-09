@@ -11,7 +11,6 @@
 		E32B66152CBA960000FED006 /* MachineInstaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B65EE2CBA960000FED006 /* MachineInstaller.swift */; };
 		E32B66172CBA960000FED006 /* VZVirtualMachine.State.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B65F02CBA960000FED006 /* VZVirtualMachine.State.swift */; };
 		E32B661D2CBA960000FED006 /* VZKitMachineInstaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B65F72CBA960000FED006 /* VZKitMachineInstaller.swift */; };
-		E32B66212CBA960000FED006 /* VZKitTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B65FB2CBA960000FED006 /* VZKitTemplate.swift */; };
 		E32B66242CBA960000FED006 /* VZKitVirtualMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B65FE2CBA960000FED006 /* VZKitVirtualMachine.swift */; };
 		E32B66322CBA960000FED006 /* VZKitError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B660E2CBA960000FED006 /* VZKitError.swift */; };
 		E32B66332CBA960000FED006 /* VZKitActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B660F2CBA960000FED006 /* VZKitActor.swift */; };
@@ -31,7 +30,6 @@
 		E32B65EE2CBA960000FED006 /* MachineInstaller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MachineInstaller.swift; sourceTree = "<group>"; };
 		E32B65F02CBA960000FED006 /* VZVirtualMachine.State.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VZVirtualMachine.State.swift; sourceTree = "<group>"; };
 		E32B65F72CBA960000FED006 /* VZKitMachineInstaller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VZKitMachineInstaller.swift; sourceTree = "<group>"; };
-		E32B65FB2CBA960000FED006 /* VZKitTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VZKitTemplate.swift; sourceTree = "<group>"; };
 		E32B65FE2CBA960000FED006 /* VZKitVirtualMachine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VZKitVirtualMachine.swift; sourceTree = "<group>"; };
 		E32B660E2CBA960000FED006 /* VZKitError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VZKitError.swift; sourceTree = "<group>"; };
 		E32B660F2CBA960000FED006 /* VZKitActor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VZKitActor.swift; sourceTree = "<group>"; };
@@ -129,7 +127,6 @@
 				E345084D2D30064400286A37 /* PublicAPI */,
 				E3393A3B2CDEE4C300D4E3CE /* VZKitMachineStateManager.swift */,
 				E32B65F72CBA960000FED006 /* VZKitMachineInstaller.swift */,
-				E32B65FB2CBA960000FED006 /* VZKitTemplate.swift */,
 				E32B65FE2CBA960000FED006 /* VZKitVirtualMachine.swift */,
 			);
 			path = Protocols;
@@ -263,7 +260,6 @@
 				E32B66172CBA960000FED006 /* VZVirtualMachine.State.swift in Sources */,
 				E32B661D2CBA960000FED006 /* VZKitMachineInstaller.swift in Sources */,
 				E36413702D2BC89700CFD722 /* VZKitLogger.swift in Sources */,
-				E32B66212CBA960000FED006 /* VZKitTemplate.swift in Sources */,
 				E32B66242CBA960000FED006 /* VZKitVirtualMachine.swift in Sources */,
 				E3393A382CDEAF3F00D4E3CE /* MachineStateManager.swift in Sources */,
 				E345080E2D2FCC9A00286A37 /* VirtualMachine.Command.swift in Sources */,
