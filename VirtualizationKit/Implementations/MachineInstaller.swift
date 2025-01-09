@@ -47,20 +47,22 @@ struct MachineInstaller: VZKitMachineInstaller {
     /// `Virtualization` framework’s concurrency model, this method uses a checked continuation to bridge the asynchronous
     /// API with Swift’s structured concurrency.
     ///
-    /// - Parameter stateManager: The `MachineStateManager` instance responsible for tracking the execution state and
+    /// - Parameter stateManager: The `VZKitObservableState` instance responsible for tracking the execution state and
     ///   installation progress. This method registers the installer’s progress with `stateManager` so that any observers
     ///   (e.g., SwiftUI views) can receive real-time updates.
     ///
     /// - Throws: An error if the installation process encounters an issue. If the installer fails with an underlying error,
     ///   it attempts to throw the root cause.
-    @VZKitActor func startInstallation(_ stateManager: MachineStateManager) async throws {
+    @VZKitActor func startInstallation(_ stateManager: VZKitObservableState) async throws {
                 
         let installer = VZMacOSInstaller(
             virtualMachine: vzVirtualMachine,
             restoringFromImageAt: self.restoreImage
         )
         
-        await stateManager.registerProgress(installer.progress)
+        await stateManager.registerPublisher(
+            installer.progress.publisher(for: \.fractionCompleted)
+        )
         
         return try await withCheckedThrowingContinuation { continuation in
             

@@ -61,16 +61,19 @@ public struct VirtualMachine<Template: VZKitTemplate>: VZKitVirtualMachine {
     /// `vzVirtualMachine` serves as the primary interface for controlling the virtual machine, including
     /// operations like starting, stopping, installation procedures, and managing the graphical console.
     /// It encapsulates the underlying `VZVirtualMachine`, giving direct access to essential lifecycle management functionality.
+    ///
+    /// - Note: Although this property is scoped publicly, it's not recommended to interfere with it. It can be useful
+    /// to have access to it in order to be able to use features from Virtualization.framework
     public let vzVirtualMachine: VZVirtualMachine
     
     /// Manages and tracks the current execution state of the virtual machine, pinned to the main actor.
     ///
-    /// `stateManager` is an instance of `StateManager` responsible for observing and updating the `VZVirtualMachine.State`
+    /// `stateManager` is an instance of `VZKitObservableState` responsible for observing and updating the `VZVirtualMachine.State`
     /// of the virtual machine. Since `stateManager` is tied to `@MainActor`, all state changes and updates are
     /// handled on the main thread, ensuring thread safety for UI updates and other main-thread operations.
     /// The `stateManager` helps centralize and simplify state management within the VM, reducing the need
     /// for manual state tracking within the main view model.
-    public let stateManager: MachineStateManager
+    public let stateManager: VZKitObservableState
     
     /// A reference to an instance of `VZKitMachineDelegate`, responsible for handling VM events and updates.
     ///
@@ -132,7 +135,11 @@ public struct VirtualMachine<Template: VZKitTemplate>: VZKitVirtualMachine {
         self.delegate = .init()
         self.template = template
         self.vzVirtualMachine.delegate = delegate
-        await self.stateManager = .init(self.delegate)
+        self.stateManager = await .init()
+        
+        await self.stateManager.registerPublisher(
+            delegate.statePublisher
+        )
     }
 }
 

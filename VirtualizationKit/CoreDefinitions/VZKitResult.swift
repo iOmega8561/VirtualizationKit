@@ -69,7 +69,7 @@ public enum VZKitResult<Template: VZKitTemplate>: Sendable {
     /// The current state of the virtual machine, suitable for display in views.
     ///
     /// If the outcome of the initialization is a success then we can simply forward the state from the virtual machine's own
-    /// `MachineStateManager` instance. If the outcome is a failure it returns `.error`.
+    /// `VZKitObservableState` instance. If the outcome is a failure it returns `.error`.
     ///
     /// - Important: This property must be accessed on the main thread.
     /// - Returns: Either a `VZVirtualMachine.State` forwarded directly from the virtual machine state manager,
