@@ -74,9 +74,7 @@ public struct GraphicalConsole<TemplateType: VZKitTemplate>: VZKitGraphicalConso
     ///   - vmView: The existing `Framebuffer` view instance to update.
     ///   - context: The context provided by `NSViewRepresentable` for managing state and interactions.
     public func updateNSView(_ vmView: Framebuffer, context: Context) {
-        if vmView.virtualMachine != vzVirtualMachine {
-            vmView.virtualMachine = vzVirtualMachine
-        }
+        vmView.virtualMachine = vzVirtualMachine
         vmView.automaticallyReconfiguresDisplay = automaticallyReconfiguresDisplay
         vmView.capturesSystemKeys = capturesSystemKeys
     }
