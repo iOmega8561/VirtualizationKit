@@ -1,5 +1,5 @@
 //
-//  RosettaDevice.swift
+//  VZLinuxRosettaDirectoryShare.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 17/05/24.
@@ -7,13 +7,9 @@
 
 import Virtualization
 
-
-/// A typealias for `VZLinuxRosettaDirectoryShare`, providing a concise and readable name for Rosetta directory shares.
-///
-/// `RosettaDevice` simplifies code when working with Rosetta-specific directory shares.
-typealias RosettaDevice = VZLinuxRosettaDirectoryShare
-
-extension RosettaDevice {
+extension VZLinuxRosettaDirectoryShare: VZKitGenericConstructible {
+    
+    typealias Constructible = VZVirtioFileSystemDeviceConfiguration
     
     /// Creates a shared directory mount between the host and the guest systems using Apple Rosetta.
     ///
@@ -30,23 +26,21 @@ extension RosettaDevice {
     ///
     /// - Note:
     ///   Ensure that Rosetta is installed and supported on the host system before calling this method.
-    static func createDevice() throws -> FileSystemDevice {
+    static func create() throws -> Constructible {
                 
-        switch RosettaDevice.availability {
+        switch VZLinuxRosettaDirectoryShare.availability {
         case .installed:
-            
-            let rosettaDirectoryShare = try RosettaDevice()
+            let rosettaDirectoryShare = try VZLinuxRosettaDirectoryShare()
             
             try rosettaDirectoryShare.setCachingOptions(
                 .abstractSocket("rosettaSocket")
             )
             
-            let sharingDevice = FileSystemDevice(
+            let sharingDevice = VZVirtioFileSystemDeviceConfiguration(
                 tag: "ROSETTA_SHARE"
             )
             
             sharingDevice.share = rosettaDirectoryShare
-            
             return sharingDevice
             
         case .notSupported:

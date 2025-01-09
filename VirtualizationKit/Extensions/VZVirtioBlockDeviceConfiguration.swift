@@ -1,5 +1,5 @@
 //
-//  BlockDevice.swift
+//  VZVirtioBlockDeviceConfiguration.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 17/05/24.
@@ -7,28 +7,11 @@
 
 import Virtualization
 
-/// This typealias allows for cleaner-looking code
-typealias BlockDevice = VZVirtioBlockDeviceConfiguration
-
-/// Protocol conformation of `VZVirtioBlockDeviceConfiguration` to `VZKitStorageAttachment`
-///
-/// @brief
-///    The `VZKitStorageAttachment` protocol allows for a simpler implementation of the static factory method pattern.
-///    This extension contains the necessary stubs to achieve conformation and defines an appropriare `CaseIterable`
-///    to be used as argument, when calling the factory method.
-extension BlockDevice: VZKitStorageAttachment {
+extension VZVirtioBlockDeviceConfiguration: VZKitStorageConstructible {    
     
-    /// MountType `CaseIterable`
-    ///
-    /// @brief
-    ///    When calling the factory method from the outside, this `CaseIterable` becomes very useful
-    ///    to provide concise information about disk capacity and read/write mounting permissions.
-    enum MountType: CaseIterable {
-        public static let allCases: [Self] = [
-            .readOnly(size: 0),
-            .readWrite(size: 0)
-        ]
-        
+    /// When calling the factory method from the outside, this enum becomes very useful
+    /// to provide concise information about disk capacity and read/write mounting permissions.
+    enum MountingOptions {
         case readWrite(size: UInt64)
         case readOnly(size: UInt64)
     }
@@ -66,7 +49,7 @@ extension BlockDevice: VZKitStorageAttachment {
     /// - Parameters:
     ///   - url: The location at which the disk image should be created on the host file system.
     ///   - type: Mounting permissions with integer size of the virtual disk image, in gigabytes.
-    static func createDevice(_ url: URL, _ type: MountType) throws -> BlockDevice {
+    static func create(at url: URL, type: MountingOptions) throws -> Constructible {
         
         let attachment: VZDiskImageStorageDeviceAttachment
         
@@ -87,6 +70,6 @@ extension BlockDevice: VZKitStorageAttachment {
             readOnly: isReadOnly
         )
         
-        return BlockDevice(attachment: attachment)
+        return Constructible(attachment: attachment)
     }
 }

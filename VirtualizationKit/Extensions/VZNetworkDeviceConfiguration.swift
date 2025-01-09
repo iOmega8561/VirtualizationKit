@@ -1,5 +1,5 @@
 //
-//  NetworkDevice.swift
+//  VZNetworkDeviceConfiguration.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 17/05/24.
@@ -7,16 +7,9 @@
 
 import Virtualization
 
-/// This typealias allows for cleaner-looking code
-typealias NetworkDevice = VZVirtioNetworkDeviceConfiguration
-
-/// Protocol conformation of `VZVirtioNetworkDeviceConfiguration` to `VZKitDeviceAttachment`
-///
-/// @brief
-///    The `VZKitDeviceAttachment` protocol allows for a simpler implementation of the static factory method pattern.
-///    This extension contains the necessary stubs to achieve conformation and defines an appropriare `CaseIterable`
-///    to be used as argument, when calling the factory method.
-extension NetworkDevice: VZKitDeviceAttachment {
+extension VZNetworkDeviceConfiguration: VZKitSpecializedConstructible {
+    
+    typealias Constructible = VZVirtioNetworkDeviceConfiguration
     
     /// Sets up a `VZMACAddress` from a provided MAC address string.
     ///
@@ -88,8 +81,8 @@ extension NetworkDevice: VZKitDeviceAttachment {
     ///
     /// - Parameters:
     ///   - type: The network configuration of choice
-    static func createDevice(_ type: NetworkTopology) throws -> NetworkDevice {
-        let dev = NetworkDevice()
+    static func create(type: NetworkTopology) throws -> Constructible {
+        let dev = Constructible()
                 
         switch type {
         case .bridged(let hostInterfaceID, let macAddress):

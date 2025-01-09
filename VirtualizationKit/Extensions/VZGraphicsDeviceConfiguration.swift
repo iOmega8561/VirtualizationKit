@@ -1,5 +1,5 @@
 //
-//  GraphicsDevice.swift
+//  VZGraphicsDeviceConfiguration.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 17/05/24.
@@ -7,16 +7,7 @@
 
 import Virtualization
 
-
-/// This typealias allows for cleaner-looking code
-typealias GraphicsDevice = VZGraphicsDeviceConfiguration
-
-/// Protocol conformation of `VZGraphicsDeviceConfiguration` to `VZKitDeviceAttachment`
-///
-/// @brief
-///    The `VZKitDeviceAttachment` protocol allows for a simpler implementation of the static factory method pattern.
-///    This extension contains the necessary stubs to achieve conformation.
-extension GraphicsDevice: VZKitDeviceAttachment {
+extension VZGraphicsDeviceConfiguration: VZKitSpecializedConstructible {
     
     /// This factory method can create a graphics device configuration for the guest machine.
     /// Configuration will be different according to the OS of choice, so the method takes the latter as input parameter
@@ -24,7 +15,7 @@ extension GraphicsDevice: VZKitDeviceAttachment {
     ///
     /// - Parameters:
     ///   - type: The guest operating system.
-    static func createDevice(_ type: OperatingSystem) -> GraphicsDevice {
+    static func create(type: OperatingSystem) -> Constructible {
 
         switch type {
         case .macos:

@@ -24,8 +24,14 @@ struct ConfigurationBuilder<TemplateType: VZKitTemplate>: VZKitConfigurationBuil
     /// Reference to the native `Virtualization` framework configuration object
     let configuration: VZVirtualMachineConfiguration
     
-    /// Computed property to get the location of the VM's storage folder inside the application bundle
+    /// Stored property to get the location of the VM's storage folder inside the application bundle
     private let vmSupportDirectory: URL
+    
+    /// Computed property that determines, based on current system version, if nestedVirtualization should be enabled
+    /// - Note: If macOS is inferior to 15.0 this is always false, else it is `template.enablesNestedVirtualization`
+    private var enablesNestedVirtualization: Bool {
+        if #available(macOS 15.0, *) { template.enablesNestedVirtualization } else { false }
+    }
     
     /// This method is responsible of building the full fledged virtual machine configuration scheme.
     /// To do that it makes a distinction between the different guest operating systems, since they need completely different
@@ -44,89 +50,65 @@ struct ConfigurationBuilder<TemplateType: VZKitTemplate>: VZKitConfigurationBuil
         switch template.operatingSystem {
         case .macos:
             
-            configuration.platform = try MacintoshPlatform.createDevice(
-                restoreImage!,
-                vmSupportDirectory
+            configuration.platform = try .create(
+                at: vmSupportDirectory,
+                type: .macintosh(restoreImage: restoreImage!)
             )
             
-            configuration.bootLoader = try BootLoader.createDevice()
+            configuration.bootLoader = try .create()
             
         case .linux:
             
-            configuration.platform = try GenericPlatform.createDevice(
-                vmSupportDirectory.appendingPathComponent("MachineIdentifier"),
-                { if #available(macOS 15.0, *) { template.enablesNestedVirtualization } else { false } }()
+            configuration.platform = try .create(
+                at: vmSupportDirectory,
+                type: .generic(nestedVirtualization: enablesNestedVirtualization)
             )
             
-            configuration.bootLoader = try BootLoader.createDevice(
-                vmSupportDirectory.appendingPathComponent("NVRAM")
+            configuration.bootLoader = try .create(
+                at: vmSupportDirectory.appendingPathComponent("NVRAM")
             )
             
             if template.enablesRosettaDirectoryShare {
-                configuration.directorySharingDevices.append(
-                    try RosettaDevice.createDevice()
-                )
+                configuration.directorySharingDevices.append(try VZLinuxRosettaDirectoryShare.create())
             }
             
             if let url = template.removableDiskImage {
                 configuration.storageDevices.append(
-                    try USBMassStorageDevice.createDevice(url, .readOnly)
+                    try VZUSBMassStorageDeviceConfiguration.create(at: url, type: .readOnly)
                 )
             }
         }
       
         configuration.storageDevices.append(
-            try BlockDevice.createDevice(
-                vmSupportDirectory.appendingPathComponent("Disk.img"),
-                .readWrite(size: template.performancePreset.diskSize)
+            try VZVirtioBlockDeviceConfiguration.create(
+                at: vmSupportDirectory.appendingPathComponent("Disk.img"),
+                type: .readWrite(size: template.performancePreset.diskSize)
             )
         )
         
-        configuration.consoleDevices.append(
-            ConsoleDevice.createDevice(template.operatingSystem)
-        )
-        
-        configuration.graphicsDevices.append(
-            GraphicsDevice.createDevice(template.operatingSystem)
-        )
-        
-        configuration.keyboards.append(
-            KeyboardDevice.createDevice(template.operatingSystem)
-        )
-        
-        configuration.pointingDevices.append(
-            PointingDevice.createDevice(template.operatingSystem)
-        )
-        
-        configuration.memoryBalloonDevices.append(
-            VZVirtioTraditionalMemoryBalloonDeviceConfiguration()
-        )
-        
-        configuration.entropyDevices.append(
-            VZVirtioEntropyDeviceConfiguration()
-        )
-        
-        configuration.networkDevices.append(
-            try NetworkDevice.createDevice(template.networkTopology)
-        )
+        configuration.consoleDevices.append(.create(type: template.operatingSystem))
+        configuration.graphicsDevices.append(.create(type: template.operatingSystem))
+        configuration.keyboards.append(.create(type: template.operatingSystem))
+        configuration.pointingDevices.append(.create(type: template.operatingSystem))
+        configuration.networkDevices.append(try .create(type: template.networkTopology))
+        configuration.cpuCount = template.performancePreset.cpuCoreCount
+        configuration.memorySize = template.performancePreset.memorySize
+        configuration.memoryBalloonDevices.append(VZVirtioTraditionalMemoryBalloonDeviceConfiguration())
+        configuration.entropyDevices.append(VZVirtioEntropyDeviceConfiguration())
         
         if template.enablesOutputAudio {
-            configuration.audioDevices.append(
-                try await SoundDevice.createDevice(.output)
-            )
+            configuration.audioDevices.append(try await .create(type: .output))
         }
         
         if template.enablesInputAudio {
-            configuration.audioDevices.append(
-                try await SoundDevice.createDevice(.input)
-            )
+            configuration.audioDevices.append(try await .create(type: .input))
         }
         
         if template.enablesSharedDirectory {
             configuration.directorySharingDevices.append(
-                try FileSystemDevice.createDevice(
-                    vmSupportDirectory.appendingPathComponent(template.name),
-                    template.operatingSystem
+                try .create(
+                    at: vmSupportDirectory.appendingPathComponent(template.name),
+                    type: template.operatingSystem
                 )
             )
         }
@@ -134,10 +116,6 @@ struct ConfigurationBuilder<TemplateType: VZKitTemplate>: VZKitConfigurationBuil
         if #available(macOS 15.0, *) {
             configuration.usbControllers.append(VZXHCIControllerConfiguration())
         }
-        
-        configuration.cpuCount = template.performancePreset.cpuCoreCount
-        
-        configuration.memorySize = template.performancePreset.memorySize
     }
     
     /// This method prepares the macOS restore image for the configuration process.
