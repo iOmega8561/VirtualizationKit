@@ -8,7 +8,7 @@
 //
 //  -----------------------------------------------------------------------
 //
-//  MacOSRestoreImage.swift
+//  VZMacOSRestoreImage.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 13/11/24.
@@ -16,11 +16,8 @@
 
 @preconcurrency import Virtualization
 
-/// A typealias for `VZMacOSRestoreImage`, representing a macOS restore image used in virtualization configurations.
-typealias MacOSRestoreImage = VZMacOSRestoreImage
-
 /// Extension to provide additional functionality to `MacOSRestoreImage`, conforming it to `VZKitRestoreImage`.
-extension MacOSRestoreImage: VZKitRestoreImage {
+extension VZMacOSRestoreImage: VZKitRestoreImage {
     
     /// The version of the macOS operating system associated with this restore image.
     ///
@@ -30,7 +27,7 @@ extension MacOSRestoreImage: VZKitRestoreImage {
     /// - Returns: An `OperatingSystem.Version` instance that represents the macOS version
     ///            of the restore image.
     public var osVersion: OperatingSystem.Version {
-        return .init(self.operatingSystemVersion)
+        return .init(self.operatingSystemVersion, self.buildVersion)
     }
     
     /// Asynchronously loads a `VZMacOSRestoreImage` from a specified URL.
@@ -48,7 +45,7 @@ extension MacOSRestoreImage: VZKitRestoreImage {
         
         return try await withCheckedThrowingContinuation { continuation in
             
-            MacOSRestoreImage.load(from: url) { result in
+            VZMacOSRestoreImage.load(from: url) { result in
                 
                 switch result {
                 case let .failure(error):

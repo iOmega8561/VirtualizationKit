@@ -116,14 +116,14 @@ public struct VirtualMachine<Template: VZKitTemplate>: VZKitVirtualMachine {
         } catch { await stateManager.rollback(); throw error }
     }
 
-    /// The explicit, private, asynchronous init of the data structure. Uses an instance of `ConfigurationBuilder`
+    /// The explicit, private, asynchronous init of the data structure. Uses an instance of `VZKitConfigurationBuilder`
     /// to setup the `VZVirtualMachine` object and binds a new instance of `VirtualMachineDelegate` to it.
     ///
     /// - Parameters:
     ///   - template: the data transfer object containing all the information about the VM.
     public init(template: Template) async throws {
         
-        let builder = await ConfigurationBuilder(template: template)
+        let builder = await VZKitConfigurationBuilder(template: template)
         
         self.vzVirtualMachine = VZVirtualMachine(
             configuration: try await builder.createConfiguration(),

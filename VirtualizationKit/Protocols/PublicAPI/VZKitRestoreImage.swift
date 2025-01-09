@@ -24,20 +24,14 @@ public protocol VZKitRestoreImage {
     ///
     /// This type allows implementations to specify their own restore image type, providing flexibility
     /// for different restore image implementations while adhering to the protocol.
-    associatedtype ImageType: VZKitRestoreImage
-    
-    /// An associated type representing the version type of the operating system.
-    ///
-    /// This type must conform to `VZKitOperatingSystemVersion`, enabling compatibility with different
-    /// operating system versions while maintaining a consistent API.
-    associatedtype VersionType: VZKitOperatingSystemVersion
+    associatedtype RestoreImage: VZKitRestoreImage
     
     /// The version of the operating system associated with the restore image.
     ///
-    /// This property provides access to the OS version information, encapsulated within the specified
-    /// `VersionType` type. Implementations of this property must return the version of the OS that the
-    /// restore image represents.
-    var osVersion: VersionType { get }
+    /// This property provides access to the OS version information, encapsulated within this framework's
+    /// `OperatingSystem.Version` struct. Implementations of this property must return the version
+    /// of the OS that the restore image represents.
+    var osVersion: OperatingSystem.Version { get }
     
     /// Asynchronously loads a restore image from a specified URL.
     ///
@@ -48,5 +42,5 @@ public protocol VZKitRestoreImage {
     /// - Parameter url: The URL from which to load the restore image data.
     /// - Returns: An instance of the associated `ImageType` representing the loaded restore image.
     /// - Throws: An error if the image could not be loaded from the specified URL.
-    static func load(from url: URL) async throws -> ImageType
+    static func load(from url: URL) async throws -> RestoreImage
 }

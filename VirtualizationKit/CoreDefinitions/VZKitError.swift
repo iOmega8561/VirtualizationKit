@@ -74,10 +74,8 @@ enum VZKitError: LocalizedError {
             
         case .wrongMacImageVersion(let expected, let actual):
             return .init(format: VirtualizationKit.localized("error-configuration-wrongimgversion"),
-                         expected.major,
-                         expected.minor,
-                         actual.major,
-                         actual.minor)
+                         expected.description,
+                         actual.description)
             
         case .appleVMLimitExceeded:
             return .init(format: VirtualizationKit.localized("error-applevz-limitexceeded"),

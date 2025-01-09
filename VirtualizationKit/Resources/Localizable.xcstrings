@@ -230,13 +230,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The Virtual Machine has been created using a  macOS %d.%d restore image, but the currently selected image’s version is %d.%d"
+            "value" : "The Virtual Machine has been created using a  macOS %@ restore image, but the currently selected image’s version is %@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La Macchina Virtuale è stata creata utilizzando un’immagine di ripristino di macOS %d.%d, ma la versione dell’immagine attualmente selezionata è %d.%d"
+            "value" : "La Macchina Virtuale è stata creata utilizzando un’immagine di ripristino di macOS %@, ma la versione dell’immagine attualmente selezionata è %@"
           }
         }
       }
