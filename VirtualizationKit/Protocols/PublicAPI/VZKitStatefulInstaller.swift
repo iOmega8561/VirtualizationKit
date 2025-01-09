@@ -44,10 +44,7 @@
 /// }
 /// ```
 ///
-/// - Note: This protocol is actor-isolated to ensure safe and consistent access to state
-///         and progress data during asynchronous operations.
-///
-@VZKitActor public protocol VZKitStatefulInstaller {
+public protocol VZKitStatefulInstaller {
     
     // MARK: - Associated Types
     
