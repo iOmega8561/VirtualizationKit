@@ -41,7 +41,7 @@ protocol VZKitMachineInstaller: Sendable {
     /// Starts the installation process on the specified state manager.
     ///
     /// The `startInstallation(_:)` method is responsible for initiating and managing the virtual machine installation.
-    /// This function operates asynchronously on the `@VZKitGlobalActor` to ensure thread safety and isolation,
+    /// This function operates asynchronously on the `@VZKitActor` to ensure thread safety and isolation,
     /// Implementations of this method should update the `stateManager` throughout the installation to reflect the progress
     /// and state changes of the VM.
     ///
@@ -51,5 +51,5 @@ protocol VZKitMachineInstaller: Sendable {
     ///
     /// - Throws: An error if the installation process encounters an issue, such as a missing restore image, configuration
     ///   error, or an interrupted operation.
-    @VZKitGlobalActor func startInstallation(_ stateManager: StateManagerType) async throws
+    @VZKitActor func startInstallation(_ stateManager: StateManagerType) async throws
 }

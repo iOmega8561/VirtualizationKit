@@ -9,7 +9,7 @@ import os
 
 /// A utility structure for logging messages within the VirtualizationKit framework.
 /// This struct provides an interface for structured logging using Apple's `os.Logger`.
-internal struct VZKitLogger {
+struct VZKitLogger {
     
     /// The default logger instance with the category set to "general".
     /// Use this for general-purpose logging within the framework.
@@ -30,7 +30,7 @@ internal struct VZKitLogger {
     ///
     /// - Parameter message: The message to log. The message's privacy is set to `.public`.
     /// - Note: Use this method to log messages that provide context about the normal operation of the application.
-    internal func info(_ message: String) {
+    func info(_ message: String) {
         self.logger.info("\(message, privacy: .public)")
     }
     
@@ -38,7 +38,7 @@ internal struct VZKitLogger {
     ///
     /// - Parameter message: The message to log. The message's privacy is set to `.public`.
     /// - Note: Use this method to log errors or unexpected conditions in the application.
-    internal func error(_ message: String) {
+    func error(_ message: String) {
         self.logger.error("VirtualizationKit: \(message, privacy: .public)")
     }
     

@@ -35,7 +35,7 @@
 		E32B66302CBA960000FED006 /* SoundDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B660B2CBA960000FED006 /* SoundDevice.swift */; };
 		E32B66312CBA960000FED006 /* USBMassStorageDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B660C2CBA960000FED006 /* USBMassStorageDevice.swift */; };
 		E32B66322CBA960000FED006 /* VZKitError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B660E2CBA960000FED006 /* VZKitError.swift */; };
-		E32B66332CBA960000FED006 /* VZKitGlobalActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B660F2CBA960000FED006 /* VZKitGlobalActor.swift */; };
+		E32B66332CBA960000FED006 /* VZKitActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B660F2CBA960000FED006 /* VZKitActor.swift */; };
 		E32B66342CBA960000FED006 /* VZKitResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B66102CBA960000FED006 /* VZKitResult.swift */; };
 		E32B663B2CBA97A100FED006 /* Virtualization.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E32B663A2CBA97A100FED006 /* Virtualization.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		E32B663D2CBA981600FED006 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = E32B663C2CBA981600FED006 /* Localizable.xcstrings */; };
@@ -88,7 +88,7 @@
 		E32B660B2CBA960000FED006 /* SoundDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundDevice.swift; sourceTree = "<group>"; };
 		E32B660C2CBA960000FED006 /* USBMassStorageDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = USBMassStorageDevice.swift; sourceTree = "<group>"; };
 		E32B660E2CBA960000FED006 /* VZKitError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VZKitError.swift; sourceTree = "<group>"; };
-		E32B660F2CBA960000FED006 /* VZKitGlobalActor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VZKitGlobalActor.swift; sourceTree = "<group>"; };
+		E32B660F2CBA960000FED006 /* VZKitActor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VZKitActor.swift; sourceTree = "<group>"; };
 		E32B66102CBA960000FED006 /* VZKitResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VZKitResult.swift; sourceTree = "<group>"; };
 		E32B663A2CBA97A100FED006 /* Virtualization.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Virtualization.framework; path = System/Library/Frameworks/Virtualization.framework; sourceTree = SDKROOT; };
 		E32B663C2CBA981600FED006 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
@@ -236,7 +236,7 @@
 			children = (
 				E3D7E87E2CBB4069005488C8 /* VirtualizationKit.swift */,
 				E32B660E2CBA960000FED006 /* VZKitError.swift */,
-				E32B660F2CBA960000FED006 /* VZKitGlobalActor.swift */,
+				E32B660F2CBA960000FED006 /* VZKitActor.swift */,
 				E364136F2D2BC89000CFD722 /* VZKitLogger.swift */,
 				E32B66102CBA960000FED006 /* VZKitResult.swift */,
 			);
@@ -369,7 +369,7 @@
 				E32B66312CBA960000FED006 /* USBMassStorageDevice.swift in Sources */,
 				E3393A3A2CDEB22E00D4E3CE /* MachineDelegate.swift in Sources */,
 				E32B66322CBA960000FED006 /* VZKitError.swift in Sources */,
-				E32B66332CBA960000FED006 /* VZKitGlobalActor.swift in Sources */,
+				E32B66332CBA960000FED006 /* VZKitActor.swift in Sources */,
 				E33DEB4B2CE4DAFE00B206B8 /* VZKitRestoreImage.swift in Sources */,
 				E3393A3C2CDEE4CB00D4E3CE /* VZKitMachineStateManager.swift in Sources */,
 				E32B66342CBA960000FED006 /* VZKitResult.swift in Sources */,
