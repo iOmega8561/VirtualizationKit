@@ -16,6 +16,8 @@
 
 @_exported import Foundation
 
+import Virtualization
+
 public final class _VirtualizationKit: Sendable {
     
     /// The bundle identifier of this framework
@@ -67,7 +69,7 @@ extension _VirtualizationKit {
     /// Determines whether or not the Nested Virtualization feature is supported by the Host Mac
     /// - Note: This is only available starting with macOS 15
     public var isNestedVirtualizationSupported: Bool {
-        GenericPlatform.isNestedVirtualizationSupported
+        VZGenericPlatformConfiguration.isNestedVirtualizationSupported
     }
 }
 

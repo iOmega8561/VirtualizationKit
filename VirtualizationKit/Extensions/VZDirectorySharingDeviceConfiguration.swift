@@ -8,7 +8,7 @@
 //
 //  -----------------------------------------------------------------------
 //
-//  FileSystemDevice.swift
+//  VZDirectorySharingDeviceConfiguration.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 17/05/24.
@@ -16,15 +16,9 @@
 
 import Virtualization
 
-///This typealias allows for cleaner-looking code
-typealias FileSystemDevice = VZVirtioFileSystemDeviceConfiguration
-
-/// Protocol conformation of `VZVirtioFileSystemDeviceConfiguration` to `VZKitStorageAttachment`
-///
-/// @brief
-///    The `VZKitStorageAttachment` protocol allows for a simpler implementation of the static factory method pattern.
-///    This extension contains the necessary stubs to achieve conformation.
-extension FileSystemDevice: VZKitStorageAttachment {
+extension VZDirectorySharingDeviceConfiguration: VZKitStorageConstructible {
+    
+    typealias Constructible = VZVirtioFileSystemDeviceConfiguration
     
     /// This method can create a shared directory mount between the host and the guest systems.
     /// Sets the appropriate tag depending on the chosen guest operating system, for example to support
@@ -33,7 +27,7 @@ extension FileSystemDevice: VZKitStorageAttachment {
     /// - Parameters:
     ///   - url: The location at which the shared mount should be created on the host file system.
     ///   - type: The guest operating system.
-    static func createDevice(_ url: URL, _ type: OperatingSystem) throws -> FileSystemDevice {
+    static func create(at url: URL, type: OperatingSystem) throws -> Constructible {
         
         try FileManager.default.createDirectory(
             atPath: url.path(percentEncoded: false),
@@ -47,7 +41,7 @@ extension FileSystemDevice: VZKitStorageAttachment {
         
         let singleDirectoryShare = VZSingleDirectoryShare(directory: sharedDirectory)
         
-        let sharingDevice: FileSystemDevice
+        let sharingDevice: Constructible
         
         switch type {
         case .macos(let version):
@@ -56,12 +50,12 @@ extension FileSystemDevice: VZKitStorageAttachment {
                 throw VZKitError.guestFeatureNotSupported("VZDirectoryShare")
             }
             
-            sharingDevice = FileSystemDevice(
-                tag: FileSystemDevice.macOSGuestAutomountTag
+            sharingDevice = .init(
+                tag: Constructible.macOSGuestAutomountTag
             )
             
         default:
-            sharingDevice = FileSystemDevice(tag: "DEFAULT_SHARE")
+            sharingDevice = .init(tag: "DEFAULT_SHARE")
             
         }
         

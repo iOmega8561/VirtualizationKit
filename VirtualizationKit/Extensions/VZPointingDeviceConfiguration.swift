@@ -8,7 +8,7 @@
 //
 //  -----------------------------------------------------------------------
 //
-//  PointingDevice.swift
+//  VZPointingDeviceConfiguration.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 18/05/24.
@@ -16,22 +16,14 @@
 
 import Virtualization
 
-/// This typealias allows for cleaner-looking code
-typealias PointingDevice = VZPointingDeviceConfiguration
-
-/// Protocol conformation of `VZPointingDeviceConfiguration` to `VZKitDeviceAttachment`
-///
-/// @brief
-///    The `VZKitDeviceAttachment` protocol allows for a simpler implementation of the static factory method pattern.
-///    This extension contains the necessary stubs to achieve conformation.
-extension PointingDevice: VZKitDeviceAttachment {
+extension VZPointingDeviceConfiguration: VZKitSpecializedConstructible {
    
     /// Much simpler than the other factory methods, this one just returns the appropriate pointing
     /// device configuration according to the OS of choice.
     ///
     /// - Parameters:
     ///   - type: The guest operating system.
-    static func createDevice(_ type: OperatingSystem) -> PointingDevice {
+    static func create(type: OperatingSystem) -> Constructible {
         
         switch type {
         case .macos(let version):

@@ -8,7 +8,7 @@
 //
 //  -----------------------------------------------------------------------
 //
-//  SoundDevice.swift
+//  VZAudioDeviceConfiguration.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 17/05/24.
@@ -18,23 +18,13 @@ import Virtualization
 
 import AVFoundation
 
-/// This typealias allows for cleaner-looking code
-typealias SoundDevice = VZVirtioSoundDeviceConfiguration
-
-/// Protocol conformation of `VZVirtioSoundDeviceConfiguration` to `VZKitDeviceAttachment`
-///
-/// @brief
-///    The `VZKitDeviceAttachment` protocol allows for a simpler implementation of the static factory method pattern.
-///    This extension contains the necessary stubs to achieve conformation and defines an appropriare `CaseIterable`
-///    to be used as argument, when calling the factory method.
-extension SoundDevice: VZKitDeviceAttachment {
+extension VZAudioDeviceConfiguration: VZKitSpecializedConstructible {
+   
+    typealias Constructible = VZVirtioSoundDeviceConfiguration
     
-    /// StreamType `CaseIterable`
-    ///
-    /// @brief
-    ///    When calling the factory method from the outside, this `CaseIterable` becomes very useful
-    ///    to provide concise information about the audio stream capabilities of the guest machine.
-    enum StreamType: CaseIterable {
+    /// When calling the factory method from the outside, this enum becomes very useful
+    /// to provide concise information about the audio stream capabilities of the guest machine.
+    enum StreamType {
         case input
         case output
     }
@@ -47,12 +37,10 @@ extension SoundDevice: VZKitDeviceAttachment {
     static private func captureDevicePermission(type: AVMediaType) async throws {
 
         switch AVCaptureDevice.authorizationStatus(for: type) {
-            
         case .authorized:
             break
         
         case .notDetermined:
-            
             guard await AVCaptureDevice.requestAccess(for: type) else {
                 fallthrough
             }
@@ -68,26 +56,23 @@ extension SoundDevice: VZKitDeviceAttachment {
     ///
     /// - Parameters:
     ///   - type: The audio configuration type (input or output)
-    static func createDevice(_ type: StreamType) async throws -> SoundDevice {
-        let dev = SoundDevice()
+    static func create(type: StreamType) async throws -> Constructible {
+        let dev = Constructible()
         
         switch type {
         case .output:
-            
             let stream = VZVirtioSoundDeviceOutputStreamConfiguration()
             stream.sink = VZHostAudioOutputStreamSink()
             
             dev.streams.append(stream)
             
         case .input:
-            
-            try await Self.captureDevicePermission(type: .audio)
+            try await captureDevicePermission(type: .audio)
             
             let stream = VZVirtioSoundDeviceInputStreamConfiguration()
             stream.source = VZHostAudioInputStreamSource()
             
             dev.streams.append(stream)
-            
         }
         
         return dev

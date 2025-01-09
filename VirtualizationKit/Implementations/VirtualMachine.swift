@@ -154,7 +154,7 @@ public struct VirtualMachine<TemplateType: VZKitTemplate>: VZKitVirtualMachine {
         }
         
         let massStorageDev = try VZUSBMassStorageDevice(
-            configuration: .createDevice(url, .readOnly)
+            configuration: .create(at: url, type: .readOnly)
         )
         
         try await controller.attach(device: massStorageDev)

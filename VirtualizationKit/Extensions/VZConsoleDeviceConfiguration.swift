@@ -8,7 +8,7 @@
 //
 //  -----------------------------------------------------------------------
 //
-//  ConsoleDevice.swift
+//  VZConsoleDeviceConfiguration.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 17/05/24.
@@ -16,18 +16,15 @@
 
 import Virtualization
 
-
-/// This typealias allows for cleaner-looking code
-typealias ConsoleDevice = VZVirtioConsoleDeviceConfiguration
-
-extension ConsoleDevice: VZKitDeviceAttachment {
+extension VZConsoleDeviceConfiguration: VZKitSpecializedConstructible {
+    
+    typealias Constructible = VZVirtioConsoleDeviceConfiguration
     
     /// Static factory method for `VZVirtioConsoleDeviceConfiguration`.
     /// Spice console configuration is standard across the different vm types, the only difference is that currently
     /// Clipboard sharing is not supported for macOS guests, so we explicitly disable it in that case.
-    static func createDevice(_ type: OperatingSystem) -> ConsoleDevice {
-        let dev = ConsoleDevice()
-        
+    static func create(type: OperatingSystem) -> Constructible {
+        let dev = Constructible()
         let portAttachment = VZSpiceAgentPortAttachment()
         
         switch type {
