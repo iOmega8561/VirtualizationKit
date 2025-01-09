@@ -20,9 +20,9 @@ public protocol VZKitRestoreImage {
     /// The version of the operating system associated with the restore image.
     ///
     /// This property provides access to the OS version information, encapsulated within this framework's
-    /// `OperatingSystem.Version` struct. Implementations of this property must return the version
+    /// `VZKitOperatingSystem.Version` struct. Implementations of this property must return the version
     /// of the OS that the restore image represents.
-    var osVersion: OperatingSystem.Version { get }
+    var osVersion: VZKitOperatingSystem.Version { get }
     
     /// Asynchronously loads a restore image from a specified URL.
     ///

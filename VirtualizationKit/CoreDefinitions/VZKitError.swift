@@ -19,7 +19,7 @@ enum VZKitError: LocalizedError {
     case macUnsupportedHost
     case missingMacImage
     case captureDevicePermissionDenied
-    case wrongMacImageVersion(_ expected: OperatingSystem.Version, _ actual: OperatingSystem.Version)
+    case wrongMacImageVersion(_ expected: VZKitOperatingSystem.Version, _ actual: VZKitOperatingSystem.Version)
     case appleVMLimitExceeded
     case bridgeInterfaceNotAvailable(_ id: String?)
     case invalidMacAddress(_ macAddress: String)

@@ -13,11 +13,11 @@ extension VZMacOSRestoreImage: VZKitRestoreImage {
     /// The version of the macOS operating system associated with this restore image.
     ///
     /// This computed property converts the `operatingSystemVersion` of the restore image
-    /// to a custom `OperatingSystem.Version` type.
+    /// to a custom `VZKitOperatingSystem.Version` type.
     ///
-    /// - Returns: An `OperatingSystem.Version` instance that represents the macOS version
+    /// - Returns: An `VZKitOperatingSystem.Version` instance that represents the macOS version
     ///            of the restore image.
-    public var osVersion: OperatingSystem.Version {
+    public var osVersion: VZKitOperatingSystem.Version {
         return .init(self.operatingSystemVersion, self.buildVersion)
     }
     

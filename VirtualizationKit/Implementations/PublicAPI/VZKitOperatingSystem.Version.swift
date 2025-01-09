@@ -1,5 +1,5 @@
 //
-//  OperatingSystem.Version.swift
+//  VZKitOperatingSystem.Version.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 12/11/24.
@@ -7,7 +7,7 @@
 
 import Virtualization
 
-extension OperatingSystem {
+extension VZKitOperatingSystem {
     
     /// A data structure that standardizes the representation of a guest operating system version.
     ///
