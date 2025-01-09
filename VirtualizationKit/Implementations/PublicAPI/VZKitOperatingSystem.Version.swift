@@ -17,10 +17,36 @@ extension VZKitOperatingSystem {
     /// - `Codable`: Enables seamless integration with encoding and decoding systems, such as JSON or property lists.
     /// - `Sendable`: Ensures thread safety, allowing instances to be used across concurrent contexts without issue.
     /// - `Hashable`: Facilitates use as an associated value in enums and in collections like dictionaries and sets.
+    /// - `Comparable`: Allows  to compare instances using relational operators.
     ///
     /// This struct also includes a static utility method to retrieve a `Version` instance based on a macOS restore image,
     /// enabling streamlined extraction of version information from provided image files.
-    public struct Version: Equatable, Codable, Sendable, Hashable {
+    public struct Version: Equatable, Codable, Sendable, Hashable, Comparable {
+        
+        /// This method is required for `Comparable` conformation and allows to use the `<` operator.
+        public static func < (lhs: Version, rhs: Version) -> Bool {
+            
+            if lhs.major != rhs.major {
+                lhs.major < rhs.major
+                
+            } else if let lhsMinor = lhs.minor,
+                      let rhsMinor = rhs.minor,
+                      lhsMinor != rhsMinor {
+                lhsMinor < rhsMinor
+                
+            } else if let lhsPatch = lhs.patch,
+                      let rhsPatch = rhs.patch,
+                      lhsPatch != rhsPatch {
+                lhsPatch < rhsPatch
+                
+            } else if let lhsBuild = lhs.build,
+                      let rhsBuild = rhs.build,
+                      lhsBuild != rhsBuild {
+                
+                lhsBuild < rhsBuild
+                
+            } else { lhs.major < rhs.major }
+        }
         
         /// The major version number of the operating system.
         public let major: Int
