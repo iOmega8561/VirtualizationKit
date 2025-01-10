@@ -9,7 +9,7 @@ import Virtualization
 
 /// `VZKitNetworkTopology` is an enumeration that represents the possible network configurations
 /// available for virtual machines. This enumeration conforms to Sendable
-public enum VZKitNetworkTopology: Sendable {
+public enum VZKitNetworkTopology: Codable, Hashable, Sendable {
     
     /// A static property that retrieves the list of network interface identifiers available for bridging.
     ///
