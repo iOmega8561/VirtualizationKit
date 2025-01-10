@@ -32,7 +32,7 @@ import Virtualization
     /// The `currentState` property represents the active `VZVirtualMachine.State` of the virtual machine.
     /// It is marked as `private(set)` to restrict external modification, while still allowing
     /// observers to access the current state. This property updates whenever a new state is received,
-    /// and the `StateManager` automatically notifies observers of any changes.
+    /// and the `stateCoordinator` automatically notifies observers of any changes.
     public private(set) var currentState: VZVirtualMachine.State = .stopped
     
     /// A value representing the current progress of the virtual machine operation.

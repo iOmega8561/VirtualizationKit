@@ -52,7 +52,6 @@
 ///     }
 /// }
 /// ```
-///
 public protocol VZKitStatefulInstaller {
     
     // MARK: - Associated Types

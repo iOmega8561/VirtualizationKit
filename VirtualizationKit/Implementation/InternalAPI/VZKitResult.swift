@@ -81,7 +81,7 @@ public enum VZKitResult<Template: VZKitTemplate>: Sendable {
     ///
     /// This property is marked with `@MainActor` to ensure it is accessed on the main thread, which is essential for UI-bound contexts.
     /// It returns the progress as an integer, representing the completion percentage, calculated based on the virtual machine’s
-    /// state manager. If the virtual machine is in a `.success` state, it converts the `progress` value from `stateManager`
+    /// state manager. If the virtual machine is in a `.success` state, it converts the `progress` value from `stateCoordinator`
     /// (a `Double` between 0 and 1) into an integer percentage. If the virtual machine is in any other state, the progress defaults to 0.
     ///
     /// - Returns: An integer representing the progress percentage (0-100) if available; otherwise, 0 if progress data is not accessible.
