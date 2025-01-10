@@ -65,6 +65,8 @@ public enum VZKitResult<Template: VZKitTemplate>: Sendable {
     /// - Important: This property must be accessed on the main thread.
     /// - Returns: Either a `VZVirtualMachine.State` forwarded directly from the virtual machine state manager,
     /// or `.error` in case o failure.
+    /// - Note: This computed property propagates state changes thanks to
+    /// `VZKitObservableState` being marked with `@Observable`.
     @MainActor public var state: VZVirtualMachine.State {
         
         switch self {
@@ -84,6 +86,8 @@ public enum VZKitResult<Template: VZKitTemplate>: Sendable {
     /// (a `Double` between 0 and 1) into an integer percentage. If the virtual machine is in any other state, the progress defaults to 0.
     ///
     /// - Returns: An integer representing the progress percentage (0-100) if available; otherwise, 0 if progress data is not accessible.
+    /// - Note: This computed property propagates state changes thanks to
+    /// `VZKitObservableState` being marked with `@Observable`.
     @MainActor public var progress: Int {
         
         switch self {
