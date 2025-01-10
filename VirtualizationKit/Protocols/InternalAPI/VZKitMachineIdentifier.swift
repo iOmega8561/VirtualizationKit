@@ -13,7 +13,7 @@ import Virtualization
 /// This protocol allows generic code to work with both classes by exposing common
 /// properties and initialization methods. It is particularly useful when handling
 /// identifiers in the Virtualization framework.
-protocol MachineIdentifier {
+protocol VZKitMachineIdentifier {
     
     /// Creates a new instance of the machine identifier.
     ///
@@ -36,8 +36,9 @@ protocol MachineIdentifier {
     var dataRepresentation: Data { get }
 }
 
-/// Extends `VZMacMachineIdentifier` to conform to the `MachineIdentifier` protocol.
-extension VZMacMachineIdentifier: MachineIdentifier {}
+/// Extends `VZMacMachineIdentifier` to conform to the `VZKitMachineIdentifier` protocol.
+extension VZMacMachineIdentifier: VZKitMachineIdentifier {}
 
-/// Extends `VZGenericMachineIdentifier` to conform to the `MachineIdentifier` protocol.
-extension VZGenericMachineIdentifier: MachineIdentifier {}
+/// Extends `VZGenericMachineIdentifier` to conform to the `VZKitMachineIdentifier` protocol.
+extension VZGenericMachineIdentifier: VZKitMachineIdentifier {}
+  
