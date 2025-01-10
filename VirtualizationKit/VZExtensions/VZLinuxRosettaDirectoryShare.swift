@@ -50,7 +50,7 @@ extension VZLinuxRosettaDirectoryShare: VZKitGenericConstructible {
             fallthrough
             
         default:
-            throw VZKitError.rosettaUnavailable
+            throw VZKitError.unavailableFeature(.rosetta)
         }
     }
 }

@@ -76,6 +76,9 @@ enum VZKitFeature {
     /// Represents the ability to share directories with the guest virtual machine.
     case directoryShare
     
+    /// Represents the ability to use the microphone of the host macintosh
+    case captureDevice
+    
     // MARK: - Private Metadata
     
     /// Provides metadata for each feature, including its localization key and scope.
@@ -85,6 +88,7 @@ enum VZKitFeature {
         case .nestedVirtualization: .init(key: "feature-nestedVirtualization", scope: .host)
         case .xhciUSBHotSwap: .init(key: "feature-xhciUSBHotSwap", scope: .host)
         case .directoryShare: .init(key: "feature-directoryShare", scope: .guest)
+        case .captureDevice: .init(key: "feature-captureDevice", scope: .host)
         }
     }
     
