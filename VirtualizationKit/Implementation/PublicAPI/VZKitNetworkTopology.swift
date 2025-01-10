@@ -144,9 +144,9 @@ public enum VZKitNetworkTopology: Sendable {
     /// - Returns: A `String` that is the localized representation of the network configuration.
     public var localized: String {
         switch self {
-            case .none: VirtualizationKit.localized("networktopo-none")
-            case .nat: VirtualizationKit.localized("networktopo-nat")
-            case .bridged: VirtualizationKit.localized("networktopo-bridged")
+        case .none: VZKitLocale("networktopo-none").value
+        case .nat: VZKitLocale("networktopo-nat").value
+        case .bridged: VZKitLocale("networktopo-bridged").value
         }
     }
 }

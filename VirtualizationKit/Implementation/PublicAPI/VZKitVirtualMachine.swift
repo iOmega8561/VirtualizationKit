@@ -160,13 +160,13 @@
     ///   in a read-only or writable state depending on the configuration.
     /// - Returns: A `UUID` uniquely identifying the attached USB device.
     /// - Throws:
-    ///   - `VZKitError.guestFeatureNotSupported`: If the virtual machine does not support XHCI USB controllers.
+    ///   - `VZKitError.guestFeatureUnsupported`: If the virtual machine does not support XHCI USB controllers.
     ///   - Any error encountered during the creation or attachment of the USB mass storage device.
     /// - Note: This method is pinned to `@VZKitActor` to ensure the operation is executed on
     /// the same queue that was used to create the `VZVirtualMachine` instance
     public func attachRemovableUSBDisk(usingImageAt url: URL) async throws -> UUID {
         guard let controller = vzVirtualMachine.usbControllers.first else {
-            throw VZKitError.guestFeatureUnsupported("XHCI USB Controller")
+            throw VZKitError.unsupportedFeature(.xhciUSBHotSwap)
         }
         
         let massStorageDev = try VZUSBMassStorageDevice(
@@ -183,7 +183,7 @@
     /// - Parameters:
     ///   - id: The `UUID` identifying the USB mass storage device to detach.
     /// - Throws: An error if the detachment fails, such as:
-    ///   - `VZKitError.guestFeatureNotSupported`: If the virtual machine does not support XHCI USB controllers,
+    ///   - `VZKitError.guestFeatureUnsupported`: If the virtual machine does not support XHCI USB controllers,
     ///     or if the specified device cannot be found.
     ///   - `VZKitError.usbDeviceNotFound`: If the supplied id doesn't match any device that is currently attached to the VM.
     ///   - Other errors related to the detachment process.
@@ -192,7 +192,7 @@
     /// the same queue that was used to create the `VZVirtualMachine` instance
     public func detachRemovableUSBDisk(identifiedBy id: UUID) async throws {
         guard let controller = vzVirtualMachine.usbControllers.first else {
-            throw VZKitError.guestFeatureUnsupported("XHCI USB Controller")
+            throw VZKitError.unsupportedFeature(.xhciUSBHotSwap)
         }
         
         guard let device = controller.usbDevices.first(where: { $0.uuid == id }) else {

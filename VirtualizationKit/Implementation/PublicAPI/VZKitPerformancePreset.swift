@@ -255,10 +255,10 @@ public enum VZKitPerformancePreset: Sendable {
     /// - Returns: A `String` containing the localized value for the performance preset.
     public var localized: String {
         switch self {
-        case .basic: VirtualizationKit.localized("perfpreset-basic")
-        case .balanced: VirtualizationKit.localized("perfpreset-balanced")
-        case .performance: VirtualizationKit.localized("perfpreset-performance")
-        case .custom: VirtualizationKit.localized("perfpreset-custom")
+        case .basic: VZKitLocale("perfpreset-basic").value
+        case .balanced: VZKitLocale("perfpreset-balanced").value
+        case .performance: VZKitLocale("perfpreset-performance").value
+        case .custom: VZKitLocale("perfpreset-custom").value
         }
     }
 }

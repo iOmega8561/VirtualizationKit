@@ -97,38 +97,6 @@
         }
       }
     },
-    "error-guestFeatureUnsupported" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The following feature is not supported by the guest operating system: “%@”"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La seguente funzionalità non è supportata dal sistema operativo guest: “%@”"
-          }
-        }
-      }
-    },
-    "error-hostFeatureUnsupported" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The following feature is not supported by the host Macintosh: “%@”"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La seguente funzionalità non è supportata dal Macintosh Host: “%@”"
-          }
-        }
-      }
-    },
     "error-invalidMacAddress" : {
       "localizations" : {
         "en" : {
@@ -241,6 +209,22 @@
         }
       }
     },
+    "error-unsupportedFeature" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The following feature is not supported by the %@ machine or operating system: “%@”"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La seguente funzionalità non è supportata dalla macchina o sistema operativo %@: “%@”"
+          }
+        }
+      }
+    },
     "error-usbDeviceNotFound" : {
       "localizations" : {
         "en" : {
@@ -269,6 +253,70 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "La Macchina Virtuale è stata creata utilizzando un’immagine di ripristino di macOS %@, ma la versione dell’immagine attualmente selezionata è %@"
+          }
+        }
+      }
+    },
+    "feature-directoryShare" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shared Directory"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cartella Condivisa"
+          }
+        }
+      }
+    },
+    "feature-nestedVirtualization" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nested Virtualization"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Virtualizzazione Nidificata"
+          }
+        }
+      }
+    },
+    "feature-rosetta" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rosetta"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rosetta"
+          }
+        }
+      }
+    },
+    "feature-xhciUSBHotSwap" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para-virtualized USB device hot swap"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gestione a caldo dei dispositivi USB para-virtualizzati"
           }
         }
       }

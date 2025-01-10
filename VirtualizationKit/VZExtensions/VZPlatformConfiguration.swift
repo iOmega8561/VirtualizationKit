@@ -86,7 +86,7 @@ extension VZPlatformConfiguration: VZKitPersistentConstructible {
             
             guard #available(macOS 15.0, *),
                   VZGenericPlatformConfiguration.isNestedVirtualizationSupported else {
-                throw VZKitError.hostFeatureUnsupported("Nested Virtualization")
+                throw VZKitError.unsupportedFeature(.nestedVirtualization)
             }
             
             genericPlatform.isNestedVirtualizationEnabled = nestedVZ

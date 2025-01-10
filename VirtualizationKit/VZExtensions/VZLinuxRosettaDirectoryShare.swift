@@ -44,7 +44,7 @@ extension VZLinuxRosettaDirectoryShare: VZKitGenericConstructible {
             return sharingDevice
             
         case .notSupported:
-            throw VZKitError.hostFeatureUnsupported("Rosetta")
+            throw VZKitError.unsupportedFeature(.rosetta)
             
         case .notInstalled:
             fallthrough
