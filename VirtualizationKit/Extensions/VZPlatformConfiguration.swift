@@ -30,7 +30,7 @@ extension VZPlatformConfiguration: VZKitPersistentConstructible {
     ///
     /// - Parameters:
     ///   - url: Location of the machine identifier storage on the host file system.
-    private static func createMachineIdentifier<Identifier: MachineIdentifier>(at url: URL) throws -> Identifier {
+    private static func createMachineIdentifier<Identifier: VZKitMachineIdentifier>(at url: URL) throws -> Identifier {
         
         guard FileManager.default.fileExists(atPath: url.path(percentEncoded: false)) else {
             let machineId = Identifier()

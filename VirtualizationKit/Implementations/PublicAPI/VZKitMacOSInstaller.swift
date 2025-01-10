@@ -77,9 +77,8 @@ struct VZKitMacOSInstaller<Template: VZKitTemplate>: VZKitStatefulInstaller {
     /// - Throws: An error if the installation process encounters an issue.
     /// - Note: Every operation that is dispatched on a `VZVirtualMachine` **is required**
     /// to be executed on the same thread on which the `VZVirtualMachine` was first created. Since
-    /// the default implementation that this frameworks provides uses `VZKitActor`, this method starts the
-    /// installation process in a `VZKitActor.run {...}` closure
-    public func restoreFromDiskImage() async throws {
+    /// the default implementation that this frameworks provides uses `VZKitActor`, this method is pinned to it.
+    @VZKitActor public func restoreFromDiskImage() async throws {
         
         if await vzKitStateCoordinator.currentState != .restoring {
             await vzKitStateCoordinator.update(with: .restoring)
@@ -89,7 +88,7 @@ struct VZKitMacOSInstaller<Template: VZKitTemplate>: VZKitStatefulInstaller {
             vzMacOSInstaller.progress.publisher(for: \.fractionCompleted)
         )
         
-        try await VZKitActor.run { try await vzMacOSInstaller.install() }
+        try await vzMacOSInstaller.install()
     }
 
     // MARK: - Initializers

@@ -89,7 +89,8 @@ public struct VirtualMachine<Template: VZKitTemplate>: VZKitVirtualMachine {
     /// instead of propagating and throws `VZKitError.appleVMLimitExceeded`. Any case that `Command` provides
     /// is supported by this implementation.
     ///
-    /// - Important: Pinned to `@VZKitActor` for serial dispatch of the commands sent to VMs.
+    /// - Note: This method is pinned to `@VZKitActor` to ensure the operation is executed on
+    /// the same queue that was used to create the `VZVirtualMachine` instance
     @VZKitActor public func sendCommand(_ command: Command) async throws {
             
         await stateManager.update(with: command.transitionState)
@@ -145,11 +146,14 @@ public struct VirtualMachine<Template: VZKitTemplate>: VZKitVirtualMachine {
     /// Attaches a removable USB disk to the virtual machine using a specified disk image.
     ///
     /// - Parameters:
-    ///   - url: A `URL` pointing to the disk image file to be attached. The image can be in a read-only or writable state depending on the configuration.
+    ///   - url: A `URL` pointing to the disk image file to be attached. The image can be
+    ///   in a read-only or writable state depending on the configuration.
     /// - Returns: A `UUID` uniquely identifying the attached USB device.
     /// - Throws:
     ///   - `VZKitError.guestFeatureNotSupported`: If the virtual machine does not support XHCI USB controllers.
     ///   - Any error encountered during the creation or attachment of the USB mass storage device.
+    /// - Note: This method is pinned to `@VZKitActor` to ensure the operation is executed on
+    /// the same queue that was used to create the `VZVirtualMachine` instance
     public func attachRemovableUSBDisk(usingImageAt url: URL) async throws -> UUID {
         guard let controller = vzVirtualMachine.usbControllers.first else {
             throw VZKitError.guestFeatureNotSupported("XHCI USB Controller")
@@ -174,7 +178,8 @@ public struct VirtualMachine<Template: VZKitTemplate>: VZKitVirtualMachine {
     ///   - `VZKitError.usbDeviceNotFound`: If the supplied id doesn't match any device that is currently attached to the VM.
     ///   - Other errors related to the detachment process.
     /// - Important: The `id` must correspond to a USB device previously attached via `attachRemovableUSBDisk(usingImageAt:)`.
-    /// - Note: This method is `async` and should be called from an asynchronous context.
+    /// - Note: This method is pinned to `@VZKitActor` to ensure the operation is executed on
+    /// the same queue that was used to create the `VZVirtualMachine` instance
     public func detachRemovableUSBDisk(identifiedBy id: UUID) async throws {
         guard let controller = vzVirtualMachine.usbControllers.first else {
             throw VZKitError.guestFeatureNotSupported("XHCI USB Controller")
