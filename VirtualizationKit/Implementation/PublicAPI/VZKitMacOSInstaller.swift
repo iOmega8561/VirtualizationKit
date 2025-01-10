@@ -63,6 +63,10 @@ struct VZKitMacOSInstaller<Template: VZKitTemplate>: VZKitStatefulInstaller {
     /// progress and update observers as necessary.
     public let vzKitStateCoordinator: VZKitObservableState
 
+    /// A convenient NSProgress object that will be effective to observe the installation progress,
+    /// although it's generally recommended to use vzKitStateCoordinator.
+    public var legacyProgress: Progress { vzMacOSInstaller.progress }
+    
     /// The Virtualization.framework Installer object that will effectively handle the installation process
     /// on the back end. This struct is very effectively a wrapper around this.
     private let vzMacOSInstaller: VZMacOSInstaller
