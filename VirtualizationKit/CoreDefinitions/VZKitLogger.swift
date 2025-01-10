@@ -22,7 +22,7 @@ struct VZKitLogger {
     ///
     /// - Parameter category: The category to associate with this logger instance.
     /// - Returns: A configured `VZKitLogger` instance.
-    private static func create(for category: String) -> VZKitLogger {
+    static func create(for category: String) -> VZKitLogger {
         return VZKitLogger(category: category)
     }
     
