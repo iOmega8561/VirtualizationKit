@@ -8,7 +8,7 @@
 //
 //  -----------------------------------------------------------------------
 //
-//  VZKitPerformancePreset.swift
+//  PerformancePreset.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 15/11/24.
@@ -18,7 +18,7 @@ import Foundation
 
 import Virtualization
 
-/// VZKitPerformancePreset defines hardware configurations for virtual machines.
+/// PerformancePreset defines hardware configurations for virtual machines.
 /// It provides predefined presets and a customizable option for fine-tuned resources.
 ///
 /// Presets:
@@ -28,7 +28,7 @@ import Virtualization
 /// - `custom`: User-defined configuration.
 ///
 /// UInt64 values for memorySize and diskSize are multiples of 1 MB.
-public enum VZKitPerformancePreset: Codable, Hashable, Sendable {
+public enum PerformancePreset: VZKitTransferable {
     
     /// Minimal configuration for lightweight workloads.
     case basic

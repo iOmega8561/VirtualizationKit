@@ -27,7 +27,7 @@ extension VZDirectorySharingDeviceConfiguration: VZKitPersistentConstructible {
     /// - Parameters:
     ///   - url: The location at which the shared mount should be created on the host file system.
     ///   - type: The guest operating system.
-    static func create(at url: URL, type: VZKitOperatingSystem) throws -> Constructible {
+    static func create(at url: URL, type: OperatingSystem) throws -> Constructible {
         
         try FileManager.default.createDirectory(
             atPath: url.path(percentEncoded: false),

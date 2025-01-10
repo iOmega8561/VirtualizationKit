@@ -1,5 +1,5 @@
 //
-//  VZKitMacOSInstaller.swift
+//  MacOSInstaller.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 09/01/25.
@@ -9,13 +9,13 @@
 
 /// A specialized macOS installer for virtual machines tailored for default implementations in `VirtualizationKit`.
 ///
-/// The `VZKitMacOSInstaller` class extends `VZMacOSInstaller` and conforms to `VZKitStatefulInstaller`,
+/// The `MacOSInstaller` class extends `VZMacOSInstaller` and conforms to `VZKitStatefulInstaller`,
 /// offering functionality to install macOS on virtual machines. It provides additional
-/// capabilities for handling macOS restore images and integrates with `VZKitObservableState`
+/// capabilities for handling macOS restore images and integrates with `ObservableCoordinator`
 /// to track installation progress and machine state.
 ///
 /// ## Features
-/// - Tracks and reports installation progress using `VZKitObservableState`.
+/// - Tracks and reports installation progress using `ObservableCoordinator`.
 /// - Validates macOS restore images for compatibility with the target template.
 /// - Provides both synchronous and asynchronous initialization for flexible use cases.
 /// - Conforms to Swift's concurrency model with support for `async/await`.
@@ -28,12 +28,12 @@
 ///
 /// ## Usage
 /// ```swift
-/// let installer = try VZKitMacOSInstaller(virtualMachine: myVirtualMachine)
+/// let installer = try MacOSInstaller(virtualMachine: myVirtualMachine)
 /// try await installer.restoreFromDiskImage()
 /// ```
 ///
 /// ## Concurrency
-/// The `VZKitMacOSInstaller` supports asynchronous operations for installation and validation of restore images.
+/// The `MacOSInstaller` supports asynchronous operations for installation and validation of restore images.
 /// Ensure that the calling context supports Swift concurrency.
 ///
 /// ## Errors
@@ -46,22 +46,22 @@
 /// ## Example
 /// ```swift
 /// do {
-///     let installer = try VZKitMacOSInstaller(virtualMachine: myVirtualMachine)
+///     let installer = try MacOSInstaller(virtualMachine: myVirtualMachine)
 ///     try await installer.restoreFromDiskImage()
 ///     print("Installation completed successfully.")
 /// } catch {
 ///     print("Installation failed with error: \(error)")
 /// }
 /// ```
-struct VZKitMacOSInstaller<Template: VZKitTemplate>: VZKitStatefulInstaller {
+struct MacOSInstaller<Template: VZKitTemplate>: VZKitStatefulInstaller {
 
     // MARK: - Properties
     
     /// The state coordinator for tracking progress and state updates during installation.
     ///
-    /// The `vzKitStateCoordinator` integrates with `VZKitObservableState` to monitor installation
+    /// The `vzKitStateCoordinator` integrates with `ObservableCoordinator` to monitor installation
     /// progress and update observers as necessary.
-    public let vzKitStateCoordinator: VZKitObservableState
+    public let vzKitStateCoordinator: ObservableCoordinator
 
     /// A convenient NSProgress object that will be effective to observe the installation progress,
     /// although it's generally recommended to use vzKitStateCoordinator.
@@ -102,11 +102,11 @@ struct VZKitMacOSInstaller<Template: VZKitTemplate>: VZKitStatefulInstaller {
     /// This initializer verifies the existence of the restore image specified in the template
     /// and associates the installer with the virtual machine's state manager for tracking progress.
     ///
-    /// - Parameter virtualMachine: A `VZKitVirtualMachine` instance configured with the provided `Template`.
+    /// - Parameter virtualMachine: A `VirtualMachine` instance configured with the provided `Template`.
     /// - Throws:
     ///   - `VZKitError.missingMacImage`: If the required restore image is not available.
     ///   - Any errors thrown by the superclass initializer.
-    public init(virtualMachine: VZKitVirtualMachine<Template>) throws {
+    public init(virtualMachine: VirtualMachine<Template>) throws {
         let restoreImageURL = virtualMachine.template.removableDiskImage
         
         guard let restoreImageURL else {
@@ -128,13 +128,13 @@ struct VZKitMacOSInstaller<Template: VZKitTemplate>: VZKitStatefulInstaller {
     /// tracking progress.
     ///
     /// - Parameters:
-    ///   - virtualMachine: A `VZKitVirtualMachine` instance configured with the provided `Template`.
+    ///   - virtualMachine: A `VirtualMachine` instance configured with the provided `Template`.
     ///   - url: The file URL of the macOS restore image.
     /// - Throws:
     ///   - `VZKitError.macUnsupportedImage`: If the restore image is incompatible with macOS.
     ///   - `VZKitError.wrongMacImageVersion`: If the restore image version does not match the template.
     ///   - Any errors thrown during restore image validation or superclass initialization.
-    public init(virtualMachine: VZKitVirtualMachine<Template>, restoringFromImageAt url: URL) async throws {
+    public init(virtualMachine: VirtualMachine<Template>, restoringFromImageAt url: URL) async throws {
         
         switch virtualMachine.template.operatingSystem {
         case .linux:

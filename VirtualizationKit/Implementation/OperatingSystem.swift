@@ -8,7 +8,7 @@
 //
 //  -----------------------------------------------------------------------
 //
-//  VZKitOperatingSystem.swift
+//  OperatingSystem.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 16/05/24.
@@ -22,7 +22,7 @@ import UniformTypeIdentifiers
 
 /// This enumeration has been created to define the possible operating systems that can be associated to a virtual machine.
 /// Since Apple Virtualization Framework officially supports only Linux and macOS, only these two are included.
-public enum VZKitOperatingSystem: Codable, Hashable, Sendable {
+public enum OperatingSystem: VZKitTransferable {
     
     /// Standard case for Linux virtual machines
     case linux

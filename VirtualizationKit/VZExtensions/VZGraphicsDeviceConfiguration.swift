@@ -24,7 +24,7 @@ extension VZGraphicsDeviceConfiguration: VZKitSpecializedConstructible {
     ///
     /// - Parameters:
     ///   - type: The guest operating system.
-    static func create(type: VZKitOperatingSystem) -> Constructible {
+    static func create(type: OperatingSystem) -> Constructible {
 
         switch type {
         case .macos:

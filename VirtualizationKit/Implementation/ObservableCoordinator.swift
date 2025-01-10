@@ -8,7 +8,7 @@
 //
 //  -----------------------------------------------------------------------
 //
-//  VZKitObservableState.swift
+//  ObservableCoordinator.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 08/11/24.
@@ -18,14 +18,14 @@
 
 import Virtualization
     
-/// The `VZKitObservableState` class is responsible for managing and tracking the execution state of a virtual machine
+/// The `ObservableCoordinator` class is responsible for managing and tracking the execution state of a virtual machine
 /// in an observable and thread-safe manner. By using the `@Observable` macro, this class allows SwiftUI views
 /// or other observers to react to state changes automatically. The class is marked as `@MainActor`, ensuring that
 /// all state updates occur on the main thread, making it safe for use in UI-bound contexts.
 ///
-/// `VZKitObservableState` provides functionality for tracking the current execution state, monitoring progress,
+/// `ObservableCoordinator` provides functionality for tracking the current execution state, monitoring progress,
 /// and supporting rollback functionality to a previous state.
-@Observable public final class VZKitObservableState: VZKitStateCoordinator {
+@Observable public final class ObservableCoordinator: VZKitStateCoordinator {
     
     /// The current execution state of the virtual machine.
     ///

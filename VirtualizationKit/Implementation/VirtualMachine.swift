@@ -8,7 +8,7 @@
 //
 //  -----------------------------------------------------------------------
 //
-//  VZKitVirtualMachine.swift
+//  VirtualMachine.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 15/05/24.
@@ -18,10 +18,10 @@
 
 /// A data structure representing a Virtual Machine.
 ///
-/// The `VZKitVirtualMachine` type is implemented as a struct to provide a lightweight, value-oriented
+/// The `VirtualMachine` type is implemented as a struct to provide a lightweight, value-oriented
 /// representation of a virtual machine instance. Rather than holding state directly, this struct
 /// maintains references to other objects that are specifically designed to manage the virtual machine's
-/// state. This approach ensures a clear separation of responsibilities: `VZKitVirtualMachine` serves as a
+/// state. This approach ensures a clear separation of responsibilities: `VirtualMachine` serves as a
 /// convenient interface for interacting with the virtual machine's state without itself being responsible
 /// for state management. Using a struct here allows for efficient copying and passing of instances without
 /// retaining a unique reference, and the conformance to `Sendable` ensures safe usage across concurrency
@@ -34,7 +34,7 @@
 ///
 /// - Important: A VZKitTemplate conforming object is not defined by this framework. It will be responsability of the
 ///   developer using these facilities to implement one and correctly use it with this generc data structure.
-@dynamicMemberLookup public struct VZKitVirtualMachine<Template: VZKitTemplate>: VZKitTemplatedVM {
+@dynamicMemberLookup public struct VirtualMachine<Template: VZKitTemplate>: VZKitTemplatedVM {
     
     /// Static factory method of this default implementation,
     ///
@@ -44,7 +44,7 @@
     /// - Returns:VZKitResult<Template> so that the caller can store any eventual error to something with it.
     public static func createMachine(_ template: Template) async -> VZKitResult<Template> {
         do {
-            return try await .success(VZKitVirtualMachine(template: template))
+            return try await .success(VirtualMachine(template: template))
             
         } catch { return .failure(error) }
     }
@@ -68,13 +68,13 @@
     
     /// Manages and tracks the current execution state of the virtual machine, pinned to the main actor.
     ///
-    /// `stateCoordinator` is an instance of `VZKitObservableState` responsible for
+    /// `stateCoordinator` is an instance of `ObservableCoordinator` responsible for
     /// observing and updating the `VZVirtualMachine.State` of the virtual machine.
     /// Since `stateCoordinator` is tied to `@MainActor`, all state changes and updates are
     /// handled on the main thread, ensuring thread safety for UI updates and other main-thread operations.
     /// The `stateCoordinator` helps centralize and simplify state management within the VM, reducing the need
     /// for manual state tracking within the main view model.
-    public let stateCoordinator: VZKitObservableState
+    public let stateCoordinator: ObservableCoordinator
     
     /// A reference to an instance of `VZKitDelegate`, responsible for handling VM events and updates.
     ///
@@ -102,7 +102,7 @@
             case .stop: try await vzVirtualMachine.stop()
             case .pause: try await vzVirtualMachine.pause()
             case .resume: try await vzVirtualMachine.resume()
-            case .install: try await VZKitMacOSInstaller(virtualMachine: self).restoreFromDiskImage()
+            case .install: try await MacOSInstaller(virtualMachine: self).restoreFromDiskImage()
             }
             
             if let state = command.finalState {
@@ -140,27 +140,27 @@
         )
     }
     
-    /// Provides dynamic access to the properties of `VZKitObservableState` through the `stateCoordinator`.
+    /// Provides dynamic access to the properties of `ObservableCoordinator` through the `stateCoordinator`.
     ///
-    /// This subscript allows you to access properties of the `VZKitObservableState` associated with
+    /// This subscript allows you to access properties of the `ObservableCoordinator` associated with
     /// the `stateCoordinator` instance as if they were directly part of the enclosing type. The
     /// `@dynamicMemberLookup` attribute enables seamless forwarding of property accesses, improving
     /// readability and simplifying interactions.
     ///
     /// ## Usage
     /// ```swift
-    /// let state = virtualMachine.currentState // Accessing directly a property of `VZKitObservableState`
+    /// let state = virtualMachine.currentState // Accessing directly a property of `ObservableCoordinator`
     /// ```
     ///
-    /// - Parameter keyPath: A key path to a property of `VZKitObservableState`.
+    /// - Parameter keyPath: A key path to a property of `ObservableCoordinator`.
     /// - Returns: The value of the property at the specified key path.
-    public subscript<T>(dynamicMember keyPath: KeyPath<VZKitObservableState, T>) -> T {
+    public subscript<T>(dynamicMember keyPath: KeyPath<ObservableCoordinator, T>) -> T {
         stateCoordinator[keyPath: keyPath]
     }
 }
 
 @available(macOS 15.0, *)
-@VZKitActor extension VZKitVirtualMachine {
+@VZKitActor extension VirtualMachine {
     
     /// Attaches a removable USB disk to the virtual machine using a specified disk image.
     ///

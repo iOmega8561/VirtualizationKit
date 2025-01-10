@@ -8,7 +8,7 @@
 //
 //  -----------------------------------------------------------------------
 //
-//  VZKitVirtualMachine.Command.swift
+//  VirtualMachine.Command.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 07/01/25.
@@ -16,7 +16,7 @@
 
 import Virtualization
 
-extension VZKitVirtualMachine {
+extension VirtualMachine {
     
     /// A `Command` represents operations that can be performed on a virtual machine.
     ///
@@ -56,7 +56,7 @@ extension VZKitVirtualMachine {
     ///
     /// - Note: The `install` case represents an operation where the final state is not explicitly defined,
     ///         making it suitable for processes like initial setups or installations.
-    public enum Command: Sendable, CaseIterable {
+    public enum Command: VZKitTransferable {
         
         // MARK: - Supporting Structures
         
