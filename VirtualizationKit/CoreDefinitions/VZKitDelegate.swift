@@ -8,7 +8,7 @@
 //
 //  -----------------------------------------------------------------------
 //
-//  VirtualMachine+Delegate.swift
+//  VZKitDelegate.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 08/11/24.
