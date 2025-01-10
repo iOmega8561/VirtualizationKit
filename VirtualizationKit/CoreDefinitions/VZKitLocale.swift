@@ -91,12 +91,12 @@ struct VZKitLocale {
     ///
     /// - Parameters:
     ///   - key: A `String.LocalizationValue` representing the localization key.
-    ///   - lver: A `VZKitOperatingSystem.Version` representing the left-hand version in the comparison.
-    ///   - rver: A `VZKitOperatingSystem.Version` representing the right-hand version in the comparison.
+    ///   - lver: A `OperatingSystem.Version` representing the left-hand version in the comparison.
+    ///   - rver: A `OperatingSystem.Version` representing the right-hand version in the comparison.
     init(
         _ key: String.LocalizationValue,
-        _ lver: VZKitOperatingSystem.Version,
-        _ rver: VZKitOperatingSystem.Version
+        _ lver: OperatingSystem.Version,
+        _ rver: OperatingSystem.Version
     ) {
         self.init(key, lver.description, rver.description)
     }

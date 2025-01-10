@@ -1,5 +1,5 @@
 //
-//  VZKitOperatingSystem.Version.swift
+//  OperatingSystem.Version.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 12/11/24.
@@ -7,7 +7,7 @@
 
 import Virtualization
 
-extension VZKitOperatingSystem {
+extension OperatingSystem {
     
     /// A data structure that standardizes the representation of a guest operating system version.
     ///
@@ -36,7 +36,7 @@ extension VZKitOperatingSystem {
     /// making it particularly useful in virtualization and deployment scenarios.
     ///
     /// - Note: When using `Comparable`, versions are compared by their major, minor, patch, and build values in sequence.
-    public struct Version: Equatable, Codable, Sendable, Hashable, Comparable {
+    public struct Version: Equatable, Comparable, VZKitTransferable {
         
         // MARK: - Comparable Conformance
             

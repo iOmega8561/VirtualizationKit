@@ -6,13 +6,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Due to limitations imposed by Apple, it is only possible to run %d macOS Virtual Machines at the same time."
+            "value" : "Due to limitations imposed by Apple’s license agreement, it is only possible to run a fixed amount of macOS Virtual Machines at the same time."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A causa di una limitazione imposta da Apple, non è possibile avviare più di %d Macchine Virtuali macOS in contemporanea."
+            "value" : "A causa di una limitazione prevista dagli accordi di licenza di Apple, non è possibile avviare più di un certo numero di Macchine Virtuali macOS in contemporanea."
           }
         }
       }

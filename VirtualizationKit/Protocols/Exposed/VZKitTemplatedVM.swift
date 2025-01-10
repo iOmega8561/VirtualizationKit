@@ -1,5 +1,5 @@
 //
-//  VZKitVirtualMachine.swift
+//  VirtualMachine.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 14/05/24.

@@ -1,5 +1,5 @@
 //
-//  VZKitNetworkTopology.swift
+//  NetworkTopology.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 08/11/24.
@@ -7,9 +7,9 @@
 
 import Virtualization
 
-/// `VZKitNetworkTopology` is an enumeration that represents the possible network configurations
+/// `NetworkTopology` is an enumeration that represents the possible network configurations
 /// available for virtual machines. This enumeration conforms to Sendable
-public enum VZKitNetworkTopology: Codable, Hashable, Sendable {
+public enum NetworkTopology: VZKitTransferable {
     
     /// A static property that retrieves the list of network interface identifiers available for bridging.
     ///

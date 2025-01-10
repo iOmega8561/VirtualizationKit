@@ -32,8 +32,8 @@ enum VZKitError: LocalizedError {
     // Configuration/Generic
     case macUnsupportedImage
     case macUnsupportedHost
-    case wrongMacImageVersion(_ expected: VZKitOperatingSystem.Version,
-                              _ actual: VZKitOperatingSystem.Version)
+    case wrongMacImageVersion(_ expected: OperatingSystem.Version,
+                              _ actual: OperatingSystem.Version)
 
     public var errorDescription: String? { self.vzKitLocale.value }
     
@@ -41,7 +41,7 @@ enum VZKitError: LocalizedError {
         
         switch self {
         
-        case .appleLimitExceeded: .init("error-appleLimitExceeded", VirtualizationKit.appleMaxVMs)
+        case .appleLimitExceeded: .init("error-appleLimitExceeded")
                 
         case .auxiliaryFailedSetup: .init("error-auxiliaryFailedSetup")
         case .diskImageFailedSetup: .init("error-diskImageFailedSetup")
