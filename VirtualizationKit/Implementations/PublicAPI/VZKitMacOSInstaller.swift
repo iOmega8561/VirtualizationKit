@@ -81,6 +81,10 @@ struct VZKitMacOSInstaller<Template: VZKitTemplate>: VZKitStatefulInstaller {
     /// installation process in a `VZKitActor.run {...}` closure
     public func restoreFromDiskImage() async throws {
         
+        if await vzKitStateCoordinator.currentState != .restoring {
+            await vzKitStateCoordinator.update(with: .restoring)
+        }
+        
         await vzKitStateCoordinator.registerPublisher(
             vzMacOSInstaller.progress.publisher(for: \.fractionCompleted)
         )
