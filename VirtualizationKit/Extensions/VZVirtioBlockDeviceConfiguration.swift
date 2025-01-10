@@ -49,7 +49,7 @@ extension VZVirtioBlockDeviceConfiguration: VZKitPersistentConstructible {
                 atOffset: size
             )
             
-        } catch { throw VZKitError.mainDisk }
+        } catch { throw VZKitError.diskImageFailedSetup }
     }
     
     /// This is the static factory method for `VZVirtioBlockDeviceConfiguration`. It creates a block device based

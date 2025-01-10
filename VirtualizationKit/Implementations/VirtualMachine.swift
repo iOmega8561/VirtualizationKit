@@ -110,7 +110,7 @@ public struct VirtualMachine<Template: VZKitTemplate>: VZKitVirtualMachine {
             
         } catch VZError.virtualMachineLimitExceeded {
             await stateManager.rollback()
-            throw VZKitError.appleVMLimitExceeded
+            throw VZKitError.appleLimitExceeded
             
         } catch { await stateManager.rollback(); throw error }
     }
@@ -156,7 +156,7 @@ public struct VirtualMachine<Template: VZKitTemplate>: VZKitVirtualMachine {
     /// the same queue that was used to create the `VZVirtualMachine` instance
     public func attachRemovableUSBDisk(usingImageAt url: URL) async throws -> UUID {
         guard let controller = vzVirtualMachine.usbControllers.first else {
-            throw VZKitError.guestFeatureNotSupported("XHCI USB Controller")
+            throw VZKitError.guestFeatureUnsupported("XHCI USB Controller")
         }
         
         let massStorageDev = try VZUSBMassStorageDevice(
@@ -182,7 +182,7 @@ public struct VirtualMachine<Template: VZKitTemplate>: VZKitVirtualMachine {
     /// the same queue that was used to create the `VZVirtualMachine` instance
     public func detachRemovableUSBDisk(identifiedBy id: UUID) async throws {
         guard let controller = vzVirtualMachine.usbControllers.first else {
-            throw VZKitError.guestFeatureNotSupported("XHCI USB Controller")
+            throw VZKitError.guestFeatureUnsupported("XHCI USB Controller")
         }
         
         guard let device = controller.usbDevices.first(where: { $0.uuid == id }) else {

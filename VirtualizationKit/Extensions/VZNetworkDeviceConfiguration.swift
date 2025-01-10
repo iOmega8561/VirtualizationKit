@@ -78,7 +78,7 @@ extension VZNetworkDeviceConfiguration: VZKitSpecializedConstructible {
         } else { interface = VZBridgedNetworkInterface.networkInterfaces.first }
         
         guard let interface else {
-            throw VZKitError.bridgeInterfaceNotAvailable(id)
+            throw VZKitError.bridgeNicUnavailable(id)
         }
         
         return VZBridgedNetworkDeviceAttachment(interface: interface)

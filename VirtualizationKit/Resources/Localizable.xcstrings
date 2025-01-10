@@ -1,7 +1,7 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "error-applevz-limitexceeded" : {
+    "error-appleLimitExceeded" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -17,7 +17,7 @@
         }
       }
     },
-    "error-configuration-auxstorage" : {
+    "error-auxiliaryFailedSetup" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -33,151 +33,7 @@
         }
       }
     },
-    "error-configuration-capturedevice" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The virtual machine has been configured with a capture device, but the application does not have permission to use it"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La macchina virtuale è stata configurata con un dispositivo di cattura, ma l’applicazione non ha il permesso di usarlo."
-          }
-        }
-      }
-    },
-    "error-configuration-guest-feature-unsupported" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The following feature is not supported by the guest operating system: “%@”"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La seguente funzionalità non è supportata dal sistema operativo guest: “%@”"
-          }
-        }
-      }
-    },
-    "error-configuration-host-feature-unsupported" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The following feature is not supported by the host Macintosh: “%@”"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La seguente funzionalità non è supportata dal Macintosh Host: “%@”"
-          }
-        }
-      }
-    },
-    "error-configuration-macaddress" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The specified MAC Address is not valid: “%@”"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il MAC Address specificato non è valido: “%@”"
-          }
-        }
-      }
-    },
-    "error-configuration-machineid-corrupt" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The Unique Identifier of the Virtual Machine appears to be corrupt. Please re-create this Virtual Machine."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "L’Identificativo Univoco della Macchina Virtuale sembra corrotto. Per favore ricreare la Macchina. "
-          }
-        }
-      }
-    },
-    "error-configuration-machineid-missing" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The Unique Identifier file of the Virtual Machine could not be found (could have been deleted). Please re-create this Virtual Machine"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non è stato possibile trovare il file contenente l’Identificativo Univoco della Macchina Virtuale (potrebbe essere stato rimosso). Per favore ricreare la Macchina."
-          }
-        }
-      }
-    },
-    "error-configuration-machost" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "This mac is not supported by the chosen macOS restore image"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Questo mac non è supportato dall'immagine di ripristino di macOS scelta"
-          }
-        }
-      }
-    },
-    "error-configuration-macimage" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The chosen macOS restore image does not support any feasible configuration"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "L'immagine di ripristino di macOS scelta non supporta alcuna configurazione possibile"
-          }
-        }
-      }
-    },
-    "error-configuration-maindisk" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Could not create device attachment for main disk"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non è stato possibile creare il dispositivo a blocchi per il disco principale"
-          }
-        }
-      }
-    },
-    "error-configuration-netinterface" : {
+    "error-bridgeNicUnavailable" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -193,7 +49,7 @@
         }
       }
     },
-    "error-configuration-netinterfaces" : {
+    "error-bridgeNoNicsAvailable" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -209,39 +65,151 @@
         }
       }
     },
-    "error-configuration-rosettaunavailable" : {
+    "error-captureDevicePermissionDenied" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rosetta is unavailable on the host Macintosh"
+            "value" : "The virtual machine has been configured with a capture device, but the application does not have permission to use it"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rosetta non è disponibile sul Macintosh Host"
+            "value" : "La macchina virtuale è stata configurata con un dispositivo di cattura, ma l’applicazione non ha il permesso di usarlo."
           }
         }
       }
     },
-    "error-configuration-wrongimgversion" : {
+    "error-diskImageFailedSetup" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The Virtual Machine has been created using a  macOS %@ restore image, but the currently selected image’s version is %@"
+            "value" : "Could not create device attachment for main disk"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La Macchina Virtuale è stata creata utilizzando un’immagine di ripristino di macOS %@, ma la versione dell’immagine attualmente selezionata è %@"
+            "value" : "Non è stato possibile creare il dispositivo a blocchi per il disco principale"
           }
         }
       }
     },
-    "error-installer-macimage" : {
+    "error-guestFeatureUnsupported" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The following feature is not supported by the guest operating system: “%@”"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La seguente funzionalità non è supportata dal sistema operativo guest: “%@”"
+          }
+        }
+      }
+    },
+    "error-hostFeatureUnsupported" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The following feature is not supported by the host Macintosh: “%@”"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La seguente funzionalità non è supportata dal Macintosh Host: “%@”"
+          }
+        }
+      }
+    },
+    "error-invalidMacAddress" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The specified MAC Address is not valid: “%@”"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il MAC Address specificato non è valido: “%@”"
+          }
+        }
+      }
+    },
+    "error-machineIdCorrupt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The Unique Identifier of the Virtual Machine appears to be corrupt. Please re-create this Virtual Machine."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’Identificativo Univoco della Macchina Virtuale sembra corrotto. Per favore ricreare la Macchina. "
+          }
+        }
+      }
+    },
+    "error-machineIdMissing" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The Unique Identifier file of the Virtual Machine could not be found (could have been deleted). Please re-create this Virtual Machine"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non è stato possibile trovare il file contenente l’Identificativo Univoco della Macchina Virtuale (potrebbe essere stato rimosso). Per favore ricreare la Macchina."
+          }
+        }
+      }
+    },
+    "error-macUnsupportedHost" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This mac is not supported by the chosen macOS restore image"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questo mac non è supportato dall'immagine di ripristino di macOS scelta"
+          }
+        }
+      }
+    },
+    "error-macUnsupportedImage" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The chosen macOS restore image does not support any feasible configuration"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'immagine di ripristino di macOS scelta non supporta alcuna configurazione possibile"
+          }
+        }
+      }
+    },
+    "error-missingMacImage" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -257,7 +225,23 @@
         }
       }
     },
-    "error-usbdev-notfound" : {
+    "error-rosettaUnavailable" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rosetta is unavailable on the host Macintosh"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rosetta non è disponibile sul Macintosh Host"
+          }
+        }
+      }
+    },
+    "error-usbDeviceNotFound" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -269,6 +253,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Il dispositivo USB para-virtualizzato con il seguente identificativo non esiste: “%@”"
+          }
+        }
+      }
+    },
+    "error-wrongMacImageVersion" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The Virtual Machine has been created using a  macOS %@ restore image, but the currently selected image’s version is %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La Macchina Virtuale è stata creata utilizzando un’immagine di ripristino di macOS %@, ma la versione dell’immagine attualmente selezionata è %@"
           }
         }
       }

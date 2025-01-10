@@ -16,83 +16,70 @@
 
 import Foundation
 
+extension String {
+    
+    static func vzKit(_ key: String.LocalizationValue, _ arguments: CVarArg...) -> String {
+        arguments.count != 0 ? .init(format: VirtualizationKit.localized(key), arguments) :
+                               VirtualizationKit.localized(key)
+    }
+}
+
 enum VZKitError: LocalizedError {
-    case mainDisk
+    
+    // "Something blew up in Virtualization.framework"
+    case appleLimitExceeded
+    
+    // "Something went wrong with files on disk"
+    case auxiliaryFailedSetup
+    case diskImageFailedSetup
     case machineIdCorrupt
     case machineIdMissing
-    case hostFeatureUnsupported(_ feature: String)
-    case guestFeatureNotSupported(_ feature: String)
-    case rosettaUnavailable
-    case auxiliaryStorage
-    case macUnsupportedImage
-    case macUnsupportedHost
     case missingMacImage
+    
+    // Configuration - Feature specific
+    case rosettaUnavailable
     case captureDevicePermissionDenied
-    case wrongMacImageVersion(_ expected: VZKitOperatingSystem.Version, _ actual: VZKitOperatingSystem.Version)
-    case appleVMLimitExceeded
-    case bridgeInterfaceNotAvailable(_ id: String?)
+    case bridgeNicUnavailable(_ id: String?)
+    case hostFeatureUnsupported(_ feature: String)
+    case guestFeatureUnsupported(_ feature: String)
     case invalidMacAddress(_ macAddress: String)
     case usbDeviceNotFound(_ id: UUID)
+    
+    // Configuration - Generic
+    case macUnsupportedImage
+    case macUnsupportedHost
+    case wrongMacImageVersion(_ expected: VZKitOperatingSystem.Version,
+                              _ actual: VZKitOperatingSystem.Version)
 
-    public var errorDescription: String? {
+    public var errorDescription: String {
         
         switch self {
-        case .mainDisk:
-            return VirtualizationKit.localized("error-configuration-maindisk")
-            
-        case .machineIdCorrupt:
-            return VirtualizationKit.localized("error-configuration-machineid-corrupt")
-            
-        case .machineIdMissing:
-            return VirtualizationKit.localized("error-configuration-machineid-missing")
-            
-        case .hostFeatureUnsupported(let feature):
-            return .init(format: VirtualizationKit.localized("error-configuration-host-feature-unsupported"),
-                         feature)
-            
-        case .guestFeatureNotSupported(let feature):
-            return .init(format: VirtualizationKit.localized("error-configuration-guest-feature-unsupported"),
-                         feature)
-            
-        case .rosettaUnavailable:
-            return VirtualizationKit.localized("error-configuration-rosettaunavailable")
-            
-        case .auxiliaryStorage:
-            return VirtualizationKit.localized("error-configuration-auxstorage")
-            
-        case .macUnsupportedImage:
-            return VirtualizationKit.localized("error-configuration-macimage")
-            
-        case .macUnsupportedHost:
-            return VirtualizationKit.localized("error-configuration-machost")
-            
-        case .missingMacImage:
-            return VirtualizationKit.localized("error-installer-macimage")
-            
-        case .captureDevicePermissionDenied:
-            return VirtualizationKit.localized("error-configuration-capturedevice")
-            
-        case .wrongMacImageVersion(let expected, let actual):
-            return .init(format: VirtualizationKit.localized("error-configuration-wrongimgversion"),
-                         expected.description,
-                         actual.description)
-            
-        case .appleVMLimitExceeded:
-            return .init(format: VirtualizationKit.localized("error-applevz-limitexceeded"),
-                         VirtualizationKit.appleMaxVMs)
-            
-        case .bridgeInterfaceNotAvailable(let id):
-            guard let id else {
-                return VirtualizationKit.localized("error-configuration-netinterfaces")
-            }
-            
-            return .init(format: VirtualizationKit.localized("error-configuration-netinterface"), id)
-            
-        case .invalidMacAddress(let macAddress):
-            return .init(format: VirtualizationKit.localized("error-configuration-macaddress"), macAddress)
-            
-        case .usbDeviceNotFound(let id):
-            return .init(format: VirtualizationKit.localized("error-usbdev-notfound"), id.uuidString)
+        // "Something blew up in Virtualization.framework"
+        case .appleLimitExceeded: .vzKit("error-appleLimitExceeded", VirtualizationKit.appleMaxVMs)
+        
+        // "Something went wrong with files on disk"
+        case .auxiliaryFailedSetup: .vzKit("error-auxiliaryFailedSetup")
+        case .diskImageFailedSetup: .vzKit("error-diskImageFailedSetup")
+        case .machineIdCorrupt: .vzKit("error-machineIdCorrupt")
+        case .machineIdMissing: .vzKit("error-machineIdMissing")
+        case .missingMacImage: .vzKit("error-missingMacImage")
+        
+        // Configuration - Feature specific
+        case .rosettaUnavailable: .vzKit("error-rosettaUnavailable")
+        case .captureDevicePermissionDenied: .vzKit("error-captureDevicePermissionDenied")
+        case .bridgeNicUnavailable(let id): if let id { .vzKit("error-bridgeNicUnavailable", id) }
+                                            else { .vzKit("error-bridgeNoNicsAvailable") }
+        case .hostFeatureUnsupported(let feature): .vzKit("error-hostFeatureUnsupported", feature)
+        case .guestFeatureUnsupported(let feature): .vzKit("error-guestFeatureUnsupported", feature)
+        case .invalidMacAddress(let macAddress): .vzKit("error-invalidMacAddress", macAddress)
+        case .usbDeviceNotFound(let id): .vzKit("error-usbDeviceNotFound", id.uuidString)
+        
+        // Configuration - Generic
+        case .macUnsupportedImage: .vzKit("error-macUnsupportedImage")
+        case .macUnsupportedHost: .vzKit("error-macUnsupportedHost")
+        case .wrongMacImageVersion(let expected, let actual): .vzKit("error-wrongMacImageVersion",
+                                                                     expected.description,
+                                                                     actual.description)
         }
     }
 }
