@@ -69,16 +69,16 @@ extension VZVirtualMachine.State {
     /// If the state does not match any defined case, it defaults to `"undefined-state"`.
     public var localized: String {
         switch self {
-        case .running:  VirtualizationKit.localized("vmstate-running")
-        case .stopping: VirtualizationKit.localized("vmstate-stopping")
-        case .stopped: VirtualizationKit.localized("vmstate-stopped")
-        case .error: VirtualizationKit.localized("vmstate-error")
-        case .starting: VirtualizationKit.localized("vmstate-starting")
-        case .paused: VirtualizationKit.localized("vmstate-paused")
-        case .pausing: VirtualizationKit.localized("vmstate-pausing")
-        case .resuming: VirtualizationKit.localized("vmstate-resuming")
-        case .restoring: VirtualizationKit.localized("vmstate-restoring")
-        case .saving: VirtualizationKit.localized("vmstate-saving")
+        case .running:  VZKitLocale("vmstate-running").value
+        case .stopping: VZKitLocale("vmstate-stopping").value
+        case .stopped: VZKitLocale("vmstate-stopped").value
+        case .error: VZKitLocale("vmstate-error").value
+        case .starting: VZKitLocale("vmstate-starting").value
+        case .paused: VZKitLocale("vmstate-paused").value
+        case .pausing: VZKitLocale("vmstate-pausing").value
+        case .resuming: VZKitLocale("vmstate-resuming").value
+        case .restoring: VZKitLocale("vmstate-restoring").value
+        case .saving: VZKitLocale("vmstate-saving").value
         default: "undefined-state"
         }
     }

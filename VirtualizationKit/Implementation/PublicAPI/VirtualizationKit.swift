@@ -53,10 +53,6 @@ public final class _VirtualizationKit: Sendable {
     ///   - url: A `URL` representing the destination path.
     @MainActor public func setSupportDirectory(_ url: URL) { supportDirectory = url }
     
-    internal func localized(_ key: String.LocalizationValue) -> String {
-        return .init(localized: key, bundle: VirtualizationKit.bundle)
-    }
-    
     fileprivate init() {
         self.bundle = .init(identifier: bundleIdentifier)
         self.supportDirectory = .applicationSupportDirectory.appendingPathComponent(bundleIdentifier)
