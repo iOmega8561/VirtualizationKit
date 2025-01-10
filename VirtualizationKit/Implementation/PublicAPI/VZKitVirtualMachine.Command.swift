@@ -97,7 +97,7 @@ extension VZKitVirtualMachine {
         /// This property provides the intermediate state the virtual machine enters
         /// during the execution of the command. For example, when executing `.start`,
         /// the transition state is `.stopped`.
-        public var transitionState: VZVirtualMachine.State {
+        var transitionState: VZVirtualMachine.State {
             metaData.transitionState
         }
         
@@ -106,7 +106,7 @@ extension VZKitVirtualMachine {
         /// This property represents the desired state of the virtual machine after the
         /// command completes. If a command does not define a specific final state, such as `.install`,
         /// this property will be `nil`.
-        public var finalState: VZVirtualMachine.State? {
+        var finalState: VZVirtualMachine.State? {
             metaData.finalState
         }
     }
