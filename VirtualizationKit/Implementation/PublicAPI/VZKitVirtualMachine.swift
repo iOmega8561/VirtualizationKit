@@ -16,7 +16,7 @@
 /// convenient interface for interacting with the virtual machine's state without itself being responsible
 /// for state management. Using a struct here allows for efficient copying and passing of instances without
 /// retaining a unique reference, and the conformance to `Sendable` ensures safe usage across concurrency
-/// domains, as required by the `VZKitVirtualMachine` protocol interface.
+/// domains, as required by the `VZKitTemplatedVM` protocol interface.
 ///
 /// - Note: This object can be created by calling the async `init()` directly, or by using the static factory method `createMachine()`.
 ///   The difference is that using the latter, the outcome of the initialization procedure will be encapsulated inside
@@ -25,7 +25,7 @@
 ///
 /// - Important: A VZKitTemplate conforming object is not defined by this framework. It will be responsability of the
 ///   developer using these facilities to implement one and correctly use it with this generc data structure.
-@dynamicMemberLookup public struct VZKitVirtualMachine<Template: VZKitTemplate>: VZKitTemplateDrivenVM {
+@dynamicMemberLookup public struct VZKitVirtualMachine<Template: VZKitTemplate>: VZKitTemplatedVM {
     
     /// Static factory method of this default implementation,
     ///
@@ -59,12 +59,13 @@
     
     /// Manages and tracks the current execution state of the virtual machine, pinned to the main actor.
     ///
-    /// `stateManager` is an instance of `VZKitObservableState` responsible for observing and updating the `VZVirtualMachine.State`
-    /// of the virtual machine. Since `stateManager` is tied to `@MainActor`, all state changes and updates are
+    /// `stateCoordinator` is an instance of `VZKitObservableState` responsible for
+    /// observing and updating the `VZVirtualMachine.State` of the virtual machine.
+    /// Since `stateCoordinator` is tied to `@MainActor`, all state changes and updates are
     /// handled on the main thread, ensuring thread safety for UI updates and other main-thread operations.
-    /// The `stateManager` helps centralize and simplify state management within the VM, reducing the need
+    /// The `stateCoordinator` helps centralize and simplify state management within the VM, reducing the need
     /// for manual state tracking within the main view model.
-    public let stateManager: VZKitObservableState
+    public let stateCoordinator: VZKitObservableState
     
     /// A reference to an instance of `VZKitDelegate`, responsible for handling VM events and updates.
     ///
@@ -77,14 +78,14 @@
     /// This method provides a standard way to send commands to the `VZVirtualMachine`
     /// and updates the shared state accordingly. If an error occurs, the state is safely reset before propagation.
     /// Since `VZError.virtualMachineLimitExceeded` has a confusing localizedDescription, this method traps it
-    /// instead of propagating and throws `VZKitError.appleVMLimitExceeded`. Any case that `Command` provides
+    /// instead of propagating and throws `VZKitError.appleLimitExceeded`. Any case that `Command` provides
     /// is supported by this implementation.
     ///
     /// - Note: This method is pinned to `@VZKitActor` to ensure the operation is executed on
     /// the same queue that was used to create the `VZVirtualMachine` instance
-    @VZKitActor public func sendCommand(_ command: Command) async throws {
+    @VZKitActor public func performTransition(executing command: Command) async throws {
             
-        await stateManager.update(with: command.transitionState)
+        await stateCoordinator.update(with: command.transitionState)
         
         do {
             switch command {
@@ -96,14 +97,14 @@
             }
             
             if let state = command.finalState {
-                await stateManager.update(with: state)
+                await stateCoordinator.update(with: state)
             }
             
         } catch VZError.virtualMachineLimitExceeded {
-            await stateManager.rollback()
+            await stateCoordinator.rollback()
             throw VZKitError.appleLimitExceeded
             
-        } catch { await stateManager.rollback(); throw error }
+        } catch { await stateCoordinator.rollback(); throw error }
     }
 
     /// The explicit, private, asynchronous init of the data structure. Uses an instance of `VZKitBuilder`
@@ -123,17 +124,17 @@
         self.delegate = .init()
         self.template = template
         self.vzVirtualMachine.delegate = delegate
-        self.stateManager = await .init()
+        self.stateCoordinator = await .init()
         
-        await self.stateManager.registerPublisher(
+        await self.stateCoordinator.registerPublisher(
             delegate.statePublisher
         )
     }
     
-    /// Provides dynamic access to the properties of `VZKitObservableState` through the `stateManager`.
+    /// Provides dynamic access to the properties of `VZKitObservableState` through the `stateCoordinator`.
     ///
     /// This subscript allows you to access properties of the `VZKitObservableState` associated with
-    /// the `stateManager` instance as if they were directly part of the enclosing type. The
+    /// the `stateCoordinator` instance as if they were directly part of the enclosing type. The
     /// `@dynamicMemberLookup` attribute enables seamless forwarding of property accesses, improving
     /// readability and simplifying interactions.
     ///
@@ -145,7 +146,7 @@
     /// - Parameter keyPath: A key path to a property of `VZKitObservableState`.
     /// - Returns: The value of the property at the specified key path.
     public subscript<T>(dynamicMember keyPath: KeyPath<VZKitObservableState, T>) -> T {
-        stateManager[keyPath: keyPath]
+        stateCoordinator[keyPath: keyPath]
     }
 }
 

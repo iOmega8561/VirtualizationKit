@@ -109,7 +109,7 @@ struct VZKitMacOSInstaller<Template: VZKitTemplate>: VZKitStatefulInstaller {
             throw VZKitError.missingMacImage
         }
         
-        self.vzKitStateCoordinator = virtualMachine.stateManager
+        self.vzKitStateCoordinator = virtualMachine.stateCoordinator
         
         self.vzMacOSInstaller = VZMacOSInstaller(
             virtualMachine: virtualMachine.vzVirtualMachine,
@@ -148,7 +148,7 @@ struct VZKitMacOSInstaller<Template: VZKitTemplate>: VZKitStatefulInstaller {
             }
         }
         
-        self.vzKitStateCoordinator = virtualMachine.stateManager
+        self.vzKitStateCoordinator = virtualMachine.stateCoordinator
         
         self.vzMacOSInstaller = VZMacOSInstaller(
             virtualMachine: virtualMachine.vzVirtualMachine,

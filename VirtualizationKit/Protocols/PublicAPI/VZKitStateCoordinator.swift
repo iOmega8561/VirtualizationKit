@@ -29,7 +29,7 @@ import Virtualization
 /// ## Example Usage
 /// ```swift
 /// @MainActor
-/// class VirtualMachineStateManager: VZKitStateCoordinator {
+/// class VirtualMachinestateCoordinator: VZKitStateCoordinator {
 ///     var currentState: VZVirtualMachine.State = .stopped
 ///     var progress: Double = 0.0
 ///
