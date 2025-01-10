@@ -18,7 +18,7 @@ import Virtualization
 
 @preconcurrency import Combine
     
-/// The `VZKitMachineDelegate` class.
+/// The `VZKitDelegate` class.
 ///
 /// Serves as the delegate for a `VZVirtualMachine` instance, conforming to `VZVirtualMachineDelegate`.
 /// It acts as an intermediary to handle virtual machine state changes, broadcasting these changes through a Combine
@@ -27,7 +27,7 @@ import Virtualization
 /// This class is responsible for monitoring the lifecycle of a virtual machine, capturing both graceful shutdowns
 /// and forced shutdowns due to errors. When such events occur, the delegate publishes updates to the `statePublisher`,
 /// allowing other parts of the app (such as a view model) to observe and react to state changes.
-final class VZKitMachineDelegate: NSObject, VZVirtualMachineDelegate, Sendable {
+final class VZKitDelegate: NSObject, VZVirtualMachineDelegate, Sendable {
     
     /// A publisher that emits updates on the virtual machine’s execution state.
     ///
@@ -38,7 +38,7 @@ final class VZKitMachineDelegate: NSObject, VZVirtualMachineDelegate, Sendable {
     
     /// Called when the virtual machine has stopped gracefully.
     ///
-    /// This method is a stub required by the `VZVirtualVZKitMachineDelegate` protocol. It is invoked by the virtual
+    /// This method is a stub required by the `VZVirtualVZKitDelegate` protocol. It is invoked by the virtual
     /// machine after a graceful shutdown. Upon receiving this event, the delegate sends the current state
     /// through the `statePublisher` so that observers can update accordingly.
     ///
@@ -49,7 +49,7 @@ final class VZKitMachineDelegate: NSObject, VZVirtualMachineDelegate, Sendable {
     
     /// Called when the virtual machine has stopped due to an error.
     ///
-    /// This method is a stub required by the `VZVirtualVZKitMachineDelegate` protocol. It is invoked when the virtual
+    /// This method is a stub required by the `VZVirtualVZKitDelegate` protocol. It is invoked when the virtual
     /// machine encounters an error and shuts down forcefully. The delegate sends the current state through the
     /// `statePublisher` to notify observers of the change. The error is logged using macOS `os_log` facility, making
     /// it viewable in the Console application. Additionally, a task can be launched to present the error to the user, if desired.
@@ -64,7 +64,7 @@ final class VZKitMachineDelegate: NSObject, VZVirtualMachineDelegate, Sendable {
     
     /// Called when a network attachment disconnects from the virtual machine, throwing an error
     ///
-    /// This method is a stub optionally required by the `VZVirtualVZKitMachineDelegate` protocol. It is invoked when twhen
+    /// This method is a stub optionally required by the `VZVirtualVZKitDelegate` protocol. It is invoked when twhen
     /// a network attachment disconnects from the virtual machine, throwing an error. The methods logs the error using VZKitLogger
     /// making it viewable in the Console application. Additionally, a task can be launched to present the error to the user, if desired.
     ///
