@@ -28,7 +28,7 @@ import Virtualization
 /// - `custom`: User-defined configuration.
 ///
 /// UInt64 values for memorySize and diskSize are multiples of 1 MB.
-public enum VZKitPerformancePreset: Sendable {
+public enum VZKitPerformancePreset: Codable, Hashable, Sendable {
     
     /// Minimal configuration for lightweight workloads.
     case basic
