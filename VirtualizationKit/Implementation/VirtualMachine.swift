@@ -66,13 +66,13 @@ public struct VirtualMachine<Template: VZKitTemplate>: VZKitVirtualMachine {
     /// for manual state tracking within the main view model.
     public let stateManager: VZKitObservableState
     
-    /// A reference to an instance of `VZKitMachineDelegate`, responsible for handling VM events and updates.
+    /// A reference to an instance of `VZKitDelegate`, responsible for handling VM events and updates.
     ///
     /// The `delegate` serves as an intermediary for receiving updates from the `VZVirtualMachine`,
     /// communicating events and state changes to other parts of the application. By connecting directly to
     /// the `VZVirtualMachine` instance, the `delegate` enables efficient event handling for lifecycle transitions
     /// and other VM-related activities.
-    private let delegate: VZKitMachineDelegate
+    private let delegate: VZKitDelegate
     
     /// This method provides a standard way to send commands to the `VZVirtualMachine`
     /// and updates the shared state accordingly. If an error occurs, the state is safely reset before propagation.
@@ -106,14 +106,14 @@ public struct VirtualMachine<Template: VZKitTemplate>: VZKitVirtualMachine {
         } catch { await stateManager.rollback(); throw error }
     }
 
-    /// The explicit, private, asynchronous init of the data structure. Uses an instance of `VZKitConfigurationBuilder`
-    /// to setup the `VZVirtualMachine` object and binds a new instance of `VirtualVZKitMachineDelegate` to it.
+    /// The explicit, private, asynchronous init of the data structure. Uses an instance of `VZKitBuilder`
+    /// to setup the `VZVirtualMachine` object and binds a new instance of `VirtualVZKitDelegate` to it.
     ///
     /// - Parameters:
     ///   - template: the data transfer object containing all the information about the VM.
     public init(template: Template) async throws {
         
-        let builder = await VZKitConfigurationBuilder(template: template)
+        let builder = await VZKitBuilder(template: template)
         
         self.vzVirtualMachine = VZVirtualMachine(
             configuration: try await builder.createConfiguration(),

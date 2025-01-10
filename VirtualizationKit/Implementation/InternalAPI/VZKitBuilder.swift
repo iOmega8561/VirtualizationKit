@@ -1,5 +1,5 @@
 //
-//  VZKitConfigurationBuilder.swift
+//  VZKitBuilder.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 17/05/24.
@@ -7,16 +7,14 @@
 
 @preconcurrency import Virtualization
 
-/// `VZKitConfigurationBuilder` data structure
+/// `VZKitBuilder` data structure
 ///
-/// @brief
-///    The choice to make it a struct instead of a class derives from the fact that it is not necessary
-///    to keep track of the identity of the instanciated object. This struct also conforms to `Sendable`,
-///    as required by `VZKitMachineConfigurator`. This is the default implementation of the Builder pattern
+/// This struct embodies the resolution of a builder pattern, aimed to provide a full fledged
+/// `VZVirtualMachineConfiguration` object starting from a simple template
 ///
-///    - Important: `VZVirtualMachineConfiguration` IS NOT sendable.
-///      We import the `Virtualization` framework using `@preconcurrency`.
-struct VZKitConfigurationBuilder<Template: VZKitTemplate> {
+/// - Important: `VZVirtualMachineConfiguration` IS NOT sendable.
+///   We import the `Virtualization` framework using `@preconcurrency`.
+struct VZKitBuilder<Template: VZKitTemplate> {
     
     /// A copy of the DTO to have all the necessary info about the VM template
     let template: Template
