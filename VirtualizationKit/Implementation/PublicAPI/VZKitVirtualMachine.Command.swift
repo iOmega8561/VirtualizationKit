@@ -1,5 +1,5 @@
 //
-//  VirtualMachine.Command.swift
+//  VZKitVirtualMachine.Command.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 07/01/25.
@@ -7,7 +7,7 @@
 
 import Virtualization
 
-extension VirtualMachine {
+extension VZKitVirtualMachine {
     
     /// A `Command` represents operations that can be performed on a virtual machine.
     ///

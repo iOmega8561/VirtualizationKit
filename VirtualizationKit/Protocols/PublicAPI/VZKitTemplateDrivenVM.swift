@@ -13,7 +13,7 @@ import Virtualization
 ///
 /// Conforming types must provide specific types for VM templates, state management, and delegates, enabling flexible
 /// implementations that integrate seamlessly with the `Virtualization` framework.
-public protocol VZKitVirtualMachine: Sendable {
+public protocol VZKitTemplateDrivenVM: Sendable {
     
     /// A type representing the possible commands that can be sent to the virtual machine.
     ///

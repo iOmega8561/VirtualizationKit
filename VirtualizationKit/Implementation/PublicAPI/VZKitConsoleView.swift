@@ -17,7 +17,7 @@ import Virtualization
 ///
 /// # Overview
 /// This wrapper manages the following properties for the virtual machine console:
-/// - `virtualMachine`: The virtual machine instance for display output.
+/// - `VZKitVirtualMachine`: The virtual machine instance for display output.
 /// - `automaticallyReconfiguresDisplay`: Determines if the console should adjust the display configuration based on window size.
 /// - `capturesSystemKeys`: Determines if the console should capture system-wide key combinations.
 ///
@@ -85,11 +85,11 @@ public struct VZKitConsoleView<Template: VZKitTemplate>: NSViewRepresentable, VZ
     /// This initializer should be used when the console view is part of a live app instance.
     ///
     /// - Parameters:
-    ///   - machine: A virtual machine instance of type `VirtualMachine<Template>` to display in the console.
+    ///   - machine: A virtual machine instance of type `VZKitVirtualMachine<Template>` to display in the console.
     ///   - automaticallyReconfiguresDisplay: Specifies if the console view should auto-resize to match window dimensions.
     ///   - capturesSystemKeys: Specifies if the console view should capture system-wide key commands.
     public init(
-        machine: VirtualMachine<Template>,
+        machine: VZKitVirtualMachine<Template>,
         automaticallyReconfiguresDisplay: Bool,
         capturesSystemKeys: Bool
     ) {
@@ -104,9 +104,9 @@ public struct VZKitConsoleView<Template: VZKitTemplate>: NSViewRepresentable, VZ
     /// This initializer is designed for SwiftUI Preview configurations and allows disabling automatic display and key capture settings.
     ///
     /// - Parameters:
-    ///   - machine: A virtual machine instance of type `VirtualMachine<Template>` to display in the console.
+    ///   - machine: A virtual machine instance of type `VZKitVirtualMachine<Template>` to display in the console.
     ///   - isPreviewContext: Boolean indicating whether this instance is in a preview environment (defaults to `true`).
-    public init(machine: VirtualMachine<Template>, isPreviewContext: Bool = true) {
+    public init(machine: VZKitVirtualMachine<Template>, isPreviewContext: Bool = true) {
         self.vzVirtualMachine = machine.vzVirtualMachine
         self.isPreviewContext = isPreviewContext
         self.automaticallyReconfiguresDisplay = false
