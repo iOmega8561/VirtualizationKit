@@ -8,7 +8,7 @@
 //
 //  -----------------------------------------------------------------------
 //
-//  VZKitStorageConstructible.swift
+//  VZKitPersistentConstructible.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 09/01/25.
@@ -16,9 +16,9 @@
 
 /// A protocol that extends `VZKitConstructible` for storage-based construction.
 ///
-/// Types conforming to `VZKitStorageConstructible` provide a static factory method
+/// Types conforming to `VZKitPersistentConstructible` provide a static factory method
 /// that supports creating instances based on a file location and input type.
-protocol VZKitStorageConstructible: VZKitConstructible {
+protocol VZKitPersistentConstructible: VZKitConstructible {
     
     /// The type of input required to create a new instance.
     associatedtype InputType

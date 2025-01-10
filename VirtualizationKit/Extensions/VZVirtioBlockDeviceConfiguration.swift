@@ -16,7 +16,7 @@
 
 import Virtualization
 
-extension VZVirtioBlockDeviceConfiguration: VZKitStorageConstructible {    
+extension VZVirtioBlockDeviceConfiguration: VZKitPersistentConstructible {    
     
     /// When calling the factory method from the outside, this enum becomes very useful
     /// to provide concise information about disk capacity and read/write mounting permissions.

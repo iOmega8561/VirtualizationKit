@@ -16,7 +16,7 @@
 
 import Virtualization
 
-extension VZUSBMassStorageDeviceConfiguration: VZKitStorageConstructible {
+extension VZUSBMassStorageDeviceConfiguration: VZKitPersistentConstructible {
     
     /// When calling the factory method from the outside, this enum becomes very useful
     /// to provide concise information about read/write mounting permissions.

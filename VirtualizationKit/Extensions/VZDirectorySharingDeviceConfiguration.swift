@@ -16,7 +16,7 @@
 
 import Virtualization
 
-extension VZDirectorySharingDeviceConfiguration: VZKitStorageConstructible {
+extension VZDirectorySharingDeviceConfiguration: VZKitPersistentConstructible {
     
     typealias Constructible = VZVirtioFileSystemDeviceConfiguration
     
