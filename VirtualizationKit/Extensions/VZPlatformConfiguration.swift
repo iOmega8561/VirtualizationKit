@@ -7,7 +7,7 @@
 
 import Virtualization
 
-extension VZPlatformConfiguration: VZKitStorageConstructible {
+extension VZPlatformConfiguration: VZKitPersistentConstructible {
     
     enum PlatformType {
         case generic(nestedVirtualization: Bool = false)
