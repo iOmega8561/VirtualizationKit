@@ -28,15 +28,17 @@ enum VZKitError: LocalizedError {
     case machineIdMissing
     case missingMacImage
     
-    // Configuration - Feature specific
-    case rosettaUnavailable
-    case captureDevicePermissionDenied
-    case bridgeNicUnavailable(_ id: String?)
+    // Features
+    case unavailableFeature(_ feature: VZKitFeature)
+    case permissionDenied(_ feature: VZKitFeature)
     case unsupportedFeature(_ feature: VZKitFeature)
-    case invalidMacAddress(_ macAddress: String)
     case usbDeviceNotFound(_ id: UUID)
     
-    // Configuration - Generic
+    // Networking
+    case invalidMacAddress(_ macAddress: String)
+    case bridgeNicUnavailable(_ id: String?)
+    
+    // Configuration/Generic
     case macUnsupportedImage
     case macUnsupportedHost
     case wrongMacImageVersion(_ expected: VZKitOperatingSystem.Version,
@@ -47,29 +49,27 @@ enum VZKitError: LocalizedError {
     private var vzKitLocale: VZKitLocale {
         
         switch self {
-        // "Something blew up in Virtualization.framework"
-        case .appleLimitExceeded: .init("error-appleLimitExceeded", VirtualizationKit.appleMaxVMs)
         
-        // "Something went wrong with files on disk"
+        case .appleLimitExceeded: .init("error-appleLimitExceeded", VirtualizationKit.appleMaxVMs)
+                
         case .auxiliaryFailedSetup: .init("error-auxiliaryFailedSetup")
         case .diskImageFailedSetup: .init("error-diskImageFailedSetup")
         case .machineIdCorrupt: .init("error-machineIdCorrupt")
         case .machineIdMissing: .init("error-machineIdMissing")
         case .missingMacImage: .init("error-missingMacImage")
-        
-        // Configuration - Feature specific
-        case .rosettaUnavailable: .init("error-rosettaUnavailable")
-        case .captureDevicePermissionDenied: .init("error-captureDevicePermissionDenied")
-        case .invalidMacAddress(let macAddress): .init("error-invalidMacAddress", macAddress)
+                
+        case .permissionDenied(let feature): .init("error-permissionDenied", feature)
+        case .unavailableFeature(let feature): .init("error-unavailableFeature", feature)
         case .unsupportedFeature(let feature): .init("error-unsupportedFeature", feature)
         case .usbDeviceNotFound(let id): .init("error-usbDeviceNotFound", id.uuidString)
+                    
+        case .invalidMacAddress(let macAddress): .init("error-invalidMacAddress", macAddress)
         case .bridgeNicUnavailable(let id):
             if let id {
                 .init("error-bridgeNicUnavailable", id)
                 
             } else { .init("error-bridgeNoNicsAvailable") }
-        
-        // Configuration - Generic
+                    
         case .macUnsupportedImage: .init("error-macUnsupportedImage")
         case .macUnsupportedHost: .init("error-macUnsupportedHost")
         case .wrongMacImageVersion(let expected, let actual):

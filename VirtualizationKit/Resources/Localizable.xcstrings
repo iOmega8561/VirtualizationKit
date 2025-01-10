@@ -65,22 +65,6 @@
         }
       }
     },
-    "error-captureDevicePermissionDenied" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The virtual machine has been configured with a capture device, but the application does not have permission to use it"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La macchina virtuale è stata configurata con un dispositivo di cattura, ma l’applicazione non ha il permesso di usarlo."
-          }
-        }
-      }
-    },
     "error-diskImageFailedSetup" : {
       "localizations" : {
         "en" : {
@@ -193,18 +177,36 @@
         }
       }
     },
-    "error-rosettaUnavailable" : {
+    "error-permissionDenied" : {
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rosetta is unavailable on the host Macintosh"
+            "value" : "The following feature cannot be accessed on the %@ machine or operating system because permission has been denied: “%@”"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rosetta non è disponibile sul Macintosh Host"
+            "value" : "Non è possibile accedere alla seguente funzionalità della macchina o del sistema operativo %@ a causa di mancanza di autorizzazione: “%@”"
+          }
+        }
+      }
+    },
+    "error-unavailableFeature" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The following feature is supported but not available on the %@ machine or operating system: “%@”"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La seguente funzionalità è supportata ma non disponibile sulla macchina o sistema operativo %@: “%@”"
           }
         }
       }
@@ -253,6 +255,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "La Macchina Virtuale è stata creata utilizzando un’immagine di ripristino di macOS %@, ma la versione dell’immagine attualmente selezionata è %@"
+          }
+        }
+      }
+    },
+    "feature-captureDevice" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Capture Device (Microphone)"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dispositivo di Cattura (Microfono)"
           }
         }
       }
