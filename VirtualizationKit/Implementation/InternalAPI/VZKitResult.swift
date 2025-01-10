@@ -19,7 +19,7 @@ import Virtualization
 /// An enumeration representing the result of a virtual machine initialization within the `VirtualizationKit` framework.
 ///
 /// `VZKitResult` provides a structured way to handle the outcome of virtual machine creation operations.
-/// It encapsulates either a successfully created `VirtualMachine` instance or an `Error` encountered during
+/// It encapsulates either a successfully created `VZKitVirtualMachine` instance or an `Error` encountered during
 /// the initialization process. This design simplifies error propagation and handling by eliminating the need
 /// to throw or catch errors explicitly, allowing for more straightforward control flow in your application.
 ///
@@ -35,34 +35,27 @@ public enum VZKitResult<Template: VZKitTemplate>: Sendable {
     
     /// A case representing a successful initialization of a virtual machine.
     ///
-    /// - Parameter machine: An instance of `VirtualMachine` parameterized by `Template`, indicating successful creation.
-    case success(VirtualMachine<Template>)
+    /// - Parameter machine: An instance of `VZKitVirtualMachine` parameterized by `Template`, indicating successful creation.
+    case success(VZKitVirtualMachine<Template>)
     
     /// The error encountered during virtual machine initialization, if any.
     ///
     /// - Returns: the associated `Error` if the result is `.failure`; otherwise, returns `nil`.
     public var error: Error? {
-        
         switch self {
-        case .failure(let error):
-            return error
-            
-        default:
-            return nil
+        case .failure(let error): error
+        default: nil
         }
     }
     
     /// The successfully created virtual machine, if available.
     ///
-    /// - Returns: the associated `VirtualMachine<Template>` if the result is `.success`; otherwise, returns `nil`.
-    public var machine: VirtualMachine<Template>? {
+    /// - Returns: the associated `VZKitVirtualMachine<Template>` if the result is `.success`; otherwise, returns `nil`.
+    public var machine: VZKitVirtualMachine<Template>? {
         
         switch self {
-        case .success(let machine):
-            return machine
-            
-        default:
-            return nil
+        case .success(let virtualMachine): virtualMachine
+        default: nil
         }
     }
     
@@ -79,11 +72,8 @@ public enum VZKitResult<Template: VZKitTemplate>: Sendable {
     @MainActor public var state: VZVirtualMachine.State {
         
         switch self {
-        case .success(let machine):
-            return machine.stateManager.currentState
-            
-        default:
-            return .error
+        case .success(let virtualMachine): virtualMachine.currentState
+        default: .error
         }
      }
     
@@ -100,11 +90,8 @@ public enum VZKitResult<Template: VZKitTemplate>: Sendable {
     @MainActor public var progress: Int {
         
         switch self {
-        case .success(let machine):
-            return Int(machine.stateManager.progress * 100)
-            
-        default:
-            return 0
+        case .success(let virtualMachine): Int(virtualMachine.progress * 100)
+        default: 0
         }
     }
 }

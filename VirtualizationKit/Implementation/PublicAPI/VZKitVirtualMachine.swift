@@ -8,7 +8,7 @@
 //
 //  -----------------------------------------------------------------------
 //
-//  VirtualMachine.swift
+//  VZKitVirtualMachine.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 15/05/24.
@@ -18,10 +18,10 @@
 
 /// A data structure representing a Virtual Machine.
 ///
-/// The `VirtualMachine` type is implemented as a struct to provide a lightweight, value-oriented
+/// The `VZKitVirtualMachine` type is implemented as a struct to provide a lightweight, value-oriented
 /// representation of a virtual machine instance. Rather than holding state directly, this struct
 /// maintains references to other objects that are specifically designed to manage the virtual machine's
-/// state. This approach ensures a clear separation of responsibilities: `VirtualMachine` serves as a
+/// state. This approach ensures a clear separation of responsibilities: `VZKitVirtualMachine` serves as a
 /// convenient interface for interacting with the virtual machine's state without itself being responsible
 /// for state management. Using a struct here allows for efficient copying and passing of instances without
 /// retaining a unique reference, and the conformance to `Sendable` ensures safe usage across concurrency
@@ -34,7 +34,7 @@
 ///
 /// - Important: A VZKitTemplate conforming object is not defined by this framework. It will be responsability of the
 ///   developer using these facilities to implement one and correctly use it with this generc data structure.
-public struct VirtualMachine<Template: VZKitTemplate>: VZKitVirtualMachine {
+@dynamicMemberLookup public struct VZKitVirtualMachine<Template: VZKitTemplate>: VZKitTemplateDrivenVM {
     
     /// Static factory method of this default implementation,
     ///
@@ -44,7 +44,7 @@ public struct VirtualMachine<Template: VZKitTemplate>: VZKitVirtualMachine {
     /// - Returns:VZKitResult<Template> so that the caller can store any eventual error to something with it.
     public static func createMachine(_ template: Template) async -> VZKitResult<Template> {
         do {
-            return try await .success(VirtualMachine(template: template))
+            return try await .success(VZKitVirtualMachine(template: template))
             
         } catch { return .failure(error) }
     }
@@ -138,10 +138,28 @@ public struct VirtualMachine<Template: VZKitTemplate>: VZKitVirtualMachine {
             delegate.statePublisher
         )
     }
+    
+    /// Provides dynamic access to the properties of `VZKitObservableState` through the `stateManager`.
+    ///
+    /// This subscript allows you to access properties of the `VZKitObservableState` associated with
+    /// the `stateManager` instance as if they were directly part of the enclosing type. The
+    /// `@dynamicMemberLookup` attribute enables seamless forwarding of property accesses, improving
+    /// readability and simplifying interactions.
+    ///
+    /// ## Usage
+    /// ```swift
+    /// let state = virtualMachine.currentState // Accessing directly a property of `VZKitObservableState`
+    /// ```
+    ///
+    /// - Parameter keyPath: A key path to a property of `VZKitObservableState`.
+    /// - Returns: The value of the property at the specified key path.
+    public subscript<T>(dynamicMember keyPath: KeyPath<VZKitObservableState, T>) -> T {
+        stateManager[keyPath: keyPath]
+    }
 }
 
 @available(macOS 15.0, *)
-@VZKitActor extension VirtualMachine {
+@VZKitActor extension VZKitVirtualMachine {
     
     /// Attaches a removable USB disk to the virtual machine using a specified disk image.
     ///

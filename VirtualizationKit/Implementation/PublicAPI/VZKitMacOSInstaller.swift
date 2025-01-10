@@ -98,11 +98,11 @@ struct VZKitMacOSInstaller<Template: VZKitTemplate>: VZKitStatefulInstaller {
     /// This initializer verifies the existence of the restore image specified in the template
     /// and associates the installer with the virtual machine's state manager for tracking progress.
     ///
-    /// - Parameter virtualMachine: A `VirtualMachine` instance configured with the provided `Template`.
+    /// - Parameter virtualMachine: A `VZKitVirtualMachine` instance configured with the provided `Template`.
     /// - Throws:
     ///   - `VZKitError.missingMacImage`: If the required restore image is not available.
     ///   - Any errors thrown by the superclass initializer.
-    public init(virtualMachine: VirtualMachine<Template>) throws {
+    public init(virtualMachine: VZKitVirtualMachine<Template>) throws {
         let restoreImageURL = virtualMachine.template.removableDiskImage
         
         guard let restoreImageURL else {
@@ -124,13 +124,13 @@ struct VZKitMacOSInstaller<Template: VZKitTemplate>: VZKitStatefulInstaller {
     /// tracking progress.
     ///
     /// - Parameters:
-    ///   - virtualMachine: A `VirtualMachine` instance configured with the provided `Template`.
+    ///   - virtualMachine: A `VZKitVirtualMachine` instance configured with the provided `Template`.
     ///   - url: The file URL of the macOS restore image.
     /// - Throws:
     ///   - `VZKitError.macUnsupportedImage`: If the restore image is incompatible with macOS.
     ///   - `VZKitError.wrongMacImageVersion`: If the restore image version does not match the template.
     ///   - Any errors thrown during restore image validation or superclass initialization.
-    public init(virtualMachine: VirtualMachine<Template>, restoringFromImageAt url: URL) async throws {
+    public init(virtualMachine: VZKitVirtualMachine<Template>, restoringFromImageAt url: URL) async throws {
         
         switch virtualMachine.template.operatingSystem {
         case .linux:
