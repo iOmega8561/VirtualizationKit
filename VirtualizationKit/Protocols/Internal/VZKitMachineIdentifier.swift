@@ -41,10 +41,8 @@ extension VZKitMachineIdentifier {
             try machineId.dataRepresentation.write(to: url)
             return machineId
         }
-        
-        let data = try Self.create(dataAt: url)
-        
-        return data
+    
+        return try Self.create(dataAt: url)
     }
 }
 
