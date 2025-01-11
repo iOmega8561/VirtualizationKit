@@ -25,10 +25,7 @@ public protocol VZKitTemplate: Identifiable, VZKitTransferable {
     var operatingSystem: OperatingSystem { get }
     
     /// A URL pointing to the chosen CD-ROM image or media to be used with the VM, if available
-    var removableDiskImage: URL? { get }
-    
-    /// A Boolean value that allows to understeand if the virtual machine needs to be processed through an Installer facility.
-    var restoreFromDiskImage: Bool { get }
+    var removableInstallMedia: URL? { get }
     
     /// The network topology setup for the VM, defining its network configuration.
     var networkTopology: NetworkTopology { get }
@@ -36,22 +33,6 @@ public protocol VZKitTemplate: Identifiable, VZKitTransferable {
     /// The performance preset that better descrives the capabilities that the VM should have, hardware wise.
     var performancePreset: PerformancePreset { get }
     
-    /// A Boolean value that indicates whether a shared directory is enabled between the host and VM.
-    var enablesSharedDirectory: Bool { get }
     
-    /// A Boolean value that indicates whether input audio support is enabled for the VM.
-    var enablesInputAudio: Bool { get }
-    
-    /// A Boolean value that indicates whether output audio support is enabled for the VM.
-    var enablesOutputAudio: Bool { get }
-    
-    /// A Boolean value that indicates whether the Rosetta directory share should be exposed to the VM.
-    /// - Note: This value should be `true` only for Linux virtual machines. It will should be ignored if otherwise.
-    var enablesRosettaDirectoryShare: Bool { get }
-
-    /// A Boolean value that indicates whether the Virtual Machine should enable nested virtualization.
-    /// - Note: Nested virtualization is supported starting from macOS 15.0 and only available for
-    /// generic platform configurations (Linux). This will have no effect with macOS as guest operating system.
-    @available(macOS 15.0, *)
-    var enablesNestedVirtualization: Bool { get }
+    var featuresToEnable: [VZKitFeature] { get }
 }

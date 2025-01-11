@@ -257,18 +257,35 @@
         }
       }
     },
-    "feature-captureDevice" : {
+    "feature-audioCaptureDevice" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Capture Device (Microphone)"
+            "value" : "Audio capture device (Microphone)"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dispositivo di Cattura (Microfono)"
+            "value" : "Dispositivo audio di cattura (Microfono)"
+          }
+        }
+      }
+    },
+    "feature-audioOutputDevice" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Audio output device (Speakers)"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dispositivo audio di uscita (Altoparlante)"
           }
         }
       }
@@ -278,13 +295,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Shared Directory"
+            "value" : "Shared directory"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cartella Condivisa"
+            "value" : "Cartella condivisa"
           }
         }
       }
@@ -294,13 +311,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nested Virtualization"
+            "value" : "Nested virtualization"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Virtualizzazione Nidificata"
+            "value" : "Virtualizzazione nidificata"
           }
         }
       }

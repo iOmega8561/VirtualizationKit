@@ -45,7 +45,7 @@ import Foundation
 /// ## Implementation Details
 /// - **Scope**: A private enum defining whether a feature applies to the host or guest.
 /// - **MetaData**: A private structure encapsulating the localization key and scope of a feature.
-enum VZKitFeature {
+public enum VZKitFeature: VZKitTransferable {
     
     // MARK: - Private Types
     
@@ -76,7 +76,10 @@ enum VZKitFeature {
     case directoryShare
     
     /// Represents the ability to use the microphone of the host macintosh
-    case captureDevice
+    case audioCaptureDevice
+    
+    /// Represents the ability to use the speakers of the host macintosh
+    case audioOutputDevice
     
     // MARK: - Private Metadata
     
@@ -87,7 +90,8 @@ enum VZKitFeature {
         case .nestedVirtualization: .init(key: "feature-nestedVirtualization", scope: .host)
         case .xhciUSBHotSwap: .init(key: "feature-xhciUSBHotSwap", scope: .host)
         case .directoryShare: .init(key: "feature-directoryShare", scope: .guest)
-        case .captureDevice: .init(key: "feature-captureDevice", scope: .host)
+        case .audioCaptureDevice: .init(key: "feature-audioCaptureDevice", scope: .host)
+        case .audioOutputDevice: .init(key: "feature-audioOutputDevice", scope: .host)
         }
     }
     
@@ -97,9 +101,11 @@ enum VZKitFeature {
     ///
     /// This property retrieves the feature's name from the framework's localization resources
     /// using the `VZKitLocale` utility and the associated localization key.
-    var localized: String {
+    public var localized: String {
         VZKitLocale(self.metaData.key).value
     }
+    
+    // MARK: - Internal Properties
     
     /// The localized scope of the feature (host or guest).
     ///
