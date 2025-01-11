@@ -65,6 +65,38 @@
         }
       }
     },
+    "error-coreFilesMissing" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Critical Virtual Machine files are missing or have been deleted. Please delete or recreate the Virtual Machine"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "File critici per il funzionamento della Macchina Virtuale sono mancanti o sono stati eliminati. Si prega di eliminare o ricreare la Macchina Virtuale."
+          }
+        }
+      }
+    },
+    "error-coreFilesTampered" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Critical Virtual Machine files are corrupted or have been tampered with. Please delete or recreate the Virtual Machine."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "File critici per il funzionamento della Macchina Virtuale sono stati corrotti o manomessi. Si prega di eliminare o ricreare la Macchina Virtuale"
+          }
+        }
+      }
+    },
     "error-diskImageFailedSetup" : {
       "localizations" : {
         "en" : {
@@ -93,38 +125,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Il MAC Address specificato non è valido: “%@”"
-          }
-        }
-      }
-    },
-    "error-machineIdCorrupt" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The Unique Identifier of the Virtual Machine appears to be corrupt. Please re-create this Virtual Machine."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "L’Identificativo Univoco della Macchina Virtuale sembra corrotto. Per favore ricreare la Macchina. "
-          }
-        }
-      }
-    },
-    "error-machineIdMissing" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The Unique Identifier file of the Virtual Machine could not be found (could have been deleted). Please re-create this Virtual Machine"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non è stato possibile trovare il file contenente l’Identificativo Univoco della Macchina Virtuale (potrebbe essere stato rimosso). Per favore ricreare la Macchina."
           }
         }
       }
@@ -178,7 +178,6 @@
       }
     },
     "error-permissionDenied" : {
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -195,7 +194,6 @@
       }
     },
     "error-unavailableFeature" : {
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {

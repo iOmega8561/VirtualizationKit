@@ -11,36 +11,10 @@ extension VZPlatformConfiguration: VZKitPersistentConstructible {
     
     enum PlatformType {
         case generic(nestedVirtualization: Bool = false)
-        case macintosh(restoreImage: VZMacOSRestoreImage)
+        case macintosh(restoreImage: VZMacOSRestoreImage?)
     }
     
-    // MARK: - Machine Identifier with Generics (Good for .generic and .macintosh)
-    
-    /// This method checks if an already existing machine identifier file can be found on the host FS,
-    /// and eventually returns that instance, otherwise a new file is created.
-    ///
-    /// - Parameters:
-    ///   - url: Location of the machine identifier storage on the host file system.
-    private static func createMachineIdentifier<Identifier: VZKitMachineIdentifier>(at url: URL) throws -> Identifier {
-        
-        guard FileManager.default.fileExists(atPath: url.path(percentEncoded: false)) else {
-            let machineId = Identifier()
-            try machineId.dataRepresentation.write(to: url)
-            return machineId
-        }
-        
-        guard let machineIdData = try? Data(contentsOf: url) else {
-            throw VZKitError.machineIdMissing
-        }
-        
-        guard let machineId = Identifier(dataRepresentation: machineIdData) else {
-            throw VZKitError.machineIdCorrupt
-        }
-        
-        return machineId
-    }
-    
-    // MARK: - Macintosh Platform
+    // MARK: - Macintosh Platform Specific
     
     /// This method checks if an already existing auxiliary storage can be found,
     /// and eventually returns that instance, otherwise a new file is created.
@@ -50,10 +24,9 @@ extension VZPlatformConfiguration: VZKitPersistentConstructible {
     ///   - hwModel: The macOS restore image most featureful supported hardware model.
     private static func createAuxStorage(at url: URL, hwModel: VZMacHardwareModel) throws -> VZMacAuxiliaryStorage {
         
-        guard !FileManager.default.fileExists(
-            atPath: url.path(percentEncoded: false)
-            
-        )  else { return VZMacAuxiliaryStorage(url: url) }
+        guard !FileManager.default.fileExists(atPath: url.path(percentEncoded: false)) else {
+            return VZMacAuxiliaryStorage(url: url)
+        }
         
         let auxiliaryStorage = try VZMacAuxiliaryStorage(
             creatingStorageAt: url,
@@ -63,12 +36,14 @@ extension VZPlatformConfiguration: VZKitPersistentConstructible {
         return auxiliaryStorage
     }
     
+    // MARK: - VZKitPersistentConstructible
+    
     /// This method can create a generic virtual machine platform configuration.
     /// It also takes care of calling the appropriate method to generate a machine identifier, then returns the full object, ready to use.
     ///
     /// - Parameters:
     ///   - url: Location on disk of the Virtual Machine storage directory.
-    ///   - nestedVZ: Whether the platform should enable nested virtualization
+    ///   - type: The additional configuration and platform type to generate the correct object
     static func create(at url: URL, type: PlatformType) throws -> Constructible {
         
         let platform: VZPlatformConfiguration
@@ -78,7 +53,7 @@ extension VZPlatformConfiguration: VZKitPersistentConstructible {
             
             let genericPlatform = VZGenericPlatformConfiguration()
             
-            genericPlatform.machineIdentifier = try createMachineIdentifier(
+            genericPlatform.machineIdentifier = try .create(
                 at: url.appendingPathComponent("MachineIdentifier")
             )
             
@@ -94,19 +69,32 @@ extension VZPlatformConfiguration: VZKitPersistentConstructible {
             
         case .macintosh(let restoreImage):
             
-            guard let requirements = restoreImage.mostFeaturefulSupportedConfiguration else {
-                throw VZKitError.macUnsupportedImage
-            }
-            
-            guard requirements.hardwareModel.isSupported else {
-                throw VZKitError.macUnsupportedHost
-            }
-            
             let macintoshPlatform = VZMacPlatformConfiguration()
             
-            macintoshPlatform.hardwareModel = requirements.hardwareModel
+            if let restoreImage {
+                
+                guard let requirements = restoreImage.mostFeaturefulSupportedConfiguration else {
+                    throw VZKitError.macUnsupportedImage
+                }
+                
+                guard requirements.hardwareModel.isSupported else {
+                    throw VZKitError.macUnsupportedHost
+                }
+                
+                try requirements.hardwareModel.dataRepresentation.write(
+                    to: url.appendingPathComponent("HardwareModel")
+                )
+                
+                macintoshPlatform.hardwareModel = requirements.hardwareModel
+                
+            } else {
+                
+                macintoshPlatform.hardwareModel = try .create(
+                    at: url.appendingPathComponent("HardwareModel")
+                )
+            }
             
-            macintoshPlatform.machineIdentifier = try createMachineIdentifier(
+            macintoshPlatform.machineIdentifier = try .create(
                 at: url.appendingPathComponent("MachineIdentifier")
             )
             
@@ -116,7 +104,6 @@ extension VZPlatformConfiguration: VZKitPersistentConstructible {
             )
             
             platform = macintoshPlatform
-            
         }
         
         return platform
