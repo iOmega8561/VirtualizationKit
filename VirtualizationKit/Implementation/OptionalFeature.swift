@@ -1,5 +1,5 @@
 //
-//  VZKitFeature.swift
+//  OptionalFeature.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 10/01/25.
@@ -9,7 +9,7 @@ import Foundation
 
 /// Represents a set of features available within the `VZKit` framework.
 ///
-/// The `VZKitFeature` enum encapsulates a predefined set of features that can be supported by
+/// The `OptionalFeature` enum encapsulates a predefined set of features that can be supported by
 /// either the host system or the guest virtual machine. Each feature includes metadata that
 /// describes its localization key and scope (e.g., host or guest), allowing for consistent
 /// representation and translation.
@@ -27,7 +27,7 @@ import Foundation
 ///
 /// ## Usage
 /// ```swift
-/// let feature = VZKitFeature.rosetta
+/// let feature = OptionalFeature.rosetta
 /// print("Feature: \(feature.localized)") // Localized name
 /// print("Scope: \(feature.scope)")       // "Host" or "Guest"
 /// ```
@@ -45,7 +45,7 @@ import Foundation
 /// ## Implementation Details
 /// - **Scope**: A private enum defining whether a feature applies to the host or guest.
 /// - **MetaData**: A private structure encapsulating the localization key and scope of a feature.
-public enum VZKitFeature: VZKitTransferable {
+public enum OptionalFeature: VZKitTransferable {
     
     // MARK: - Private Types
     

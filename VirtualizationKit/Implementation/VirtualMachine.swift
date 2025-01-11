@@ -143,6 +143,7 @@
     /// let state = virtualMachine.currentState // Accessing directly a property of `ObservableCoordinator`
     /// ```
     ///
+    /// - Important: Using the subscript may lead to increased overhead if it's needed to access the state frequently!
     /// - Parameter keyPath: A key path to a property of `ObservableCoordinator`.
     /// - Returns: The value of the property at the specified key path.
     public subscript<T>(dynamicMember keyPath: KeyPath<ObservableCoordinator, T>) -> T {

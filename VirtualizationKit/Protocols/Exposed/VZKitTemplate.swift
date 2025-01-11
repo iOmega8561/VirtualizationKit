@@ -34,5 +34,5 @@ public protocol VZKitTemplate: Identifiable, VZKitTransferable {
     var performancePreset: PerformancePreset { get }
     
     
-    var featuresToEnable: [VZKitFeature] { get }
+    var featuresToEnable: [OptionalFeature] { get }
 }

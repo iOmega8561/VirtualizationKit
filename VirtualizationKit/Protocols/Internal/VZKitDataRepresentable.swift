@@ -37,7 +37,7 @@ extension VZKitDataRepresentable {
     /// - Throws:
     ///   - `VZKitError.coreFilesMissing` if the file cannot be read or the data is missing.
     ///   - `VZKitError.coreFilesTampered` if the data is invalid or cannot be used to create the object.
-    static func create(at url: URL) throws -> Constructible {
+    static func create(dataAt url: URL) throws -> Constructible {
         
         guard let dataRepresentation = try? Data(contentsOf: url) else {
             throw VZKitError.coreFilesMissing

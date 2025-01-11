@@ -56,14 +56,14 @@ public enum VZKitResult<Template: VZKitTemplate>: Sendable {
     /// `ObservableCoordinator` instance. If the outcome is a failure it returns `.error`.
     ///
     /// - Important: This property must be accessed on the main thread.
-    /// - Returns: Either a `VZVirtualMachine.State` forwarded directly from the virtual machine state manager,
+    /// - Returns: Either a `VZVirtualMachine.State` forwarded directly from the virtual machine state coordinator,
     /// or `.error` in case o failure.
     /// - Note: This computed property propagates state changes thanks to
     /// `ObservableCoordinator` being marked with `@Observable`.
     @MainActor public var state: VZVirtualMachine.State {
         
         switch self {
-        case .success(let virtualMachine): virtualMachine.currentState
+        case .success(let virtualMachine): virtualMachine.stateCoordinator.currentState
         default: .error
         }
      }
