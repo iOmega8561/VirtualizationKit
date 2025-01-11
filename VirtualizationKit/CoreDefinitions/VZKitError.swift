@@ -35,9 +35,9 @@ enum VZKitError: LocalizedError {
     case wrongMacImageVersion(_ expected: OperatingSystem.Version,
                               _ actual: OperatingSystem.Version)
 
-    public var errorDescription: String? { self.localized.value }
+    public var errorDescription: String? { self.errorLocale.value }
     
-    private var localized: VZKitLocale {
+    private var errorLocale: VZKitLocale {
         
         switch self {
         
