@@ -45,7 +45,6 @@ import Foundation
 /// ## Implementation Details
 /// - **Scope**: A private enum defining whether a feature applies to the host or guest.
 /// - **MetaData**: A private structure encapsulating the localization key and scope of a feature.
-///
 enum VZKitFeature {
     
     // MARK: - Private Types

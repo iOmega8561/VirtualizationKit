@@ -12,7 +12,7 @@ enum VZKitError: LocalizedError {
     // "Something blew up in Virtualization.framework"
     case appleLimitExceeded
     
-    // "Something went wrong with files on disk"
+    // "Something went wrong writing/reading files"
     case auxiliaryFailedSetup
     case diskImageFailedSetup
     case machineIdCorrupt
@@ -35,9 +35,9 @@ enum VZKitError: LocalizedError {
     case wrongMacImageVersion(_ expected: OperatingSystem.Version,
                               _ actual: OperatingSystem.Version)
 
-    public var errorDescription: String? { self.vzKitLocale.value }
+    public var errorDescription: String? { self.localized.value }
     
-    private var vzKitLocale: VZKitLocale {
+    private var localized: VZKitLocale {
         
         switch self {
         
@@ -56,10 +56,8 @@ enum VZKitError: LocalizedError {
                     
         case .invalidMacAddress(let macAddress): .init("error-invalidMacAddress", macAddress)
         case .bridgeNicUnavailable(let id):
-            if let id {
-                .init("error-bridgeNicUnavailable", id)
-                
-            } else { .init("error-bridgeNoNicsAvailable") }
+            id != nil ? .init("error-bridgeNicUnavailable", id!) :
+                        .init("error-bridgeNoNicsAvailable")
                     
         case .macUnsupportedImage: .init("error-macUnsupportedImage")
         case .macUnsupportedHost: .init("error-macUnsupportedHost")
