@@ -107,7 +107,7 @@ struct MacOSInstaller<Template: VZKitTemplate>: VZKitStatefulInstaller {
     ///   - `VZKitError.missingMacImage`: If the required restore image is not available.
     ///   - Any errors thrown by the superclass initializer.
     public init(virtualMachine: VirtualMachine<Template>) throws {
-        let restoreImageURL = virtualMachine.template.removableDiskImage
+        let restoreImageURL = virtualMachine.template.removableInstallMedia
         
         guard let restoreImageURL else {
             throw VZKitError.missingMacImage

@@ -46,7 +46,7 @@ extension VZAudioDeviceConfiguration: VZKitSpecializedConstructible {
             }
                         
         default:
-            throw VZKitError.permissionDenied(.captureDevice)
+            throw VZKitError.permissionDenied(.audioCaptureDevice)
         }
     }
     

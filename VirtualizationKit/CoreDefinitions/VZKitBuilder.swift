@@ -34,12 +34,6 @@ struct VZKitBuilder<Template: VZKitTemplate> {
     /// Stored property to get the location of the VM's storage folder inside the application bundle
     private let vmSupportDirectory: URL
     
-    /// Computed property that determines, based on current system version, if nestedVirtualization should be enabled
-    /// - Note: If macOS is inferior to 15.0 this is always false, else it is `template.enablesNestedVirtualization`
-    private var enablesNestedVirtualization: Bool {
-        if #available(macOS 15.0, *) { template.enablesNestedVirtualization } else { false }
-    }
-    
     /// This method is responsible of building the full fledged virtual machine configuration scheme.
     /// To do that it makes a distinction between the different guest operating systems, since they need completely different
     /// configuration schemes. Its workings are helped by the several static factory methods implemented for every virtual device.
@@ -68,18 +62,18 @@ struct VZKitBuilder<Template: VZKitTemplate> {
             
             configuration.platform = try .create(
                 at: vmSupportDirectory,
-                type: .generic(nestedVirtualization: enablesNestedVirtualization)
+                type: .generic(nestedVirtualization: template.featuresToEnable.contains(.nestedVirtualization))
             )
             
             configuration.bootLoader = try .create(
                 at: vmSupportDirectory.appendingPathComponent("NVRAM")
             )
             
-            if template.enablesRosettaDirectoryShare {
+            if template.featuresToEnable.contains(.rosetta) {
                 configuration.directorySharingDevices.append(try VZLinuxRosettaDirectoryShare.create())
             }
             
-            if let url = template.removableDiskImage {
+            if let url = template.removableInstallMedia {
                 configuration.storageDevices.append(
                     try VZUSBMassStorageDeviceConfiguration.create(at: url, type: .readOnly)
                 )
@@ -103,15 +97,15 @@ struct VZKitBuilder<Template: VZKitTemplate> {
         configuration.memoryBalloonDevices.append(VZVirtioTraditionalMemoryBalloonDeviceConfiguration())
         configuration.entropyDevices.append(VZVirtioEntropyDeviceConfiguration())
         
-        if template.enablesOutputAudio {
+        if template.featuresToEnable.contains(.audioOutputDevice) {
             configuration.audioDevices.append(try await .create(type: .output))
         }
         
-        if template.enablesInputAudio {
+        if template.featuresToEnable.contains(.audioCaptureDevice) {
             configuration.audioDevices.append(try await .create(type: .input))
         }
         
-        if template.enablesSharedDirectory {
+        if template.featuresToEnable.contains(.directoryShare) {
             configuration.directorySharingDevices.append(
                 try .create(
                     at: vmSupportDirectory.appendingPathComponent(template.name),
@@ -120,7 +114,7 @@ struct VZKitBuilder<Template: VZKitTemplate> {
             )
         }
         
-        if #available(macOS 15.0, *) {
+        if #available(macOS 15.0, *), template.featuresToEnable.contains(.xhciUSBHotSwap) {
             configuration.usbControllers.append(VZXHCIControllerConfiguration())
         }
     }
@@ -135,7 +129,7 @@ struct VZKitBuilder<Template: VZKitTemplate> {
             
             var restoreImage: VZMacOSRestoreImage? = nil
             
-            if  let url = template.removableDiskImage,
+            if  let url = template.removableInstallMedia,
                 let image = try? await VZMacOSRestoreImage.load(from: url) {
                 
                 guard image.osVersion.major == version.major else {
