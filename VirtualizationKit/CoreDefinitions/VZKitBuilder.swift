@@ -59,7 +59,7 @@ struct VZKitBuilder<Template: VZKitTemplate> {
             
             configuration.platform = try .create(
                 at: vmSupportDirectory,
-                type: .macintosh(restoreImage: restoreImage!)
+                type: .macintosh(restoreImage: restoreImage)
             )
             
             configuration.bootLoader = try .create()
@@ -133,14 +133,16 @@ struct VZKitBuilder<Template: VZKitTemplate> {
         switch template.operatingSystem {
         case .macos(let version):
             
-            guard let url = template.removableDiskImage else {
-                throw VZKitError.missingMacImage
-            }
+            var restoreImage: VZMacOSRestoreImage? = nil
             
-            let restoreImage: VZMacOSRestoreImage = try await .load(from: url)
-            
-            guard restoreImage.osVersion == version else {
-                throw VZKitError.wrongMacImageVersion(version, restoreImage.osVersion)
+            if  let url = template.removableDiskImage,
+                let image = try? await VZMacOSRestoreImage.load(from: url) {
+                
+                guard image.osVersion.major == version.major else {
+                    throw VZKitError.wrongMacImageVersion(version, image.osVersion)
+                }
+                
+                restoreImage = image
             }
             
             try await createConfiguration(using: restoreImage)

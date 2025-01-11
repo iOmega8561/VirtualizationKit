@@ -147,7 +147,7 @@ struct MacOSInstaller<Template: VZKitTemplate>: VZKitStatefulInstaller {
                 throw VZKitError.macUnsupportedImage
             }
             
-            guard restoreImage.osVersion == version else {
+            guard restoreImage.osVersion.major == version.major else {
                 throw VZKitError.wrongMacImageVersion(version, restoreImage.osVersion)
             }
         }

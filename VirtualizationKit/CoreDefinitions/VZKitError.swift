@@ -24,8 +24,8 @@ enum VZKitError: LocalizedError {
     // "Something went wrong writing/reading files"
     case auxiliaryFailedSetup
     case diskImageFailedSetup
-    case machineIdCorrupt
-    case machineIdMissing
+    case coreFilesTampered
+    case coreFilesMissing
     case missingMacImage
     
     // Features
@@ -54,8 +54,8 @@ enum VZKitError: LocalizedError {
                 
         case .auxiliaryFailedSetup: .init("error-auxiliaryFailedSetup")
         case .diskImageFailedSetup: .init("error-diskImageFailedSetup")
-        case .machineIdCorrupt: .init("error-machineIdCorrupt")
-        case .machineIdMissing: .init("error-machineIdMissing")
+        case .coreFilesTampered: .init("error-coreFilesTampered")
+        case .coreFilesMissing: .init("error-coreFilesMissing")
         case .missingMacImage: .init("error-missingMacImage")
                 
         case .permissionDenied(let feature): .init("error-permissionDenied", feature)
