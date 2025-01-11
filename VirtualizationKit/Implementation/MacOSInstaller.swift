@@ -106,7 +106,12 @@ struct MacOSInstaller<Template: VZKitTemplate>: VZKitStatefulInstaller {
     /// - Throws:
     ///   - `VZKitError.missingMacImage`: If the required restore image is not available.
     ///   - Any errors thrown by the superclass initializer.
-    public init(virtualMachine: VirtualMachine<Template>) throws {
+    public init?(virtualMachine: VirtualMachine<Template>) throws {
+        
+        guard virtualMachine.template.operatingSystem != .linux else {
+            return nil
+        }
+        
         let restoreImageURL = virtualMachine.template.removableInstallMedia
         
         guard let restoreImageURL else {
@@ -134,11 +139,11 @@ struct MacOSInstaller<Template: VZKitTemplate>: VZKitStatefulInstaller {
     ///   - `VZKitError.macUnsupportedImage`: If the restore image is incompatible with macOS.
     ///   - `VZKitError.wrongMacImageVersion`: If the restore image version does not match the template.
     ///   - Any errors thrown during restore image validation or superclass initialization.
-    public init(virtualMachine: VirtualMachine<Template>, restoringFromImageAt url: URL) async throws {
+    public init?(virtualMachine: VirtualMachine<Template>, restoringFromImageAt url: URL) async throws {
         
         switch virtualMachine.template.operatingSystem {
         case .linux:
-            throw VZKitError.macUnsupportedImage
+            return nil
 
         case .macos(let version):
             let restoreImage = try await VZMacOSRestoreImage.load(from: url)
