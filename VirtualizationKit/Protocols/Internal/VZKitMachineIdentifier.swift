@@ -42,9 +42,9 @@ extension VZKitMachineIdentifier {
             return machineId
         }
         
-        let data = try Constructible.Constructible.create(at: url)
+        let data = try Self.create(dataAt: url)
         
-        return data as! Self.Constructible
+        return data
     }
 }
 

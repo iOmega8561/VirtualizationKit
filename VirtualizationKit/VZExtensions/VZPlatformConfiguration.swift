@@ -99,7 +99,7 @@ extension VZPlatformConfiguration: VZKitPersistentConstructible {
             } else {
                 
                 macintoshPlatform.hardwareModel = try .create(
-                    at: url.appendingPathComponent("HardwareModel")
+                    dataAt: url.appendingPathComponent("HardwareModel")
                 )
             }
             
