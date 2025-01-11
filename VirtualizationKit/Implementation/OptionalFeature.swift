@@ -11,7 +11,7 @@ import Foundation
 ///
 /// The `OptionalFeature` enum encapsulates a predefined set of features that can be supported by
 /// either the host system or the guest virtual machine. Each feature includes metadata that
-/// describes its localization key and scope (e.g., host or guest), allowing for consistent
+/// describes its localization key and other internal details like scope (e.g., host or guest), allowing for consistent
 /// representation and translation.
 ///
 /// ## Features
@@ -24,38 +24,31 @@ import Foundation
 /// - `.nestedVirtualization`: Represents nested virtualization support on the host.
 /// - `.xhciUSBHotSwap`: Represents support for XHCI USB hot-swapping on the host.
 /// - `.directoryShare`: Represents the ability to share directories with the guest virtual machine.
+/// - `.audioCaptureDevice`: Represents the ability to use the microphone of the host macintosh
+/// - `.audioOutputDevice`: Represents the ability to use the speakers of the host macintosh
 ///
 /// ## Usage
 /// ```swift
 /// let feature = OptionalFeature.rosetta
 /// print("Feature: \(feature.localized)") // Localized name
-/// print("Scope: \(feature.scope)")       // "Host" or "Guest"
 /// ```
 ///
 /// ## Localization
 /// - Each feature includes a `localized` property that retrieves its localized name
 ///   using the framework's localization resources.
-/// - The `scope` property provides a localized string indicating whether the feature
-///   applies to the host or guest.
-///
-/// ## Extensibility
-/// New features can be added by defining additional cases and updating the `metaData`
-/// property to include the appropriate localization key and scope.
-///
-/// ## Implementation Details
-/// - **Scope**: A private enum defining whether a feature applies to the host or guest.
-/// - **MetaData**: A private structure encapsulating the localization key and scope of a feature.
 public enum OptionalFeature: VZKitTransferable {
     
     // MARK: - Private Types
     
-    /// Defines the scope of a feature (host or guest).
+    /// ## Implementation Detail
+    /// - **Scope**: A private enum defining whether a feature applies to the host or guest.
     private enum Scope {
         case host
         case guest
     }
     
-    /// Encapsulates metadata for a feature, including its localization key and scope.
+    /// ## Implementation Detail
+    /// - **MetaData**: A private structure encapsulating the localization key and scope of a feature.
     private struct MetaData {
         let key: String.LocalizationValue
         let scope: Scope
@@ -84,6 +77,10 @@ public enum OptionalFeature: VZKitTransferable {
     // MARK: - Private Metadata
     
     /// Provides metadata for each feature, including its localization key and scope.
+    ///
+    /// ## Extensibility
+    /// New features can be added by defining additional cases and updating the `metaData`
+    /// property to include the appropriate localization key and scope.
     private var metaData: MetaData {
         switch self {
         case .rosetta: .init(key: "feature-rosetta", scope: .host)

@@ -262,13 +262,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Audio capture device (Microphone)"
+            "value" : "Audio capture device"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dispositivo audio di cattura (Microfono)"
+            "value" : "Dispositivo audio di cattura"
           }
         }
       }
@@ -279,13 +279,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Audio output device (Speakers)"
+            "value" : "Audio output device"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dispositivo audio di uscita (Altoparlante)"
+            "value" : "Dispositivo audio di uscita"
           }
         }
       }
@@ -327,13 +327,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rosetta"
+            "value" : "Rosetta software emulator"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rosetta"
+            "value" : "Emulatore software Rosetta"
           }
         }
       }
