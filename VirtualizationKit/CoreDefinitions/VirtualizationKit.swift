@@ -55,14 +55,4 @@ public final class _VirtualizationKit: Sendable {
     }
 }
 
-@available(macOS 15.0, *)
-extension _VirtualizationKit {
-    
-    /// Determines whether or not the Nested Virtualization feature is supported by the Host Mac
-    /// - Note: This is only available starting with macOS 15
-    public var isNestedVirtualizationSupported: Bool {
-        VZGenericPlatformConfiguration.isNestedVirtualizationSupported
-    }
-}
-
 public let VirtualizationKit: _VirtualizationKit = .init()

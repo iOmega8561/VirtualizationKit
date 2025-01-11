@@ -33,7 +33,7 @@
 ///   in which you would need to store the error and later present this error to the user, so they can take action if needed.
 ///
 /// - Important: A VZKitTemplate conforming object is not defined by this framework. It will be responsability of the
-///   developer using these facilities to implement one and correctly use it with this generc data structure.
+///   developer using these facilities to implement one and correctly use it with this generic data structure.
 @dynamicMemberLookup public struct VirtualMachine<Template: VZKitTemplate>: VZKitTemplatedVM {
     
     /// Static factory method of this default implementation,
