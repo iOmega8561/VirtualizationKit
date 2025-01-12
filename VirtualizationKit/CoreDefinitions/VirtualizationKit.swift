@@ -16,20 +16,18 @@
 
 @_exported import Foundation
 
+@_exported import Virtualization
+
 public final class _VirtualizationKit: Sendable {
     
     /// The bundle identifier of this framework
     public let bundleIdentifier: String = "giusepperocco.VirtualizationKit"
     
     /// The version string of this framework
-    public let version: String = "1.4.1"
+    public let version: String = "1.5"
     
     /// The minimum macOS version supported as a guest operating system
     public let macOSGuestMinVersion: OperatingSystem.Version = .init(major: 12, minor: 4, patch: 0)
-    
-    /// The maximum amount of macOS virtual machines that can run simultaneously.
-    /// Unfortunately Apple Virtualization Framework limits this amount to two VMs at once :(
-    public let appleMaxVMs: Int = 2
     
     /// The resource bundle of this framework,
     /// to get assets and localized strings from here and not the main bundle
@@ -51,23 +49,9 @@ public final class _VirtualizationKit: Sendable {
     ///   - url: A `URL` representing the destination path.
     @MainActor public func setSupportDirectory(_ url: URL) { supportDirectory = url }
     
-    internal func localized(_ key: String.LocalizationValue) -> String {
-        return .init(localized: key, bundle: VirtualizationKit.bundle)
-    }
-    
     fileprivate init() {
         self.bundle = .init(identifier: bundleIdentifier)
         self.supportDirectory = .applicationSupportDirectory.appendingPathComponent(bundleIdentifier)
-    }
-}
-
-@available(macOS 15.0, *)
-extension _VirtualizationKit {
-    
-    /// Determines whether or not the Nested Virtualization feature is supported by the Host Mac
-    /// - Note: This is only available starting with macOS 15
-    public var isNestedVirtualizationSupported: Bool {
-        GenericPlatform.isNestedVirtualizationSupported
     }
 }
 

@@ -23,10 +23,10 @@ import Virtualization
 /// the initialization process. This design simplifies error propagation and handling by eliminating the need
 /// to throw or catch errors explicitly, allowing for more straightforward control flow in your application.
 ///
-/// - Note: The `TemplateType` must conform to `VZKitTemplate`.
+/// - Note: The `Template` must conform to `VZKitTemplate`.
 ///
 /// - Important: You generally don't create this object directly, but use the VirtualMachine.createMachine static factory method instead.
-public enum VZKitResult<TemplateType: VZKitTemplate>: Sendable {
+public enum VZKitResult<Template: VZKitTemplate>: Sendable {
     
     /// A case representing a failed attempt to initialize a virtual machine.
     ///
@@ -35,52 +35,45 @@ public enum VZKitResult<TemplateType: VZKitTemplate>: Sendable {
     
     /// A case representing a successful initialization of a virtual machine.
     ///
-    /// - Parameter machine: An instance of `VirtualMachine` parameterized by `TemplateType`, indicating successful creation.
-    case success(VirtualMachine<TemplateType>)
+    /// - Parameter machine: An instance of `VirtualMachine` parameterized by `Template`, indicating successful creation.
+    case success(VirtualMachine<Template>)
     
     /// The error encountered during virtual machine initialization, if any.
     ///
     /// - Returns: the associated `Error` if the result is `.failure`; otherwise, returns `nil`.
     public var error: Error? {
-        
         switch self {
-        case .failure(let error):
-            return error
-            
-        default:
-            return nil
+        case .failure(let error): error
+        default: nil
         }
     }
     
     /// The successfully created virtual machine, if available.
     ///
-    /// - Returns: the associated `VirtualMachine<TemplateType>` if the result is `.success`; otherwise, returns `nil`.
-    public var machine: VirtualMachine<TemplateType>? {
+    /// - Returns: the associated `VirtualMachine<Template>` if the result is `.success`; otherwise, returns `nil`.
+    public var machine: VirtualMachine<Template>? {
         
         switch self {
-        case .success(let machine):
-            return machine
-            
-        default:
-            return nil
+        case .success(let virtualMachine): virtualMachine
+        default: nil
         }
     }
     
     /// The current state of the virtual machine, suitable for display in views.
     ///
     /// If the outcome of the initialization is a success then we can simply forward the state from the virtual machine's own
-    /// `MachineStateManager` instance. If the outcome is a failure it returns `.error`.
+    /// `ObservableCoordinator` instance. If the outcome is a failure it returns `.error`.
     ///
     /// - Important: This property must be accessed on the main thread.
-    /// - Returns: Either a `MachineState` forwarded directly from the virtual machine state manager, or `.error` in case o failure.
-    @MainActor public var state: MachineState {
+    /// - Returns: Either a `VZVirtualMachine.State` forwarded directly from the virtual machine state coordinator,
+    /// or `.error` in case o failure.
+    /// - Note: This computed property propagates state changes thanks to
+    /// `ObservableCoordinator` being marked with `@Observable`.
+    @MainActor public var state: VZVirtualMachine.State {
         
         switch self {
-        case .success(let machine):
-            return machine.stateManager.currentState
-            
-        default:
-            return .error
+        case .success(let virtualMachine): virtualMachine.stateCoordinator.currentState
+        default: .error
         }
      }
     
@@ -88,18 +81,17 @@ public enum VZKitResult<TemplateType: VZKitTemplate>: Sendable {
     ///
     /// This property is marked with `@MainActor` to ensure it is accessed on the main thread, which is essential for UI-bound contexts.
     /// It returns the progress as an integer, representing the completion percentage, calculated based on the virtual machine’s
-    /// state manager. If the virtual machine is in a `.success` state, it converts the `progress` value from `stateManager`
+    /// state manager. If the virtual machine is in a `.success` state, it converts the `progress` value from `stateCoordinator`
     /// (a `Double` between 0 and 1) into an integer percentage. If the virtual machine is in any other state, the progress defaults to 0.
     ///
     /// - Returns: An integer representing the progress percentage (0-100) if available; otherwise, 0 if progress data is not accessible.
+    /// - Note: This computed property propagates state changes thanks to
+    /// `ObservableCoordinator` being marked with `@Observable`.
     @MainActor public var progress: Int {
         
         switch self {
-        case .success(let machine):
-            return Int(machine.stateManager.progress * 100)
-            
-        default:
-            return 0
+        case .success(let virtualMachine): Int(virtualMachine.progress * 100)
+        default: 0
         }
     }
 }
