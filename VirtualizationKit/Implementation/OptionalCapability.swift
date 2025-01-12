@@ -1,5 +1,5 @@
 //
-//  OptionalFeature.swift
+//  OptionalCapability.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 10/01/25.
@@ -9,7 +9,7 @@ import Foundation
 
 /// Represents a set of features available within the `VZKit` framework.
 ///
-/// The `OptionalFeature` enum encapsulates a predefined set of features that can be supported by
+/// The `OptionalCapability` enum encapsulates a predefined set of features that can be supported by
 /// either the host system or the guest virtual machine. Each feature includes metadata that
 /// describes its localization key and other internal details like scope (e.g., host or guest), allowing for consistent
 /// representation and translation.
@@ -29,14 +29,14 @@ import Foundation
 ///
 /// ## Usage
 /// ```swift
-/// let feature = OptionalFeature.rosetta
+/// let feature = OptionalCapability.rosetta
 /// print("Feature: \(feature.localized)") // Localized name
 /// ```
 ///
 /// ## Localization
 /// - Each feature includes a `localized` property that retrieves its localized name
 ///   using the framework's localization resources.
-public enum OptionalFeature: VZKitTransferable {
+public enum OptionalCapability: VZKitTransferable {
     
     // MARK: - Private Types
     
@@ -83,12 +83,12 @@ public enum OptionalFeature: VZKitTransferable {
     /// property to include the appropriate localization key and scope.
     private var metaData: MetaData {
         switch self {
-        case .rosetta: .init(key: "feature-rosetta", scope: .host)
-        case .nestedVirtualization: .init(key: "feature-nestedVirtualization", scope: .host)
-        case .xhciUSBHotSwap: .init(key: "feature-xhciUSBHotSwap", scope: .host)
-        case .directoryShare: .init(key: "feature-directoryShare", scope: .guest)
-        case .audioCaptureDevice: .init(key: "feature-audioCaptureDevice", scope: .host)
-        case .audioOutputDevice: .init(key: "feature-audioOutputDevice", scope: .host)
+        case .rosetta: .init(key: "capability-rosetta", scope: .host)
+        case .nestedVirtualization: .init(key: "capability-nestedVirtualization", scope: .host)
+        case .xhciUSBHotSwap: .init(key: "capability-xhciUSBHotSwap", scope: .host)
+        case .directoryShare: .init(key: "capability-directoryShare", scope: .guest)
+        case .audioCaptureDevice: .init(key: "capability-audioCaptureDevice", scope: .host)
+        case .audioOutputDevice: .init(key: "capability-audioOutputDevice", scope: .host)
         }
     }
     

@@ -53,18 +53,18 @@ struct VZKitBuilder<Template: VZKitTemplate> {
             
             configuration.platform = try .create(
                 at: vmSupportDirectory,
-                type: .generic(nestedVirtualization: template.featuresToEnable.contains(.nestedVirtualization))
+                type: .generic(nestedVirtualization: template.optionalCapabilities.contains(.nestedVirtualization))
             )
             
             configuration.bootLoader = try .create(
                 at: vmSupportDirectory.appendingPathComponent("NVRAM")
             )
             
-            if template.featuresToEnable.contains(.rosetta) {
+            if template.optionalCapabilities.contains(.rosetta) {
                 configuration.directorySharingDevices.append(try VZLinuxRosettaDirectoryShare.create())
             }
             
-            if let url = template.removableInstallMedia {
+            if let url = template.bootableInstallMedia {
                 configuration.storageDevices.append(
                     try VZUSBMassStorageDeviceConfiguration.create(at: url, type: .readOnly)
                 )
@@ -88,15 +88,15 @@ struct VZKitBuilder<Template: VZKitTemplate> {
         configuration.memoryBalloonDevices.append(VZVirtioTraditionalMemoryBalloonDeviceConfiguration())
         configuration.entropyDevices.append(VZVirtioEntropyDeviceConfiguration())
         
-        if template.featuresToEnable.contains(.audioOutputDevice) {
+        if template.optionalCapabilities.contains(.audioOutputDevice) {
             configuration.audioDevices.append(try await .create(type: .output))
         }
         
-        if template.featuresToEnable.contains(.audioCaptureDevice) {
+        if template.optionalCapabilities.contains(.audioCaptureDevice) {
             configuration.audioDevices.append(try await .create(type: .input))
         }
         
-        if template.featuresToEnable.contains(.directoryShare) {
+        if template.optionalCapabilities.contains(.directoryShare) {
             configuration.directorySharingDevices.append(
                 try .create(
                     at: vmSupportDirectory.appendingPathComponent(template.name),
@@ -105,7 +105,7 @@ struct VZKitBuilder<Template: VZKitTemplate> {
             )
         }
         
-        if #available(macOS 15.0, *), template.featuresToEnable.contains(.xhciUSBHotSwap) {
+        if #available(macOS 15.0, *), template.optionalCapabilities.contains(.xhciUSBHotSwap) {
             configuration.usbControllers.append(VZXHCIControllerConfiguration())
         }
     }
@@ -120,7 +120,7 @@ struct VZKitBuilder<Template: VZKitTemplate> {
             
             var restoreImage: VZMacOSRestoreImage? = nil
             
-            if  let url = template.removableInstallMedia,
+            if  let url = template.bootableInstallMedia,
                 let image = try? await VZMacOSRestoreImage.load(from: url) {
                 
                 guard image.osVersion.major == version.major else {

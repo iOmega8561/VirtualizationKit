@@ -20,9 +20,9 @@ enum VZKitError: LocalizedError {
     case missingMacImage
     
     // Features
-    case unavailableFeature(_ feature: OptionalFeature)
-    case permissionDenied(_ feature: OptionalFeature)
-    case unsupportedFeature(_ feature: OptionalFeature)
+    case unavailableFeature(_ feature: OptionalCapability)
+    case permissionDenied(_ feature: OptionalCapability)
+    case unsupportedFeature(_ feature: OptionalCapability)
     case usbDeviceNotFound(_ id: UUID)
     
     // Networking
