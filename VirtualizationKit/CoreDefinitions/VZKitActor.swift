@@ -91,4 +91,21 @@ import Virtualization
     public nonisolated var unownedExecutor: UnownedSerialExecutor {
         Self.sharedUnownedExecutor
     }
+    
+    /// Executes a closure asynchronously on the actor's queue.
+    ///
+    /// This method allows you to schedule a closure to be executed within the actor's isolated context,
+    /// ensuring thread safety and proper synchronization.
+    ///
+    /// - Parameter operation: A closure to be executed on the actor's queue.
+    /// - Returns: The result of the closure, if it has a return value.
+    /// - Throws: Any error thrown by the closure.
+    public static func run<T: Sendable>(_ operation: @Sendable @escaping () async throws -> T) async throws -> T {
+        return try await shared.perform(operation)
+    }
+
+    /// A helper method to execute an operation within the actor's context.
+    private func perform<T: Sendable>(_ operation: @Sendable @escaping () async throws -> T) async throws -> T {
+        return try await operation()
+    }
 }

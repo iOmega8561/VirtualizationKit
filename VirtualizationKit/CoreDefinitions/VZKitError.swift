@@ -8,84 +8,61 @@
 import Foundation
 
 enum VZKitError: LocalizedError {
-    case mainDisk
-    case machineIdCorrupt
-    case machineIdMissing
-    case hostFeatureUnsupported(_ feature: String)
-    case guestFeatureNotSupported(_ feature: String)
-    case rosettaUnavailable
-    case auxiliaryStorage
+    
+    // "Something blew up in Virtualization.framework"
+    case appleLimitExceeded
+    
+    // "Something went wrong writing/reading files"
+    case auxiliaryFailedSetup
+    case diskImageFailedSetup
+    case coreFilesTampered
+    case coreFilesMissing
+    case missingMacImage
+    
+    // Features
+    case unavailableFeature(_ feature: OptionalFeature)
+    case permissionDenied(_ feature: OptionalFeature)
+    case unsupportedFeature(_ feature: OptionalFeature)
+    case usbDeviceNotFound(_ id: UUID)
+    
+    // Networking
+    case invalidMacAddress(_ macAddress: String)
+    case bridgeNicUnavailable(_ id: String?)
+    
+    // Configuration/Generic
     case macUnsupportedImage
     case macUnsupportedHost
-    case missingMacImage
-    case captureDevicePermissionDenied
-    case wrongMacImageVersion(_ expected: OperatingSystem.Version, _ actual: OperatingSystem.Version)
-    case appleVMLimitExceeded
-    case bridgeInterfaceNotAvailable(_ id: String?)
-    case invalidMacAddress(_ macAddress: String)
-    case usbDeviceNotFound(_ id: UUID)
+    case wrongMacImageVersion(_ expected: OperatingSystem.Version,
+                              _ actual: OperatingSystem.Version)
 
-    public var errorDescription: String? {
+    public var errorDescription: String? { self.errorLocale.value }
+    
+    private var errorLocale: VZKitLocale {
         
         switch self {
-        case .mainDisk:
-            return VirtualizationKit.localized("error-configuration-maindisk")
-            
-        case .machineIdCorrupt:
-            return VirtualizationKit.localized("error-configuration-machineid-corrupt")
-            
-        case .machineIdMissing:
-            return VirtualizationKit.localized("error-configuration-machineid-missing")
-            
-        case .hostFeatureUnsupported(let feature):
-            return .init(format: VirtualizationKit.localized("error-configuration-host-feature-unsupported"),
-                         feature)
-            
-        case .guestFeatureNotSupported(let feature):
-            return .init(format: VirtualizationKit.localized("error-configuration-guest-feature-unsupported"),
-                         feature)
-            
-        case .rosettaUnavailable:
-            return VirtualizationKit.localized("error-configuration-rosettaunavailable")
-            
-        case .auxiliaryStorage:
-            return VirtualizationKit.localized("error-configuration-auxstorage")
-            
-        case .macUnsupportedImage:
-            return VirtualizationKit.localized("error-configuration-macimage")
-            
-        case .macUnsupportedHost:
-            return VirtualizationKit.localized("error-configuration-machost")
-            
-        case .missingMacImage:
-            return VirtualizationKit.localized("error-installer-macimage")
-            
-        case .captureDevicePermissionDenied:
-            return VirtualizationKit.localized("error-configuration-capturedevice")
-            
+        
+        case .appleLimitExceeded: .init("error-appleLimitExceeded")
+                
+        case .auxiliaryFailedSetup: .init("error-auxiliaryFailedSetup")
+        case .diskImageFailedSetup: .init("error-diskImageFailedSetup")
+        case .coreFilesTampered: .init("error-coreFilesTampered")
+        case .coreFilesMissing: .init("error-coreFilesMissing")
+        case .missingMacImage: .init("error-missingMacImage")
+                
+        case .permissionDenied(let feature): .init("error-permissionDenied", feature)
+        case .unavailableFeature(let feature): .init("error-unavailableFeature", feature)
+        case .unsupportedFeature(let feature): .init("error-unsupportedFeature", feature)
+        case .usbDeviceNotFound(let id): .init("error-usbDeviceNotFound", id.uuidString)
+                    
+        case .invalidMacAddress(let macAddress): .init("error-invalidMacAddress", macAddress)
+        case .bridgeNicUnavailable(let id):
+            id != nil ? .init("error-bridgeNicUnavailable", id!) :
+                        .init("error-bridgeNoNicsAvailable")
+                    
+        case .macUnsupportedImage: .init("error-macUnsupportedImage")
+        case .macUnsupportedHost: .init("error-macUnsupportedHost")
         case .wrongMacImageVersion(let expected, let actual):
-            return .init(format: VirtualizationKit.localized("error-configuration-wrongimgversion"),
-                         expected.major,
-                         expected.minor,
-                         actual.major,
-                         actual.minor)
-            
-        case .appleVMLimitExceeded:
-            return .init(format: VirtualizationKit.localized("error-applevz-limitexceeded"),
-                         VirtualizationKit.appleMaxVMs)
-            
-        case .bridgeInterfaceNotAvailable(let id):
-            guard let id else {
-                return VirtualizationKit.localized("error-configuration-netinterfaces")
-            }
-            
-            return .init(format: VirtualizationKit.localized("error-configuration-netinterface"), id)
-            
-        case .invalidMacAddress(let macAddress):
-            return .init(format: VirtualizationKit.localized("error-configuration-macaddress"), macAddress)
-            
-        case .usbDeviceNotFound(let id):
-            return .init(format: VirtualizationKit.localized("error-usbdev-notfound"), id.uuidString)
+                .init("error-wrongMacImageVersion", expected, actual)
         }
     }
 }

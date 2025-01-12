@@ -1,23 +1,23 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "error-applevz-limitexceeded" : {
+    "error-appleLimitExceeded" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Due to limitations imposed by Apple, it is only possible to run %d macOS Virtual Machines at the same time."
+            "value" : "Due to limitations imposed by Apple’s license agreement, it is only possible to run a fixed amount of macOS Virtual Machines at the same time."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A causa di una limitazione imposta da Apple, non è possibile avviare più di %d Macchine Virtuali macOS in contemporanea."
+            "value" : "A causa di una limitazione prevista dagli accordi di licenza di Apple, non è possibile avviare più di un certo numero di Macchine Virtuali macOS in contemporanea."
           }
         }
       }
     },
-    "error-configuration-auxstorage" : {
+    "error-auxiliaryFailedSetup" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -33,151 +33,7 @@
         }
       }
     },
-    "error-configuration-capturedevice" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The virtual machine has been configured with a capture device, but the application does not have permission to use it"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La macchina virtuale è stata configurata con un dispositivo di cattura, ma l’applicazione non ha il permesso di usarlo."
-          }
-        }
-      }
-    },
-    "error-configuration-guest-feature-unsupported" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The following feature is not supported by the guest operating system: “%@”"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La seguente funzionalità non è supportata dal sistema operativo guest: “%@”"
-          }
-        }
-      }
-    },
-    "error-configuration-host-feature-unsupported" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The following feature is not supported by the host Macintosh: “%@”"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La seguente funzionalità non è supportata dal Macintosh Host: “%@”"
-          }
-        }
-      }
-    },
-    "error-configuration-macaddress" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The specified MAC Address is not valid: “%@”"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il MAC Address specificato non è valido: “%@”"
-          }
-        }
-      }
-    },
-    "error-configuration-machineid-corrupt" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The Unique Identifier of the Virtual Machine appears to be corrupt. Please re-create this Virtual Machine."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "L’Identificativo Univoco della Macchina Virtuale sembra corrotto. Per favore ricreare la Macchina. "
-          }
-        }
-      }
-    },
-    "error-configuration-machineid-missing" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The Unique Identifier file of the Virtual Machine could not be found (could have been deleted). Please re-create this Virtual Machine"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non è stato possibile trovare il file contenente l’Identificativo Univoco della Macchina Virtuale (potrebbe essere stato rimosso). Per favore ricreare la Macchina."
-          }
-        }
-      }
-    },
-    "error-configuration-machost" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "This mac is not supported by the chosen macOS restore image"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Questo mac non è supportato dall'immagine di ripristino di macOS scelta"
-          }
-        }
-      }
-    },
-    "error-configuration-macimage" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The chosen macOS restore image does not support any feasible configuration"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "L'immagine di ripristino di macOS scelta non supporta alcuna configurazione possibile"
-          }
-        }
-      }
-    },
-    "error-configuration-maindisk" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Could not create device attachment for main disk"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non è stato possibile creare il dispositivo a blocchi per il disco principale"
-          }
-        }
-      }
-    },
-    "error-configuration-netinterface" : {
+    "error-bridgeNicUnavailable" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -193,7 +49,7 @@
         }
       }
     },
-    "error-configuration-netinterfaces" : {
+    "error-bridgeNoNicsAvailable" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -209,39 +65,103 @@
         }
       }
     },
-    "error-configuration-rosettaunavailable" : {
+    "error-coreFilesMissing" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rosetta is unavailable on the host Macintosh"
+            "value" : "Critical Virtual Machine files are missing or have been deleted. Please delete or recreate the Virtual Machine"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rosetta non è disponibile sul Macintosh Host"
+            "value" : "File critici per il funzionamento della Macchina Virtuale sono mancanti o sono stati eliminati. Si prega di eliminare o ricreare la Macchina Virtuale."
           }
         }
       }
     },
-    "error-configuration-wrongimgversion" : {
+    "error-coreFilesTampered" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The Virtual Machine has been created using a  macOS %d.%d restore image, but the currently selected image’s version is %d.%d"
+            "value" : "Critical Virtual Machine files are corrupted or have been tampered with. Please delete or recreate the Virtual Machine."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La Macchina Virtuale è stata creata utilizzando un’immagine di ripristino di macOS %d.%d, ma la versione dell’immagine attualmente selezionata è %d.%d"
+            "value" : "File critici per il funzionamento della Macchina Virtuale sono stati corrotti o manomessi. Si prega di eliminare o ricreare la Macchina Virtuale"
           }
         }
       }
     },
-    "error-installer-macimage" : {
+    "error-diskImageFailedSetup" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Could not create device attachment for main disk"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non è stato possibile creare il dispositivo a blocchi per il disco principale"
+          }
+        }
+      }
+    },
+    "error-invalidMacAddress" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The specified MAC Address is not valid: “%@”"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il MAC Address specificato non è valido: “%@”"
+          }
+        }
+      }
+    },
+    "error-macUnsupportedHost" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This mac is not supported by the chosen macOS restore image"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questo mac non è supportato dall'immagine di ripristino di macOS scelta"
+          }
+        }
+      }
+    },
+    "error-macUnsupportedImage" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The chosen macOS restore image does not support any feasible configuration"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'immagine di ripristino di macOS scelta non supporta alcuna configurazione possibile"
+          }
+        }
+      }
+    },
+    "error-missingMacImage" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -257,7 +177,55 @@
         }
       }
     },
-    "error-usbdev-notfound" : {
+    "error-permissionDenied" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The following feature cannot be accessed on the %@ machine or operating system because permission has been denied: “%@”"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non è possibile accedere alla seguente funzionalità della macchina o del sistema operativo %@ a causa di mancanza di autorizzazione: “%@”"
+          }
+        }
+      }
+    },
+    "error-unavailableFeature" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The following feature is supported but not available on the %@ machine or operating system: “%@”"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La seguente funzionalità è supportata ma non disponibile sulla macchina o sistema operativo %@: “%@”"
+          }
+        }
+      }
+    },
+    "error-unsupportedFeature" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The following feature is not supported by the %@ machine or operating system: “%@”"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La seguente funzionalità non è supportata dalla macchina o sistema operativo %@: “%@”"
+          }
+        }
+      }
+    },
+    "error-usbDeviceNotFound" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -269,6 +237,119 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Il dispositivo USB para-virtualizzato con il seguente identificativo non esiste: “%@”"
+          }
+        }
+      }
+    },
+    "error-wrongMacImageVersion" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The Virtual Machine has been created using a  macOS %@ restore image, but the currently selected image’s version is %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La Macchina Virtuale è stata creata utilizzando un’immagine di ripristino di macOS %@, ma la versione dell’immagine attualmente selezionata è %@"
+          }
+        }
+      }
+    },
+    "feature-audioCaptureDevice" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Audio capture device"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dispositivo audio di cattura"
+          }
+        }
+      }
+    },
+    "feature-audioOutputDevice" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Audio output device"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dispositivo audio di uscita"
+          }
+        }
+      }
+    },
+    "feature-directoryShare" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shared directory"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cartella condivisa"
+          }
+        }
+      }
+    },
+    "feature-nestedVirtualization" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nested virtualization"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Virtualizzazione nidificata"
+          }
+        }
+      }
+    },
+    "feature-rosetta" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rosetta software emulator"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Emulatore software Rosetta"
+          }
+        }
+      }
+    },
+    "feature-xhciUSBHotSwap" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para-virtualized USB device hot swap"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gestione a caldo dei dispositivi USB para-virtualizzati"
           }
         }
       }
