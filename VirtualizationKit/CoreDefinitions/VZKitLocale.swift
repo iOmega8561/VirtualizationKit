@@ -89,7 +89,7 @@ struct VZKitLocale {
     /// - Parameters:
     ///   - key: A `String.LocalizationValue` representing the localization key.
     ///   - feature: A `Feature` object providing additional context for the localized string.
-    init(_ key: String.LocalizationValue, _ feature: OptionalFeature) {
+    init(_ key: String.LocalizationValue, _ feature: OptionalCapability) {
         self.init(key, feature.scope, feature.localized)
     }
     

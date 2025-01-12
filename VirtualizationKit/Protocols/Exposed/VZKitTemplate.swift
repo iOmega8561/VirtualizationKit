@@ -37,17 +37,17 @@ public protocol VZKitTemplate: Identifiable, VZKitTransferable {
     /// Use this property to label or display the template in the user interface.
     var name: String { get }
     
+    /// An optional URL pointing to a removable install media, such as a CD-ROM image.
+    ///
+    /// If provided, the Virtual Machine can boot or install from the given image. If `nil`,
+    /// the VM may rely on other sources for installation media.
+    var bootableInstallMedia: URL? { get }
+    
     /// The operating system configuration associated with this template.
     ///
     /// Provides details about which OS is used in the VM, as well as any
     /// relevant configuration specific to that OS.
     var operatingSystem: OperatingSystem { get }
-    
-    /// An optional URL pointing to a removable install media, such as a CD-ROM image.
-    ///
-    /// If provided, the Virtual Machine can boot or install from the given image. If `nil`,
-    /// the VM may rely on other sources for installation media.
-    var removableInstallMedia: URL? { get }
     
     /// The network configuration defining how the VM connects to other networks or VMs.
     ///
@@ -61,9 +61,9 @@ public protocol VZKitTemplate: Identifiable, VZKitTransferable {
     /// aspects are allocated to the VM.
     var performancePreset: PerformancePreset { get }
     
-    /// A collection of optional features to enable for the VM.
+    /// A collection of optional capabilities to enable for the VM.
     ///
     /// These may include specialized hardware capabilities, security features, or
     /// experimental functionalities that can be toggled on for the VM.
-    var featuresToEnable: [OptionalFeature] { get }
+    var optionalCapabilities: [OptionalCapability] { get }
 }

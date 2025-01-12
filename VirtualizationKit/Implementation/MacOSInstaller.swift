@@ -112,7 +112,7 @@ struct MacOSInstaller<Template: VZKitTemplate>: VZKitStatefulInstaller {
             return nil
         }
         
-        let restoreImageURL = virtualMachine.template.removableInstallMedia
+        let restoreImageURL = virtualMachine.template.bootableInstallMedia
         
         guard let restoreImageURL else {
             throw VZKitError.missingMacImage

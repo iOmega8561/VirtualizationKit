@@ -1,6 +1,108 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "capability-audioCaptureDevice" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Audio capture device"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dispositivo audio di cattura"
+          }
+        }
+      }
+    },
+    "capability-audioOutputDevice" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Audio output device"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dispositivo audio di uscita"
+          }
+        }
+      }
+    },
+    "capability-directoryShare" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shared directory"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cartella condivisa"
+          }
+        }
+      }
+    },
+    "capability-nestedVirtualization" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nested virtualization"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Virtualizzazione nidificata"
+          }
+        }
+      }
+    },
+    "capability-rosetta" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rosetta x86_64 Emulator"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Emulatore x86_64 Rosetta"
+          }
+        }
+      }
+    },
+    "capability-xhciUSBHotSwap" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para-virtualized USB device hot swap"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gestione a caldo dei dispositivi USB para-virtualizzati"
+          }
+        }
+      }
+    },
     "error-appleLimitExceeded" : {
       "localizations" : {
         "en" : {
@@ -253,103 +355,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "La Macchina Virtuale è stata creata utilizzando un’immagine di ripristino di macOS %@, ma la versione dell’immagine attualmente selezionata è %@"
-          }
-        }
-      }
-    },
-    "feature-audioCaptureDevice" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Audio capture device"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dispositivo audio di cattura"
-          }
-        }
-      }
-    },
-    "feature-audioOutputDevice" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Audio output device"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dispositivo audio di uscita"
-          }
-        }
-      }
-    },
-    "feature-directoryShare" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Shared directory"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cartella condivisa"
-          }
-        }
-      }
-    },
-    "feature-nestedVirtualization" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nested virtualization"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Virtualizzazione nidificata"
-          }
-        }
-      }
-    },
-    "feature-rosetta" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rosetta software emulator"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Emulatore software Rosetta"
-          }
-        }
-      }
-    },
-    "feature-xhciUSBHotSwap" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Para-virtualized USB device hot swap"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gestione a caldo dei dispositivi USB para-virtualizzati"
           }
         }
       }
