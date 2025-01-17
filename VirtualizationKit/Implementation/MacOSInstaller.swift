@@ -82,6 +82,9 @@ struct MacOSInstaller<Template: VZKitTemplate>: VZKitStatefulInstaller {
     /// - Note: Every operation that is dispatched on a `VZVirtualMachine` **is required**
     /// to be executed on the same thread on which the `VZVirtualMachine` was first created. Since
     /// the default implementation that this frameworks provides uses `VZKitActor`, this method is pinned to it.
+    /// - Note: This method checks if there is any underlying error existing in case the installation goes wrong.
+    /// This is done to ensure that any other Virtualization or Network related error id not masked by VZMacOSInstaller
+    /// errors, that are not very helpful and provide extremely generic localized descriptions.
     @VZKitActor public func restoreFromDiskImage() async throws {
         
         if await vzKitStateCoordinator.currentState != .restoring {
@@ -92,7 +95,10 @@ struct MacOSInstaller<Template: VZKitTemplate>: VZKitStatefulInstaller {
             vzMacOSInstaller.progress.publisher(for: \.fractionCompleted)
         )
         
-        try await vzMacOSInstaller.install()
+        do {
+            try await vzMacOSInstaller.install()
+            
+        } catch { throw (error as NSError).underlyingErrors.first ?? error }
     }
 
     // MARK: - Initializers
