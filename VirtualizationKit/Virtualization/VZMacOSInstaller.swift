@@ -16,9 +16,9 @@
 
 import Virtualization
 
-extension VZMacOSInstaller {
+@VZKitActor extension VZMacOSInstaller {
     
-    @VZKitActor func install() async throws {
+    func install() async throws {
         
         return try await withCheckedThrowingContinuation(isolation: VZKitActor.shared) { continuation in
             
