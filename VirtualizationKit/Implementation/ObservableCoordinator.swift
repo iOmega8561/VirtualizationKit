@@ -74,6 +74,7 @@ import Virtualization
                                                                T.Failure == Never {
         registerPublisher(publisher) { [weak self] state in
             guard let state = ExecutionState(state) else { return }
+            guard self?.currentState.rawValue != 10 || state == .stopped else { return }
             self?.currentState = state
         }
     }
