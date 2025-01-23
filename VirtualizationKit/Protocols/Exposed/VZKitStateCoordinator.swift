@@ -26,50 +26,14 @@ import Virtualization
 /// All conforming types must operate within the `@MainActor` context to ensure thread safety
 /// and UI compatibility.
 ///
-/// ## Example Usage
-/// ```swift
-/// @MainActor
-/// class VirtualMachinestateCoordinator: VZKitStateCoordinator {
-///     var currentState: VZVirtualMachine.State = .stopped
-///     var progress: Double = 0.0
-///
-///     func update(with newState: VZVirtualMachine.State) {
-///         currentState = newState
-///     }
-///
-///     func registerPublisher<T: Publisher>(_ publisher: T, sink: @escaping (T.Output) -> Void) where T.Failure == Never {
-///         // Implementation here
-///     }
-/// }
-/// ```
-///
 /// - Note: This protocol is pinned to `@MainActor` to ensure safe usage in UI-related contexts.
 @MainActor public protocol VZKitStateCoordinator {
-        
-    /// The type representing the progress of the operation.
-    ///
-    /// This can be any numeric type, such as `Double` or `Int`.
-    associatedtype NumericProgress: Numeric
     
     /// The current execution state of the virtual machine.
     ///
-    /// The `currentState` property represents the active `VZVirtualMachine.State` of the virtual machine.
-    /// This property should be updated whenever a new state is received, possibly using the `update(_:)` method.
-    var currentState: VZVirtualMachine.State { get }
-    
-    /// The current progress of the virtual machine operation.
-    ///
-    /// This property represents a numeric value that can be used to track progress. For example,
-    /// it might be a percentage (0.0 to 1.0) or a specific count, depending on the operation.
-    var progress: NumericProgress { get }
-    
-    /// Updates the current execution state to a new value.
-    ///
-    /// Conforming types must implement this method to handle state transitions and ensure that
-    /// observers or coordinated objects are notified of changes to the `currentState`.
-    ///
-    /// - Parameter newState: The new execution state to set.
-    func update(with newState: VZVirtualMachine.State)
+    /// The `currentState` property represents the active `ExecutionState` of the virtual machine.
+    /// This property should be updated whenever a new state is received.
+    var currentState: ExecutionState { get }
     
     /// Registers a generic `Publisher` and defines a sink closure to handle its output.
     ///

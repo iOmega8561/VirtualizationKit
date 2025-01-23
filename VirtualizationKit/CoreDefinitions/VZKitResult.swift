@@ -42,7 +42,7 @@ public enum VZKitResult<Template: VZKitTemplate>: Sendable {
     /// The successfully created virtual machine, if available.
     ///
     /// - Returns: the associated `VirtualMachine<Template>` if the result is `.success`; otherwise, returns `nil`.
-    public var machine: VirtualMachine<Template>? {
+    public var virtualMachine: VirtualMachine<Template>? {
         
         switch self {
         case .success(let virtualMachine): virtualMachine
@@ -56,33 +56,15 @@ public enum VZKitResult<Template: VZKitTemplate>: Sendable {
     /// `ObservableCoordinator` instance. If the outcome is a failure it returns `.error`.
     ///
     /// - Important: This property must be accessed on the main thread.
-    /// - Returns: Either a `VZVirtualMachine.State` forwarded directly from the virtual machine state coordinator,
+    /// - Returns: Either a `ExecutionState` forwarded directly from the virtual machine state coordinator,
     /// or `.error` in case o failure.
     /// - Note: This computed property propagates state changes thanks to
     /// `ObservableCoordinator` being marked with `@Observable`.
-    @MainActor public var state: VZVirtualMachine.State {
+    @MainActor public var state: ExecutionState {
         
         switch self {
         case .success(let virtualMachine): virtualMachine.stateCoordinator.currentState
-        default: .error
+        case .failure(let error): .error(error: error)
         }
      }
-    
-    /// The `progress` computed property provides the current progress of the virtual machine’s operation as a percentage.
-    ///
-    /// This property is marked with `@MainActor` to ensure it is accessed on the main thread, which is essential for UI-bound contexts.
-    /// It returns the progress as an integer, representing the completion percentage, calculated based on the virtual machine’s
-    /// state manager. If the virtual machine is in a `.success` state, it converts the `progress` value from `stateCoordinator`
-    /// (a `Double` between 0 and 1) into an integer percentage. If the virtual machine is in any other state, the progress defaults to 0.
-    ///
-    /// - Returns: An integer representing the progress percentage (0-100) if available; otherwise, 0 if progress data is not accessible.
-    /// - Note: This computed property propagates state changes thanks to
-    /// `ObservableCoordinator` being marked with `@Observable`.
-    @MainActor public var progress: Int {
-        
-        switch self {
-        case .success(let virtualMachine): Int(virtualMachine.progress * 100)
-        default: 0
-        }
-    }
 }
