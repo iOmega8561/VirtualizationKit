@@ -34,18 +34,7 @@ final class VZKitDelegate: NSObject, VZVirtualMachineDelegate, Sendable {
     /// `statePublisher` is a `PassthroughSubject` that broadcasts `VZVirtualMachine.State` updates when the virtual
     /// machine undergoes state changes, such as stopping gracefully or due to an error. Observing this publisher
     /// allows other components, such as a view model, to stay in sync with the virtual machine’s current state.
-    let statePublisher: PassthroughSubject<VZVirtualMachine.State, Never> = .init()
-    
-    /// Called when the virtual machine has stopped gracefully.
-    ///
-    /// This method is a stub required by the `VZVirtualMachineDelegate` protocol. It is invoked by the virtual
-    /// machine after a graceful shutdown. Upon receiving this event, the delegate sends the current state
-    /// through the `statePublisher` so that observers can update accordingly.
-    ///
-    /// - Parameter virtualMachine: The virtual machine instance that stopped.
-    func guestDidStop(_ virtualMachine: VZVirtualMachine) {
-        statePublisher.send(virtualMachine.state)
-    }
+    let publisher: PassthroughSubject<Error, Never> = .init()
     
     /// Called when the virtual machine has stopped due to an error.
     ///
@@ -58,7 +47,7 @@ final class VZKitDelegate: NSObject, VZVirtualMachineDelegate, Sendable {
     ///   - virtualMachine: The virtual machine instance that stopped.
     ///   - error: The error that caused the virtual machine to stop unexpectedly.
     func virtualMachine(_ virtualMachine: VZVirtualMachine, didStopWithError error: any Error) {
-        statePublisher.send(.stopped)
+        publisher.send(error)
         VZKitLogger.default.error(error.localizedDescription)
     }
     
@@ -73,6 +62,7 @@ final class VZKitDelegate: NSObject, VZVirtualMachineDelegate, Sendable {
     ///   - networkDevice: The network device that has been detached.
     ///   - attachmentWasDisconnectedWithError: The error that has been encountered.
     func virtualMachine(_ virtualMachine: VZVirtualMachine, networkDevice: VZNetworkDevice, attachmentWasDisconnectedWithError error: any Error) {
+        publisher.send(error)
         VZKitLogger.default.error(error.localizedDescription)
     }
 }

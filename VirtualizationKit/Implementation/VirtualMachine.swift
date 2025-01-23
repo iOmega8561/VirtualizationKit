@@ -69,7 +69,7 @@
     /// Manages and tracks the current execution state of the virtual machine, pinned to the main actor.
     ///
     /// `stateCoordinator` is an instance of `ObservableCoordinator` responsible for
-    /// observing and updating the `VZVirtualMachine.State` of the virtual machine.
+    /// observing and updating the `ExecutionState` of the virtual machine.
     /// Since `stateCoordinator` is tied to `@MainActor`, all state changes and updates are
     /// handled on the main thread, ensuring thread safety for UI updates and other main-thread operations.
     /// The `stateCoordinator` helps centralize and simplify state management within the VM, reducing the need
@@ -93,27 +93,19 @@
     /// - Note: This method is pinned to `@VZKitActor` to ensure the operation is executed on
     /// the same queue that was used to create the `VZVirtualMachine` instance
     @VZKitActor public func performTransition(executing command: Command) async throws {
-            
-        await stateCoordinator.update(with: command.transitionState)
-        
+                    
         do {
             switch command {
             case .start: try await vzVirtualMachine.start()
             case .stop: try await vzVirtualMachine.stop()
             case .pause: try await vzVirtualMachine.pause()
             case .resume: try await vzVirtualMachine.resume()
-            case .install: try await MacOSInstaller(virtualMachine: self)?.restoreFromDiskImage()
+            case .install: try await VZMacOSInstaller(virtualMachine: self)?.install()
             }
-            
-            if let state = command.finalState {
-                await stateCoordinator.update(with: state)
-            }
-            
+           
         } catch VZError.virtualMachineLimitExceeded {
-            await stateCoordinator.rollback()
             throw VZKitError.appleLimitExceeded
-            
-        } catch { await stateCoordinator.rollback(); throw error }
+        }
     }
 
     /// The explicit, private, asynchronous init of the data structure. Uses an instance of `VZKitBuilder`
@@ -136,7 +128,11 @@
         self.stateCoordinator = await .init()
         
         await self.stateCoordinator.registerPublisher(
-            delegate.statePublisher
+            delegate.publisher
+        )
+        
+        await self.stateCoordinator.registerPublisher(
+            vzVirtualMachine.publisher(for: \.state)
         )
     }
     
