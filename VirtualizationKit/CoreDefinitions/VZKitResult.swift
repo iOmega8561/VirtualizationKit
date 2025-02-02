@@ -26,7 +26,7 @@ import Virtualization
 /// - Note: The `Template` must conform to `VZKitTemplate`.
 ///
 /// - Important: You generally don't create this object directly, but use the VirtualMachine.createMachine static factory method instead.
-public enum VZKitResult<Template: VZKitTemplate>: Sendable {
+@frozen public enum VZKitResult<Template: VZKitTemplate>: Sendable {
     
     /// A case representing a failed attempt to initialize a virtual machine.
     ///
@@ -52,28 +52,9 @@ public enum VZKitResult<Template: VZKitTemplate>: Sendable {
     ///
     /// - Returns: the associated `VirtualMachine<Template>` if the result is `.success`; otherwise, returns `nil`.
     public var virtualMachine: VirtualMachine<Template>? {
-        
         switch self {
         case .success(let virtualMachine): virtualMachine
         default: nil
         }
     }
-    
-    /// The current state of the virtual machine, suitable for display in views.
-    ///
-    /// If the outcome of the initialization is a success then we can simply forward the state from the virtual machine's own
-    /// `ObservableCoordinator` instance. If the outcome is a failure it returns `.error`.
-    ///
-    /// - Important: This property must be accessed on the main thread.
-    /// - Returns: Either a `ExecutionState` forwarded directly from the virtual machine state coordinator,
-    /// or `.error` in case o failure.
-    /// - Note: This computed property propagates state changes thanks to
-    /// `ObservableCoordinator` being marked with `@Observable`.
-    @MainActor public var state: ExecutionState {
-        
-        switch self {
-        case .success(let virtualMachine): virtualMachine.stateCoordinator.currentState
-        case .failure(let error): .error(error: error)
-        }
-     }
 }
