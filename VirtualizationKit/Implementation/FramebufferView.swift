@@ -18,32 +18,18 @@ import SwiftUI
 
 import Virtualization
 
-/// A SwiftUI-compatible wrapper for an AppKit-based virtual machine console view.
+/// A SwiftUI-compatible wrapper for the virtual machine display.
 ///
-/// `FramebufferView` is a wrapper around an AppKit `NSView` that provides a graphical console for a virtual machine.
-/// It conforms to `VZKitPreviewable` and can be used as a SwiftUI view through `NSViewRepresentable`.
-/// This structure is designed to configure and present the virtual machine's display within a SwiftUI application.
+/// `FramebufferView` is a SwiftUI representable view (conforms to `NSViewRepresentable`) that can be
+/// used to access the virtual machine display and interact with it using mouse and keyboard. The view is configurable,
+/// allowing to set specific properties that will modify the behaviour of the virtual machine display
 ///
-/// # Overview
 /// This wrapper manages the following properties for the virtual machine console:
 /// - `VirtualMachine`: The virtual machine instance for display output.
 /// - `automaticallyReconfiguresDisplay`: Determines if the console should adjust the display configuration based on window size.
 /// - `capturesSystemKeys`: Determines if the console should capture system-wide key combinations.
-///
-/// `FramebufferView` is intended to be wrapped by a `ConsoleView` for direct use in SwiftUI layouts. The view is
-/// configurable based on whether it is running in a preview context, allowing for a customized experience in development
-/// previews.
-///
-/// - Note: `FramebufferView` should only be used within a SwiftUI context and is not designed for standalone usage.
-///
-/// - Parameters:
-///   - Template: A type conforming to `VZKitTemplate`, which provides the necessary configuration for the virtual machine.
-public struct FramebufferView<Template: VZKitTemplate>: NSViewRepresentable, VZKitPreviewable {
-    
-    /// Indicates if the view is used in a preview context.
-    ///
-    /// This boolean value helps determine if the representable should adjust its configuration for Xcode's SwiftUI Preview.
-    public let isPreviewContext: Bool
+/// - `disablesInputRedirection`: Determines if the view should forward mouse and keyboard input to the virtual machine.
+public struct FramebufferView: NSViewRepresentable, VZKitPreviewable {
     
     /// A flag indicating whether the console view should automatically reconfigure the display to match the window size.
     ///
@@ -55,10 +41,15 @@ public struct FramebufferView<Template: VZKitTemplate>: NSViewRepresentable, VZK
     /// If set to `true`, the guest VM can capture key bindings from the host system.
     public let capturesSystemKeys: Bool
     
+    /// A boolean value that determines whether or not the keyboard and mouse controls should be forwarded.
+    ///
+    /// When `true`, events are ignored to prevent interaction with the virtual machine
+    public let disablesInputRedirection: Bool
+    
     /// The virtual machine instance to be displayed in the console view.
     ///
-    /// This instance provides the console with access to the VM's display and state. It is only available when unwrapped.
-    private let vzVirtualMachine: VZVirtualMachine?
+    /// This instance provides the console with access to the VM's display and state.
+    private let vzVirtualMachine: VZVirtualMachine
     
     /// Creates and configures the `NSView` for this console view.
     ///
@@ -70,7 +61,7 @@ public struct FramebufferView<Template: VZKitTemplate>: NSViewRepresentable, VZK
     public func makeNSView(context: Context) -> FramebufferNSView {
         let vmView = FramebufferNSView()
         vmView.virtualMachine = vzVirtualMachine
-        vmView.isPreviewContext = isPreviewContext
+        vmView.disablesInputRedirection = disablesInputRedirection
         return vmView
     }
     
@@ -87,38 +78,49 @@ public struct FramebufferView<Template: VZKitTemplate>: NSViewRepresentable, VZK
         vmView.virtualMachine = vzVirtualMachine
         vmView.automaticallyReconfiguresDisplay = automaticallyReconfiguresDisplay
         vmView.capturesSystemKeys = capturesSystemKeys
+        vmView.disablesInputRedirection = disablesInputRedirection
     }
     
-    /// Initializes a console view for use in a non-preview context.
+    
+    /// Creates an instance of `FramebufferView` ready to be used in a SwiftUI context
     ///
-    /// This initializer should be used when the console view is part of a live app instance.
+    /// # Generics
+    /// This initializer requires `Template` to conform to `VZKitTemplate`. It is also required by `VirtualMachine`
     ///
     /// - Parameters:
-    ///   - machine: A virtual machine instance of type `VirtualMachine<Template>` to display in the console.
-    ///   - automaticallyReconfiguresDisplay: Specifies if the console view should auto-resize to match window dimensions.
-    ///   - capturesSystemKeys: Specifies if the console view should capture system-wide key commands.
-    public init(
-        machine: VirtualMachine<Template>,
-        automaticallyReconfiguresDisplay: Bool,
-        capturesSystemKeys: Bool
+    ///   - virtualMachine: A virtual machine instance of type `VirtualMachine<Template>` to display in the console.
+    ///   - automaticallyReconfiguresDisplay: Specifies if the console view should auto-resize to match window dimensions. Defaults to `false`
+    ///   - capturesSystemKeys: Specifies if the console view should capture system-wide key commands. Defaults to `false`
+    ///   - disablesInputRedirection: Determines if the view should forward mouse and keyboard input to the virtual machine. Defaults to `true`
+    public init<Template: VZKitTemplate>(
+        virtualMachine: VirtualMachine<Template>,
+        automaticallyReconfiguresDisplay: Bool = false,
+        capturesSystemKeys: Bool = false,
+        disablesInputRedirection: Bool = true
     ) {
-        self.vzVirtualMachine = machine.vzVirtualMachine
-        self.isPreviewContext = false
+        self.vzVirtualMachine = virtualMachine.vzVirtualMachine
         self.automaticallyReconfiguresDisplay = automaticallyReconfiguresDisplay
         self.capturesSystemKeys = capturesSystemKeys
+        self.disablesInputRedirection = disablesInputRedirection
     }
     
-    /// Initializes a console view for use in a preview context.
-    ///
-    /// This initializer is designed for SwiftUI Preview configurations and allows disabling automatic display and key capture settings.
+    /// Creates an instance of `FramebufferView` that works with a `VZVirtualMachine` object from `Virtualization.framework`
+    /// This init allows for inter-operability with custom `Virtualization.framework` configurations and / or objects.
     ///
     /// - Parameters:
-    ///   - machine: A virtual machine instance of type `VirtualMachine<Template>` to display in the console.
-    ///   - isPreviewContext: Boolean indicating whether this instance is in a preview environment (defaults to `true`).
-    public init(machine: VirtualMachine<Template>, isPreviewContext: Bool = true) {
-        self.vzVirtualMachine = machine.vzVirtualMachine
-        self.isPreviewContext = isPreviewContext
-        self.automaticallyReconfiguresDisplay = false
-        self.capturesSystemKeys = false
+    ///   - virtualMachine: A virtual machine instance of type `VZVirtualMachine` to display in the console.
+    ///   - automaticallyReconfiguresDisplay: Specifies if the console view should auto-resize to match window dimensions.  Defaults to `false`
+    ///   - capturesSystemKeys: Specifies if the console view should capture system-wide key commands. Defaults to `false`
+    ///   - disablesInputRedirection: Determines if the view should forward mouse and keyboard input to the virtual machine. Defaults to `true`
+    public init(
+        virtualMachine: VZVirtualMachine,
+        automaticallyReconfiguresDisplay: Bool = false,
+        capturesSystemKeys: Bool = false,
+        disablesInputRedirection: Bool = true
+    ) {
+        self.vzVirtualMachine = virtualMachine
+        self.automaticallyReconfiguresDisplay = automaticallyReconfiguresDisplay
+        self.capturesSystemKeys = capturesSystemKeys
+        self.disablesInputRedirection = disablesInputRedirection
     }
 }
