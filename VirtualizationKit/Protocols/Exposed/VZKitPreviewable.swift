@@ -28,8 +28,8 @@ import Foundation
 /// These components are processed on the main thread, therefore this protocol expects this behaviour too.
 @MainActor public protocol VZKitPreviewable {
     
-    /// A boolean value to know it this representable will be used in preview contexts
-    var isPreviewContext: Bool { get }
+    /// A boolean value that determines whether or not the keyboard and mouse controls should be forwarded.
+    var disablesInputRedirection: Bool { get }
     
     /// This `Bool` is needed to update the boolean value `automaticallyReconfiguresDisplay` of `VZVirtualMachineView`
     /// during a state update of the UI element. When it's set to true, the screen of the VM adapts to the window.
