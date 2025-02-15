@@ -51,6 +51,15 @@ struct VZKitLogger {
         self.logger.error("VirtualizationKit: \(message, privacy: .public)")
     }
     
+    /// Logs a fatal error message and calls fatalError.
+    ///
+    /// - Parameter message: The message to log. The message's privacy is set to `.public`.
+    /// - Note: Use this method only for irrecoverable conditions in the application.
+    func fatalError(_ message: String) -> Never {
+        self.logger.error("VirtualizationKit: \(message, privacy: .public)")
+        fatalError("VirtualizationKit: \(message)")
+    }
+    
     /// Initializes a new `VZKitLogger` instance for a specific category.
     ///
     /// - Parameter category: The category to associate with the logger.
