@@ -1,5 +1,5 @@
 //
-//  VZKitBuilder.swift
+//  AppleConfigBuilder.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 17/05/24.
@@ -14,7 +14,7 @@
 ///
 /// - Important: `VZVirtualMachineConfiguration` IS NOT sendable.
 ///   We import the `Virtualization` framework using `@preconcurrency`.
-struct VZKitBuilder<Template: VZKitTemplate> {
+struct AppleConfigurationBuilder<Template: VZKitTemplate> {
     
     /// A copy of the DTO to have all the necessary info about the VM template
     let template: Template
@@ -115,6 +115,8 @@ struct VZKitBuilder<Template: VZKitTemplate> {
     /// After the synchronous call terminates, the methods validates the configuration scheme and returns it to its caller.
     func createConfiguration() async throws -> VZVirtualMachineConfiguration {
         
+        print(template.operatingSystem.displayName)
+        
         switch template.operatingSystem {
         case .macos(let version):
             
@@ -123,8 +125,12 @@ struct VZKitBuilder<Template: VZKitTemplate> {
             if  let url = template.bootableInstallMedia,
                 let image = try? await VZMacOSRestoreImage.load(from: url) {
                 
-                guard image.osVersion.major == version.major else {
-                    throw VZKitError.wrongMacImageVersion(version, image.osVersion)
+                let macOSImageVersion = OperatingSystem.Version(
+                    image.operatingSystemVersion
+                )
+                
+                guard macOSImageVersion.major == version.major else {
+                    throw VZKitError.wrongMacImageVersion(version, macOSImageVersion)
                 }
                 
                 restoreImage = image
@@ -132,9 +138,7 @@ struct VZKitBuilder<Template: VZKitTemplate> {
             
             try await createConfiguration(using: restoreImage)
             
-        default:
-            
-            try await createConfiguration(using: nil)
+        case .linux: try await createConfiguration(using: nil)
         }
         
         try configuration.validate(); return configuration

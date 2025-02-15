@@ -79,12 +79,12 @@ public struct AppleVirtualMachine<Template: VZKitTemplate>: VZKitVirtualMachine 
     /// are generally discouraged in favor of higher-level methods provided by this struct.
     let vzVirtualMachine: VZVirtualMachine
     
-    /// Handles event callbacks from the `VZVirtualMachine` and forwards them to other components.
+    /// Handles error event callbacks from the `VZVirtualMachine` and forwards them to other components.
     ///
-    /// `delegate` observes the VM’s lifecycle and propagates state changes or errors
+    /// `errorDelegate` observes the VM’s lifecycle and propagates state changes or errors
     /// to `stateCoordinator`. Conforming code typically does not need to interact with
     /// this delegate directly.
-    private let delegate: VZKitDelegate
+    private let errorDelegate: AppleErrorDelegate
     
     /// Executes a high-level VM action and manages resulting state changes within the same actor context.
     ///
@@ -120,19 +120,19 @@ public struct AppleVirtualMachine<Template: VZKitTemplate>: VZKitVirtualMachine 
     ///           framework, or initializing the event delegation process.
     public init(template: Template) async throws {
         
-        let builder = await VZKitBuilder(template: template)
+        let builder = await AppleConfigurationBuilder(template: template)
         
         self.vzVirtualMachine = VZVirtualMachine(
             configuration: try await builder.createConfiguration(),
             queue: VZKitActor.queue
         )
         
-        self.delegate = .init()
+        self.errorDelegate = .init()
         self.template = template
-        self.vzVirtualMachine.delegate = delegate
+        self.vzVirtualMachine.delegate = errorDelegate
         self.stateCoordinator = await .init()
         
-        await self.stateCoordinator.registerPublisher(delegate.publisher)
+        await self.stateCoordinator.registerPublisher(errorDelegate.publisher)
         await self.stateCoordinator.registerPublisher(vzVirtualMachine.publisher(for: \.state))
     }
     
