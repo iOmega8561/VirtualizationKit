@@ -115,8 +115,6 @@ struct AppleConfigurationBuilder<Template: VZKitTemplate> {
     /// After the synchronous call terminates, the methods validates the configuration scheme and returns it to its caller.
     func createConfiguration() async throws -> VZVirtualMachineConfiguration {
         
-        print(template.operatingSystem.displayName)
-        
         switch template.operatingSystem {
         case .macos(let version):
             
