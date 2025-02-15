@@ -20,9 +20,9 @@ enum VZKitError: LocalizedError {
     case missingMacImage
     
     // Features
-    case unavailableFeature(_ feature: OptionalCapability)
-    case permissionDenied(_ feature: OptionalCapability)
-    case unsupportedFeature(_ feature: OptionalCapability)
+    case unavailableFeature(_ capability: OptionalCapability)
+    case permissionDenied(_ capability: OptionalCapability)
+    case unsupportedFeature(_ capability: OptionalCapability)
     case usbDeviceNotFound(_ id: UUID)
     
     // Networking
@@ -49,9 +49,9 @@ enum VZKitError: LocalizedError {
         case .coreFilesMissing: .init("error-coreFilesMissing")
         case .missingMacImage: .init("error-missingMacImage")
                 
-        case .permissionDenied(let feature): .init("error-permissionDenied", feature)
-        case .unavailableFeature(let feature): .init("error-unavailableFeature", feature)
-        case .unsupportedFeature(let feature): .init("error-unsupportedFeature", feature)
+        case .permissionDenied(let capability): .init("error-permissionDenied", capability)
+        case .unavailableFeature(let capability): .init("error-unavailableFeature", capability)
+        case .unsupportedFeature(let capability): .init("error-unsupportedFeature", capability)
         case .usbDeviceNotFound(let id): .init("error-usbDeviceNotFound", id.uuidString)
                     
         case .invalidMacAddress(let macAddress): .init("error-invalidMacAddress", macAddress)
