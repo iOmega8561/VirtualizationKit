@@ -24,12 +24,6 @@
 /// design allows easy passing and copying of the virtual machine interface without duplicating large
 /// internal state, while still adhering to `Sendable` requirements.
 ///
-/// ## Initialization
-/// You can create a virtual machine in two primary ways:
-/// 1. Calling the `init(template:)` initializer directly, which can throw errors during setup.
-/// 2. (Optionally) using a static factory method (e.g., `createMachine(template:)` if provided) that
-///    wraps results in a `VZKitResult` for smoother error handling—especially helpful in SwiftUI contexts.
-///
 /// ## Concurrency
 /// - Methods like `execute(action:)` are pinned to `@VZKitActor`, ensuring they run on the same queue
 ///   used to create the underlying `VZVirtualMachine`.
@@ -48,7 +42,6 @@
 ///
 /// - Note: This struct is not responsible for storing or mutating substantial state. Instead, it
 ///   references specialized components that each manage a specific aspect of the VM's lifecycle.
-@dynamicMemberLookup
 public struct AppleVirtualMachine<Template: VZKitTemplate>: VZKitVirtualMachine {
     
     /// An enum of high-level actions that can be performed on the Apple Virtual Machine.
@@ -59,7 +52,7 @@ public struct AppleVirtualMachine<Template: VZKitTemplate>: VZKitVirtualMachine 
     /// - `.pause`: Suspend the VM.
     /// - `.resume`: Resume the VM from a paused state.
     /// - `.install`: Run an installation procedure, typically for macOS guests.
-    public enum Action: Sendable {
+    public enum Action: VZKitExecutableAction {
         case start(options: VZVirtualMachineStartOptions = .init())
         case stop
         case pause
@@ -144,22 +137,10 @@ public struct AppleVirtualMachine<Template: VZKitTemplate>: VZKitVirtualMachine 
         await self.stateCoordinator.registerPublisher(errorDelegate.publisher)
         await self.stateCoordinator.registerPublisher(vzVirtualMachine.publisher(for: \.state))
     }
-    
-    /// Dynamically accesses properties of `stateCoordinator` using key paths.
-    ///
-    /// This `@dynamicMemberLookup` subscript allows external code to refer to properties
-    /// in `AppleStateCoordinator` as if they were part of `AppleVirtualMachine`. While
-    /// convenient, frequent usage may introduce performance overhead due to repeated lookups.
-    ///
-    /// - Parameter keyPath: A key path referencing a property of `AppleStateCoordinator`.
-    /// - Returns: The value of that property.
-    public subscript<T>(dynamicMember keyPath: KeyPath<AppleStateCoordinator, T>) -> T {
-        stateCoordinator[keyPath: keyPath]
-    }
 }
 
 @available(macOS 15.0, *)
-@VZKitActor extension AppleVirtualMachine {
+@VZKitActor public extension AppleVirtualMachine {
     
     /// Attaches a removable USB mass storage device to the VM from a specified disk image.
     ///
@@ -172,7 +153,7 @@ public struct AppleVirtualMachine<Template: VZKitTemplate>: VZKitVirtualMachine 
     /// - Throws:
     ///   - `VZKitError.unsupportedFeature(.xhciUSBHotSwap)` if no suitable USB controller is found.
     ///   - `VZKitError.appleLimitExceeded` or other Apple Virtualization–related errors if attachment fails.
-    public func attachRemovableUSBDisk(usingImageAt url: URL) async throws -> UUID {
+    func attachRemovableUSBDisk(usingImageAt url: URL) async throws -> UUID {
         guard let controller = vzVirtualMachine.usbControllers.first else {
             throw VZKitError.unsupportedFeature(.xhciUSBHotSwap)
         }
@@ -195,7 +176,7 @@ public struct AppleVirtualMachine<Template: VZKitTemplate>: VZKitVirtualMachine 
     ///   - `VZKitError.unsupportedFeature(.xhciUSBHotSwap)` if no suitable USB controller is found.
     ///   - `VZKitError.usbDeviceNotFound(id)` if the specified device is not attached.
     ///   - Other errors originating from the Apple Virtualization framework during detachment.
-    public func detachRemovableUSBDisk(identifiedBy id: UUID) async throws {
+    func detachRemovableUSBDisk(identifiedBy id: UUID) async throws {
         guard let controller = vzVirtualMachine.usbControllers.first else {
             throw VZKitError.unsupportedFeature(.xhciUSBHotSwap)
         }

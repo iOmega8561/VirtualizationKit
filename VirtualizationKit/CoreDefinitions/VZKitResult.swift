@@ -16,37 +16,60 @@
 
 import Virtualization
 
-/// An enumeration encapsulating the outcome of creating a virtual machine instance using a
-/// `VZKitVirtualMachine`-conforming type.
+/// An enumeration representing the outcome of initializing a virtual machine instance.
 ///
-/// `VZKitResult` serves as a high-level container for handling the two possible outcomes of VM
-/// initialization: either a fully realized `VirtualMachine` or an `Error` indicating what went wrong.
-/// This design simplifies error propagation by eliminating the need to throw or catch errors
-/// immediately, enabling more linear control flow—particularly useful in SwiftUI or other UI-bound
-/// contexts where preserving and later presenting an error is desirable.
+/// `VZKitResult` serves as a high-level container that encapsulates the result of creating a virtual
+/// machine conforming to `VZKitVirtualMachine`. The result is either a successfully initialized virtual
+/// machine (wrapped as an existential of type `any VZKitVirtualMachine`) or an error that occurred during
+/// the initialization process.
 ///
-/// - Note: The associated `VirtualMachine` must specify a `Template` conforming to `VZKitTemplate`.
-/// - Important: While you can instantiate `VZKitResult` directly through its initializer,
-///   it is more common to invoke a factory method (e.g., `createMachine(template:)`) that returns
-///   this result, centralizing the creation logic and error handling in a single call.
+/// This design simplifies error handling by capturing initialization failures within the result itself,
+/// rather than requiring immediate error throwing. This pattern is especially useful in UI-bound contexts
+/// (e.g., SwiftUI applications), where you may wish to preserve and later present errors.
 ///
-/// - Parameters:
-///   - VirtualMachine: A type conforming to `VZKitVirtualMachine` used in the result.
-@frozen public enum VZKitResult<VirtualMachine: VZKitVirtualMachine>: Sendable {
+/// ### Provided Properties
+/// - `error`: If the result represents a failure, this property returns the associated error; otherwise, it returns `nil`.
+/// - `virtualMachine`: If the result represents success, this property returns the initialized virtual machine; otherwise, it returns `nil`.
+///
+/// ### Asynchronous Initializer
+///
+/// The asynchronous initializer attempts to create a virtual machine using the provided configuration template.
+/// It accepts:
+///
+/// - `vmType`: The concrete type of the virtual machine to be created. This type must conform to `VZKitVirtualMachine`.
+/// - `template`: A configuration object conforming to `VZKitTemplate` that specifies the settings for the virtual machine.
+///
+/// The initializer uses the `init(template:)` method on the specified `vmType`. If the initialization is successful,
+/// the instance is stored in the `.success` case; if an error occurs, it is captured in the `.failure` case.
+///
+/// - Note: The associated `Template` type of the virtual machine must match the type of the provided `template`.
+///
+/// ### Usage Example
+/// ```swift
+/// let result = await VZKitResult(MyVirtualMachine.self, using: myTemplate)
+/// if let vm = result.virtualMachine {
+///     // Use the successfully created virtual machine.
+/// } else if let error = result.error {
+///     // Handle the initialization error.
+/// }
+/// ```
+///
+/// Conformance to `Sendable` ensures that `VZKitResult` can be safely used in concurrent environments.
+@frozen public enum VZKitResult: Sendable {
     
-    /// Indicates that the VM creation process encountered an error.
+    /// Indicates that the virtual machine initialization process encountered an error.
     ///
-    /// - Parameter error: The `Error` detailing the cause of the failure during initialization.
+    /// - Parameter error: The `Error` detailing what went wrong during initialization.
     case failure(Error)
     
-    /// Indicates that the VM was successfully initialized.
+    /// Indicates that the virtual machine was successfully initialized.
     ///
-    /// - Parameter machine: A fully configured `VirtualMachine` instance resulting from a valid template.
-    case success(VirtualMachine)
+    /// - Parameter machine: A fully configured virtual machine instance, stored as an existential of type `any VZKitVirtualMachine`.
+    case success(any VZKitVirtualMachine)
     
-    /// Retrieves the error from a failed initialization, if present.
+    /// Retrieves the error from a failed initialization, if available.
     ///
-    /// Returns `nil` if the result was `.success`.
+    /// Returns `nil` if the result is `.success`.
     public var error: Error? {
         switch self {
         case .failure(let error): return error
@@ -54,27 +77,51 @@ import Virtualization
         }
     }
     
-    /// Retrieves the successfully created VM, if present.
+    /// Retrieves the successfully created virtual machine, if available.
     ///
-    /// Returns `nil` if the result was `.failure`.
-    public var virtualMachine: VirtualMachine? {
+    /// Returns `nil` if the result is `.failure`.
+    public var virtualMachine: (any VZKitVirtualMachine)? {
         switch self {
-        case .success(let vm): return vm
+        case .success(let virtualMachine): return virtualMachine
         default: return nil
         }
     }
     
-    /// Asynchronously attempts to initialize a `VirtualMachine` from the specified `template`,
-    /// storing the outcome in either the `.success` or `.failure` case.
+    /// Asynchronously initializes a `VZKitResult` by attempting to create a virtual machine instance
+    /// using the provided configuration template.
     ///
-    /// - Parameter template: A configuration object conforming to `VZKitTemplate`, describing
-    ///   how to provision and launch the virtual machine.
-    /// - Note: The resulting `VZKitResult` preserves any error encountered during creation,
-    ///   enabling you to store and present it later—especially useful in UI contexts.
-    public init(template: VirtualMachine.Template) async {
+    /// This initializer takes a specific virtual machine type and a configuration object, then attempts
+    /// to create the virtual machine via its `init(template:)` initializer. If the initialization succeeds,
+    /// the result is stored in the `.success` case of `VZKitResult`; if an error occurs, it is captured in
+    /// the `.failure` case.
+    ///
+    /// - Parameters:
+    ///   - vmType: The concrete type of the virtual machine to be created. This type must conform to `VZKitVirtualMachine`.
+    ///   - template: A configuration object conforming to `VZKitTemplate` that specifies the settings for the virtual machine.
+    /// - Note: The associated `Template` type of the virtual machine must match the type of the provided `template`.
+    /// - Usage:
+    ///   ```swift
+    ///   let result = await VZKitResult(MyVirtualMachine.self, using: myTemplate)
+    ///   ```
+    /// - Important: This initializer does not throw errors directly; instead, any errors encountered during
+    ///   initialization are captured within the resulting `VZKitResult` instance.
+    public init<
+        VirtualMachine: VZKitVirtualMachine,
+        Template: VZKitTemplate
+    >(
+        _ vmType: VirtualMachine.Type,
+        using template: Template
+        
+    ) async where VirtualMachine.Template == Template {
+        
         do {
-            self = try await .success(VirtualMachine(template: template))
+            self = .success(
+                try await vmType.init(template: template)
+            )
             
-        } catch { self = .failure(error) }
+        } catch {
+            
+            self = .failure(error)
+        }
     }
 }
