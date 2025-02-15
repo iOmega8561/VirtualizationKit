@@ -7,8 +7,6 @@
 
 @_exported import Foundation
 
-@_exported import Virtualization
-
 public final class _VirtualizationKit: Sendable {
     
     /// The bundle identifier of this framework
