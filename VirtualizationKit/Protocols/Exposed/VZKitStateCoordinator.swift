@@ -9,40 +9,33 @@ import Combine
 
 import Virtualization
 
-/// A protocol for managing and observing the execution state and progress of a virtual machine.
+/// A protocol defining a main-actor-isolated coordinator for managing a virtual machine's execution state.
 ///
-/// The `VZKitStateCoordinator` protocol defines a standard interface for coordinating the state
-/// and progress of virtual machine operations in a thread-safe and observable manner. This protocol
-/// is designed to be used in environments where state updates must occur on the main thread, such as
-/// UI-bound applications leveraging SwiftUI or Combine.
+/// Conforming types must provide real-time tracking of the virtual machine's state (`executionState`), as well as
+/// a mechanism (`stateSubject`) to broadcast state changes. Additionally, they must implement a method for registering
+/// external Combine publishers to integrate updates, making this protocol suitable for bridging lower-level or
+/// asynchronous APIs into a SwiftUI or Combine-based application.
 ///
-/// Conforming types must implement functionality to:
-/// - Track the current execution state (`currentState`) of the virtual machine.
-/// - Report progress of ongoing operations (`progress`).
-/// - Allow state transitions via the `update(with:)` method.
-/// - Register publishers for observing state or progress changes.
-///
-/// ## Concurrency
-/// All conforming types must operate within the `@MainActor` context to ensure thread safety
-/// and UI compatibility.
-///
-/// - Note: This protocol is pinned to `@MainActor` to ensure safe usage in UI-related contexts.
+/// By enforcing `@MainActor`, all state updates are guaranteed to occur on the main thread, preserving thread safety
+/// and ensuring compatibility with UI-bound components.
 @MainActor public protocol VZKitStateCoordinator {
+    
+    /// A Combine subject that broadcasts new `ExecutionState` values to observers.
+    ///
+    /// Implementers should use this subject to emit any state changes in conjunction with updates to `executionState`.
+    nonisolated var stateSubject: PassthroughSubject<ExecutionState, Never> { get }
     
     /// The current execution state of the virtual machine.
     ///
-    /// The `currentState` property represents the active `ExecutionState` of the virtual machine.
-    /// This property should be updated whenever a new state is received.
-    var currentState: ExecutionState { get }
+    /// This property should be updated whenever a new state is detected. Observers can rely on this value
+    /// to reflect or respond to changes in the VM lifecycle (e.g., running, stopped, installing, or errored).
+    var executionState: ExecutionState { get }
     
-    /// Registers a generic `Publisher` and defines a sink closure to handle its output.
-    ///
-    /// This method subscribes to a `Publisher` and ensures that updates are received on the main thread.
-    /// The provided sink closure is executed with each emitted value from the publisher.
-    /// The subscriptions should be used to update the state of the instance that uses this interface
+    /// Subscribes to a generic `Publisher` and processes its output on the main thread.
     ///
     /// - Parameters:
-    ///   - publisher: A `Publisher` instance that emits values to be handled.
-    ///   - sink: A closure that processes the emitted values from the publisher.
+    ///   - publisher: A `Publisher` that emits values relevant to the virtual machine's state or progress.
+    ///   - sink: A closure invoked for each emitted value, typically used to mutate the coordinator's state
+    ///           or broadcast changes through `stateSubject`.
     func registerPublisher<T: Publisher>(_ publisher: T, sink: @escaping (T.Output) -> Void) where T.Failure == Never
 }

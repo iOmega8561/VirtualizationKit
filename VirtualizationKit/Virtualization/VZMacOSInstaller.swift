@@ -26,7 +26,7 @@ import Virtualization
         }
     }
     
-    convenience init?<Template: VZKitTemplate>(virtualMachine: VirtualMachine<Template>) async throws {
+    convenience init?<Template: VZKitTemplate>(virtualMachine: AppleVirtualMachine<Template>) async throws {
         
         guard virtualMachine.template.operatingSystem != .linux else {
             return nil
