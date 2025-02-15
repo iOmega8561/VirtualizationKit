@@ -130,12 +130,11 @@ extension OperatingSystem {
         /// - Parameters:
         ///   - version: An `OperatingSystemVersion` object representing the OS version.
         ///   - build: An optional build identifier string.
-        public init(_ version: OperatingSystemVersion, _ build: String? = nil) {
+        init(_ version: OperatingSystemVersion, _ build: String? = nil) {
             self.major = version.majorVersion
             self.minor = version.minorVersion
             self.patch = version.patchVersion
             self.build = build
         }
     }
-    
 }
