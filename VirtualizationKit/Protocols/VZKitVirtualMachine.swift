@@ -5,6 +5,8 @@
 //  Created by Giuseppe Rocco on 14/05/24.
 //
 
+import Combine
+
 import Virtualization
 
 /// A protocol defining the core requirements for a templated virtual machine.
@@ -51,7 +53,7 @@ public protocol VZKitVirtualMachine: Sendable {
     ///
     /// Common examples may include `.start`, `.stop`, or `.pause`. The actual implementation
     /// is backend-specific and determined by each conforming type.
-    associatedtype ExecutableAction: Sendable
+    associatedtype ExecutableAction: VZKitExecutableAction
     
     /// Defines the template data required to configure the virtual machine.
     ///
@@ -108,4 +110,75 @@ public protocol VZKitVirtualMachine: Sendable {
     ///   details required to set up the virtual machine.
     /// - Throws: An error if the virtual machine cannot be properly initialized from the provided template.
     init(template: Template) async throws
+}
+
+
+// MARK: - General Extension
+
+/// Provides a convenience property to access the virtual machine's state publisher.
+///
+/// This extension of `VZKitVirtualMachine` exposes a computed property `stateSubject`
+/// that directly retrieves the state coordinator’s publisher. This allows client code to subscribe
+/// to execution state updates without having to access the state coordinator directly.
+public extension VZKitVirtualMachine {
+    
+    /// A Combine publisher that emits updates to the virtual machine's execution state.
+    ///
+    /// This property forwards to the underlying `stateCoordinator.stateSubject`, enabling observers
+    /// (e.g., view models or UI components) to react to state changes as they occur.
+    var stateSubject: PassthroughSubject<ExecutionState, Never> {
+        stateCoordinator.stateSubject
+    }
+}
+
+// MARK: - MainActor Extension
+
+/// Provides additional execution state properties for a `VZKitVirtualMachine` operating on the main actor.
+///
+/// This extension is marked with `@MainActor` to ensure that all state-related computations and access
+/// occur on the main thread, which is critical for UI updates. It adds computed properties that expose:
+///
+/// - The current execution state.
+/// - Boolean flags indicating whether the virtual machine is in a state where it can be started, stopped,
+///   paused, or resumed.
+///
+/// These properties abstract the raw state values, offering a more expressive API for controlling the
+/// virtual machine based on its execution state.
+@MainActor
+public extension VZKitVirtualMachine {
+    
+    /// The current execution state of the virtual machine.
+    ///
+    /// This property forwards to the `stateCoordinator.executionState`, reflecting the latest known state.
+    var executionState: ExecutionState {
+        stateCoordinator.executionState
+    }
+    
+    /// Indicates whether the virtual machine can be started.
+    ///
+    /// Returns `true` if the current execution state's raw value is either 0 or 3.
+    var canStart: Bool {
+        [0, 3].contains(stateCoordinator.executionState.rawValue)
+    }
+    
+    /// Indicates whether the virtual machine can be stopped.
+    ///
+    /// Returns `true` if the current execution state's raw value is either 1 or 2.
+    var canStop: Bool {
+        [1, 2].contains(stateCoordinator.executionState.rawValue)
+    }
+    
+    /// Indicates whether the virtual machine can be paused.
+    ///
+    /// Returns `true` if the current execution state is `.running`.
+    var canPause: Bool {
+        stateCoordinator.executionState == .running
+    }
+    
+    /// Indicates whether the virtual machine can be resumed.
+    ///
+    /// Returns `true` if the current execution state is `.paused`.
+    var canResume: Bool {
+        stateCoordinator.executionState == .paused
+    }
 }
