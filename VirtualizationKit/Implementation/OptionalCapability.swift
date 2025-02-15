@@ -16,51 +16,63 @@
 
 import Foundation
 
-/// Represents a set of features available within the `VZKit` framework.
+import Virtualization
+
+/// An enumeration of optional features available within VirtualizationKit.
 ///
-/// The `OptionalCapability` enum encapsulates a predefined set of features that can be supported by
-/// either the host system or the guest virtual machine. Each feature includes metadata that
-/// describes its localization key and other internal details like scope (e.g., host or guest), allowing for consistent
-/// representation and translation.
+/// `OptionalCapability` defines a set of capabilities that can be supported on either the host system
+/// or the guest virtual machine. Each case is associated with metadata that includes a localization key
+/// and a scope (host or guest) to facilitate consistent UI representation and internationalization.
 ///
-/// ## Features
-/// - Provides localized names for features using the `VZKitLocale` utility.
-/// - Defines whether a feature applies to the host system or the guest virtual machine.
-/// - Easily extendable to accommodate additional features.
+/// ### Key Features
+/// - **Localization**: Each capability exposes a `localizedName` property that returns its localized name
+///   using VirtualizationKit's localization utilities.
+/// - **Scope**: The `featureScope` property indicates whether the capability applies to the host system or the guest VM.
+/// - **Extensibility**: New capabilities can be added by defining additional cases and updating the corresponding metadata.
 ///
-/// ## Enum Cases
-/// - `.rosetta`: Represents the Rosetta translation layer for the host system.
-/// - `.nestedVirtualization`: Represents nested virtualization support on the host.
-/// - `.xhciUSBHotSwap`: Represents support for XHCI USB hot-swapping on the host.
-/// - `.directoryShare`: Represents the ability to share directories with the guest virtual machine.
-/// - `.audioCaptureDevice`: Represents the ability to use the microphone of the host macintosh
-/// - `.audioOutputDevice`: Represents the ability to use the speakers of the host macintosh
+/// ### Supported Capabilities
+/// - **rosetta**: Represents the Rosetta translation layer available on the host system.
+/// - **nestedVirtualization**: Represents support for nested virtualization on the host.
+///   *Note*: Requires macOS 15 or later and appropriate hardware support (e.g., Apple M3).
+/// - **xhciUSBHotSwap**: Represents support for XHCI USB hot-swapping on the host.
+/// - **directoryShare**: Represents the ability to share directories with the guest virtual machine.
+/// - **audioCaptureDevice**: Represents the ability to use the host's microphone for audio capture.
+/// - **audioOutputDevice**: Represents the ability to use the host's speakers for audio output.
 ///
-/// ## Usage
+/// ### Example Usage
 /// ```swift
-/// let feature = OptionalCapability.rosetta
-/// print("Feature: \(feature.localized)") // Localized name
+/// let capability: OptionalCapability = .rosetta
+/// print("Capability: \(capability.localizedName)") // Prints the localized name
+/// print("Scope: \(capability.featureScope.rawValue)")   // Prints "Host" or "Guest"
 /// ```
 ///
-/// ## Localization
-/// - Each feature includes a `localized` property that retrieves its localized name
-///   using the framework's localization resources.
+/// `OptionalCapability` conforms to `VZKitTransferable` for seamless integration within VirtualizationKit.
 public enum OptionalCapability: VZKitTransferable {
     
-    // MARK: - Private Types
+    // MARK: - Supporting Types
     
-    /// ## Implementation Detail
-    /// - **Scope**: A private enum defining whether a feature applies to the host or guest.
-    private enum Scope {
-        case host
-        case guest
+    /// Represents the scope of a capability: whether it applies to the host or the guest virtual machine.
+    private enum Scope: String {
+        case host = "Host"
+        case guest = "Guest"
     }
     
-    /// ## Implementation Detail
-    /// - **MetaData**: A private structure encapsulating the localization key and scope of a feature.
+    /// Encapsulates metadata associated with a capability, including its localization key and scope.
     private struct MetaData {
-        let key: String.LocalizationValue
-        let scope: Scope
+        /// The localization key for the capability's name.
+        let localizationKey: String.LocalizationValue
+        /// The scope indicating whether the capability is a host or guest feature.
+        let featureScope: Scope
+        /// Returns the localized name of the capability.
+        var localizedName: String { VZKitLocale(localizationKey).value }
+    }
+    
+    // MARK: - Static properties
+    
+    /// Indicates if nested virtualization is supported on the current host.
+    @available(macOS 15.0, *)
+    public static var isNestedVirtualizationSupported: Bool {
+        VZGenericPlatformConfiguration.isNestedVirtualizationSupported
     }
     
     // MARK: - Enum Cases
@@ -77,51 +89,31 @@ public enum OptionalCapability: VZKitTransferable {
     /// Represents the ability to share directories with the guest virtual machine.
     case directoryShare
     
-    /// Represents the ability to use the microphone of the host macintosh
+    /// Represents the ability to use the host's microphone for audio capture.
     case audioCaptureDevice
     
-    /// Represents the ability to use the speakers of the host macintosh
+    /// Represents the ability to use the host's speakers for audio output.
     case audioOutputDevice
     
-    // MARK: - Private Metadata
+    // MARK: - Private Metadata Access
     
-    /// Provides metadata for each feature, including its localization key and scope.
-    ///
-    /// ## Extensibility
-    /// New features can be added by defining additional cases and updating the `metaData`
-    /// property to include the appropriate localization key and scope.
+    /// Retrieves the metadata for each capability, including its localization key and scope.
     private var metaData: MetaData {
         switch self {
-        case .rosetta: .init(key: "capability-rosetta", scope: .host)
-        case .nestedVirtualization: .init(key: "capability-nestedVirtualization", scope: .host)
-        case .xhciUSBHotSwap: .init(key: "capability-xhciUSBHotSwap", scope: .host)
-        case .directoryShare: .init(key: "capability-directoryShare", scope: .guest)
-        case .audioCaptureDevice: .init(key: "capability-audioCaptureDevice", scope: .host)
-        case .audioOutputDevice: .init(key: "capability-audioOutputDevice", scope: .host)
+        case .rosetta: .init(localizationKey: "capability-rosetta", featureScope: .host)
+        case .nestedVirtualization: .init(localizationKey: "capability-nestedVirtualization", featureScope: .host)
+        case .xhciUSBHotSwap: .init(localizationKey: "capability-xhciUSBHotSwap", featureScope: .host)
+        case .directoryShare: .init(localizationKey: "capability-directoryShare", featureScope: .guest)
+        case .audioCaptureDevice: .init(localizationKey: "capability-audioCaptureDevice", featureScope: .host)
+        case .audioOutputDevice: .init(localizationKey: "capability-audioOutputDevice", featureScope: .host)
         }
     }
     
-    // MARK: - Public Properties
+    // MARK: - Instance Properties
     
-    /// The localized name of the feature.
-    ///
-    /// This property retrieves the feature's name from the framework's localization resources
-    /// using the `VZKitLocale` utility and the associated localization key.
-    public var localized: String {
-        VZKitLocale(self.metaData.key).value
-    }
+    /// The localized name of the capability.
+    public var localizedName: String { metaData.localizedName }
     
-    // MARK: - Internal Properties
-    
-    /// The localized scope of the feature (host or guest).
-    ///
-    /// This property retrieves a localized string indicating whether the feature applies to
-    /// the host system or the guest virtual machine. It uses the `VZKitLocale` utility for
-    /// consistent translation.
-    var scope: String {
-        switch self.metaData.scope {
-        case .host: "Host"
-        case .guest: "Guest"
-        }
-    }
+    /// The scope of the capability, indicating whether it applies to the host or guest.
+    public var featureScope: String { metaData.featureScope.rawValue }
 }

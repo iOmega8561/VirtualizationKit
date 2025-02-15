@@ -476,13 +476,29 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Configuration error"
+            "value" : "Error"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Errore di configurazione"
+            "value" : "Errore"
+          }
+        }
+      }
+    },
+    "vmstate-installing" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Installing"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Installazione"
           }
         }
       }
@@ -530,7 +546,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "In ripristino"
+            "value" : "Ripristino"
           }
         }
       }
@@ -546,7 +562,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Riprendo"
+            "value" : "Ripresa"
           }
         }
       }
@@ -572,13 +588,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Saving state"
+            "value" : "Saving"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Salvando lo stato"
+            "value" : "Salvataggio"
           }
         }
       }
@@ -594,7 +610,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Inizializzazione"
+            "value" : "Avvio"
           }
         }
       }
@@ -626,7 +642,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "In arresto"
+            "value" : "Arresto"
           }
         }
       }

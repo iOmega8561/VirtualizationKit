@@ -5,6 +5,8 @@
 //  Created by Giuseppe Rocco on 11/01/25.
 //
 
+import Virtualization
+
 /// A protocol representing types that can be converted to and from a `Data` representation.
 ///
 /// Types conforming to this protocol must implement an initializer to create an instance
