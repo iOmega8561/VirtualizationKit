@@ -18,7 +18,7 @@ import Virtualization
 ///
 /// The primary use case for this enum is to centralize and observe the state transitions of a virtual
 /// machine, providing a consistent way to track and display its status in a user interface.
-public enum ExecutionState: RawRepresentable, VZKitTransferable {
+public enum ExecutionState: RawRepresentable, Transferable {
     
     // MARK: - RawValue
     

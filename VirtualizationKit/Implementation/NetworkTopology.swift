@@ -40,8 +40,8 @@ import Virtualization
 /// print("Interface: \(topology.hostInterfaceID ?? "Automatic")") // Outputs the host interface identifier or nil
 /// ```
 ///
-/// `NetworkTopology` conforms to `VZKitTransferable` for seamless integration within VirtualizationKit.
-public enum NetworkTopology: VZKitTransferable {
+/// `NetworkTopology` conforms to `Transferable` for seamless integration within VirtualizationKit.
+public enum NetworkTopology: Transferable {
     
     // MARK: - Static properties
     

@@ -16,9 +16,9 @@
 
 import Virtualization
 
-extension VZDirectorySharingDeviceConfiguration: VZKitPersistentConstructible {
+extension VZDirectorySharingDeviceConfiguration: PersistentConstructible {
     
-    typealias Constructible = VZVirtioFileSystemDeviceConfiguration
+    typealias Product = VZVirtioFileSystemDeviceConfiguration
     
     /// This method can create a shared directory mount between the host and the guest systems.
     /// Sets the appropriate tag depending on the chosen guest operating system, for example to support
@@ -27,7 +27,7 @@ extension VZDirectorySharingDeviceConfiguration: VZKitPersistentConstructible {
     /// - Parameters:
     ///   - url: The location at which the shared mount should be created on the host file system.
     ///   - type: The guest operating system.
-    static func create(at url: URL, type: OperatingSystem) throws -> Constructible {
+    static func create(at url: URL, type: OperatingSystem) throws -> Product {
         
         try FileManager.default.createDirectory(
             atPath: url.path(percentEncoded: false),
@@ -41,7 +41,7 @@ extension VZDirectorySharingDeviceConfiguration: VZKitPersistentConstructible {
         
         let singleDirectoryShare = VZSingleDirectoryShare(directory: sharedDirectory)
         
-        let sharingDevice: Constructible
+        let sharingDevice: Product
         
         switch type {
         case .macos(let version):
@@ -51,7 +51,7 @@ extension VZDirectorySharingDeviceConfiguration: VZKitPersistentConstructible {
             }
             
             sharingDevice = .init(
-                tag: Constructible.macOSGuestAutomountTag
+                tag: Product.macOSGuestAutomountTag
             )
             
         default:

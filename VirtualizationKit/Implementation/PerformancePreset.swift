@@ -39,7 +39,7 @@ import Virtualization
 /// print("Memory Size: \(preset.memorySize) bytes")  // Memory allocation in bytes
 /// print("Disk Size: \(preset.diskSize) bytes")      // Disk allocation in bytes
 /// ```
-public enum PerformancePreset: VZKitTransferable {
+public enum PerformancePreset: Transferable {
     
     /// Minimal configuration for lightweight workloads.
     case basic

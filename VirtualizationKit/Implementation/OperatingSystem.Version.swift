@@ -45,7 +45,7 @@ extension OperatingSystem {
     /// making it particularly useful in virtualization and deployment scenarios.
     ///
     /// - Note: When using `Comparable`, versions are compared by their major, minor, patch, and build values in sequence.
-    public struct Version: Equatable, Comparable, VZKitTransferable {
+    public struct Version: Equatable, Comparable, Transferable {
         
         // MARK: - Comparable Conformance
             

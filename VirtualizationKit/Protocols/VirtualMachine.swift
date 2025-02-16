@@ -8,7 +8,7 @@
 //
 //  -----------------------------------------------------------------------
 //
-//  VZKitVirtualMachine.swift
+//  VirtualMachine.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 14/05/24.
@@ -20,7 +20,7 @@ import Virtualization
 
 /// A protocol defining the core requirements for a templated virtual machine.
 ///
-/// The `VZKitVirtualMachine` protocol offers a flexible contract that can be implemented by various
+/// The `VirtualMachine` protocol offers a flexible contract that can be implemented by various
 /// virtualization backends (e.g., Apple Virtualization, QEMU). It prescribes a set of associated
 /// types for managing actions, configuration templates, and execution state. Conforming types
 /// should be `Sendable`, ensuring safe interaction in concurrent environments.
@@ -37,7 +37,7 @@ import Virtualization
 ///
 /// ## Example Usage
 /// ```swift
-/// struct MyCustomVM: VZKitVirtualMachine {
+/// struct MyCustomVM: VirtualMachine {
 ///     typealias ExecutableAction = MyVMAction
 ///     typealias Template = MyVMTemplate
 ///     typealias StateCoordinator = MyStateCoordinator
@@ -54,7 +54,7 @@ import Virtualization
 /// By separating VM operations into discrete actions, configuration templates, and a dedicated state
 /// coordinator, this protocol ensures a clean structure that can be adapted to diverse virtualization
 /// solutions.
-public protocol VZKitVirtualMachine: Sendable {
+public protocol VirtualMachine: Sendable {
     
     // MARK: - Associated Types
     
@@ -62,20 +62,20 @@ public protocol VZKitVirtualMachine: Sendable {
     ///
     /// Common examples may include `.start`, `.stop`, or `.pause`. The actual implementation
     /// is backend-specific and determined by each conforming type.
-    associatedtype ExecutableAction: VZKitExecutableAction
+    associatedtype Action: ExecutableAction
     
     /// Defines the template data required to configure the virtual machine.
     ///
-    /// Conforming types must provide a struct or class implementing `VZKitTemplate` to encapsulate
+    /// Conforming types must provide a struct or class implementing `TransferableTemplate` to encapsulate
     /// essential configuration details (e.g., CPU count, memory allocation, storage parameters).
-    associatedtype Template: VZKitTemplate
+    associatedtype Template: TransferableTemplate
     
     /// Manages and broadcasts the execution state of the virtual machine.
     ///
-    /// `StateCoordinator` is responsible for tracking state changes such as transitioning from
+    /// `Coordinator` is responsible for tracking state changes such as transitioning from
     /// "running" to "stopped," and notifying observers (e.g., UI elements). Conforming types must
     /// properly update and utilize this coordinator in their implementation.
-    associatedtype StateCoordinator: VZKitStateCoordinator
+    associatedtype Coordinator: StateCoordinator
     
     // MARK: - Properties
     
@@ -91,13 +91,13 @@ public protocol VZKitVirtualMachine: Sendable {
     /// Conforming implementations should keep the `stateCoordinator` in sync with any state
     /// transitions triggered by `execute(action:)` or other internal operations. Observers
     /// can listen for state changes through the coordinator's `stateSubject` or similar mechanism.
-    var stateCoordinator: StateCoordinator { get }
+    var stateCoordinator: Coordinator { get }
     
     // MARK: - Methods
     
     /// Executes a virtual machine action, potentially transitioning the machine to a new state.
     ///
-    /// Conforming types should implement backend-specific logic to handle the given `ExecutableAction`.
+    /// Conforming types should implement backend-specific logic to handle the given `Action`.
     /// For instance, `.start` might trigger a boot sequence, while `.stop` could gracefully terminate
     /// the VM. Errors should be caught and propagated as needed, with the `stateCoordinator` updated
     /// to reflect any final state or error conditions.
@@ -105,7 +105,7 @@ public protocol VZKitVirtualMachine: Sendable {
     /// - Parameter action: The high-level action that the VM needs to perform.
     /// - Throws: An error if the command execution fails. Conforming implementations must ensure that
     ///           the state is updated or rolled back as appropriate before propagating the error.
-    func execute(action: ExecutableAction) async throws
+    func execute(action: Action) async throws
     
     /// Initializes a new virtual machine instance using the specified configuration template.
     ///
@@ -115,7 +115,7 @@ public protocol VZKitVirtualMachine: Sendable {
     /// If the initialization process encounters issues—such as incompatible template data
     /// or resource limitations—an error should be thrown.
     ///
-    /// - Parameter template: An instance conforming to `VZKitTemplate`, providing the configuration
+    /// - Parameter template: An instance conforming to `TransferableTemplate`, providing the configuration
     ///   details required to set up the virtual machine.
     /// - Throws: An error if the virtual machine cannot be properly initialized from the provided template.
     init(template: Template) async throws
@@ -126,10 +126,10 @@ public protocol VZKitVirtualMachine: Sendable {
 
 /// Provides a convenience property to access the virtual machine's state publisher.
 ///
-/// This extension of `VZKitVirtualMachine` exposes a computed property `stateSubject`
+/// This extension of `VirtualMachine` exposes a computed property `stateSubject`
 /// that directly retrieves the state coordinator’s publisher. This allows client code to subscribe
 /// to execution state updates without having to access the state coordinator directly.
-public extension VZKitVirtualMachine {
+public extension VirtualMachine {
     
     /// A Combine publisher that emits updates to the virtual machine's execution state.
     ///
@@ -142,7 +142,7 @@ public extension VZKitVirtualMachine {
 
 // MARK: - MainActor Extension
 
-/// Provides additional execution state properties for a `VZKitVirtualMachine` operating on the main actor.
+/// Provides additional execution state properties for a `VirtualMachine` operating on the main actor.
 ///
 /// This extension is marked with `@MainActor` to ensure that all state-related computations and access
 /// occur on the main thread, which is critical for UI updates. It adds computed properties that expose:
@@ -154,7 +154,7 @@ public extension VZKitVirtualMachine {
 /// These properties abstract the raw state values, offering a more expressive API for controlling the
 /// virtual machine based on its execution state.
 @MainActor
-public extension VZKitVirtualMachine {
+public extension VirtualMachine {
     
     /// The current execution state of the virtual machine.
     ///

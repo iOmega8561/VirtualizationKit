@@ -29,7 +29,7 @@ import UniformTypeIdentifiers
 /// via dedicated computed properties, allowing UI components and file handlers to easily access this
 /// information without revealing the underlying implementation details.
 ///
-/// Conformance to `VZKitTransferable` ensures seamless integration with other components in VirtualizationKit.
+/// Conformance to `Transferable` ensures seamless integration with other components in VirtualizationKit.
 ///
 /// ### Usage Example
 /// ```swift
@@ -48,7 +48,7 @@ import UniformTypeIdentifiers
 ///     // Handle error: the URL did not point to a valid macOS Restore Image
 /// }
 /// ```
-public enum OperatingSystem: VZKitTransferable {
+public enum OperatingSystem: Transferable {
     
     /// Encapsulates display and file metadata for an operating system.
     private struct MetaData {

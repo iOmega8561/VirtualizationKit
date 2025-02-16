@@ -23,7 +23,7 @@ import Virtualization
 /// Key Feature:
 /// - **disablesInputRedirection**: When enabled, suppresses input events (such as mouse movement, entry, and
 ///   hit testing), effectively creating a non-interactive, preview-only display.
-final class VZVirtualMachineView: Virtualization.VZVirtualMachineView, VZKitFramebufferNSView {
+final class VZVirtualMachineView: Virtualization.VZVirtualMachineView, FramebufferNSView {
     
     /// Controls whether keyboard and mouse events are forwarded to the virtual machine.
     ///

@@ -8,7 +8,7 @@
 //
 //  -----------------------------------------------------------------------
 //
-//  VZKitStateCoordinator.swift
+//  StateCoordinator.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 09/11/24.
@@ -27,7 +27,7 @@ import Virtualization
 ///
 /// By enforcing `@MainActor`, all state updates are guaranteed to occur on the main thread, preserving thread safety
 /// and ensuring compatibility with UI-bound components.
-@MainActor public protocol VZKitStateCoordinator {
+@MainActor public protocol StateCoordinator {
     
     /// A Combine subject that broadcasts new `ExecutionState` values to observers.
     ///
