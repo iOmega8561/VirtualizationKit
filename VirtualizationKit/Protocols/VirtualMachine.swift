@@ -95,7 +95,7 @@ public protocol VirtualMachine: Sendable {
     
     // MARK: - Methods
     
-    /// Executes a virtual machine action, potentially transitioning the machine to a new state.
+    /// Executes a virtual machine action with no return value, potentially transitioning the machine to a new state.
     ///
     /// Conforming types should implement backend-specific logic to handle the given `Action`.
     /// For instance, `.start` might trigger a boot sequence, while `.stop` could gracefully terminate

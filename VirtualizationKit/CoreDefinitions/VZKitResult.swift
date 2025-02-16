@@ -55,7 +55,8 @@ import Virtualization
 /// ```
 ///
 /// Conformance to `Sendable` ensures that `VZKitResult` can be safely used in concurrent environments.
-@frozen public enum VZKitResult: Sendable {
+@frozen
+public enum VZKitResult: Sendable {
     
     /// Indicates that the virtual machine initialization process encountered an error.
     ///
@@ -111,12 +112,15 @@ import Virtualization
     >(
         _ vmType: Product.Type,
         using template: Template
-    ) async where Product.Template == Template {
+    )
+    async where Product.Template == Template {
         do {
             self = .success(
                 try await vmType.init(template: template)
             )
+        } catch {
             
-        } catch { self = .failure(error) }
+            self = .failure(error)
+        }
     }
 }
