@@ -125,7 +125,7 @@ public struct AppleVirtualMachine<Template: VZKitTemplate>: VZKitVirtualMachine 
         self.vzVirtualMachine.delegate = errorDelegate
         self.stateCoordinator = await .init()
         
-        await self.stateCoordinator.registerPublisher(errorDelegate.publisher)
+        await self.stateCoordinator.registerPublisher(errorDelegate.errorSubject)
         await self.stateCoordinator.registerPublisher(vzVirtualMachine.publisher(for: \.state))
     }
 }

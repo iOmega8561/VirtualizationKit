@@ -30,7 +30,7 @@
 public protocol VZKitExecutableAction: Sendable {
     
     /// The type that encapsulates the options required to start a virtual machine.
-    associatedtype StartOptions: Any
+    associatedtype StartOptions: AnyObject
     
     /// Creates an action to start a virtual machine with the specified options.
     ///

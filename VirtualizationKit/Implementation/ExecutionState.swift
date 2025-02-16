@@ -20,10 +20,107 @@ import Virtualization
 /// machine, providing a consistent way to track and display its status in a user interface.
 public enum ExecutionState: RawRepresentable, VZKitTransferable {
     
-    // MARK: - Properties
+    // MARK: - RawValue
     
     /// The raw value type for `ExecutionState`.
     public typealias RawValue = Int
+    
+    // MARK: - Custom Comparable
+    
+    /// Compares two `ExecutionState` instances for equality.
+    ///
+    /// - Parameters:
+    ///   - lhs: The left-hand `ExecutionState` to compare.
+    ///   - rhs: The right-hand `ExecutionState` to compare.
+    /// - Returns: A Boolean value indicating whether the two states are equal.
+    public static func == (lhs: ExecutionState, rhs: ExecutionState) -> Bool {
+        switch (lhs, rhs) {
+        case let (.installing(lhsProgress), .installing(rhsProgress)):
+            return lhsProgress == rhsProgress
+        case let (.error(lhsError), .error(rhsError)):
+            return lhsError.localizedDescription == rhsError.localizedDescription
+        default:
+            return lhs.rawValue == rhs.rawValue
+        }
+    }
+    
+    // MARK: - Cases
+    
+    /// The virtual machine has stopped.
+    case stopped
+    
+    /// The virtual machine is fully running.
+    case running
+    
+    /// The virtual machine is paused.
+    case paused
+    
+    /// The virtual machine is in an error state.
+    ///
+    /// - Parameter error: The associated error providing details about the issue.
+    case error(error: Error)
+    
+    /// The virtual machine is in the process of starting.
+    case starting
+    
+    /// The virtual machine is in the process of pausing.
+    case pausing
+    
+    /// The virtual machine is resuming from a paused state.
+    case resuming
+    
+    /// The virtual machine is in the process of stopping.
+    case stopping
+    
+    /// The virtual machine is saving its current state.
+    case saving
+    
+    /// The virtual machine is restoring from a saved state.
+    case restoring
+    
+    /// The virtual machine is being installed.
+    ///
+    /// - Parameter progress: A value between 0.0 and 1.0 indicating the installation progress.
+    case installing(progress: Double)
+    
+    // MARK: - Properties
+    
+    /// Returns the color associated with the current state of the virtual machine.
+    ///
+    /// Use this property in SwiftUI views to visually indicate the status of
+    /// the virtual machine. For example:
+    /// - `.green` for `.running`
+    /// - `.red` for `.stopped`
+    /// - `.orange` for transition states.
+    public var color: Color {
+        switch self {
+        case .stopped: .red
+        case .running: .green
+        case .error: .yellow
+        case .paused, .starting, .pausing, .resuming, .stopping, .saving, .restoring: .orange
+        case .installing: .mint
+        }
+    }
+    
+    /// Returns a localized string representing the current state of the virtual machine.
+    ///
+    /// This property retrieves a localized string for the state, using localization keys defined
+    /// in the framework's bundle. This allows for seamless integration of localized text in SwiftUI views.
+    public var localizedName: String {
+        switch self {
+        case .stopped: VZKitLocale("vmstate-stopped").value
+        case .running: VZKitLocale("vmstate-running").value
+        case .paused: VZKitLocale("vmstate-paused").value
+        case .error: VZKitLocale("vmstate-error").value
+        case .starting: VZKitLocale("vmstate-starting").value
+        case .pausing: VZKitLocale("vmstate-pausing").value
+        case .resuming: VZKitLocale("vmstate-resuming").value
+        case .stopping: VZKitLocale("vmstate-stopping").value
+        case .saving: VZKitLocale("vmstate-saving").value
+        case .restoring: VZKitLocale("vmstate-restoring").value
+        case .installing: VZKitLocale("vmstate-installing").value
+        }
+    }
     
     /// The raw integer value representing the current state.
     ///
@@ -67,102 +164,7 @@ public enum ExecutionState: RawRepresentable, VZKitTransferable {
     /// Initializes an `ExecutionState` from a `VZVirtualMachine.State`.
     ///
     /// - Parameter vzState: The `VZVirtualMachine.State` to map to an `ExecutionState`.
-    public init?(_ vzState: VZVirtualMachine.State) {
+    init?(_ vzState: VZVirtualMachine.State) {
         self.init(rawValue: vzState.rawValue)
-    }
-    
-    // MARK: - Cases
-    
-    /// The virtual machine has stopped.
-    case stopped
-    
-    /// The virtual machine is fully running.
-    case running
-    
-    /// The virtual machine is paused.
-    case paused
-    
-    /// The virtual machine is in an error state.
-    ///
-    /// - Parameter error: The associated error providing details about the issue.
-    case error(error: Error)
-    
-    /// The virtual machine is in the process of starting.
-    case starting
-    
-    /// The virtual machine is in the process of pausing.
-    case pausing
-    
-    /// The virtual machine is resuming from a paused state.
-    case resuming
-    
-    /// The virtual machine is in the process of stopping.
-    case stopping
-    
-    /// The virtual machine is saving its current state.
-    case saving
-    
-    /// The virtual machine is restoring from a saved state.
-    case restoring
-    
-    /// The virtual machine is being installed.
-    ///
-    /// - Parameter progress: A value between 0.0 and 1.0 indicating the installation progress.
-    case installing(progress: Double)
-    
-    // MARK: - Methods
-    
-    /// Compares two `ExecutionState` instances for equality.
-    ///
-    /// - Parameters:
-    ///   - lhs: The left-hand `ExecutionState` to compare.
-    ///   - rhs: The right-hand `ExecutionState` to compare.
-    /// - Returns: A Boolean value indicating whether the two states are equal.
-    public static func == (lhs: ExecutionState, rhs: ExecutionState) -> Bool {
-        switch (lhs, rhs) {
-        case let (.installing(lhsProgress), .installing(rhsProgress)):
-            return lhsProgress == rhsProgress
-        case let (.error(lhsError), .error(rhsError)):
-            return lhsError.localizedDescription == rhsError.localizedDescription
-        default:
-            return lhs.rawValue == rhs.rawValue
-        }
-    }
-    
-    /// Returns the color associated with the current state of the virtual machine.
-    ///
-    /// Use this property in SwiftUI views to visually indicate the status of
-    /// the virtual machine. For example:
-    /// - `.green` for `.running`
-    /// - `.red` for `.stopped`
-    /// - `.orange` for transition states.
-    public var color: Color {
-        switch self {
-        case .stopped: .red
-        case .running: .green
-        case .error: .yellow
-        case .paused, .starting, .pausing, .resuming, .stopping, .saving, .restoring: .orange
-        case .installing: .mint
-        }
-    }
-    
-    /// Returns a localized string representing the current state of the virtual machine.
-    ///
-    /// This property retrieves a localized string for the state, using localization keys defined
-    /// in the framework's bundle. This allows for seamless integration of localized text in SwiftUI views.
-    public var localized: String {
-        switch self {
-        case .stopped: VZKitLocale("vmstate-stopped").value
-        case .running: VZKitLocale("vmstate-running").value
-        case .paused: VZKitLocale("vmstate-paused").value
-        case .error: VZKitLocale("vmstate-error").value
-        case .starting: VZKitLocale("vmstate-starting").value
-        case .pausing: VZKitLocale("vmstate-pausing").value
-        case .resuming: VZKitLocale("vmstate-resuming").value
-        case .stopping: VZKitLocale("vmstate-stopping").value
-        case .saving: VZKitLocale("vmstate-saving").value
-        case .restoring: VZKitLocale("vmstate-restoring").value
-        case .installing: VZKitLocale("vmstate-installing").value
-        }
     }
 }
