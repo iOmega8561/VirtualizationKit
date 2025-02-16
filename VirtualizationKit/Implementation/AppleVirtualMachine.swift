@@ -90,8 +90,8 @@ public struct AppleVirtualMachine<Template: TransferableTemplate>: VirtualMachin
     @VZKitActor public func execute(action: Action) async throws {
         do {
             switch action {
-            case .start:
-                try await vzVirtualMachine.start()
+            case .start(let startOptions):
+                try await vzVirtualMachine.start(options: startOptions)
             case .stop:
                 try await vzVirtualMachine.stop()
             case .pause:
