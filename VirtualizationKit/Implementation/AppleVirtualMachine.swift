@@ -44,7 +44,7 @@ public struct AppleVirtualMachine<Template: TransferableTemplate>: VirtualMachin
     /// - `.resume`: Resume the VM from a paused state.
     /// - `.install`: Run an installation procedure, typically for macOS guests.
     public enum Action: ExecutableAction {
-        case start
+        case start(options: VZVirtualMachineStartOptions)
         case stop
         case pause
         case resume
