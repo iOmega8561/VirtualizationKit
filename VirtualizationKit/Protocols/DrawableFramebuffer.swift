@@ -1,12 +1,4 @@
 //
-//  VZKitViewController 2.swift
-//  VirtualizationKit
-//
-//  Created by Giuseppe Rocco on 12/10/24.
-//
-
-
-//
 //  Copyright (C) Giuseppe Rocco - All Rights Reserved
 //  Unauthorized copying, modification or distribution of this source code,
 //  via any medium is strictly prohibited and penally persecutable
