@@ -17,7 +17,7 @@
 /// ### Associated Type
 /// - `StartOptions`: A type that encapsulates the options or parameters needed to start a virtual machine.
 ///   This type allows customization of the start action, such as specifying configuration details.
-///   It is constrained to `NSObject` so that a default initializer is available.
+///   It is constrained to `Any` so that different implementations can use whatever they need and suits best.
 ///
 /// ### Requirements
 /// - `static func start(options: StartOptions) -> Self`
@@ -32,15 +32,15 @@ public protocol ExecutableAction: Sendable {
     
     /// The type that encapsulates the options required to start a virtual machine.
     ///
-    /// Constrained to `NSObject`, ensuring a default initializer is available.
-    associatedtype StartOptions: NSObject
+    /// Constrained to `Any` so that different implementations can use whatever they need and suits best.
+    associatedtype StartOptions: Any
     
     /// Creates an action to start a virtual machine with the specified options.
     ///
     /// - Parameter options: An instance of `StartOptions` containing the parameters needed to
     ///   configure the start action.
     /// - Returns: An instance of the conforming type representing the start action.
-    static func start(options: StartOptions) -> Self
+    static func start(options: StartOptions?) -> Self
     
     /// Represents the action to stop a virtual machine.
     static var stop: Self { get }
@@ -66,6 +66,6 @@ public extension ExecutableAction {
     ///
     /// - Returns: An instance representing the start action with default configuration.
     static func start() -> Self {
-        start(options: .init())
+        start(options: nil)
     }
 }
