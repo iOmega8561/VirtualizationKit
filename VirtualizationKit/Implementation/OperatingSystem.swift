@@ -83,7 +83,7 @@ public enum OperatingSystem: VZKitTransferable {
         case .macos(let version): .init(
             displayName: "macOS",
             logoImage: .init(systemName: "apple.logo"),
-            fileType: .diskImage,
+            fileType: .init(filenameExtension: "ipsw")!,
             version: version
         )}
     }

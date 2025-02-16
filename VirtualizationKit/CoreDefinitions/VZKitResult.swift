@@ -72,8 +72,8 @@ import Virtualization
     /// Returns `nil` if the result is `.success`.
     public var error: Error? {
         switch self {
-        case .failure(let error): return error
-        default: return nil
+        case .failure(let error): error
+        default: nil
         }
     }
     
@@ -82,8 +82,8 @@ import Virtualization
     /// Returns `nil` if the result is `.failure`.
     public var virtualMachine: (any VZKitVirtualMachine)? {
         switch self {
-        case .success(let virtualMachine): return virtualMachine
-        default: return nil
+        case .success(let virtualMachine): virtualMachine
+        default: nil
         }
     }
     
@@ -113,15 +113,12 @@ import Virtualization
         using template: Template
         
     ) async where VirtualMachine.Template == Template {
-        
+
         do {
             self = .success(
                 try await vmType.init(template: template)
             )
             
-        } catch {
-            
-            self = .failure(error)
-        }
+        } catch { self = .failure(error) }
     }
 }

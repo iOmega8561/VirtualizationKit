@@ -34,26 +34,26 @@ final class AppleErrorDelegate: NSObject, VZVirtualMachineDelegate, Sendable {
     ///
     /// Observers can subscribe to this `PassthroughSubject` to be notified whenever the virtual machine
     /// stops due to an error or when a network device detaches unexpectedly.
-    let publisher: PassthroughSubject<Error, Never> = .init()
+    let errorSubject: PassthroughSubject<Error, Never> = .init()
     
     /// Called when the virtual machine stops due to an error.
     ///
     /// This method is invoked when the virtual machine encounters a fatal error that forces it to shut down.
-    /// Upon receiving such an event, the delegate publishes the error via the `publisher` and logs the error
+    /// Upon receiving such an event, the delegate publishes the error via the `errorSubject` and logs the error
     /// using the framework's logging system.
     ///
     /// - Parameters:
     ///   - virtualMachine: The virtual machine instance that has stopped.
     ///   - error: The error that caused the virtual machine to stop unexpectedly.
     func virtualMachine(_ virtualMachine: VZVirtualMachine, didStopWithError error: any Error) {
-        publisher.send(error)
+        errorSubject.send(error)
         VZKitLogger.default.error(error.localizedDescription)
     }
     
     /// Called when a network device detaches from the virtual machine due to an error.
     ///
     /// This method is triggered when a network attachment disconnects unexpectedly because of an error.
-    /// The delegate handles the event by publishing the encountered error through the `publisher` and logging
+    /// The delegate handles the event by publishing the encountered error through the `errorSubject` and logging
     /// the error details for debugging purposes.
     ///
     /// - Parameters:
@@ -61,7 +61,7 @@ final class AppleErrorDelegate: NSObject, VZVirtualMachineDelegate, Sendable {
     ///   - networkDevice: The network device that was disconnected.
     ///   - attachmentWasDisconnectedWithError: The error that caused the disconnection.
     func virtualMachine(_ virtualMachine: VZVirtualMachine, networkDevice: VZNetworkDevice, attachmentWasDisconnectedWithError error: any Error) {
-        publisher.send(error)
+        errorSubject.send(error)
         VZKitLogger.default.error(error.localizedDescription)
     }
 }

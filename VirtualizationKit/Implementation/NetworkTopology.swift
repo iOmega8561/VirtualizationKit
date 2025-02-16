@@ -53,9 +53,9 @@ public enum NetworkTopology: VZKitTransferable {
     /// - Returns: An array of `(String, String?)` where the left value is the identifier of the network interface, and the right
     /// value is a localized string representing the display name of the network interface (Wi-Fi or Ethernet, for example).
     /// If a localized name is not available, the right value is simply set to `nil`.
-    public static var networkInterfaces: [(id: String, localized: String?)] {
+    public static var networkInterfaces: [(id: String, localizedName: String?)] {
         VZBridgedNetworkInterface.networkInterfaces.map {
-            (id: $0.identifier, localized: $0.localizedDisplayName)
+            (id: $0.identifier, localizedName: $0.localizedDisplayName)
         }
     }
     
