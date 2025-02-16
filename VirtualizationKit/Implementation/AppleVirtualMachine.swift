@@ -53,7 +53,7 @@ public struct AppleVirtualMachine<Template: TransferableTemplate>: VirtualMachin
     /// - `.resume`: Resume the VM from a paused state.
     /// - `.install`: Run an installation procedure, typically for macOS guests.
     public enum Action: ExecutableAction {
-        case start(options: VZVirtualMachineStartOptions)
+        case start(options: VZVirtualMachineStartOptions?)
         case stop
         case pause
         case resume
@@ -99,8 +99,10 @@ public struct AppleVirtualMachine<Template: TransferableTemplate>: VirtualMachin
     @VZKitActor public func execute(action: Action) async throws {
         do {
             switch action {
-            case .start(let startOptions):
-                try await vzVirtualMachine.start(options: startOptions)
+            case .start(let vzStartOptions?):
+                try await vzVirtualMachine.start(options: vzStartOptions)
+            case .start(nil):
+                try await vzVirtualMachine.start()
             case .stop:
                 try await vzVirtualMachine.stop()
             case .pause:
