@@ -1,12 +1,4 @@
 //
-//  VZKitViewController 2.swift
-//  VirtualizationKit
-//
-//  Created by Giuseppe Rocco on 12/10/24.
-//
-
-
-//
 //  DrawableFramebuffer.swift
 //  VirtualizationKit
 //
