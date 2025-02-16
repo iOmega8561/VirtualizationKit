@@ -7,14 +7,14 @@
 
 import Virtualization
 
-extension VZKeyboardConfiguration: VZKitSpecializedConstructible {
+extension VZKeyboardConfiguration: SpecializedConstructible {
     
     /// Much simpler than the other factory methods, this one just returns the appropriate keyboard
     /// configuration according to the OS of choice.
     ///
     /// - Parameters:
     ///   - type: The guest operating system.
-    static func create(type: OperatingSystem) -> Constructible {
+    static func create(type: OperatingSystem) -> Product {
         
         switch type {
         case .macos(let version):

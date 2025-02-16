@@ -9,9 +9,9 @@ import Virtualization
 
 import AVFoundation
 
-extension VZAudioDeviceConfiguration: VZKitSpecializedConstructible {
+extension VZAudioDeviceConfiguration: SpecializedConstructible {
    
-    typealias Constructible = VZVirtioSoundDeviceConfiguration
+    typealias Product = VZVirtioSoundDeviceConfiguration
     
     /// When calling the factory method from the outside, this enum becomes very useful
     /// to provide concise information about the audio stream capabilities of the guest machine.
@@ -47,8 +47,8 @@ extension VZAudioDeviceConfiguration: VZKitSpecializedConstructible {
     ///
     /// - Parameters:
     ///   - type: The audio configuration type (input or output)
-    static func create(type: StreamType) async throws -> Constructible {
-        let dev = Constructible()
+    static func create(type: StreamType) async throws -> Product {
+        let dev = Product()
         
         switch type {
         case .output:

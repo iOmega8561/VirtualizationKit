@@ -10,8 +10,8 @@ import Virtualization
 /// An enumeration representing the outcome of initializing a virtual machine instance.
 ///
 /// `VZKitResult` serves as a high-level container that encapsulates the result of creating a virtual
-/// machine conforming to `VZKitVirtualMachine`. The result is either a successfully initialized virtual
-/// machine (wrapped as an existential of type `any VZKitVirtualMachine`) or an error that occurred during
+/// machine conforming to `VirtualMachine`. The result is either a successfully initialized virtual
+/// machine (wrapped as an existential of type `any VirtualMachine`) or an error that occurred during
 /// the initialization process.
 ///
 /// This design simplifies error handling by capturing initialization failures within the result itself,
@@ -27,8 +27,8 @@ import Virtualization
 /// The asynchronous initializer attempts to create a virtual machine using the provided configuration template.
 /// It accepts:
 ///
-/// - `vmType`: The concrete type of the virtual machine to be created. This type must conform to `VZKitVirtualMachine`.
-/// - `template`: A configuration object conforming to `VZKitTemplate` that specifies the settings for the virtual machine.
+/// - `vmType`: The concrete type of the virtual machine to be created. This type must conform to `VirtualMachine`.
+/// - `template`: A configuration object conforming to `TransferableTemplate` that specifies the settings for the virtual machine.
 ///
 /// The initializer uses the `init(template:)` method on the specified `vmType`. If the initialization is successful,
 /// the instance is stored in the `.success` case; if an error occurs, it is captured in the `.failure` case.
@@ -55,8 +55,8 @@ import Virtualization
     
     /// Indicates that the virtual machine was successfully initialized.
     ///
-    /// - Parameter machine: A fully configured virtual machine instance, stored as an existential of type `any VZKitVirtualMachine`.
-    case success(any VZKitVirtualMachine)
+    /// - Parameter machine: A fully configured virtual machine instance, stored as an existential of type `any VirtualMachine`.
+    case success(any VirtualMachine)
     
     /// Retrieves the error from a failed initialization, if available.
     ///
@@ -71,7 +71,7 @@ import Virtualization
     /// Retrieves the successfully created virtual machine, if available.
     ///
     /// Returns `nil` if the result is `.failure`.
-    public var virtualMachine: (any VZKitVirtualMachine)? {
+    public var virtualMachine: (any VirtualMachine)? {
         switch self {
         case .success(let virtualMachine): virtualMachine
         default: nil
@@ -87,8 +87,8 @@ import Virtualization
     /// the `.failure` case.
     ///
     /// - Parameters:
-    ///   - vmType: The concrete type of the virtual machine to be created. This type must conform to `VZKitVirtualMachine`.
-    ///   - template: A configuration object conforming to `VZKitTemplate` that specifies the settings for the virtual machine.
+    ///   - vmType: The concrete type of the virtual machine to be created. This type must conform to `VirtualMachine`.
+    ///   - template: A configuration object conforming to `TransferableTemplate` that specifies the settings for the virtual machine.
     /// - Note: The associated `Template` type of the virtual machine must match the type of the provided `template`.
     /// - Usage:
     ///   ```swift
@@ -97,14 +97,12 @@ import Virtualization
     /// - Important: This initializer does not throw errors directly; instead, any errors encountered during
     ///   initialization are captured within the resulting `VZKitResult` instance.
     public init<
-        VirtualMachine: VZKitVirtualMachine,
-        Template: VZKitTemplate
+        Product: VirtualMachine,
+        Template: TransferableTemplate
     >(
-        _ vmType: VirtualMachine.Type,
+        _ vmType: Product.Type,
         using template: Template
-        
-    ) async where VirtualMachine.Template == Template {
-
+    ) async where Product.Template == Template {
         do {
             self = .success(
                 try await vmType.init(template: template)

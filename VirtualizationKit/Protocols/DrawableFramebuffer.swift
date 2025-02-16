@@ -7,7 +7,7 @@
 
 
 //
-//  VZKitFramebuffer.swift
+//  DrawableFramebuffer.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 12/10/24.
@@ -18,15 +18,15 @@ import SwiftUI
 /// A protocol defining the required properties for a UI element that displays a virtual machine's
 /// framebuffer and responds to display-related updates.
 ///
-/// `VZKitFramebuffer` is specifically intended for use with drawable contexts such as SwiftUI
+/// `DrawableFramebuffer` is specifically intended for use with drawable contexts such as SwiftUI
 /// `View` types or `NSView` subclasses in AppKit. Conforming types should handle the display of
 /// the guest operating system within the host application, optionally forwarding keyboard and mouse
 /// events. This protocol is pinned to the main actor to ensure all UI updates occur on the main thread.
 ///
-/// - Important: While this protocol is not compiler-enforced to accept only `View` or `NSView`
-///   types, its design targets these two categories of UI elements. For best results, ensure your
-///   conforming type either subclasses `NSView` (AppKit) or conforms to `View` (SwiftUI).
-@MainActor public protocol VZKitFramebuffer {
+/// - Important: This protocol is not compiler-enforced to accept only `View` or `NSView`
+///   types, its design targets these two categories of UI elements. Don't conform to this protocol
+///   directly but use the specific ones `FramebufferView` and `FramebufferNSView`.
+@MainActor public protocol DrawableFramebuffer {
     
     /// A Boolean value indicating whether keyboard and mouse events should be blocked from the guest.
     ///
@@ -52,8 +52,8 @@ import SwiftUI
 
 /// A protocol for SwiftUI views that display a virtual machine’s framebuffer.
 @MainActor
-public protocol VZKitFramebufferView: VZKitFramebuffer, View { }
+public protocol FramebufferView: DrawableFramebuffer, View { }
 
 /// A protocol for AppKit views that display a virtual machine’s framebuffer.
 @MainActor
-public protocol VZKitFramebufferNSView: VZKitFramebuffer where Self: NSView { }
+public protocol FramebufferNSView: DrawableFramebuffer where Self: NSView { }

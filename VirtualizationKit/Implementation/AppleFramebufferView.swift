@@ -22,7 +22,7 @@ import Virtualization
 /// - **capturesSystemKeys**: When enabled, system-level key commands are intercepted by the guest VM.
 /// - **disablesInputRedirection**: When enabled, mouse and keyboard events are ignored, making the display
 ///   effectively non-interactive (preview-only).
-public struct AppleFramebufferView: NSViewRepresentable, VZKitFramebufferView {
+public struct AppleFramebufferView: NSViewRepresentable, FramebufferView {
         
     /// Indicates whether the VM display should automatically resize to match its container.
     public let automaticallyReconfiguresDisplay: Bool
@@ -82,7 +82,7 @@ public struct AppleFramebufferView: NSViewRepresentable, VZKitFramebufferView {
     ///   - automaticallyReconfiguresDisplay: If `true`, the VM display will adjust its layout based on the container's size. Defaults to `false`.
     ///   - capturesSystemKeys: If `true`, the VM will intercept system-wide key commands. Defaults to `false`.
     ///   - disablesInputRedirection: If `true`, the view will ignore mouse and keyboard inputs, making it non-interactive. Defaults to `true`.
-    public init<Template: VZKitTemplate>(
+    public init<Template: TransferableTemplate>(
         virtualMachine: AppleVirtualMachine<Template>,
         automaticallyReconfiguresDisplay: Bool = false,
         capturesSystemKeys: Bool = false,

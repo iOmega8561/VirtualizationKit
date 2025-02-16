@@ -14,7 +14,7 @@ import Virtualization
 /// integration with other asynchronous or lower-level APIs. Since this class is marked with `@MainActor`, all state
 /// mutations and observer callbacks occur on the main thread, making it safe for UI-bound contexts.
 @MainActor @Observable
-public final class AppleStateCoordinator: VZKitStateCoordinator {
+public final class AppleStateCoordinator: StateCoordinator {
     
     /// A Combine subject that broadcasts updates to the virtual machine's execution state.
     ///

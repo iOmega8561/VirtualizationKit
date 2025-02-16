@@ -7,9 +7,9 @@
 
 import Virtualization
 
-extension VZNetworkDeviceConfiguration: VZKitSpecializedConstructible {
+extension VZNetworkDeviceConfiguration: SpecializedConstructible {
     
-    typealias Constructible = VZVirtioNetworkDeviceConfiguration
+    typealias Product = VZVirtioNetworkDeviceConfiguration
     
     /// Sets up a `VZMACAddress` from a provided MAC address string.
     ///
@@ -81,8 +81,8 @@ extension VZNetworkDeviceConfiguration: VZKitSpecializedConstructible {
     ///
     /// - Parameters:
     ///   - type: The network configuration of choice
-    static func create(type: NetworkTopology) throws -> Constructible {
-        let dev = Constructible()
+    static func create(type: NetworkTopology) throws -> Product {
+        let dev = Product()
                 
         switch type {
         case .bridged(let hostInterfaceID, let macAddress):

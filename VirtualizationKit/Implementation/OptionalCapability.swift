@@ -37,8 +37,8 @@ import Virtualization
 /// print("Scope: \(capability.featureScope.rawValue)")   // Prints "Host" or "Guest"
 /// ```
 ///
-/// `OptionalCapability` conforms to `VZKitTransferable` for seamless integration within VirtualizationKit.
-public enum OptionalCapability: VZKitTransferable {
+/// `OptionalCapability` conforms to `Transferable` for seamless integration within VirtualizationKit.
+public enum OptionalCapability: Transferable {
     
     // MARK: - Supporting Types
     

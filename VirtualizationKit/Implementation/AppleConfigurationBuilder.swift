@@ -14,7 +14,7 @@
 ///
 /// - Important: `VZVirtualMachineConfiguration` IS NOT sendable.
 ///   We import the `Virtualization` framework using `@preconcurrency`.
-struct AppleConfigurationBuilder<Template: VZKitTemplate> {
+struct AppleConfigurationBuilder<Template: TransferableTemplate> {
     
     /// A copy of the DTO to have all the necessary info about the VM template
     let template: Template

@@ -7,7 +7,7 @@
 
 import Virtualization
 
-extension VZUSBMassStorageDeviceConfiguration: VZKitPersistentConstructible {
+extension VZUSBMassStorageDeviceConfiguration: PersistentConstructible {
     
     /// When calling the factory method from the outside, this enum becomes very useful
     /// to provide concise information about read/write mounting permissions.
@@ -22,13 +22,13 @@ extension VZUSBMassStorageDeviceConfiguration: VZKitPersistentConstructible {
     /// - Parameters:
     ///   - url: The location at which the disk image is located on the host file system.
     ///   - type: The mounting permissions of the disk image.
-    static func create(at path: URL, type: MountingOptions) throws -> Constructible {
+    static func create(at path: URL, type: MountingOptions) throws -> Product {
         
         let attachment = try VZDiskImageStorageDeviceAttachment(
             url: path,
             readOnly: type == .readOnly ? true : false
         )
         
-        return Constructible(attachment: attachment)
+        return Product(attachment: attachment)
     }
 }

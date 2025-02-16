@@ -7,10 +7,10 @@
 
 @preconcurrency import Virtualization
 
-/// A specialized struct implementing `VZKitVirtualMachine` for the Apple Virtualization framework.
+/// A specialized struct implementing `VirtualMachine` for the Apple Virtualization framework.
 ///
 /// `AppleVirtualMachine` encapsulates configuration details, state management, and direct interaction
-/// with a `VZVirtualMachine` instance. By composing references to a `VZKitTemplate`, a state coordinator,
+/// with a `VZVirtualMachine` instance. By composing references to a `TransferableTemplate`, a state coordinator,
 /// and a delegate, it provides a clear separation of responsibilities. This lightweight, value-oriented
 /// design allows easy passing and copying of the virtual machine interface without duplicating large
 /// internal state, while still adhering to `Sendable` requirements.
@@ -23,7 +23,7 @@
 ///
 /// ## Separation of Concerns
 /// - **`template`**: Contains the VM configuration details (memory, CPU, storage, etc.). This is provided
-///   by user-defined types conforming to `VZKitTemplate`.
+///   by user-defined types conforming to `TransferableTemplate`.
 /// - **`stateCoordinator`**: Manages execution state (`ExecutionState`) and broadcasts updates through
 ///   Combine publishers. Marked `@MainActor` for thread-safe UI integration.
 /// - **`vzVirtualMachine`**: The primary Apple Virtualization object, handling lifecycle actions like
@@ -33,7 +33,7 @@
 ///
 /// - Note: This struct is not responsible for storing or mutating substantial state. Instead, it
 ///   references specialized components that each manage a specific aspect of the VM's lifecycle.
-public struct AppleVirtualMachine<Template: VZKitTemplate>: VZKitVirtualMachine {
+public struct AppleVirtualMachine<Template: TransferableTemplate>: VirtualMachine {
     
     /// An enum of high-level actions that can be performed on the Apple Virtual Machine.
     ///
@@ -43,8 +43,8 @@ public struct AppleVirtualMachine<Template: VZKitTemplate>: VZKitVirtualMachine 
     /// - `.pause`: Suspend the VM.
     /// - `.resume`: Resume the VM from a paused state.
     /// - `.install`: Run an installation procedure, typically for macOS guests.
-    public enum Action: VZKitExecutableAction {
-        case start(options: VZVirtualMachineStartOptions = .init())
+    public enum Action: ExecutableAction {
+        case start
         case stop
         case pause
         case resume
@@ -55,7 +55,7 @@ public struct AppleVirtualMachine<Template: VZKitTemplate>: VZKitVirtualMachine 
     ///
     /// `template` should contain details such as memory allocation, CPU cores, disk images,
     /// and any other configuration data relevant to the virtual machine. It must conform
-    /// to `VZKitTemplate`.
+    /// to `TransferableTemplate`.
     public let template: Template
     
     /// Manages the VM’s execution state and communicates changes on the main actor.
@@ -90,8 +90,8 @@ public struct AppleVirtualMachine<Template: VZKitTemplate>: VZKitVirtualMachine 
     @VZKitActor public func execute(action: Action) async throws {
         do {
             switch action {
-            case .start(let options):
-                try await vzVirtualMachine.start(options: options)
+            case .start:
+                try await vzVirtualMachine.start()
             case .stop:
                 try await vzVirtualMachine.stop()
             case .pause:
@@ -143,7 +143,7 @@ public struct AppleVirtualMachine<Template: VZKitTemplate>: VZKitVirtualMachine 
     /// - Returns: A `UUID` uniquely identifying the attached USB device for future tracking or removal.
     /// - Throws:
     ///   - `VZKitError.unsupportedFeature(.xhciUSBHotSwap)` if no suitable USB controller is found.
-    ///   - `VZKitError.appleLimitExceeded` or other Apple Virtualization–related errors if attachment fails.
+    ///   - Other Apple Virtualization–related errors if attachment fails.
     func attachRemovableUSBDisk(usingImageAt url: URL) async throws -> UUID {
         guard let controller = vzVirtualMachine.usbControllers.first else {
             throw VZKitError.unsupportedFeature(.xhciUSBHotSwap)

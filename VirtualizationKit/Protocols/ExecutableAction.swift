@@ -27,17 +27,14 @@
 ///   A static property that represents a pause action.
 /// - `static var resume: Self { get }`
 ///   A static property that represents a resume action.
-public protocol VZKitExecutableAction: Sendable {
-    
-    /// The type that encapsulates the options required to start a virtual machine.
-    associatedtype StartOptions: AnyObject
+public protocol ExecutableAction: Sendable {
     
     /// Creates an action to start a virtual machine with the specified options.
     ///
     /// - Parameter options: An instance of `StartOptions` containing the parameters needed to
     ///   configure the start action.
     /// - Returns: An instance of the conforming type representing the start action.
-    static func start(options: StartOptions) -> Self
+    static var start: Self { get }
     
     /// Represents the action to stop a virtual machine.
     static var stop: Self { get }
