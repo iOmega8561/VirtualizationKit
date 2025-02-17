@@ -5,6 +5,8 @@
 //  Created by Giuseppe Rocco on 15/02/25.
 //
 
+import Virtualization
+
 /// A protocol defining executable actions for controlling a virtual machine.
 ///
 /// Conforming types represent high-level commands that can be issued to a virtual machine,
@@ -67,5 +69,26 @@ public extension ExecutableAction {
     /// - Returns: An instance representing the start action with default configuration.
     static func start() -> Self {
         start(options: nil)
+    }
+}
+
+/// Provides a specialized extension for `ExecutableAction` when the `StartOptions` type is specifically
+/// `VZVirtualMachineStartOptions`.
+public extension ExecutableAction where StartOptions == VZVirtualMachineStartOptions {
+    
+    /// Creates an action to start a virtual machine from macOS Recovery.
+    ///
+    /// This method performs the following steps:
+    /// 1. Creates a default instance of `VZMacOSVirtualMachineStartOptions`.
+    /// 2. Configures the options by setting the `startUpFromMacOSRecovery` property to `true`.
+    /// 3. Calls `start(options:)` with the configured options.
+    ///
+    /// - Returns: An instance representing the start action configured for macOS Recovery.
+    static func macOSRecovery() -> Self {
+        
+        let startOptions: VZMacOSVirtualMachineStartOptions = .init()
+        startOptions.startUpFromMacOSRecovery = true
+        
+        return start(options: startOptions)
     }
 }
