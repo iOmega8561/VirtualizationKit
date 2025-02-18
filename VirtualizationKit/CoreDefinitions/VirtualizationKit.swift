@@ -7,15 +7,13 @@
 
 @_exported import Foundation
 
-@_exported import Virtualization
-
 public final class _VirtualizationKit: Sendable {
     
     /// The bundle identifier of this framework
     public let bundleIdentifier: String = "giusepperocco.VirtualizationKit"
     
     /// The version string of this framework
-    public let version: String = "1.4.2"
+    public let version: String = "1.4.5"
     
     /// The minimum macOS version supported as a guest operating system
     public let macOSGuestMinVersion: OperatingSystem.Version = .init(major: 12, minor: 4, patch: 0)

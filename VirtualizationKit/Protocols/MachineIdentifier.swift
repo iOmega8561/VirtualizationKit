@@ -1,5 +1,5 @@
 //
-//  VZKitMachineIdentifier.swift
+//  MachineIdentifier.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 09/01/25.
@@ -9,10 +9,10 @@ import Virtualization
 
 /// A protocol representing a machine identifier within the VZKit framework.
 ///
-/// This protocol extends `VZKitDataRepresentable` to unify the functionality of various machine identifier types.
+/// This protocol extends `DataRepresentable` to unify the functionality of various machine identifier types.
 /// It allows generic code to handle machine identifiers by providing a standard interface for creation,
 /// data serialization, and file-based persistence.
-protocol VZKitMachineIdentifier: VZKitDataRepresentable where Constructible: VZKitMachineIdentifier {
+protocol MachineIdentifier: DataRepresentable where Product: MachineIdentifier {
     
     /// Creates a new instance of the machine identifier.
     ///
@@ -21,7 +21,7 @@ protocol VZKitMachineIdentifier: VZKitDataRepresentable where Constructible: VZK
     init()
 }
 
-extension VZKitMachineIdentifier {
+extension MachineIdentifier {
     
     /// Creates or retrieves a machine identifier from a file at the specified URL.
     ///
@@ -30,14 +30,14 @@ extension VZKitMachineIdentifier {
     /// the machine identifier from the file.
     ///
     /// - Parameter url: The file URL where the machine identifier is stored or should be created.
-    /// - Returns: An instance of the `Constructible` type that conforms to `VZKitMachineIdentifier`.
+    /// - Returns: An instance of the `Constructible` type that conforms to `MachineIdentifier`.
     /// - Throws:
     ///   - `VZKitError.coreFilesMissing` if the file cannot be read or the data is missing.
     ///   - `VZKitError.coreFilesTampered` if the data is invalid or cannot be used to create the object.
-    static func create(at url: URL) throws -> Constructible {
+    static func create(at url: URL) throws -> Product {
         
         guard FileManager.default.fileExists(atPath: url.path(percentEncoded: false)) else {
-            let machineId = Constructible()
+            let machineId = Product()
             try machineId.dataRepresentation.write(to: url)
             return machineId
         }
@@ -46,14 +46,14 @@ extension VZKitMachineIdentifier {
     }
 }
 
-/// Extends `VZMacMachineIdentifier` to conform to the `VZKitMachineIdentifier` protocol.
+/// Extends `VZMacMachineIdentifier` to conform to the `MachineIdentifier` protocol.
 ///
 /// This extension enables `VZMacMachineIdentifier` to leverage the default functionality provided
-/// by the `VZKitMachineIdentifier` protocol, including serialization, deserialization, and file-based persistence.
-extension VZMacMachineIdentifier: VZKitMachineIdentifier {}
+/// by the `MachineIdentifier` protocol, including serialization, deserialization, and file-based persistence.
+extension VZMacMachineIdentifier: MachineIdentifier {}
 
-/// Extends `VZGenericMachineIdentifier` to conform to the `VZKitMachineIdentifier` protocol.
+/// Extends `VZGenericMachineIdentifier` to conform to the `MachineIdentifier` protocol.
 ///
 /// This extension enables `VZGenericMachineIdentifier` to leverage the default functionality provided
-/// by the `VZKitMachineIdentifier` protocol, including serialization, deserialization, and file-based persistence.
-extension VZGenericMachineIdentifier: VZKitMachineIdentifier {}
+/// by the `MachineIdentifier` protocol, including serialization, deserialization, and file-based persistence.
+extension VZGenericMachineIdentifier: MachineIdentifier {}

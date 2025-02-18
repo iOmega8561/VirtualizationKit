@@ -1,15 +1,17 @@
 //
-//  VZKitDataRepresentable.swift
+//  DataRepresentable.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 11/01/25.
 //
 
+import Virtualization
+
 /// A protocol representing types that can be converted to and from a `Data` representation.
 ///
 /// Types conforming to this protocol must implement an initializer to create an instance
 /// from a `Data` representation and a property to retrieve the `Data` representation.
-protocol VZKitDataRepresentable: VZKitConstructible where Constructible: VZKitDataRepresentable {
+protocol DataRepresentable: Constructible where Product: DataRepresentable {
     
     /// Creates an instance of the conforming type from its `Data` representation.
     ///
@@ -23,10 +25,10 @@ protocol VZKitDataRepresentable: VZKitConstructible where Constructible: VZKitDa
     var dataRepresentation: Data { get }
 }
 
-/// Default implementation of utility methods for types conforming to `VZKitDataRepresentable`.
-extension VZKitDataRepresentable {
+/// Default implementation of utility methods for types conforming to `DataRepresentable`.
+extension DataRepresentable {
     
-    /// Creates an instance of a type conforming to `VZKitDataRepresentable` from a file located at the specified URL.
+    /// Creates an instance of a type conforming to `DataRepresentable` from a file located at the specified URL.
     ///
     /// This method reads the data from the specified file URL, attempts to initialize an object
     /// of the specified type using its `dataRepresentation` initializer, and returns the resulting object.
@@ -37,13 +39,13 @@ extension VZKitDataRepresentable {
     /// - Throws:
     ///   - `VZKitError.coreFilesMissing` if the file cannot be read or the data is missing.
     ///   - `VZKitError.coreFilesTampered` if the data is invalid or cannot be used to create the object.
-    static func create(dataAt url: URL) throws -> Constructible {
+    static func create(dataAt url: URL) throws -> Product {
         
         guard let dataRepresentation = try? Data(contentsOf: url) else {
             throw VZKitError.coreFilesMissing
         }
         
-        guard let object = Constructible(dataRepresentation: dataRepresentation) else {
+        guard let object = Product(dataRepresentation: dataRepresentation) else {
             throw VZKitError.coreFilesTampered
         }
         
@@ -51,8 +53,8 @@ extension VZKitDataRepresentable {
     }
 }
 
-/// Extension to make `VZMacHardwareModel` conform to the `VZKitDataRepresentable` protocol.
+/// Extension to make `VZMacHardwareModel` conform to the `DataRepresentable` protocol.
 ///
 /// This extension enables `VZMacHardwareModel` to utilize the default functionality
-/// provided by the `VZKitDataRepresentable` protocol, such as serialization and deserialization.
-extension VZMacHardwareModel: VZKitDataRepresentable {}
+/// provided by the `DataRepresentable` protocol, such as serialization and deserialization.
+extension VZMacHardwareModel: DataRepresentable {}

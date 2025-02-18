@@ -9,17 +9,28 @@ import Foundation
 
 import Virtualization
 
-/// PerformancePreset defines hardware configurations for virtual machines.
-/// It provides predefined presets and a customizable option for fine-tuned resources.
+/// Defines hardware configuration presets for virtual machines in VirtualizationKit.
 ///
-/// Presets:
-/// - `basic`: Minimal resource usage.
-/// - `balanced`: General-purpose configuration.
-/// - `performance`: Maximizes resource allocation for performance.
-/// - `custom`: User-defined configuration.
+/// `PerformancePreset` provides a set of predefined resource configurations for virtual machines,
+/// along with a customizable option for fine-tuned setups. Each preset is associated with metadata
+/// for localization, and computed properties determine the number of CPU cores, memory size, and disk size.
+/// The preset values are constrained by the host system’s capabilities as dictated by the virtualization framework.
 ///
-/// UInt64 values for memorySize and diskSize are multiples of 1 MB.
-public enum PerformancePreset: VZKitTransferable {
+/// ### Presets
+/// - **basic**: Minimal configuration for lightweight workloads.
+/// - **balanced**: General-purpose configuration balancing resource usage.
+/// - **performance**: High-performance configuration maximizing resource allocation.
+/// - **custom**: User-defined configuration for specific hardware requirements.
+///
+/// ### Example Usage
+/// ```swift
+/// let preset: PerformancePreset = .balanced
+/// print("Preset: \(preset.localizedName)")              // Localized preset name
+/// print("CPU Cores: \(preset.cpuCoreCount)")        // Number of CPU cores
+/// print("Memory Size: \(preset.memorySize) bytes")  // Memory allocation in bytes
+/// print("Disk Size: \(preset.diskSize) bytes")      // Disk allocation in bytes
+/// ```
+public enum PerformancePreset: Transferable {
     
     /// Minimal configuration for lightweight workloads.
     case basic
@@ -253,7 +264,7 @@ public enum PerformancePreset: VZKitTransferable {
     ///
     /// The localization keys are determined by the case of the enum instance.
     /// - Returns: A `String` containing the localized value for the performance preset.
-    public var localized: String {
+    public var localizedName: String {
         switch self {
         case .basic: VZKitLocale("perfpreset-basic").value
         case .balanced: VZKitLocale("perfpreset-balanced").value

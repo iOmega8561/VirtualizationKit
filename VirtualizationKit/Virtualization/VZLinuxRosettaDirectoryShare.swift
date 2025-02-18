@@ -7,9 +7,9 @@
 
 import Virtualization
 
-extension VZLinuxRosettaDirectoryShare: VZKitGenericConstructible {
+extension VZLinuxRosettaDirectoryShare: GenericConstructible {
     
-    typealias Constructible = VZVirtioFileSystemDeviceConfiguration
+    typealias Product = VZVirtioFileSystemDeviceConfiguration
     
     /// Creates a shared directory mount between the host and the guest systems using Apple Rosetta.
     ///
@@ -26,7 +26,7 @@ extension VZLinuxRosettaDirectoryShare: VZKitGenericConstructible {
     ///
     /// - Note:
     ///   Ensure that Rosetta is installed and supported on the host system before calling this method.
-    static func create() throws -> Constructible {
+    static func create() throws -> Product {
                 
         switch VZLinuxRosettaDirectoryShare.availability {
         case .installed:
