@@ -16,7 +16,7 @@
 
 import Virtualization
 
-extension VZPlatformConfiguration: VZKitPersistentConstructible {
+extension VZPlatformConfiguration: PersistentConstructible {
     
     enum PlatformType {
         case generic(nestedVirtualization: Bool = false)
@@ -45,7 +45,7 @@ extension VZPlatformConfiguration: VZKitPersistentConstructible {
         return auxiliaryStorage
     }
     
-    // MARK: - VZKitPersistentConstructible
+    // MARK: - PersistentConstructible
     
     /// This method can create a generic virtual machine platform configuration.
     /// It also takes care of calling the appropriate method to generate a machine identifier, then returns the full object, ready to use.
@@ -53,7 +53,7 @@ extension VZPlatformConfiguration: VZKitPersistentConstructible {
     /// - Parameters:
     ///   - url: Location on disk of the Virtual Machine storage directory.
     ///   - type: The additional configuration and platform type to generate the correct object
-    static func create(at url: URL, type: PlatformType) throws -> Constructible {
+    static func create(at url: URL, type: PlatformType) throws -> Product {
         
         let platform: VZPlatformConfiguration
         
@@ -69,7 +69,7 @@ extension VZPlatformConfiguration: VZKitPersistentConstructible {
             guard nestedVZ else { platform = genericPlatform; break }
             
             guard #available(macOS 15.0, *),
-                  VZGenericPlatformConfiguration.isNestedVirtualizationSupported else {
+                  OptionalCapability.isNestedVirtualizationSupported else {
                 throw VZKitError.unsupportedFeature(.nestedVirtualization)
             }
             

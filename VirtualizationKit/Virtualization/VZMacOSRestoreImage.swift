@@ -16,14 +16,8 @@
 
 @preconcurrency import Virtualization
 
-/// An extension to `VZMacOSRestoreImage` that provides a custom version property
-/// and a static async loader, tailored to Swift's concurrency model.
-///
-/// `VZMacOSRestoreImage` is presumed read-only based on Apple's current
-/// Virtualization framework documentation. This extension:
-///  1. Adds a utility property `osVersion` for cleaner access to the macOS version.
-///  2. Provides a static async method `load(from:)` that wraps the framework's
-///     completion-based API into an async/await flow.
+/// An extension to `VZMacOSRestoreImage` that provides a
+/// static async loader, tailored to Swift's concurrency model.
 ///
 /// ### Concurrency Considerations
 /// - Swift emits warnings that `VZMacOSRestoreImage` is non-Sendable when crossing
@@ -38,7 +32,6 @@
 /// ```swift
 /// do {
 ///     let restoreImage = try await VZMacOSRestoreImage.load(from: url)
-///     print("Loaded macOS version: \(restoreImage.osVersion)")
 /// } catch {
 ///     print("Failed to load restore image: \(error)")
 /// }
@@ -47,18 +40,7 @@
 /// - Note: If your app needs to pass `VZMacOSRestoreImage` across multiple actors
 ///   frequently, consider wrapping its data in a `Sendable` type or marking it
 ///   `@unchecked Sendable` (with caution).
-extension VZMacOSRestoreImage: VZKitRestorableImage {
-    
-    /// The version of the macOS operating system associated with this restore image.
-    ///
-    /// This computed property converts the `operatingSystemVersion` of the restore image
-    /// to a custom `OperatingSystem.Version` type.
-    ///
-    /// - Returns: An `OperatingSystem.Version` instance that represents the macOS version
-    ///            of the restore image.
-    public var osVersion: OperatingSystem.Version {
-        return .init(self.operatingSystemVersion, self.buildVersion)
-    }
+extension VZMacOSRestoreImage {
     
     /// Asynchronously loads a `VZMacOSRestoreImage` from a specified URL.
     ///
@@ -73,7 +55,7 @@ extension VZMacOSRestoreImage: VZKitRestorableImage {
     /// - Parameter url: The URL from which to load the macOS restore image.
     /// - Returns: A `VZMacOSRestoreImage` instance loaded from the provided URL.
     /// - Throws: An error if the restore image could not be loaded from the specified URL.
-    public static func load(from url: URL) async throws -> VZMacOSRestoreImage {
+    static func load(from url: URL) async throws -> VZMacOSRestoreImage {
         
         return try await withCheckedThrowingContinuation { continuation in
             

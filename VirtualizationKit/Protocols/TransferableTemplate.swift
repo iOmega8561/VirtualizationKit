@@ -8,7 +8,7 @@
 //
 //  -----------------------------------------------------------------------
 //
-//  VZKitTemplate.swift
+//  TransferableTemplate.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 12/10/24.
@@ -22,9 +22,9 @@ import Foundation
 /// without embedding the complete Virtualization Framework data. This enables simpler, more
 /// flexible setups for defining new VMs in your application.
 ///
-/// Conforming to both `Identifiable` and `VZKitTransferable`, each template can be uniquely
+/// Conforming to both `Identifiable` and `Transferable`, each template can be uniquely
 /// identified and easily transferred or serialized within the framework.
-public protocol VZKitTemplate: Identifiable, VZKitTransferable {
+public protocol TransferableTemplate: Identifiable, Transferable {
     
     /// A unique identifier for the template.
     ///

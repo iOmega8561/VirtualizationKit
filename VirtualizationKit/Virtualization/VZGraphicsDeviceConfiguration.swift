@@ -16,7 +16,7 @@
 
 import Virtualization
 
-extension VZGraphicsDeviceConfiguration: VZKitSpecializedConstructible {
+extension VZGraphicsDeviceConfiguration: SpecializedConstructible {
     
     /// This factory method can create a graphics device configuration for the guest machine.
     /// Configuration will be different according to the OS of choice, so the method takes the latter as input parameter
@@ -24,7 +24,7 @@ extension VZGraphicsDeviceConfiguration: VZKitSpecializedConstructible {
     ///
     /// - Parameters:
     ///   - type: The guest operating system.
-    static func create(type: OperatingSystem) -> Constructible {
+    static func create(type: OperatingSystem) -> Product {
 
         switch type {
         case .macos:

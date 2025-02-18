@@ -16,7 +16,7 @@
 
 import Virtualization
 
-extension VZVirtioBlockDeviceConfiguration: VZKitPersistentConstructible {    
+extension VZVirtioBlockDeviceConfiguration: PersistentConstructible {    
     
     /// When calling the factory method from the outside, this enum becomes very useful
     /// to provide concise information about disk capacity and read/write mounting permissions.
@@ -58,7 +58,7 @@ extension VZVirtioBlockDeviceConfiguration: VZKitPersistentConstructible {
     /// - Parameters:
     ///   - url: The location at which the disk image should be created on the host file system.
     ///   - type: Mounting permissions with integer size of the virtual disk image, in gigabytes.
-    static func create(at url: URL, type: MountingOptions) throws -> Constructible {
+    static func create(at url: URL, type: MountingOptions) throws -> Product {
         
         let attachment: VZDiskImageStorageDeviceAttachment
         
@@ -79,6 +79,6 @@ extension VZVirtioBlockDeviceConfiguration: VZKitPersistentConstructible {
             readOnly: isReadOnly
         )
         
-        return Constructible(attachment: attachment)
+        return Product(attachment: attachment)
     }
 }

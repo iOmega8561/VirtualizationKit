@@ -45,7 +45,7 @@ extension OperatingSystem {
     /// making it particularly useful in virtualization and deployment scenarios.
     ///
     /// - Note: When using `Comparable`, versions are compared by their major, minor, patch, and build values in sequence.
-    public struct Version: Equatable, Comparable, VZKitTransferable {
+    public struct Version: Equatable, Comparable, Transferable {
         
         // MARK: - Comparable Conformance
             
@@ -130,12 +130,11 @@ extension OperatingSystem {
         /// - Parameters:
         ///   - version: An `OperatingSystemVersion` object representing the OS version.
         ///   - build: An optional build identifier string.
-        public init(_ version: OperatingSystemVersion, _ build: String? = nil) {
+        init(_ version: OperatingSystemVersion, _ build: String? = nil) {
             self.major = version.majorVersion
             self.minor = version.minorVersion
             self.patch = version.patchVersion
             self.build = build
         }
     }
-    
 }

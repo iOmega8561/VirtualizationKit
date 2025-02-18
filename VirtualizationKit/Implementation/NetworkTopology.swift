@@ -16,9 +16,34 @@
 
 import Virtualization
 
-/// `NetworkTopology` is an enumeration that represents the possible network configurations
-/// available for virtual machines. This enumeration conforms to Sendable
-public enum NetworkTopology: VZKitTransferable {
+/// Represents the available network configurations for virtual machines in VirtualizationKit.
+///
+/// `NetworkTopology` defines the network connectivity options for a virtual machine,
+/// including no connectivity, NAT (Network Address Translation), or bridged mode.
+///
+/// ### Key Features
+/// - **Network Interfaces**: Provides a static property to retrieve available bridged network interfaces.
+/// - **Random MAC Address Generation**: Offers a static property to generate a random, locally administered MAC address.
+/// - **MAC Address Validation**: Includes a helper method to validate MAC address strings.
+///
+/// ### Enum Cases
+/// - `none`: No network connectivity is configured.
+/// - `nat(macAddress:)`: Provides NAT-based connectivity using the host’s IP address, with an assigned MAC address.
+/// - `bridged(hostInterfaceID:macAddress:)`: Connects the virtual machine directly to a specified host network interface,
+///   with an assigned MAC address.
+///
+/// ### Example Usage
+/// ```swift
+/// let topology: NetworkTopology = .bridged(hostInterfaceID: "en0")
+/// print("Network configuration: \(topology.localizedName)")  // Outputs localized name
+/// print("MAC Address: \(topology.macAddress ?? "N/A")")    // Outputs assigned MAC address
+/// print("Interface: \(topology.hostInterfaceID ?? "Automatic")") // Outputs the host interface identifier or nil
+/// ```
+///
+/// `NetworkTopology` conforms to `Transferable` for seamless integration within VirtualizationKit.
+public enum NetworkTopology: Transferable {
+    
+    // MARK: - Static properties
     
     /// A static property that retrieves the list of network interface identifiers available for bridging.
     ///
@@ -28,9 +53,9 @@ public enum NetworkTopology: VZKitTransferable {
     /// - Returns: An array of `(String, String?)` where the left value is the identifier of the network interface, and the right
     /// value is a localized string representing the display name of the network interface (Wi-Fi or Ethernet, for example).
     /// If a localized name is not available, the right value is simply set to `nil`.
-    public static var networkInterfaces: [(id: String, localized: String?)] {
+    public static var networkInterfaces: [(id: String, localizedName: String?)] {
         VZBridgedNetworkInterface.networkInterfaces.map {
-            (id: $0.identifier, localized: $0.localizedDisplayName)
+            (id: $0.identifier, localizedName: $0.localizedDisplayName)
         }
     }
     
@@ -43,6 +68,8 @@ public enum NetworkTopology: VZKitTransferable {
     public static var randomMacAddress: String {
         VZMACAddress.randomLocallyAdministered().string
     }
+    
+    // MARK: - Enum cases
     
     /// No network interface for the virtual machine.
     ///
@@ -77,6 +104,8 @@ public enum NetworkTopology: VZKitTransferable {
     /// `hostInterfaceID` determines which host interface is used for this connection.
     case bridged(hostInterfaceID: String? = nil, macAddress: String = Self.randomMacAddress)
     
+    // MARK: - MAC Validation logic
+    
     /// Validates the format of a MAC (Media Access Control) address string.
     ///
     /// This function checks whether the provided string represents a valid MAC address by attempting to initialize
@@ -95,6 +124,8 @@ public enum NetworkTopology: VZKitTransferable {
     public static func macAddressValidation(_ value: String) throws {
         guard let _ = VZMACAddress(string: value) else { throw VZKitError.invalidMacAddress(value) }
     }
+    
+    // MARK: - Instance properties
     
     /// The MAC (Media Access Control) address associated with the network configuration.
     ///
@@ -135,7 +166,7 @@ public enum NetworkTopology: VZKitTransferable {
     ///   - Returns the `hostInterfaceID` when explicitly provided.
     ///   - Defaults to a nil value indicating automatic selection if no `hostInterfaceID` is provided.
     /// - For all other configurations, the interface is not applicable, and the property returns `nil`.
-    public var interface: String? {
+    public var hostInterfaceID: String? {
         switch self {
         case .bridged(let hostInterfaceID, _): hostInterfaceID
         default: nil
@@ -144,14 +175,14 @@ public enum NetworkTopology: VZKitTransferable {
     
     /// A computed property that provides a localized string representation of the network configuration.
     ///
-    /// The `localized` property maps network configuration cases to corresponding localized
+    /// The `localizedName` property maps network configuration cases to corresponding localized
     /// strings using the `VirtualizationKit.localized` function. Each case is tied to a specific localization key:
     /// - `.none` corresponds to the key `networktopo-none`.
     /// - `.nat` corresponds to the key `networktopo-nat`.
     /// - `.bridged(_, _)` corresponds to the key `networktopo-bridged`.
     ///
     /// - Returns: A `String` that is the localized representation of the network configuration.
-    public var localized: String {
+    public var localizedName: String {
         switch self {
         case .none: VZKitLocale("networktopo-none").value
         case .nat: VZKitLocale("networktopo-nat").value
