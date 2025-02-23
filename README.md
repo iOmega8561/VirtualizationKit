@@ -1,83 +1,95 @@
 # VirtualizationKit
 
+<div align="center">
+  <img src="VirtualizationKit/Resources/Assets.xcassets/Logo.imageset/VirtualizationKit.png" width="200" height="200">
+
+  <p>Welcome to <strong>VirtualizationKit</strong><br>The revolutionary framework for easy Virtualization on macOS.</p>
+</div>
+
 ## Introduction
 
-`VirtualizationKit` is designed to provide a more straightforward and accessible way to use Apple's `Virtualization.framework`. This framework abstracts the complexities of virtualization, allowing developers to focus on their applications without getting bogged down in intricate configurations.
+`VirtualizationKit` is an umbrella virtualization solution. It currently supports Apple Virtualization Framework, and its architecture is built and ready to accommodate additional backends (for example, QEMU) with minimal friction. The primary goal is to offer a streamlined interface to manage virtual machines without needing to deal with the higher complexity that comes with virtualization back-ends.
 
-## Key Points
+### Design Implications
+- A **minimal** and **simple to use** API that wraps the complex virtualization back-ends and removes the need for boilerplate code.
+- Defaults that *“just work”* for the majority of use cases, from basic Linux VMs to more complex setups.
+- Advanced virtualization features for niche, specialized scenarios from the different back-ends may not be available.
+- Currently optimized around Apple virtualization. Broader hypervisor support is on the roadmap.
 
-#### Simplification as the Primary Goal
-  - The framework focuses on abstracting the complexities of `Virtualization.framework`, making it easier for developers to get started.
-  - Developers can achieve common virtualization tasks without deep knowledge of the underlying system.
-  - The starting point is a standardized, customizable data structure that defines the specific of the virtual machine (The `Template`).
-
-#### `Virtualization.framework` as the "Customizable Core"
-  - Advanced customization is already possible through `Virtualization.framework`.
-  - This framework acts as a utility layer, prioritizing simplicity and providing opinionated defaults for common use cases.
-
-#### Targets Developers who:
-  - Are not experts in virtualization or system-level APIs.
-  - Want to get started quickly without diving into low-level details.
-  - Prefer simplicity and abstraction over extreme flexibility, but without missing out on incredibly powerful features.
-
----
-
-## Design Implications
-
-#### Minimal API Surface
-  - The framework provides a minimal, intuitive API that focuses on the most common virtualization scenarios.
-  - Advanced features from `Virtualization.framework` are not duplicated but remain accessible for users who need them.
-
-#### Opinionated Design
-  - The framework assumes sensible defaults to minimize setup and configuration time.
-  - Repetitive tasks and verbose configurations are encapsulated in high-level methods and engineering patterns.
-
-#### Clear Boundaries
-  - The framework is a facilitator, and for most use-cases, can be a replacement, for `Virtualization.framework`.
-  - `VirtualizationKit` is not aiming to be an "doall-hypervisor-swiss-knife", so not everyone will be satisfied with the available features.
-
-#### Strong Documentation
-  - Easy-to-follow guides, real-world examples, and step-by-step workflows for common use cases will help developers make the most of the framework.
+> [!TIP]
+> **Target Audience**
+> - **Developers new to Virtualization**: Offers a gentle learning curve for those unfamiliar with system-level APIs.
+> - **Teams seeking quick setup**: Great for those contexts where spinning up VMs should be simple and repeatable.
+> - **Users wanting abstraction**: Whoever prefers working with a consistent API rather than multiple vendor-specific solutions.
 
 ---
 
 ## Potential API Design Goals
 
-#### Helper Objects and Methods
-- Simplify complex configurations with intuitive high-level APIs.
-  
-  **Example:**
-  ```swift
+> [!WARNING]
+> To be able to use this framework, please make sure your system meets the following requirements:
+> 
+> - **Processor**: Apple Silicon (M1, M2, or newer)   
+> - **Operating System**: macOS Sonoma 14.0 or later
 
-  let myAwesomeTemplate = Template(name: ..., os: .linux, ram: 4096, cpu: 3, ...)
+### Helper Objects and Methods
+- Encapsulate complex tasks in user-friendly functions and data structures.
 
-  do {
-     let vm = VirtualMachine(template: myAwesomeTemplate)
+**Example (using Apple as a concrete backend and Combine for state subscriptions):**
+```swift
+import VirtualizationKit
+import Combine
 
-  } catch { print(error.localizedDescription) }
-  
-  vm.installOS(from: "installer.iso") { progress in
-      print("Installation progress: \(progress)%")
-  }
-  ```
+// 1. Create a simple template
+let myAwesomeTemplate = Template(
+    name: "MySampleVM",
+    os: .linux,
+    ram: 4096,
+    cpu: 3,
+    ...
+)
 
-#### Sensible Defaults
-- Provide preconfigured settings for common virtualization scenarios, reducing boilerplate code.
+// 2. Initialize an Apple-based VM
+let vm = AppleVirtualMachine(template: myAwesomeTemplate)
 
-#### Error Handling
-- Abstract detailed error codes and provide user-friendly error messages with actionable suggestions.
+// 3. Subscribe to state updates
+var cancellables = Set<AnyCancellable>()
+vm.stateSubject
+    .sink { state in
+        switch state {
+        case .install(let progress): print("Installation at: \(progress)")
+        case .running:               print("VM is running")
+        case .stopped:               print("VM stopped")
+        }
+    }
+    .store(in: &cancellables)
+
+// 4. Perform installation asynchronously
+Task {
+    do {
+        try await vm.execute(action: .install)
+        print("Installation completed successfully!")
+    } catch {
+        print("Installation failed: \(error.localizedDescription)")
+    }
+}
+```
+
+### Sensible Defaults
+- Provide ready-to-use configurations for common virtualization needs—like typical CPU, memory, and disk settings—so users can get started with minimal code.
+
+### Simplified Error Handling
+- Mask low-level error codes with approachable descriptions and actionable suggestions.
 
   **Example:**
   ```swift
   do {
       try await vm.execute(command: .start)
-  
-  } catch { print("Failed to start VM: \(error.localizedDescription)") }
+  } catch {
+      print("Failed to start VM: \(error.localizedDescription)")
+  }
   ```
+---
+## Contact
 
-#### High-Level Utilities
-- Offer utilities to automate repetitive tasks:
-  - Automatically create disk images.
-  - Set up shared folders between host and guest.
-  - Automatically handle system input capture.
-  - Refine configuration details based on the guest Operating System.
+For any inquiries or feedback, please feel free to contact me at <a href="mailto:help@grocco.org">help@grocco.org</a>
