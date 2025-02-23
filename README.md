@@ -8,7 +8,7 @@
 
 ## Introduction
 
-`VirtualizationKit` is an umbrella virtualization solution. It currently supports Apple Virtualization Framework, and its architecture is built and ready to accommodate additional backends (for example, QEMU) with minimal friction. The primary goal is to offer a streamlined interface to manage virtual machines without needing to deal with the higher complexity that comes with virtualization back-ends.
+`VirtualizationKit` currently supports Apple Virtualization Framework, and its architecture is built and ready to accommodate additional backends (for example, QEMU) with minimal friction. The primary goal is to offer a streamlined interface to manage virtual machines without needing to deal with the higher complexity that comes with virtualization back-ends.
 
 ### Design Implications
 - A **minimal** and **simple to use** API that wraps the complex virtualization back-ends and removes the need for boilerplate code.
@@ -18,9 +18,9 @@
 
 > [!TIP]
 > **Target Audience**
-> - **Developers new to Virtualization**: Offers a gentle learning curve for those unfamiliar with system-level APIs.
-> - **Teams seeking quick setup**: Great for those contexts where spinning up VMs should be simple and repeatable.
-> - **Users wanting abstraction**: Whoever prefers working with a consistent API rather than multiple vendor-specific solutions.
+> - **Developers new to Virtualization**: Gentle learning curve for those unfamiliar with system-level APIs.
+> - **Teams seeking quick setup**: For those contexts where spinning up VMs should be simple and repeatable.
+> - **Users wanting abstraction**: Consistent, streamlined API over multiple vendor-specific solutions.
 
 ---
 
