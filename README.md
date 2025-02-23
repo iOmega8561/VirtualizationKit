@@ -11,9 +11,9 @@
 `VirtualizationKit` currently supports Apple Virtualization Framework, and its architecture is built and ready to accommodate additional backends (for example, QEMU) with minimal friction. The primary goal is to offer a streamlined interface to manage virtual machines without needing to deal with the higher complexity that comes with virtualization back-ends.
 
 ### Design Implications
-- A **minimal** and **simple to use** API that wraps the complex virtualization back-ends and removes the need for boilerplate code.
+- A **minimal** and **simple to use** API that wraps the complexity of virtualization and reduces boilerplate code.
 - Defaults that *“just work”* for the majority of use cases, from basic Linux VMs to more complex setups.
-- Advanced virtualization features for niche, specialized scenarios from the different back-ends may not be available.
+- Advanced features for niche, specialized scenarios from the underlying back-ends may not be available.
 - Currently optimized around Apple virtualization. Broader hypervisor support is on the roadmap.
 
 > [!TIP]
