@@ -19,7 +19,7 @@
 public final class _VirtualizationKit: Sendable {
     
     /// The bundle identifier of this framework
-    public let bundleIdentifier: String = "giusepperocco.VirtualizationKit"
+    public let bundleIdentifier: String = "com.giusepperocco.VirtualizationKit"
     
     /// The version string of this framework
     public let version: String = "1.4.5"
