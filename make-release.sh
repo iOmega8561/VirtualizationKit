@@ -49,7 +49,8 @@ echo "🔑 Signing XCFramework..."
 codesign --force --deep --sign "$CERTIFICATE_NAME" "${FRAMEWORK_NAME}.xcframework"
 
 echo "📦 Zipping XCFramework..."
-zip -r "${FRAMEWORK_NAME}.zip" "${FRAMEWORK_NAME}" "${SCRIPTPATH}/LICENSE"
+zip -r "${FRAMEWORK_NAME}.zip" "${FRAMEWORK_NAME}.xcframework"
+zip -j "${FRAMEWORK_NAME}.zip" "${SCRIPTPATH}/LICENSE"
 
 echo "📤 Submitting for Notarization..."
 xcrun notarytool submit "${FRAMEWORK_NAME}.zip" --keychain-profile "$KEYCHAIN_PROFILE" --wait
