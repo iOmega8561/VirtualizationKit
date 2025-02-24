@@ -1,25 +1,21 @@
 # VirtualizationKit
+`VirtualizationKit` is a macOS framework for easy virtualization, ready to accommodate different back-ends (for example, Apple Virtualization and QEMU). The primary goal is to offer a streamlined interface to manage virtual machines without needing to deal with the higher complexity that comes with standard virtualization solutions.
 
-<div align="center">
-  <img src="VirtualizationKit/Resources/Assets.xcassets/Logo.imageset/VirtualizationKit.png" width="200" height="200">
+> [!NOTE]
+> VirtualizationKit is **closed source** but freely available **without any paywall** in the *releases* section of this repo, and distributed using the **.xcframework** format, accompanied by the framework's own license.
 
-  <p>Welcome to <strong>VirtualizationKit</strong><br>The revolutionary framework for easy Virtualization on macOS.</p>
-</div>
+---
 
-## Introduction
-
-`VirtualizationKit` currently supports Apple Virtualization Framework, and its architecture is built and ready to accommodate additional backends (for example, QEMU) with minimal friction. The primary goal is to offer a streamlined interface to manage virtual machines without needing to deal with the higher complexity that comes with virtualization back-ends.
-
-### Design Implications
+## Design Implications
 - A **minimal** and **simple to use** API that wraps the complexity of virtualization and reduces boilerplate code.
 - Defaults that *“just work”* for the majority of use cases, from basic Linux VMs to more complex setups.
-- Advanced features for niche, specialized scenarios from the underlying back-ends may not be available.
-- Currently optimized around Apple virtualization. Broader hypervisor support is on the roadmap.
+- Avoids **redundancy**, by not replicating advanced scenarios and use cases from the various back-ends.
+- Currently optimized around Apple Virtualization. Broader hypervisor support is on the roadmap.
 
 > [!TIP]
 > **Target Audience**
 > - **Developers new to Virtualization**: Gentle learning curve for those unfamiliar with system-level APIs.
-> - **Teams seeking quick setup**: For those contexts where spinning up VMs should be simple and repeatable.
+> - **Teams seeking quick setup**: When spinning up VMs should be simple and repeatable, without fuss.
 > - **Users wanting abstraction**: Consistent, streamlined API over multiple vendor-specific solutions.
 
 ---
@@ -43,10 +39,9 @@ import Combine
 // 1. Create a simple template
 let myAwesomeTemplate = Template(
     name: "MySampleVM",
-    os: .linux,
-    ram: 4096,
-    cpu: 3,
-    ...
+    operatingSystem: .linux,
+    networkTopology: .nat(),
+    performancePreset: .balanced
 )
 
 // 2. Initialize an Apple-based VM
@@ -75,17 +70,20 @@ Task {
 }
 ```
 
-### Sensible Defaults
-- Provide ready-to-use configurations for common virtualization needs—like typical CPU, memory, and disk settings—so users can get started with minimal code.
-
-### Simplified Error Handling
+### Simplified Management
+- Ready-to-use configurations for common virtualization needs—like typical CPU, memory, and disk settings.
 - Mask low-level error codes with approachable descriptions and actionable suggestions.
 
   **Example:**
   ```swift
   do {
       try await vm.execute(command: .start)
+  
   } catch {
+
+      // Prints an error description that is actually useful like
+      // "The Virtual Machine has been created using a  macOS 15.2
+      //  restore image, but the currently selected image’s version is 12.6"
       print("Failed to start VM: \(error.localizedDescription)")
   }
   ```
