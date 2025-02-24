@@ -1,6 +1,68 @@
-Copyright (C) Giuseppe Rocco - All Rights Reserved
-Unauthorized copying, modification or distribution of this source code,
-via any medium is strictly prohibited and penally persecutable
+VirtualizationKit.xcframework License Agreement
 
-This project and its source code are PROPRIETARY AND CONFIDENTIAL
-Written by Giuseppe Rocco <giusepperocco38@gmail.com>, May 2024
+Last Updated: February 2025
+
+This License Agreement ("License") is a legal agreement between you (either an individual or a legal entity) and Giuseppe Rocco ("Licensor") for the use of the binary .xcframework known as VirtualizationKit or VZKit (the "Software"). By using, embedding, or otherwise utilizing the Software, you agree to be bound by the terms of this License.
+
+1. Grant of License
+
+1.1 License Grant  
+Licensor hereby grants you a non-exclusive, non-transferable, revocable license to embed and use the Software in your own software projects, whether for personal or commercial use, provided you comply with all the terms and conditions of this License.
+
+1.2 Attribution Requirement  
+You must provide clear attribution to the Software and to the Licensor (for example, in an "About" or "Credits" section) in any product or project that uses or includes the Software. All uses—whether private, public, free, or commercial—must properly credit the Licensor.
+
+2. Restrictions
+
+2.1 No Tampering  
+You shall not modify, alter, disassemble, decompile, decrypt, or otherwise attempt to derive the source code of the Software. Any attempt to circumvent or interfere with any security measures or technical protections implemented by the Licensor within the .xcframework is strictly prohibited.
+
+2.2 No Reverse Engineering  
+You shall not reverse engineer, decompile, or disassemble the Software or attempt to discover or use any underlying algorithms, methods, or techniques except as expressly allowed by applicable law (and only to the extent such law cannot be contractually waived).
+
+2.3 No Redistribution or Re-marketing  
+You shall not redistribute, resell, sublicense, rent, lease, or re-market the Software, in whole or in part, as a standalone product or as part of any other framework, library, or offering that is designed to compete with or replace the Software. The Software is licensed for integration into your own software projects but not for independent redistribution.
+
+2.4 Attribution Is Mandatory  
+Under no circumstances may you embed or use the Software in a project or product without providing attribution as specified in Section 1.2. Failure to properly credit the Licensor and Software is a direct violation of this License.
+
+3. Proprietary Rights and Confidentiality
+
+3.1 Proprietary Rights  
+The Software, including all associated intellectual property rights, is owned and will remain the exclusive property of the Licensor. This License does not constitute a sale of the Software or any copy thereof.
+
+3.2 Confidentiality  
+The Software is proprietary and confidential. You may not disclose any proprietary or confidential information in the Software to any third party, except as necessary to exercise your rights under this License.
+
+3.3 Source Code  
+The source code of the Software is proprietary and is not provided under this License. Unauthorized copying, modification, or distribution of the Software’s source code, via any medium, is strictly prohibited and may be subject to legal action.
+
+4. Termination
+
+4.1 Termination by Licensor  
+Licensor may terminate this License immediately if you fail to comply with any term or condition herein. Upon termination, you must cease all use and destroy all copies of the Software in your possession or control.
+
+4.2 Survival  
+Sections pertaining to confidentiality, restrictions on use, liability limitations, and disclaimers of warranty shall survive any termination of this License.
+
+5. Disclaimer of Warranty  
+THE SOFTWARE IS PROVIDED ON AN "AS IS" AND "AS AVAILABLE" BASIS, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT. LICENSOR DOES NOT WARRANT THAT THE SOFTWARE WILL MEET YOUR REQUIREMENTS OR THAT ITS OPERATION WILL BE UNINTERRUPTED OR ERROR-FREE.
+
+6. Limitation of Liability  
+IN NO EVENT SHALL LICENSOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING BUT NOT LIMITED TO LOSS OF PROFITS, LOSS OF DATA, OR LOSS OF BUSINESS) ARISING OUT OF THE USE OR INABILITY TO USE THE SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. LICENSOR’S ENTIRE LIABILITY UNDER THIS LICENSE SHALL NOT EXCEED THE TOTAL AMOUNT YOU PAID (IF ANY) FOR THE SOFTWARE.
+
+7. General
+
+7.1 Governing Law  
+This License shall be governed by and construed in accordance with the laws of the jurisdiction in which the Licensor resides, without regard to its conflict of laws provisions.
+
+7.2 Severability  
+If any provision of this License is held to be invalid or unenforceable, the remaining provisions will remain in full force and effect.
+
+7.3 No Waiver  
+No waiver by Licensor of any breach of this License shall be construed as a waiver of any other or subsequent breach.
+
+7.4 Entire Agreement  
+This License constitutes the entire agreement between you and the Licensor concerning the Software and supersedes all prior or contemporaneous communications and proposals (whether oral, written, or electronic) between the parties.
+
+BY USING OR EMBEDDING THE SOFTWARE, YOU ACKNOWLEDGE THAT YOU HAVE READ AND UNDERSTOOD THIS LICENSE AND AGREE TO BE BOUND BY ITS TERMS AND CONDITIONS.
