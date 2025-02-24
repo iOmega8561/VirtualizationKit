@@ -1,5 +1,6 @@
 # VirtualizationKit
 `VirtualizationKit` is a macOS framework for easy virtualization, ready to accommodate different back-ends (for example, Apple Virtualization and QEMU). The primary goal is to offer a streamlined interface to manage virtual machines without needing to deal with the higher complexity that comes with standard virtualization solutions.
+
 ---
 
 ## Design Implications
