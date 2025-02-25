@@ -30,7 +30,9 @@ KEYCHAIN_PROFILE="notarytool"
 CERTIFICATE_NAME="Developer ID Application: GIUSEPPE ROCCO (${TEAM_ID})"
 
 # Cleanup old builds
-rm -rf ${ZIP_FILE}
+rm -rf "${FRAMEWORK_NAME}.xcframework" \
+    "${FRAMEWORK_NAME}.dmg" \
+    DMG
 
 # To store credentials in the system keychain
 # This should be already done before running the script
@@ -48,7 +50,7 @@ xcodebuild -create-xcframework \
 echo "🔑 Signing XCFramework..."
 find "${FRAMEWORK_NAME}.xcframework" -type f -perm +111 -exec \
 codesign --force --strict --options runtime --timestamp \
---sign "$CERTIFICATE_NAME" {} \;
+--sign "$CERTIFICATE_NAME" {} \; > /dev/null 2>&1
 
 codesign --force \
     --deep \
