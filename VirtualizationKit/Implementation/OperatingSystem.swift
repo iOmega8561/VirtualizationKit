@@ -67,7 +67,7 @@ public enum OperatingSystem: Transferable {
         switch self {
         case .linux: .init(
             displayName: "Linux",
-            logoImage: .init("Tux", bundle: VirtualizationKit.bundle),
+            logoImage: .init("tux", bundle: VirtualizationKit.bundle),
             fileType: .diskImage,
             version: nil
         )
