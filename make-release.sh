@@ -22,17 +22,17 @@ if [ ! -d "$ARCHIVE_PATH" ]; then
     exit 1
 fi
 
-# Variables
-FRAMEWORK_NAME="VirtualizationKit"
-APPLE_ID="giusepperocco38@gmail.com"
-TEAM_ID="T8HX5554JX"
-KEYCHAIN_PROFILE="notarytool"
-CERTIFICATE_NAME="Developer ID Application: GIUSEPPE ROCCO (${TEAM_ID})"
+# Fetching environment variables
+source "${SCRIPTPATH}/.env"
 
-# Cleanup old builds
-rm -rf "${FRAMEWORK_NAME}.xcframework" \
-    "${FRAMEWORK_NAME}.dmg" \
-    DMG
+if [[ -z "${FRAMEWORK_NAME}" || \
+      -z "${APPLE_ID}" || \
+      -z "${TEAM_ID}"  || \
+      -z "${DEV_NAME}" || \
+      -z "${KEYCHAIN_PROFILE}" ]]; then
+    echo "❌ Error: Some environment variables are not set."
+    exit 1
+fi
 
 # To store credentials in the system keychain
 # This should be already done before running the script
@@ -40,6 +40,13 @@ rm -rf "${FRAMEWORK_NAME}.xcframework" \
 #     --apple-id "${APPLE_ID}" \
 #     --team-id "${TEAM_ID}" \
 #     --password "${APP_PASSWORD}"
+
+CERTIFICATE_NAME="Developer ID Application: ${DEV_NAME} (${TEAM_ID})"
+
+# Cleanup old builds
+rm -rf "${FRAMEWORK_NAME}.xcframework" \
+    "${FRAMEWORK_NAME}.dmg" \
+    DMG
 
 echo "🛠 ️ Creating XCFramework..."
 xcodebuild -create-xcframework \
