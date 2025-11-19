@@ -8,6 +8,8 @@
 
 /* Begin PBXFileReference section */
 		E32B65482CBA93C200FED006 /* VirtualizationKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VirtualizationKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E3A9CA892ECE3629001720F3 /* make-release.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "make-release.sh"; sourceTree = "<group>"; };
+		E3A9CA8A2ECE3629001720F3 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -33,6 +35,8 @@
 			isa = PBXGroup;
 			children = (
 				E34509AB2D312AC000286A37 /* VirtualizationKit */,
+				E3A9CA892ECE3629001720F3 /* make-release.sh */,
+				E3A9CA8A2ECE3629001720F3 /* README.md */,
 				E32B65492CBA93C200FED006 /* Products */,
 			);
 			sourceTree = "<group>";
