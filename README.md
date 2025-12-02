@@ -2,7 +2,7 @@
 `VirtualizationKit` is a macOS framework for easy virtualization, that aims to accommodate different back-ends (for example, Apple Virtualization and QEMU). The primary goal is to offer a streamlined interface to manage virtual machines without needing to deal with the higher complexity that comes with standard virtualization solutions.
 
 ### Tesseract ❤️ VirtualizationKit
-`VirtualizationKit` is the underlying engine powering [Tesseract](https://tesseract.grocco.org), the macOS virtual machine manager designed to simplify and streamline virtualization on Apple Silicon. Tesseract relies on this framework to build, configure, and run virtual machines, avoiding the complexity of low-level APIs. If you're here because of Tesseract, this framework is essentially the core technology that makes the app possible.
+`VirtualizationKit` is the underlying engine powering [Tesseract](https://tesseract.grocco.org), the macOS virtual machine manager designed to simplify and streamline virtualization on Apple Silicon. Tesseract relies on this framework to configure and run virtual machines, avoiding the complexity of low-level APIs. If you're here because of Tesseract, this framework is essentially the core technology that makes the app possible.
 
 ---
 
