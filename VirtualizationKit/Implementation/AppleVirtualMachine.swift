@@ -117,7 +117,7 @@ public struct AppleVirtualMachine<Template: TransferableTemplate>: VirtualMachin
             case .resume:
                 try await vzVirtualMachine.resume()
             case .install:
-                try await VZMacOSInstaller(virtualMachine: self)?.install()
+                try await VZMacOSInstaller(virtualMachine: self)?.install(stateCoordinator)
             }
         } catch VZError.virtualMachineLimitExceeded {
             throw VZKitError.appleLimitExceeded
@@ -143,8 +143,8 @@ public struct AppleVirtualMachine<Template: TransferableTemplate>: VirtualMachin
         self.vzVirtualMachine.delegate = errorDelegate
         self.stateCoordinator = await .init()
         
-        await self.stateCoordinator.registerPublisher(errorDelegate.errorSubject)
-        await self.stateCoordinator.registerPublisher(vzVirtualMachine.publisher(for: \.state))
+        await self.stateCoordinator.subscribe(errorDelegate.errorSubject)
+        await self.stateCoordinator.subscribe(vzVirtualMachine.publisher(for: \.state))
     }
 }
 

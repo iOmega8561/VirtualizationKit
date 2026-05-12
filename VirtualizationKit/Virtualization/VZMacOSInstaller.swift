@@ -34,17 +34,27 @@ extension VZMacOSInstaller {
     ///
     /// - Throws: An error if the installation fails. If the underlying error is available from the
     ///   NSError's `underlyingErrors`, that error is thrown; otherwise, the original error is propagated.
-    func install() async throws {
+    func install(_ coordinator: AppleStateCoordinator) async throws {
         return try await withCheckedThrowingContinuation(isolation: VZKitActor.shared) { continuation in
             
             self.install { result in
                 switch result {
                 case .failure(let error):
+                    
+                    Task(priority: .userInitiated) { @MainActor in
+                        coordinator.eraseSubscription(for: .macOSInstaller, shouldReset: true)
+                    }
+                    
                     continuation.resume(
                         throwing: (error as NSError).underlyingErrors.first ?? error
                     )
                     
                 case .success:
+                    
+                    Task(priority: .userInitiated) { @MainActor in
+                        coordinator.eraseSubscription(for: .macOSInstaller)
+                    }
+                    
                     continuation.resume()
                 }
             }
@@ -87,7 +97,7 @@ extension VZMacOSInstaller {
         )
         
         // Register a publisher for monitoring installation progress.
-        await virtualMachine.stateCoordinator.registerPublisher(
+        await virtualMachine.stateCoordinator.subscribe(
             self.progress.publisher(for: \.fractionCompleted)
         )
     }
