@@ -21,7 +21,7 @@
 //  Created by Giuseppe Rocco on 13/10/24.
 //
 
-@_exported import Foundation
+import Foundation
 
 public final class _VirtualizationKit: Sendable {
     
