@@ -2,7 +2,6 @@
   "sourceLanguage" : "en",
   "strings" : {
     "capability-audioCaptureDevice" : {
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -19,7 +18,6 @@
       }
     },
     "capability-audioOutputDevice" : {
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -36,7 +34,6 @@
       }
     },
     "capability-directoryShare" : {
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -53,7 +50,6 @@
       }
     },
     "capability-nestedVirtualization" : {
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -70,7 +66,6 @@
       }
     },
     "capability-rosetta" : {
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -87,7 +82,6 @@
       }
     },
     "capability-xhciUSBHotSwap" : {
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
