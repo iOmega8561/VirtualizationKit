@@ -54,7 +54,7 @@ import Virtualization
         ///   ordering and thread safety.
         func enqueue(_ job: UnownedJob) {
             queue.async {
-                job.runSynchronously(on: self.asUnownedSerialExecutor())
+                unsafe job.runSynchronously(on: self.asUnownedSerialExecutor())
             }
         }
         
@@ -63,7 +63,7 @@ import Virtualization
         /// - Returns: An `UnownedSerialExecutor` instance referencing this executor. This allows
         ///   for unowned access to the executor while ensuring that the serial execution model is preserved.
         func asUnownedSerialExecutor() -> UnownedSerialExecutor {
-            return UnownedSerialExecutor(ordinary: self)
+            return unsafe UnownedSerialExecutor(ordinary: self)
         }
         
         /// Initializes a new instance of `Executor` with a specific dispatch queue.
@@ -97,7 +97,7 @@ import Virtualization
     ///
     /// This property provides unowned access to the executor, allowing the actor to maintain
     /// serialized task execution while avoiding retain cycles.
-    public static let sharedUnownedExecutor: UnownedSerialExecutor = executor.asUnownedSerialExecutor()
+    public static let sharedUnownedExecutor: UnownedSerialExecutor = unsafe executor.asUnownedSerialExecutor()
 
     /// The unowned executor instance associated with this actor.
     ///
@@ -105,7 +105,7 @@ import Virtualization
     /// without retaining the executor instance. This nonisolated property is used to maintain
     /// thread safety across all virtual machine commands managed by the actor.
     public nonisolated var unownedExecutor: UnownedSerialExecutor {
-        Self.sharedUnownedExecutor
+        unsafe Self.sharedUnownedExecutor
     }
     
     /// Executes a closure asynchronously on the actor's queue.

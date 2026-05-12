@@ -21,7 +21,7 @@
 //  Created by Giuseppe Rocco on 15/05/24.
 //
 
-@preconcurrency import Virtualization
+import Virtualization
 
 /// A specialized struct implementing `VirtualMachine` for the Apple Virtualization framework.
 ///

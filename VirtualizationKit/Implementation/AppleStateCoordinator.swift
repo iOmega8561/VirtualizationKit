@@ -21,9 +21,9 @@
 //  Created by Giuseppe Rocco on 08/11/24.
 //
 
-@preconcurrency import Combine
-
 import Virtualization
+
+@unsafe @preconcurrency import Combine
     
 /// The `AppleStateCoordinator` class serves as a main-actor-isolated manager for a virtual machine's execution state.
 /// It leverages Combine to broadcast state changes and provides methods to register external publishers for seamless

@@ -75,7 +75,7 @@ struct VZKitLocale {
             localized: key,
             bundle: VirtualizationKit.bundle
         )
-        return arguments.count != 0 ? .init(format: localizedKey, arguments) : localizedKey
+        return unsafe arguments.count != 0 ? .init(format: localizedKey, arguments) : localizedKey
     }
     
     // MARK: - Initializers

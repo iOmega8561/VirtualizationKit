@@ -23,7 +23,7 @@
 
 import Virtualization
 
-@preconcurrency import Combine
+@unsafe @preconcurrency import Combine
     
 /// The `AppleErrorDelegate` class is a specialized delegate for handling execution errors in a
 /// `VZVirtualMachine` instance. Conforming to `VZVirtualMachineDelegate` and `Sendable`, this class

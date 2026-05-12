@@ -21,7 +21,7 @@
 //  Created by Giuseppe Rocco on 17/05/24.
 //
 
-@preconcurrency import Virtualization
+import Virtualization
 
 /// `VZKitBuilder` data structure
 ///

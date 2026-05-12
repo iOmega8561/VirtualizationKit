@@ -21,7 +21,7 @@
 //  Created by Giuseppe Rocco on 13/11/24.
 //
 
-@preconcurrency import Virtualization
+import Virtualization
 
 /// An extension to `VZMacOSRestoreImage` that provides a
 /// static async loader, tailored to Swift's concurrency model.
@@ -79,3 +79,11 @@ extension VZMacOSRestoreImage {
         }
     }
 }
+
+/// Extending to `@unchecked @retroactive Sendable` to
+/// suppress concurrency-related warnings.
+///
+/// The Swift 6 compiler is much stricter on concurrency, so much so that importing dependencies
+/// as `@preconcurrency` does not silence all warning, anymore.
+/// The way this framework operates on `VZMacOSRestoreImage` is completely safe.
+extension VZMacOSRestoreImage: @unchecked @retroactive Sendable {}
