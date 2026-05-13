@@ -23,6 +23,8 @@
 
 import Virtualization
 
+import Observation
+
 @unsafe @preconcurrency import Combine
     
 /// The `AppleStateCoordinator` class serves as a main-actor-isolated manager for a virtual machine's execution state.
@@ -58,6 +60,7 @@ public final class AppleStateCoordinator: StateCoordinator {
     /// This property reflects the active `ExecutionState` at any given time. It is marked
     /// `private(set)` to restrict external modifications but remains accessible for observers
     /// or UI components. State changes automatically trigger broadcasts to `stateSubject`.
+    @ObservationTracked
     public private(set) var executionState: ExecutionState = .stopped
     
     /// A dictionary of Combine cancellables indexed by `CancellableKind`.
