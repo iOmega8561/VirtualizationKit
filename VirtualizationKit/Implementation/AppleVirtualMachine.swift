@@ -120,6 +120,22 @@ public struct AppleVirtualMachine<Template: TransferableTemplate>: VirtualMachin
                 try await VZMacOSInstaller(virtualMachine: self)?.install(stateCoordinator)
             }
         } catch VZError.virtualMachineLimitExceeded {
+            
+            if await self.executionState != .stopped {
+                // Note:
+                //
+                // Historically, `VZVirtualMachine` would automatically transition to `.stopped`
+                // after termination, and this state change would propagate via KVO observation.
+                // In recent macOS versions, this no longer occurs — the VM state appears to
+                // remain stuck in its last transitional state even after the VM has fully stopped.
+                // The cause is unclear; it may be a change in Virtualization.framework's internal state
+                // management or a regression in macOS.
+                //
+                // Workaround: explicitly reset the execution state here to keep the coordinator
+                // in sync with the actual VM state.
+                await self.stateCoordinator.resetExecutionState()
+            }
+
             throw VZKitError.appleLimitExceeded
         }
     }

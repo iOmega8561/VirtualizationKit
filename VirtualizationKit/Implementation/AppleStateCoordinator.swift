@@ -142,9 +142,23 @@ public final class AppleStateCoordinator: StateCoordinator {
         cancellable.cancel()
         cancellables.removeValue(forKey: kind)
         
-        if shouldReset {
-            self.executionState = .stopped
-            self.stateSubject.send(.stopped)
-        }
+        if shouldReset { resetExecutionState() }
+    }
+    
+    /// Resets the virtual machine's execution state to `.stopped` and broadcasts the new state.
+    ///
+    /// This method is typically called when an operation needs to be aborted mid-execution,
+    /// when a fatal error prevents further progress, or when a clean slate is required
+    /// between distinct VM lifecycles. It ensures that both the observable property and
+    /// the Combine subject (`stateSubject`) reflect the `.stopped` state, keeping all
+    /// subscribers in sync.
+    ///
+    /// - Note: Use this method with caution. It does not perform any teardown of the
+    ///   underlying `VZVirtualMachine`, so calling it while a VM is still running may
+    ///   result in inconsistent state between the coordinator and the VM itself. Always
+    ///   ensure the VM has been properly stopped before invoking this method.
+    func resetExecutionState() {
+        self.executionState = .stopped
+        self.stateSubject.send(.stopped)
     }
 }
