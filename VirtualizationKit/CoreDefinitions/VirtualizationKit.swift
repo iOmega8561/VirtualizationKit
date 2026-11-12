@@ -55,7 +55,9 @@ public final class _VirtualizationKit: Sendable {
     @MainActor public func setSupportDirectory(_ url: URL) { supportDirectory = url }
     
     fileprivate init() {
-        self.bundle = .init(identifier: bundleIdentifier)
+        // The identifier lookup fails as soon as an embedding application re-identifies the
+        // framework, which would silently redirect every lookup to the main bundle.
+        self.bundle = Bundle(identifier: bundleIdentifier) ?? Bundle(for: _VirtualizationKit.self)
         self.supportDirectory = .applicationSupportDirectory.appendingPathComponent(bundleIdentifier)
     }
 }

@@ -68,14 +68,20 @@ struct VZKitLocale {
     ///
     /// - Parameters:
     ///   - key: A `String.LocalizationValue` representing the key to look up in the localization table.
-    ///   - arguments: A variadic list of arguments to format the localized string dynamically.
+    ///   - arguments: The arguments used to format the localized string dynamically.
     /// - Returns: A fully localized and formatted string.
-    private static func localize(_ key: String.LocalizationValue, _ arguments: CVarArg...) -> String {
+    ///
+    /// - Important: The arguments are taken as an array on purpose. Swift cannot splat a variadic
+    ///   parameter into another variadic call: forwarding `CVarArg...` to `CVarArg...` wraps the whole
+    ///   list into a single (bridged) array argument, so a format string with two specifiers would read
+    ///   past the end of the argument list.
+    private static func localize(_ key: String.LocalizationValue, _ arguments: [any CVarArg]) -> String {
         let localizedKey: String = .init(
             localized: key,
             bundle: VirtualizationKit.bundle
         )
-        return unsafe arguments.count != 0 ? .init(format: localizedKey, arguments) : localizedKey
+        guard !arguments.isEmpty else { return localizedKey }
+        return unsafe String(format: localizedKey, arguments: arguments)
     }
     
     // MARK: - Initializers
