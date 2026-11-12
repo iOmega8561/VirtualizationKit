@@ -44,12 +44,13 @@ extension VZPlatformConfiguration: PersistentConstructible {
             return VZMacAuxiliaryStorage(url: url)
         }
         
-        let auxiliaryStorage = try VZMacAuxiliaryStorage(
-            creatingStorageAt: url,
-            hardwareModel: hwModel
-        )
-        
-        return auxiliaryStorage
+        do {
+            return try VZMacAuxiliaryStorage(
+                creatingStorageAt: url,
+                hardwareModel: hwModel
+            )
+            
+        } catch { throw VZKitError.auxiliaryFailedSetup }
     }
     
     // MARK: - PersistentConstructible
@@ -87,7 +88,16 @@ extension VZPlatformConfiguration: PersistentConstructible {
             
             let macintoshPlatform = VZMacPlatformConfiguration()
             
-            if let restoreImage {
+            let hardwareModelURL = url.appendingPathComponent("HardwareModel")
+            
+            // The auxiliary storage is bound to the hardware model it was created with. Once a model
+            // has been persisted it is authoritative: deriving it again from the restore image can
+            // yield a different model after a host update and leave the guest unable to boot.
+            let hasPersistedModel = FileManager.default.fileExists(
+                atPath: hardwareModelURL.path(percentEncoded: false)
+            )
+            
+            if let restoreImage, !hasPersistedModel {
                 
                 guard let requirements = restoreImage.mostFeaturefulSupportedConfiguration else {
                     throw VZKitError.macUnsupportedImage
@@ -98,7 +108,8 @@ extension VZPlatformConfiguration: PersistentConstructible {
                 }
                 
                 try requirements.hardwareModel.dataRepresentation.write(
-                    to: url.appendingPathComponent("HardwareModel")
+                    to: hardwareModelURL,
+                    options: .atomic
                 )
                 
                 macintoshPlatform.hardwareModel = requirements.hardwareModel
@@ -106,7 +117,7 @@ extension VZPlatformConfiguration: PersistentConstructible {
             } else {
                 
                 macintoshPlatform.hardwareModel = try .create(
-                    dataAt: url.appendingPathComponent("HardwareModel")
+                    dataAt: hardwareModelURL
                 )
             }
             

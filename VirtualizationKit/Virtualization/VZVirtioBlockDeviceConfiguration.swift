@@ -40,23 +40,30 @@ extension VZVirtioBlockDeviceConfiguration: PersistentConstructible {
     ///   - size: The integer size of the virtual disk image, in gigabytes.
     static private func createDiskImage(_ url: URL, _ size: UInt64) throws {
         
-        guard !FileManager.default.fileExists(
-            atPath: url.path(percentEncoded: false)
-            
-        ) else { return }
+        let path = url.path(percentEncoded: false)
         
-        FileManager.default.createFile(
-            atPath: url.path(percentEncoded: false),
+        guard !FileManager.default.fileExists(atPath: path) else { return }
+        
+        guard FileManager.default.createFile(
+            atPath: path,
             contents: nil,
             attributes: nil
-        )
+            
+        ) else { throw VZKitError.diskImageFailedSetup }
         
         do {
-            try FileHandle(forWritingTo: url).truncate(
-                atOffset: size
-            )
+            let fileHandle = try FileHandle(forWritingTo: url)
+            defer { try? fileHandle.close() }
             
-        } catch { throw VZKitError.diskImageFailedSetup }
+            try fileHandle.truncate(atOffset: size)
+            
+        } catch {
+            // A zero-length image left behind would be picked up as "already existing"
+            // on the next attempt and attached as an empty disk from then on.
+            try? FileManager.default.removeItem(at: url)
+            
+            throw VZKitError.diskImageFailedSetup
+        }
     }
     
     /// This is the static factory method for `VZVirtioBlockDeviceConfiguration`. It creates a block device based
