@@ -79,7 +79,7 @@ public final class AppleStateCoordinator: StateCoordinator {
     func subscribe<T: Publisher>(_ publisher: T) where T.Output == Double,
                                                        T.Failure == Never {
         cancellables[.macOSInstaller] = publisher
-            .receive(on: RunLoop.main)
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] progress in
                 self?.executionState = .installing(progress: progress)
                 self?.stateSubject.send(.installing(progress: progress))
@@ -96,7 +96,7 @@ public final class AppleStateCoordinator: StateCoordinator {
     func subscribe<T: Publisher>(_ publisher: T) where T.Output == VZVirtualMachine.State,
                                                        T.Failure == Never {
        cancellables[.vzVirtualMachine] = publisher
-           .receive(on: RunLoop.main)
+           .receive(on: DispatchQueue.main)
            .sink { [weak self] newVZState in
                guard let newExecutionState = ExecutionState(newVZState)
                else { return }
@@ -119,7 +119,7 @@ public final class AppleStateCoordinator: StateCoordinator {
     func subscribe<T: Publisher>(_ publisher: T) where T.Output == Error,
                                                        T.Failure == Never {
         cancellables[.errorDelegate] = publisher
-            .receive(on: RunLoop.main)
+            .receive(on: DispatchQueue.main)
             .sink { [weak self]  error in
                 self?.executionState = .error(error: error)
                 self?.stateSubject.send(.error(error: error))
@@ -145,6 +145,31 @@ public final class AppleStateCoordinator: StateCoordinator {
         if shouldReset { resetExecutionState() }
     }
     
+    /// Re-aligns the coordinator with the hypervisor after a lifecycle request failed.
+    ///
+    /// The framework state `.error` has no representation that can be built from a raw value, so the
+    /// state observation drops it. A request that fails while the coordinator sits in a transitional
+    /// state (for example a start that is rejected) would therefore leave it there forever, and the
+    /// machine could never be started again. The caller reads the framework state on the machine's
+    /// queue and hands it over.
+    ///
+    /// - Parameter vzState: The state reported by the hypervisor right after the failure.
+    func reconcile(with vzState: VZVirtualMachine.State) {
+        switch vzState {
+        case .stopped, .error:
+            // An error published by the delegate carries more information than a bare stop.
+            if case .error = executionState { return }
+            if executionState != .stopped { resetExecutionState() }
+
+        default:
+            guard let newExecutionState = ExecutionState(vzState),
+                  newExecutionState != executionState else { return }
+
+            self.executionState = newExecutionState
+            self.stateSubject.send(newExecutionState)
+        }
+    }
+
     /// Resets the virtual machine's execution state to `.stopped` and broadcasts the new state.
     ///
     /// This method is typically called when an operation needs to be aborted mid-execution,

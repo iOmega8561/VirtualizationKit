@@ -137,6 +137,15 @@ public struct AppleVirtualMachine<Template: TransferableTemplate>: VirtualMachin
             }
 
             throw VZKitError.appleLimitExceeded
+
+        } catch {
+
+            // Any other failure can strand the coordinator in a transitional state as well:
+            // the hypervisor reports `.error`, which the state observation cannot represent.
+            // Read the real state here, on the machine's queue, and let the coordinator catch up.
+            await self.stateCoordinator.reconcile(with: vzVirtualMachine.state)
+
+            throw error
         }
     }
 
@@ -148,19 +157,51 @@ public struct AppleVirtualMachine<Template: TransferableTemplate>: VirtualMachin
     public init(template: Template) async throws {
         
         let builder = await AppleConfigurationBuilder(template: template)
+        let configuration = try await builder.createConfiguration()
+        let errorDelegate = AppleErrorDelegate()
         
-        self.vzVirtualMachine = VZVirtualMachine(
-            configuration: try await builder.createConfiguration(),
-            queue: VZKitActor.queue
+        self.vzVirtualMachine = await Self.makeVirtualMachine(
+            configuration: configuration,
+            delegate: errorDelegate
         )
         
-        self.errorDelegate = .init()
+        self.errorDelegate = errorDelegate
         self.template = template
-        self.vzVirtualMachine.delegate = errorDelegate
         self.stateCoordinator = await .init()
         
         await self.stateCoordinator.subscribe(errorDelegate.errorSubject)
-        await self.stateCoordinator.subscribe(vzVirtualMachine.publisher(for: \.state))
+        
+        // The observation must not read the machine from the main thread, which is what the
+        // `.initial` option does at subscription time. A new machine is always stopped, so the
+        // first value is supplied here instead and only real changes are observed.
+        await self.stateCoordinator.subscribe(
+            vzVirtualMachine.publisher(for: \.state, options: [.new]).prepend(.stopped)
+        )
+    }
+    
+    /// Creates the hypervisor object and wires its delegate on the queue the machine operates on.
+    ///
+    /// Every operation on a `VZVirtualMachine`, including the assignment of its delegate, has to happen
+    /// on the queue handed to its initializer. The public initializer of this type is not isolated, so
+    /// the work is funnelled through the global actor, whose executor is that very queue.
+    ///
+    /// - Parameters:
+    ///   - configuration: The validated configuration. It is not used by the caller afterwards.
+    ///   - delegate: The delegate receiving error callbacks.
+    /// - Returns: The configured machine.
+    @VZKitActor
+    private static func makeVirtualMachine(
+        configuration: VZVirtualMachineConfiguration,
+        delegate: AppleErrorDelegate
+    ) -> VZVirtualMachine {
+        
+        let virtualMachine = VZVirtualMachine(
+            configuration: configuration,
+            queue: VZKitActor.queue
+        )
+        
+        virtualMachine.delegate = delegate
+        return virtualMachine
     }
 }
 
