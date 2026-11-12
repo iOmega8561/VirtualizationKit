@@ -6,10 +6,60 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		E3C0DE012F1A00010020F006 /* QEMULauncher in Embed Launcher */ = {isa = PBXBuildFile; fileRef = E3C0DE082F1A00010020F006 /* QEMULauncher */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		E3C0DE022F1A00010020F006 /* QEMUHelper.xpc in Embed XPC Services */ = {isa = PBXBuildFile; fileRef = E3C0DE072F1A00010020F006 /* QEMUHelper.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		E3C0DE032F1A00010020F006 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E32B653F2CBA93C200FED006 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E3C0DE0F2F1A00010020F006;
+			remoteInfo = QEMULauncher;
+		};
+		E3C0DE042F1A00010020F006 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E32B653F2CBA93C200FED006 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E3C0DE0E2F1A00010020F006;
+			remoteInfo = QEMUHelper;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		E3C0DE052F1A00010020F006 /* Embed Launcher */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 6;
+			files = (
+				E3C0DE012F1A00010020F006 /* QEMULauncher in Embed Launcher */,
+			);
+			name = "Embed Launcher";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E3C0DE062F1A00010020F006 /* Embed XPC Services */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/XPCServices";
+			dstSubfolderSpec = 16;
+			files = (
+				E3C0DE022F1A00010020F006 /* QEMUHelper.xpc in Embed XPC Services */,
+			);
+			name = "Embed XPC Services";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		E32B65482CBA93C200FED006 /* VirtualizationKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VirtualizationKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3A9CA892ECE3629001720F3 /* make-release.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "make-release.sh"; sourceTree = "<group>"; };
 		E3A9CA8A2ECE3629001720F3 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		E3C0DE072F1A00010020F006 /* QEMUHelper.xpc */ = {isa = PBXFileReference; explicitFileType = "wrapper.xpc-service"; includeInIndex = 0; path = QEMUHelper.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
+		E3C0DE082F1A00010020F006 /* QEMULauncher */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = QEMULauncher; sourceTree = BUILT_PRODUCTS_DIR; };
+		E3C0DE092F1A00010020F006 /* QEMUSupport */ = {isa = PBXFileReference; lastKnownFileType = folder; path = QEMUSupport; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -18,10 +68,34 @@
 			path = VirtualizationKit;
 			sourceTree = "<group>";
 		};
+		E3C0DE0A2F1A00010020F006 /* QEMUHelper */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = QEMUHelper;
+			sourceTree = "<group>";
+		};
+		E3C0DE0B2F1A00010020F006 /* QEMULauncher */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = QEMULauncher;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		E32B65452CBA93C200FED006 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E3C0DE0C2F1A00010020F006 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E3C0DE0D2F1A00010020F006 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -35,6 +109,9 @@
 			isa = PBXGroup;
 			children = (
 				E34509AB2D312AC000286A37 /* VirtualizationKit */,
+				E3C0DE0A2F1A00010020F006 /* QEMUHelper */,
+				E3C0DE0B2F1A00010020F006 /* QEMULauncher */,
+				E3C0DE092F1A00010020F006 /* QEMUSupport */,
 				E3A9CA892ECE3629001720F3 /* make-release.sh */,
 				E3A9CA8A2ECE3629001720F3 /* README.md */,
 				E32B65492CBA93C200FED006 /* Products */,
@@ -45,6 +122,8 @@
 			isa = PBXGroup;
 			children = (
 				E32B65482CBA93C200FED006 /* VirtualizationKit.framework */,
+				E3C0DE072F1A00010020F006 /* QEMUHelper.xpc */,
+				E3C0DE082F1A00010020F006 /* QEMULauncher */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -70,10 +149,12 @@
 				E32B65442CBA93C200FED006 /* Sources */,
 				E32B65452CBA93C200FED006 /* Frameworks */,
 				E32B65462CBA93C200FED006 /* Resources */,
+				E3C0DE062F1A00010020F006 /* Embed XPC Services */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				E3C0DE152F1A00010020F006 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				E34509AB2D312AC000286A37 /* VirtualizationKit */,
@@ -85,6 +166,52 @@
 			productReference = E32B65482CBA93C200FED006 /* VirtualizationKit.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		E3C0DE0E2F1A00010020F006 /* QEMUHelper */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E3C0DE1A2F1A00010020F006 /* Build configuration list for PBXNativeTarget "QEMUHelper" */;
+			buildPhases = (
+				E3C0DE122F1A00010020F006 /* Sources */,
+				E3C0DE0C2F1A00010020F006 /* Frameworks */,
+				E3C0DE102F1A00010020F006 /* Resources */,
+				E3C0DE052F1A00010020F006 /* Embed Launcher */,
+				E3C0DE112F1A00010020F006 /* Embed QEMU Payload */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E3C0DE142F1A00010020F006 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				E3C0DE0A2F1A00010020F006 /* QEMUHelper */,
+			);
+			name = QEMUHelper;
+			packageProductDependencies = (
+			);
+			productName = QEMUHelper;
+			productReference = E3C0DE072F1A00010020F006 /* QEMUHelper.xpc */;
+			productType = "com.apple.product-type.xpc-service";
+		};
+		E3C0DE0F2F1A00010020F006 /* QEMULauncher */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E3C0DE1B2F1A00010020F006 /* Build configuration list for PBXNativeTarget "QEMULauncher" */;
+			buildPhases = (
+				E3C0DE132F1A00010020F006 /* Sources */,
+				E3C0DE0D2F1A00010020F006 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				E3C0DE0B2F1A00010020F006 /* QEMULauncher */,
+			);
+			name = QEMULauncher;
+			packageProductDependencies = (
+			);
+			productName = QEMULauncher;
+			productReference = E3C0DE082F1A00010020F006 /* QEMULauncher */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -95,6 +222,12 @@
 				LastUpgradeCheck = 2650;
 				TargetAttributes = {
 					E32B65472CBA93C200FED006 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+					E3C0DE0E2F1A00010020F006 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+					E3C0DE0F2F1A00010020F006 = {
 						CreatedOnToolsVersion = 16.0;
 					};
 				};
@@ -115,6 +248,8 @@
 			projectRoot = "";
 			targets = (
 				E32B65472CBA93C200FED006 /* VirtualizationKit */,
+				E3C0DE0E2F1A00010020F006 /* QEMUHelper */,
+				E3C0DE0F2F1A00010020F006 /* QEMULauncher */,
 			);
 		};
 /* End PBXProject section */
@@ -127,7 +262,36 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E3C0DE102F1A00010020F006 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		E3C0DE112F1A00010020F006 /* Embed QEMU Payload */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Embed QEMU Payload";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/QEMUSupport/embed-qemu-payload.sh\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		E32B65442CBA93C200FED006 /* Sources */ = {
@@ -137,7 +301,34 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E3C0DE122F1A00010020F006 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E3C0DE132F1A00010020F006 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		E3C0DE142F1A00010020F006 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E3C0DE0F2F1A00010020F006 /* QEMULauncher */;
+			targetProxy = E3C0DE032F1A00010020F006 /* PBXContainerItemProxy */;
+		};
+		E3C0DE152F1A00010020F006 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E3C0DE0E2F1A00010020F006 /* QEMUHelper */;
+			targetProxy = E3C0DE042F1A00010020F006 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		E32B65512CBA93C200FED006 /* Debug */ = {
@@ -359,6 +550,108 @@
 			};
 			name = Release;
 		};
+		E3C0DE162F1A00010020F006 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = QEMUSupport/QEMUHelper.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "QEMUSupport/QEMUHelper-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = QEMUHelper;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.QEMUHelper;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		E3C0DE172F1A00010020F006 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = QEMUSupport/QEMUHelper.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "QEMUSupport/QEMUHelper-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = QEMUHelper;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.QEMUHelper;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		E3C0DE182F1A00010020F006 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = QEMUSupport/QEMULauncher.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				OTHER_CODE_SIGN_FLAGS = "$(inherited) -i $(PRODUCT_BUNDLE_IDENTIFIER)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.QEMULauncher;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		E3C0DE192F1A00010020F006 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = QEMUSupport/QEMULauncher.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				OTHER_CODE_SIGN_FLAGS = "$(inherited) -i $(PRODUCT_BUNDLE_IDENTIFIER)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.QEMULauncher;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -376,6 +669,24 @@
 			buildConfigurations = (
 				E32B65512CBA93C200FED006 /* Debug */,
 				E32B65522CBA93C200FED006 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E3C0DE1A2F1A00010020F006 /* Build configuration list for PBXNativeTarget "QEMUHelper" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E3C0DE162F1A00010020F006 /* Debug */,
+				E3C0DE172F1A00010020F006 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E3C0DE1B2F1A00010020F006 /* Build configuration list for PBXNativeTarget "QEMULauncher" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E3C0DE182F1A00010020F006 /* Debug */,
+				E3C0DE192F1A00010020F006 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
