@@ -126,10 +126,10 @@ final class QEMUFramebufferNSView: NSView, FramebufferNSView {
             if disablesInputRedirection {
                 releaseInput()
 
-                if window?.firstResponder === self { window?.makeFirstResponder(nil) }
+                if unsafe window?.firstResponder === self { unsafe window?.makeFirstResponder(nil) }
             }
 
-            window?.invalidateCursorRects(for: self)
+            unsafe window?.invalidateCursorRects(for: self)
         }
     }
 
@@ -340,7 +340,7 @@ final class QEMUFramebufferNSView: NSView, FramebufferNSView {
 
         resolutionTask?.cancel()
 
-        guard automaticallyReconfiguresDisplay, window != nil else {
+        guard automaticallyReconfiguresDisplay, unsafe window != nil else {
             resolutionTask = nil
             return
         }
@@ -357,7 +357,7 @@ final class QEMUFramebufferNSView: NSView, FramebufferNSView {
     /// Sends the size of the view, in pixels, to the guest if it differs from the guest's.
     private func updateResolution() {
 
-        guard automaticallyReconfiguresDisplay, let window else { return }
+        guard automaticallyReconfiguresDisplay, let window = unsafe window else { return }
 
         let scale = window.backingScaleFactor
 
@@ -408,7 +408,7 @@ final class QEMUFramebufferNSView: NSView, FramebufferNSView {
     }
 
     override func mouseDown(with event: NSEvent) {
-        if acceptsInput { window?.makeFirstResponder(self) }
+        if acceptsInput { unsafe window?.makeFirstResponder(self) }
         pressButton(1, with: event)
     }
 
@@ -505,7 +505,7 @@ final class QEMUFramebufferNSView: NSView, FramebufferNSView {
     /// Rebuilds the host pointer from the guest's pointer image, at the scale the display is shown at.
     private func rebuildCursor() {
 
-        defer { window?.invalidateCursorRects(for: self) }
+        defer { unsafe window?.invalidateCursorRects(for: self) }
 
         guard let cursor = guestDisplay.cursor else {
             guestCursor = nil
@@ -579,7 +579,7 @@ final class QEMUFramebufferNSView: NSView, FramebufferNSView {
     override func performKeyEquivalent(with event: NSEvent) -> Bool {
 
         guard capturesSystemKeys, acceptsInput, event.type == .keyDown,
-              window?.firstResponder === self else {
+              unsafe window?.firstResponder === self else {
             return super.performKeyEquivalent(with: event)
         }
 
@@ -649,7 +649,7 @@ final class QEMUFramebufferNSView: NSView, FramebufferNSView {
     override func viewDidMoveToWindow() {
         super.viewDidMoveToWindow()
 
-        if let window {
+        if let window = unsafe window {
             NotificationCenter.default.addObserver(
                 self,
                 selector: #selector(windowDidResignKey(_:)),
@@ -658,7 +658,7 @@ final class QEMUFramebufferNSView: NSView, FramebufferNSView {
             )
         }
 
-        observedWindow = window
+        observedWindow = unsafe window
         lastRequestedSize = nil
         scheduleResolutionUpdate()
     }

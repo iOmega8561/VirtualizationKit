@@ -61,7 +61,7 @@ final class UnixSocket: @unchecked Sendable {
         var buffer = [UInt8](repeating: 0, count: max(count, 1))
 
         while true {
-            let (received, code) = unsafe buffer.withUnsafeMutableBytes { (raw: UnsafeMutableRawBufferPointer) -> (Int, Int32) in
+            let (received, code) = buffer.withUnsafeMutableBytes { (raw: UnsafeMutableRawBufferPointer) -> (Int, Int32) in
                 let result = unsafe Darwin.read(descriptor, raw.baseAddress, raw.count)
                 return (result, errno)
             }
@@ -88,7 +88,7 @@ final class UnixSocket: @unchecked Sendable {
 
         while offset < count {
             let (received, code) = unsafe buffer.withUnsafeMutableBytes { (raw: UnsafeMutableRawBufferPointer) -> (Int, Int32) in
-                guard let base = unsafe raw.baseAddress else { return (-1, EFAULT) }
+                guard let base = raw.baseAddress else { return (-1, EFAULT) }
                 let result = unsafe Darwin.read(descriptor, base + offset, count - offset)
                 return (result, errno)
             }
@@ -126,7 +126,7 @@ final class UnixSocket: @unchecked Sendable {
 
         while offset < data.count {
             let (sent, code) = unsafe data.withUnsafeBytes { (raw: UnsafeRawBufferPointer) -> (Int, Int32) in
-                guard let base = unsafe raw.baseAddress else { return (-1, EFAULT) }
+                guard let base = raw.baseAddress else { return (-1, EFAULT) }
                 let result = unsafe Self.send(
                     on: descriptor,
                     bytes: base + offset,
@@ -163,11 +163,11 @@ final class UnixSocket: @unchecked Sendable {
 
         var vector = unsafe iovec(iov_base: UnsafeMutableRawPointer(mutating: bytes), iov_len: count)
 
-        return unsafe withUnsafeMutablePointer(to: &vector) { (vectorPointer: UnsafeMutablePointer<iovec>) -> Int in
+        return withUnsafeMutablePointer(to: &vector) { (vectorPointer: UnsafeMutablePointer<iovec>) -> Int in
 
             var message = unsafe msghdr()
             unsafe message.msg_iov = vectorPointer
-            message.msg_iovlen = 1
+            unsafe message.msg_iovlen = 1
 
             guard let passedDescriptor else {
                 return unsafe sendmsg(socket, &message, 0)
@@ -175,9 +175,9 @@ final class UnixSocket: @unchecked Sendable {
 
             var control: [Int32] = [16, SOL_SOCKET, SCM_RIGHTS, passedDescriptor]
 
-            return unsafe control.withUnsafeMutableBytes { (controlBuffer: UnsafeMutableRawBufferPointer) -> Int in
+            return control.withUnsafeMutableBytes { (controlBuffer: UnsafeMutableRawBufferPointer) -> Int in
                 unsafe message.msg_control = controlBuffer.baseAddress
-                message.msg_controllen = socklen_t(controlBuffer.count)
+                unsafe message.msg_controllen = socklen_t(controlBuffer.count)
 
                 return unsafe sendmsg(socket, &message, 0)
             }

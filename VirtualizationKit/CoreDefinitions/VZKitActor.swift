@@ -122,22 +122,6 @@ import Virtualization
         return try await operation()
     }
 
-    /// Executes a non-isolated closure, hopping through the actor first.
-    ///
-    /// - Important: A non-isolated `async` closure always runs on the global concurrent executor, no matter
-    ///   which actor awaits it. This entry point therefore never ran its body on the actor's queue. It is kept,
-    ///   unchanged, for binary compatibility only: closure literals now resolve to the actor-isolated overload
-    ///   above, which does honour the documented contract.
-    ///
-    /// - Parameter operation: A non-isolated closure.
-    /// - Returns: The result of the closure, if it has a return value.
-    /// - Throws: Any error thrown by the closure.
-    @_disfavoredOverload
-    @available(*, deprecated, message: "The closure is not isolated to the actor and runs off its queue. Pass an actor-isolated closure instead.")
-    public static func run<T: Sendable>(_ operation: @Sendable @escaping () async throws -> T) async throws -> T {
-        return try await shared.perform(operation)
-    }
-
     /// A helper method to execute an operation within the actor's context.
     private func perform<T: Sendable>(_ operation: @Sendable @escaping () async throws -> T) async throws -> T {
         return try await operation()

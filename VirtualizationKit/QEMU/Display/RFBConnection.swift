@@ -485,7 +485,7 @@ final class RFBConnection: @unchecked Sendable {
         guard width > 0, height > 0 else { return nil }
 
         let copy: CFData? = unsafe framebuffer.withUnsafeBytes { (raw: UnsafeRawBufferPointer) -> CFData? in
-            guard let base = unsafe raw.baseAddress else { return nil }
+            guard let base = raw.baseAddress else { return nil }
             return unsafe CFDataCreate(kCFAllocatorDefault, base.assumingMemoryBound(to: UInt8.self), raw.count)
         }
 
@@ -495,7 +495,7 @@ final class RFBConnection: @unchecked Sendable {
             rawValue: CGBitmapInfo.byteOrder32Little.rawValue | CGImageAlphaInfo.noneSkipFirst.rawValue
         )
 
-        guard let image = CGImage(
+        guard let image = unsafe CGImage(
             width: width,
             height: height,
             bitsPerComponent: 8,
@@ -537,7 +537,7 @@ final class RFBConnection: @unchecked Sendable {
         )
 
         guard let provider = CGDataProvider(data: Data(bytes) as CFData),
-              let image = CGImage(
+              let image = unsafe CGImage(
                 width: width,
                 height: height,
                 bitsPerComponent: 8,
