@@ -94,3 +94,9 @@ fastlane/test_output
 # https://github.com/johnno1962/injectionforxcode
 
 iOSInjectionProject/
+
+# Products of Third-Party/setup-dependencies.sh
+/Third-Party/downloads/
+/Third-Party/build/
+/Third-Party/deps/
+/Third-Party/QEMU/
