@@ -142,6 +142,31 @@ public extension QEMUVirtualMachine {
         try await engine.reset()
     }
 
+    /// Attaches a removable USB drive backed by a disk image to the running machine.
+    ///
+    /// The image is opened read-only by the application and handed to the emulator as an open file, so
+    /// a user-selected file outside of the sandbox container works as long as the URL carries its
+    /// security scope. Access stays active while the drive is attached.
+    ///
+    /// - Parameter url: A file URL referencing the disk image to attach.
+    /// - Returns: A `UUID` identifying the attached drive, for later removal.
+    /// - Throws: A localized error if the machine is not running, the image cannot be opened, or the
+    ///   emulator rejects the drive.
+    func attachRemovableUSBDisk(usingImageAt url: URL) async throws -> UUID {
+        try await engine.attachRemovableDisk(at: url)
+    }
+
+    /// Detaches a removable USB drive attached with `attachRemovableUSBDisk(usingImageAt:)`.
+    ///
+    /// Returns once the guest has let go of the drive.
+    ///
+    /// - Parameter id: The `UUID` returned when the drive was attached.
+    /// - Throws: `VZKitError.usbDeviceNotFound(id)` if no such drive is attached, or a localized error
+    ///   if the emulator does not release it.
+    func detachRemovableUSBDisk(identifiedBy id: UUID) async throws {
+        try await engine.detachRemovableDisk(identifiedBy: id)
+    }
+
     /// The last failure of the guest display, if any.
     ///
     /// A display failure does not stop the machine: the guest keeps running, only the framebuffer
