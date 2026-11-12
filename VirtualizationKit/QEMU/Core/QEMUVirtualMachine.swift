@@ -61,6 +61,9 @@ public struct QEMUVirtualMachine<Template: TransferableTemplate>: VirtualMachine
     /// Drives the emulator process. Shared by all copies of this value.
     let engine: QEMUEngine
 
+    /// The guest display, shown by `QEMUFramebufferView`. Shared by all copies of this value.
+    let display: QEMUDisplay
+
     /// Executes a high-level action.
     ///
     /// - Parameter action: The requested operation.
@@ -101,10 +104,12 @@ public struct QEMUVirtualMachine<Template: TransferableTemplate>: VirtualMachine
         let builder = try await QEMUConfigurationBuilder(template: template, options: options)
         let plan = try builder.createLaunchPlan()
         let stateCoordinator = await QEMUStateCoordinator()
+        let display = await QEMUDisplay()
 
         self.template = template
         self.options = options
         self.stateCoordinator = stateCoordinator
+        self.display = display
         self.engine = .init(plan: plan, helper: builder.helper, coordinator: stateCoordinator)
     }
 }
@@ -122,5 +127,14 @@ public extension QEMUVirtualMachine {
     /// Resets the machine without powering it off, as the reset button of a physical one would.
     func reset() async throws {
         try await engine.reset()
+    }
+
+    /// The last failure of the guest display, if any.
+    ///
+    /// A display failure does not stop the machine: the guest keeps running, only the framebuffer
+    /// views stay empty. The value is cleared when the machine is powered on again.
+    @MainActor
+    var displayFailure: (any Error)? {
+        display.failure
     }
 }
