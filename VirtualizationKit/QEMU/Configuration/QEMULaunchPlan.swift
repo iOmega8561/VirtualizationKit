@@ -32,8 +32,8 @@ struct QEMUDescriptorSource: Sendable, Hashable {
     /// The location of the file.
     let url: URL
 
-    /// The access mode. It has to match the mode the emulator opens the corresponding drive with:
-    /// the emulator picks a descriptor out of a set by comparing access modes.
+    /// The access mode. The emulator picks a descriptor out of a set by comparing access modes, so
+    /// it has to match the mode the emulator opens the file with. See `QEMULaunchPlan.broker(_:)`.
     let access: Access
 }
 
@@ -87,13 +87,33 @@ struct QEMULaunchPlan: Sendable, Hashable {
     /// - Parameter source: The file to broker.
     /// - Returns: A `/dev/fdset/…` path naming the brokered file.
     mutating func broker(_ source: QEMUDescriptorSource) -> String {
+
+        nextSet += 1
+        let set = nextSet
+
+        add(source, to: set)
+
+        // The emulator does not open a writable image read-write right away. The block layer opens
+        // it with the permissions it holds at that moment, which are read-only until the device
+        // claims write access, and reopens it later. Each open picks a descriptor of the matching
+        // mode out of the set, so a writable file needs a read-only descriptor next to its
+        // read-write one; with the read-write one alone the first open fails.
+        if source.access == .readWrite {
+            add(.init(url: source.url, access: .readOnly), to: set)
+        }
+
+        return "/dev/fdset/\(set)"
+    }
+
+    /// The number of the last descriptor set handed out by `broker(_:)`.
+    private var nextSet = 0
+
+    /// Registers one descriptor as a member of a descriptor set.
+    private mutating func add(_ source: QEMUDescriptorSource, to set: Int) {
         let descriptor = Self.firstBrokeredDescriptor + Int32(descriptors.count)
-        let set = descriptors.count + 1
 
         descriptors.append(source)
         arguments.append(contentsOf: ["-add-fd", "fd=\(descriptor),set=\(set)"])
-
-        return "/dev/fdset/\(set)"
     }
 
     /// Escapes a free-form value for use inside a comma-separated option string.

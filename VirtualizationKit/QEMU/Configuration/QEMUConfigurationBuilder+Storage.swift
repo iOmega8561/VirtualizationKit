@@ -27,8 +27,8 @@ extension QEMUConfigurationBuilder {
     /// machine starts the installer and an installed one keeps booting from its disk once the media
     /// is removed from the template.
     ///
-    /// Both files are brokered: the disk read-write, the media read-only. The access mode of each has
-    /// to match the drive it backs, because the emulator picks a descriptor out of a set by its mode.
+    /// Both files are brokered: the disk read-write (which also hands over a read-only descriptor, see
+    /// `QEMULaunchPlan.broker(_:)`), the media read-only.
     ///
     /// - Note: The USB devices reference the controller emitted with the core devices, so this has to
     ///   run after them.
