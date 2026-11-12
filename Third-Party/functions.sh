@@ -77,7 +77,7 @@ build_autotools() {
     shift
 
     (
-        cd "${source}"
+        cd "${source}" || exit 1
         ./configure \
             --prefix="${DEPS_PREFIX}" \
             --host="${HOST_TRIPLE}" \
