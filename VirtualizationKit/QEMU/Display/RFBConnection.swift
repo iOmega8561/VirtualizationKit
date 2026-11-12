@@ -384,7 +384,10 @@ final class RFBConnection: @unchecked Sendable {
                 _ = try read(16 * screenCount)
 
                 // `x == 1` marks the answer to a size request of this client, `y` being its status.
-                if x == 1 && y != 0 {
+                // The emulator answers 4, "forwarded to the guest", when it passes the request on
+                // (the guest's own resize, if any, follows as a separate update), and 3 when the
+                // guest's graphics device cannot change its size at all.
+                if x == 1 && y != 0 && y != 4 {
                     VZKitLogger.default.info("The guest display declined a size change (status \(y))")
                 }
 
