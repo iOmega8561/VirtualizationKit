@@ -43,6 +43,14 @@ extension VZAudioDeviceConfiguration: SpecializedConstructible {
     ///   - type: The audio configuration type (input output ecc...)
     static private func captureDevicePermission(type: AVMediaType) async throws {
 
+        // Requesting capture access without a usage description makes the system terminate the
+        // process on the spot. The description lives in the embedding application, out of this
+        // framework's control, so turn a hard crash into a regular, recoverable error.
+        guard Bundle.main.object(forInfoDictionaryKey: "NSMicrophoneUsageDescription") != nil else {
+            VZKitLogger.default.error("NSMicrophoneUsageDescription is missing from the application's Info.plist")
+            throw VZKitError.permissionDenied(.audioCaptureDevice)
+        }
+
         switch AVCaptureDevice.authorizationStatus(for: type) {
         case .authorized:
             break

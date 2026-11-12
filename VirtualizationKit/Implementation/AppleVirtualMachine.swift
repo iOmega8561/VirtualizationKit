@@ -95,6 +95,15 @@ public struct AppleVirtualMachine<Template: TransferableTemplate>: VirtualMachin
     /// this delegate directly.
     private let errorDelegate: AppleErrorDelegate
     
+    /// Keeps the install media reachable inside the App Sandbox for as long as the machine exists.
+    ///
+    /// The media is referenced by the configuration (as an attached image) and by the installer, both of
+    /// which open it long after this value has been created.
+    private let installMediaAccess: SecurityScopedAccess?
+    
+    /// Keeps the images of hot-plugged removable devices reachable while they are attached.
+    private let removableMediaAccess: SecurityScopeRegistry
+    
     /// Executes a high-level VM action and manages resulting state changes within the same actor context.
     ///
     /// Supported actions include `.start`, `.stop`, `.pause`, `.resume`, and `.install`. Upon encountering
@@ -155,6 +164,10 @@ public struct AppleVirtualMachine<Template: TransferableTemplate>: VirtualMachin
     /// - Throws: Errors encountered while generating the VM configuration, setting up the virtualization
     ///           framework, or initializing the event delegation process.
     public init(template: Template) async throws {
+        
+        // Must precede the configuration: building it already opens the install media.
+        self.installMediaAccess = template.bootableInstallMedia.map { SecurityScopedAccess(url: $0) }
+        self.removableMediaAccess = .init()
         
         let builder = await AppleConfigurationBuilder(template: template)
         let configuration = try await builder.createConfiguration()
@@ -224,11 +237,15 @@ public struct AppleVirtualMachine<Template: TransferableTemplate>: VirtualMachin
             throw VZKitError.unsupportedFeature(.xhciUSBHotSwap)
         }
         
+        // Released again if anything below throws, kept for as long as the device stays attached.
+        let access = SecurityScopedAccess(url: url)
+        
         let massStorageDev = try VZUSBMassStorageDevice(
             configuration: .create(at: url, type: .readOnly)
         )
         
         try await controller.attach(device: massStorageDev)
+        removableMediaAccess.retain(access, for: massStorageDev.uuid)
         return massStorageDev.uuid
     }
     
@@ -252,5 +269,6 @@ public struct AppleVirtualMachine<Template: TransferableTemplate>: VirtualMachin
         }
         
         try await controller.detach(device: device)
+        removableMediaAccess.release(id)
     }
 }
