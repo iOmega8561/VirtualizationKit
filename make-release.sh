@@ -74,8 +74,36 @@ find "${FRAMEWORK_NAME}.xcframework" -type f -perm +111 -exec \
 codesign --force --strict --options runtime --timestamp \
 --sign "$CERTIFICATE_NAME" {} \; > /dev/null 2>&1
 
+# The pass above signs every executable without entitlements, which is wrong
+# for the QEMU helper service and its launcher. Sign them again, inside-out,
+# each with its own entitlements; then reseal the frameworks that contain them.
+HELPER_SIGN_FLAGS="--force --strict --options runtime --timestamp"
+
+find "${FRAMEWORK_NAME}.xcframework" -type d -name "QEMUHelper.xpc" -print0 |
+while IFS= read -r -d '' HELPER; do
+
+    LAUNCHER="${HELPER}/Contents/MacOS/QEMULauncher"
+
+    if [ -f "${LAUNCHER}" ]; then
+        codesign ${HELPER_SIGN_FLAGS} \
+            --entitlements "${SCRIPTPATH}/QEMUSupport/QEMULauncher.entitlements" \
+            --sign "$CERTIFICATE_NAME" \
+            "${LAUNCHER}"
+    fi
+
+    codesign ${HELPER_SIGN_FLAGS} \
+        --entitlements "${SCRIPTPATH}/QEMUSupport/QEMUHelper.entitlements" \
+        --sign "$CERTIFICATE_NAME" \
+        "${HELPER}"
+done
+
+find "${FRAMEWORK_NAME}.xcframework" -type d -name "${FRAMEWORK_NAME}.framework" -print0 |
+while IFS= read -r -d '' FRAMEWORK; do
+    codesign ${HELPER_SIGN_FLAGS} --sign "$CERTIFICATE_NAME" "${FRAMEWORK}"
+done
+
+# No --deep: it would replace the entitlements of the nested code set above.
 codesign --force \
-    --deep \
     --strict \
     --options runtime \
     --timestamp \
@@ -86,6 +114,14 @@ echo "📦 Packaging XCFramework..."
 mkdir -p DMG
 cp -R "${FRAMEWORK_NAME}.xcframework" DMG/
 cp "${SCRIPTPATH}/LICENSE" DMG/
+
+# Host applications re-sign the helper with their own identity and need the
+# script and the entitlements for that.
+mkdir -p DMG/QEMUSupport
+cp "${SCRIPTPATH}/QEMUSupport/resign-embedded-helper.sh" \
+    "${SCRIPTPATH}/QEMUSupport/QEMUHelper.entitlements" \
+    "${SCRIPTPATH}/QEMUSupport/QEMULauncher.entitlements" \
+    DMG/QEMUSupport/
 
 hdiutil create -volname "${FRAMEWORK_NAME}" \
   -srcfolder ./DMG \
