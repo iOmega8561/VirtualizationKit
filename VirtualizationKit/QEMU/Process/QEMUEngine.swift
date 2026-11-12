@@ -52,6 +52,9 @@ actor QEMUEngine {
 
         /// Forwards control channel events to the engine.
         var eventTask: Task<Void, Never>?
+
+        /// Identifies the display connection of this power cycle, once it is attached.
+        var displayGeneration: UInt64?
     }
 
     /// How long a polite request to quit may take before the process is ended forcibly.
@@ -65,6 +68,12 @@ actor QEMUEngine {
 
     /// The owner of the observable execution state.
     private let coordinator: QEMUStateCoordinator
+
+    /// The guest display, attached to the emulator for the duration of each power cycle.
+    private let display: QEMUDisplay
+
+    /// The name under which the display connection is handed to the emulator.
+    private static let displayDescriptorName = "display0"
 
     /// The current power cycle, if the machine is on.
     private var session: Session?
@@ -112,6 +121,9 @@ actor QEMUEngine {
                 await self?.handle(event, in: id)
             }
         }
+
+        // Attached while the guest is still halted, so that the first frame it draws is seen.
+        await attachDisplay(in: session.id)
 
         do {
             if paused {
@@ -331,20 +343,87 @@ actor QEMUEngine {
     /// Ends a session whose start-up could not be completed.
     private func abort(_ session: Session) async {
 
-        guard self.session?.id == session.id else { return }
+        // The current value, not the caller's copy, knows about the display attached since.
+        guard let current = self.session, current.id == session.id else { return }
 
         self.session = nil
         self.isStopRequested = false
 
-        await release(session)
+        await release(current)
         await coordinator.transition(to: .stopped)
     }
 
     /// Releases the resources of a session. Invalidating the helper connection ends the process.
     private func release(_ session: Session) async {
         session.eventTask?.cancel()
+
+        if let displayGeneration = session.displayGeneration {
+            await display.detach(generation: displayGeneration)
+        }
+
         await session.control.close()
         session.helper.invalidate()
+    }
+
+    // MARK: - Display
+
+    /// Connects the guest display to the emulator's display server.
+    ///
+    /// The server was started without listening anywhere. A connected socket pair is created here; one
+    /// end is passed to the emulator over the control channel and handed to the server as a client,
+    /// the other end is read by the display. A failure is reported through the display and does not
+    /// affect the machine, which keeps running without a picture.
+    ///
+    /// - Parameter id: The session the display belongs to.
+    private func attachDisplay(in id: UUID) async {
+
+        guard let session, session.id == id else { return }
+
+        let pair: (local: UnixSocket, peer: Int32)
+
+        do {
+            pair = try UnixSocket.makeDisplayPair()
+
+        } catch {
+            await display.report(VZKitError.qemuDisplayFailure("the display connection could not be created"))
+            return
+        }
+
+        do {
+            // The emulator keeps its own duplicate of the peer end; this one is closed either way.
+            defer { _ = close(pair.peer) }
+
+            try await send(
+                "getfd",
+                arguments: ["fdname": .string(Self.displayDescriptorName)],
+                passing: pair.peer,
+                in: session
+            )
+
+            try await send(
+                "add_client",
+                arguments: [
+                    "protocol": .string("vnc"),
+                    "fdname": .string(Self.displayDescriptorName),
+                    "skipauth": .bool(true)
+                ],
+                in: session
+            )
+
+        } catch {
+            pair.local.shutdown()
+            await display.report(VZKitError.qemuDisplayFailure(error.localizedDescription))
+            return
+        }
+
+        let generation = await display.attach(pair.local)
+
+        // The session may have ended while the display was being attached.
+        if self.session?.id == id {
+            self.session?.displayGeneration = generation
+        } else {
+            await display.detach(generation: generation)
+        }
     }
 
     // MARK: - Helpers
@@ -379,9 +458,16 @@ actor QEMUEngine {
     ///   - plan: The command line and files of the machine.
     ///   - helper: The embedded helper service.
     ///   - coordinator: The owner of the observable execution state.
-    init(plan: QEMULaunchPlan, helper: QEMUHelperBundle, coordinator: QEMUStateCoordinator) {
+    ///   - display: The guest display, attached while the machine is on.
+    init(
+        plan: QEMULaunchPlan,
+        helper: QEMUHelperBundle,
+        coordinator: QEMUStateCoordinator,
+        display: QEMUDisplay
+    ) {
         self.plan = plan
         self.helper = helper
         self.coordinator = coordinator
+        self.display = display
     }
 }

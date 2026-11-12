@@ -110,7 +110,12 @@ public struct QEMUVirtualMachine<Template: TransferableTemplate>: VirtualMachine
         self.options = options
         self.stateCoordinator = stateCoordinator
         self.display = display
-        self.engine = .init(plan: plan, helper: builder.helper, coordinator: stateCoordinator)
+        self.engine = .init(
+            plan: plan,
+            helper: builder.helper,
+            coordinator: stateCoordinator,
+            display: display
+        )
     }
 }
 
