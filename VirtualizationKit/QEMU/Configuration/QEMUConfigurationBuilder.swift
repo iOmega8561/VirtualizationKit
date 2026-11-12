@@ -60,6 +60,11 @@ struct QEMUConfigurationBuilder<Template: TransferableTemplate>: Sendable {
             }
         }
 
+        // Rejected here, before any file is provisioned.
+        if case .bridged = template.networkTopology {
+            throw VZKitError.qemuUnsupportedNetwork(template.networkTopology.localizedName)
+        }
+
         let library = helper.libraryURL(named: options.architecture.libraryName)
 
         guard FileManager.default.fileExists(atPath: library.path(percentEncoded: false)) else {
@@ -171,6 +176,9 @@ struct QEMUConfigurationBuilder<Template: TransferableTemplate>: Sendable {
         appendPlatform(to: &plan)
         try appendFirmware(to: &plan)
         appendCoreDevices(to: &plan)
+        try appendStorage(to: &plan)
+        try appendNetwork(to: &plan)
+        appendAudio(to: &plan)
 
         return plan
     }

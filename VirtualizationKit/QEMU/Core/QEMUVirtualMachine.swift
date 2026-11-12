@@ -64,6 +64,11 @@ public struct QEMUVirtualMachine<Template: TransferableTemplate>: VirtualMachine
     /// The guest display, shown by `QEMUFramebufferView`. Shared by all copies of this value.
     let display: QEMUDisplay
 
+    /// Keeps the install media reachable inside the App Sandbox for as long as the machine exists.
+    ///
+    /// The media is opened at every power-on, long after this value has been created.
+    private let installMediaAccess: SecurityScopedAccess?
+
     /// Executes a high-level action.
     ///
     /// - Parameter action: The requested operation.
@@ -100,6 +105,9 @@ public struct QEMUVirtualMachine<Template: TransferableTemplate>: VirtualMachine
     /// - Throws: A localized error if the template asks for something this backend does not support,
     ///   if the helper service is not embedded, or if the files of the machine cannot be provisioned.
     public init(template: Template, options: QEMUMachineOptions) async throws {
+
+        // Started before anything touches the media, and held for the lifetime of the machine.
+        self.installMediaAccess = template.bootableInstallMedia.map { SecurityScopedAccess(url: $0) }
 
         let builder = try await QEMUConfigurationBuilder(template: template, options: options)
         let plan = try builder.createLaunchPlan()
