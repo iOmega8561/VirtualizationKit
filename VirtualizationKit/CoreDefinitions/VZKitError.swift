@@ -50,6 +50,18 @@ enum VZKitError: LocalizedError {
     case macUnsupportedHost
     case wrongMacImageVersion(_ expected: OperatingSystem.Version,
                               _ actual: OperatingSystem.Version)
+    
+    // QEMU backend
+    case qemuHelperUnavailable
+    case qemuHelperFailure(_ reason: String)
+    case qemuFirmwareMissing(_ name: String)
+    case qemuStorageFailedSetup(_ name: String)
+    case qemuUnsupportedGuest(_ name: String)
+    case qemuUnsupportedNetwork(_ name: String)
+    case qemuInvalidState(_ name: String)
+    case qemuProcessExited(_ status: Int32, _ diagnostics: String)
+    case qemuCommandFailed(_ command: String, _ reason: String)
+    case qemuDisplayFailure(_ reason: String)
 
     public var errorDescription: String? { self.errorLocale.value }
     
@@ -79,6 +91,19 @@ enum VZKitError: LocalizedError {
         case .macUnsupportedHost: .init("error-macUnsupportedHost")
         case .wrongMacImageVersion(let expected, let actual):
                 .init("error-wrongMacImageVersion", expected, actual)
+                    
+        case .qemuHelperUnavailable: .init("error-qemuHelperUnavailable")
+        case .qemuHelperFailure(let reason): .init("error-qemuHelperFailure", reason)
+        case .qemuFirmwareMissing(let name): .init("error-qemuFirmwareMissing", name)
+        case .qemuStorageFailedSetup(let name): .init("error-qemuStorageFailedSetup", name)
+        case .qemuUnsupportedGuest(let name): .init("error-qemuUnsupportedGuest", name)
+        case .qemuUnsupportedNetwork(let name): .init("error-qemuUnsupportedNetwork", name)
+        case .qemuInvalidState(let name): .init("error-qemuInvalidState", name)
+        case .qemuProcessExited(let status, let diagnostics):
+                .init("error-qemuProcessExited", String(status), diagnostics)
+        case .qemuCommandFailed(let command, let reason):
+                .init("error-qemuCommandFailed", command, reason)
+        case .qemuDisplayFailure(let reason): .init("error-qemuDisplayFailure", reason)
         }
     }
 }

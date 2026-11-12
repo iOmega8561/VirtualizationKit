@@ -289,6 +289,166 @@
         }
       }
     },
+    "error-qemuCommandFailed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "QEMU rejected the “%@” command: %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "QEMU ha rifiutato il comando “%@”: %@"
+          }
+        }
+      }
+    },
+    "error-qemuDisplayFailure" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The connection to the Virtual Machine display failed: %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La connessione allo schermo della Macchina Virtuale non è riuscita: %@"
+          }
+        }
+      }
+    },
+    "error-qemuFirmwareMissing" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The following QEMU component is missing from the helper service: “%@”"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il seguente componente di QEMU non è presente nel servizio ausiliario: “%@”"
+          }
+        }
+      }
+    },
+    "error-qemuHelperFailure" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The QEMU helper service could not start the Virtual Machine: %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il servizio ausiliario di QEMU non è riuscito ad avviare la Macchina Virtuale: %@"
+          }
+        }
+      }
+    },
+    "error-qemuHelperUnavailable" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The QEMU helper service could not be found or reached. Make sure it is embedded and signed together with the application."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non è stato possibile trovare o contattare il servizio ausiliario di QEMU. Assicurarsi che sia incluso e firmato insieme all’applicazione."
+          }
+        }
+      }
+    },
+    "error-qemuInvalidState" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The requested operation is not possible while the Virtual Machine is in the following state: “%@”"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’operazione richiesta non è possibile mentre la Macchina Virtuale si trova nel seguente stato: “%@”"
+          }
+        }
+      }
+    },
+    "error-qemuProcessExited" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "QEMU terminated unexpectedly (status %@). %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "QEMU è terminato in modo inatteso (stato %@). %@"
+          }
+        }
+      }
+    },
+    "error-qemuStorageFailedSetup" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Could not create or open the following Virtual Machine file: “%@”"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non è stato possibile creare o aprire il seguente file della Macchina Virtuale: “%@”"
+          }
+        }
+      }
+    },
+    "error-qemuUnsupportedGuest" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The QEMU backend cannot run the following guest operating system: “%@”"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il backend QEMU non può eseguire il seguente sistema operativo guest: “%@”"
+          }
+        }
+      }
+    },
+    "error-qemuUnsupportedNetwork" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The QEMU backend does not support the following network mode: “%@”"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il backend QEMU non supporta la seguente modalità di rete: “%@”"
+          }
+        }
+      }
+    },
     "error-unavailableFeature" : {
       "localizations" : {
         "en" : {
