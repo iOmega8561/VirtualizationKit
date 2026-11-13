@@ -53,6 +53,16 @@ struct QEMULaunchPlan: Sendable, Hashable {
     /// in the order they were staged.
     static let firstBrokeredDescriptor: Int32 = 4
 
+    /// The number the control channel of the software TPM has inside the emulator process.
+    ///
+    /// The launcher creates that channel itself, when asked to start a TPM, and places the emulator's
+    /// end at this number: above every brokered descriptor, so the two can never collide.
+    static let tpmControlDescriptor: Int32 = 100
+
+    /// The launcher option that starts the software TPM. It is consumed by the launcher and never
+    /// reaches the emulator. Its value is the descriptor of the TPM's state file.
+    static let launcherTPMOption = "-launcher-tpm"
+
     /// The most descriptors a single launch may broker. The helper service enforces the same limit.
     static let maximumBrokeredDescriptors = 32
 
@@ -107,6 +117,19 @@ struct QEMULaunchPlan: Sendable, Hashable {
 
     /// The number of the last descriptor set handed out by `broker(_:)`.
     private var nextSet = 0
+
+    /// Registers a file that is handed over as a plain descriptor, outside of any descriptor set.
+    ///
+    /// The emulator does not see such a file through `/dev/fdset`; it is meant for something else in its
+    /// process, such as the launcher, which passes it on to the software TPM.
+    ///
+    /// - Parameter source: The file to hand over.
+    /// - Returns: The number the descriptor has inside the emulator process.
+    mutating func stage(_ source: QEMUDescriptorSource) -> Int32 {
+        let descriptor = Self.firstBrokeredDescriptor + Int32(descriptors.count)
+        descriptors.append(source)
+        return descriptor
+    }
 
     /// Registers one descriptor as a member of a descriptor set.
     private mutating func add(_ source: QEMUDescriptorSource, to set: Int) {

@@ -71,6 +71,14 @@ struct QEMUConfigurationBuilder<Template: TransferableTemplate>: Sendable {
         guard FileManager.default.fileExists(atPath: library.path(percentEncoded: false)) else {
             throw VZKitError.qemuFirmwareMissing(library.lastPathComponent)
         }
+
+        if options.includesTPM {
+            let tpm = helper.tpmExecutableURL
+
+            guard FileManager.default.isExecutableFile(atPath: tpm.path(percentEncoded: false)) else {
+                throw VZKitError.qemuFirmwareMissing(tpm.lastPathComponent)
+            }
+        }
     }
 
     // MARK: - Machine
@@ -111,6 +119,12 @@ struct QEMUConfigurationBuilder<Template: TransferableTemplate>: Sendable {
             plan.append("-accel", "hvf")
             plan.append("-cpu", "host")
 
+        case .x86_64 where options.usesSecureBootFirmware:
+            // The Secure Boot firmware for x86 protects its variables with System Management Mode.
+            plan.append("-machine", "q35,smm=on")
+            plan.append("-accel", "tcg")
+            plan.append("-cpu", "max")
+
         case .x86_64:
             plan.append("-machine", "q35")
             plan.append("-accel", "tcg")
@@ -124,15 +138,23 @@ struct QEMUConfigurationBuilder<Template: TransferableTemplate>: Sendable {
     /// Emits the UEFI firmware: read-only code out of the helper bundle, plus the per-machine variable store.
     private func appendFirmware(to plan: inout QEMULaunchPlan) throws {
 
+        let secureBoot = options.usesSecureBootFirmware
+
         let code = plan.broker(.init(
-            url: try storage.firmwareCode(for: options.architecture, in: helper),
+            url: try storage.firmwareCode(for: options.architecture, secureBoot: secureBoot, in: helper),
             access: .readOnly
         ))
 
         plan.append("-drive", "if=pflash,unit=0,format=raw,readonly=on,file=\(code)")
 
+        // Only code running in System Management Mode may write the variables of the x86 Secure Boot
+        // firmware; that is what keeps the guest from changing its keys behind the firmware's back.
+        if secureBoot, case .x86_64 = options.architecture {
+            plan.append("-global", "driver=cfi.pflash01,property=secure,value=on")
+        }
+
         let variables = plan.broker(.init(
-            url: try storage.prepareVariableStore(for: options.architecture, in: helper),
+            url: try storage.prepareVariableStore(for: options.architecture, secureBoot: secureBoot, in: helper),
             access: .readWrite
         ))
 
@@ -193,6 +215,7 @@ struct QEMUConfigurationBuilder<Template: TransferableTemplate>: Sendable {
         appendPlatform(to: &plan)
         try appendFirmware(to: &plan)
         appendCoreDevices(to: &plan)
+        try appendTPM(to: &plan)
         try appendStorage(to: &plan)
         try appendNetwork(to: &plan)
         appendAudio(to: &plan)

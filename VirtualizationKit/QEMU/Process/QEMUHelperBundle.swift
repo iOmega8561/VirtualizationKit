@@ -39,6 +39,11 @@ struct QEMUHelperBundle: Sendable {
         url.appendingPathComponent("Contents/Resources/qemu", isDirectory: true)
     }
 
+    /// The software TPM that the launcher starts next to the emulator when a machine has a TPM.
+    var tpmExecutableURL: URL {
+        url.appendingPathComponent("Contents/MacOS/QEMUTPM", isDirectory: false)
+    }
+
     /// The location of an emulator library inside the service bundle.
     ///
     /// - Parameter name: The name of the library, without prefix and extension.

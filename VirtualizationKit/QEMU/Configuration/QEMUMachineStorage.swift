@@ -35,12 +35,22 @@ struct QEMUMachineStorage: Sendable {
         directory.appendingPathComponent("Disk.img", isDirectory: false)
     }
 
-    /// The UEFI variable store of the machine for a given architecture.
+    /// The UEFI variable store of the machine for a given firmware.
     ///
-    /// - Parameter architecture: The architecture the firmware was built for.
+    /// The Secure Boot firmware keeps its variables in a different layout, so it has a store of its own.
+    ///
+    /// - Parameters:
+    ///   - architecture: The architecture the firmware was built for.
+    ///   - secureBoot: Whether the firmware is the Secure Boot capable one.
     /// - Returns: The location of the variable store.
-    func variableStore(for architecture: QEMUMachineOptions.Architecture) -> URL {
-        directory.appendingPathComponent("QEMU-\(architecture.rawValue)-NVRAM", isDirectory: false)
+    func variableStore(for architecture: QEMUMachineOptions.Architecture, secureBoot: Bool) -> URL {
+        let variant = secureBoot ? "-secure" : ""
+        return directory.appendingPathComponent("QEMU-\(architecture.rawValue)\(variant)-NVRAM", isDirectory: false)
+    }
+
+    /// The state of the machine's software TPM: its keys, counters and other persistent data.
+    var tpmState: URL {
+        directory.appendingPathComponent("QEMU-TPM", isDirectory: false)
     }
 
     /// Creates the machine directory if it does not exist yet.
@@ -58,54 +68,117 @@ struct QEMUMachineStorage: Sendable {
     ///
     /// - Parameters:
     ///   - architecture: The architecture of the guest.
+    ///   - secureBoot: Whether to return the Secure Boot capable build.
     ///   - helper: The helper service bundle carrying the emulator's data files.
     /// - Returns: The location of the read-only firmware code.
     func firmwareCode(
         for architecture: QEMUMachineOptions.Architecture,
+        secureBoot: Bool,
         in helper: QEMUHelperBundle
     ) throws -> URL {
-        switch architecture {
-        case .aarch64: return try helper.dataFile(named: "edk2-aarch64-code.fd")
-        case .x86_64: return try helper.dataFile(named: "edk2-x86_64-code.fd")
+        switch (architecture, secureBoot) {
+        case (.aarch64, false): return try helper.dataFile(named: "edk2-aarch64-code.fd")
+        case (.aarch64, true): return try helper.dataFile(named: "edk2-aarch64-secure-code.fd")
+        case (.x86_64, false): return try helper.dataFile(named: "edk2-x86_64-code.fd")
+        case (.x86_64, true): return try helper.dataFile(named: "edk2-x86_64-secure-code.fd")
         }
     }
 
-    /// Returns the UEFI variable store for an architecture, creating it on first use.
+    /// Returns the UEFI variable store for a firmware, creating it on first use.
     ///
-    /// The store is what makes boot entries and firmware settings survive a power cycle. For ARM the
-    /// firmware accepts, and formats, an erased flash device, so an empty sparse file of the right size
-    /// is enough. For x86 the store has to be pre-formatted and is copied from the template that ships
-    /// with the emulator.
+    /// The store is what makes boot entries and firmware settings survive a power cycle.
+    ///
+    /// - The standard ARM firmware accepts, and formats, an erased flash device, so an empty sparse file
+    ///   of the right size is enough.
+    /// - The Secure Boot capable ARM firmware needs a pre-formatted store. The template that ships with
+    ///   the emulator is smaller than a flash device of the `virt` machine and is extended to its size.
+    /// - For x86 the store is always pre-formatted and copied from the matching template.
     ///
     /// - Parameters:
     ///   - architecture: The architecture of the guest.
+    ///   - secureBoot: Whether the store is for the Secure Boot capable firmware.
     ///   - helper: The helper service bundle carrying the emulator's data files.
     /// - Returns: The location of the writable variable store.
     func prepareVariableStore(
         for architecture: QEMUMachineOptions.Architecture,
+        secureBoot: Bool,
         in helper: QEMUHelperBundle
     ) throws -> URL {
 
-        let store = variableStore(for: architecture)
+        let store = variableStore(for: architecture, secureBoot: secureBoot)
 
         guard !FileManager.default.fileExists(atPath: store.path(percentEncoded: false)) else {
             return store
         }
 
-        switch architecture {
-        case .aarch64:
+        switch (architecture, secureBoot) {
+        case (.aarch64, false):
             try Self.createSparseFile(at: store, size: Self.armFlashSize)
 
-        case .x86_64:
-            let template = try helper.dataFile(named: "edk2-i386-vars.fd")
+        case (.aarch64, true):
+            try Self.copy(try helper.dataFile(named: "edk2-arm-secure-vars.fd"), to: store, extendingTo: Self.armFlashSize)
 
-            do {
-                try FileManager.default.copyItem(at: template, to: store)
+        case (.x86_64, false):
+            try Self.copy(try helper.dataFile(named: "edk2-i386-vars.fd"), to: store, extendingTo: nil)
 
-            } catch { throw VZKitError.qemuStorageFailedSetup(store.lastPathComponent) }
+        case (.x86_64, true):
+            try Self.copy(try helper.dataFile(named: "edk2-i386-secure-vars.fd"), to: store, extendingTo: nil)
         }
 
         return store
+    }
+
+    /// Returns the state file of the machine's software TPM, creating it on first use.
+    ///
+    /// The file starts empty; the TPM formats it the first time it runs.
+    ///
+    /// - Returns: The location of the state file.
+    func prepareTPMState() throws -> URL {
+
+        let state = tpmState
+        let path = state.path(percentEncoded: false)
+
+        guard !FileManager.default.fileExists(atPath: path) else { return state }
+
+        guard FileManager.default.createFile(atPath: path, contents: nil, attributes: nil) else {
+            throw VZKitError.qemuStorageFailedSetup(state.lastPathComponent)
+        }
+
+        return state
+    }
+
+    /// Copies a template into place, optionally extending the copy to a given size.
+    ///
+    /// The copy is prepared under a temporary name and moved into place only once complete, so a failure
+    /// never leaves a half-made store behind for the next start to pick up.
+    ///
+    /// - Parameters:
+    ///   - template: The file to copy.
+    ///   - destination: Where the copy goes. It must not exist yet.
+    ///   - size: The size to extend the copy to, if any. Added space reads as zeros.
+    private static func copy(_ template: URL, to destination: URL, extendingTo size: UInt64?) throws {
+
+        let partial = destination.appendingPathExtension("partial")
+
+        do {
+            try? FileManager.default.removeItem(at: partial)
+            try FileManager.default.copyItem(at: template, to: partial)
+
+            if let size {
+                let fileHandle = try FileHandle(forWritingTo: partial)
+                defer { try? fileHandle.close() }
+
+                if try fileHandle.seekToEnd() < size {
+                    try fileHandle.truncate(atOffset: size)
+                }
+            }
+
+            try FileManager.default.moveItem(at: partial, to: destination)
+
+        } catch {
+            try? FileManager.default.removeItem(at: partial)
+            throw VZKitError.qemuStorageFailedSetup(destination.lastPathComponent)
+        }
     }
 
     /// Creates an empty file of a given logical size without allocating its blocks.

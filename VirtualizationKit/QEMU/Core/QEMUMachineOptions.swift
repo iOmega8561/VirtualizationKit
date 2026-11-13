@@ -68,6 +68,21 @@ public struct QEMUMachineOptions: Transferable {
     /// The height of the guest display at power-on, in pixels.
     public var displayHeight: Int
 
+    /// Whether the machine has a TPM 2.0 device. Defaults to `false`.
+    ///
+    /// The TPM is emulated in software by a separate process next to the emulator, and its state (keys,
+    /// counters) is kept in a file of the machine that survives power cycles. Windows 11 requires one,
+    /// and any guest can use it for measured boot or disk encryption.
+    public var includesTPM: Bool
+
+    /// Whether the machine boots with UEFI firmware that supports Secure Boot. Defaults to `false`.
+    ///
+    /// The firmware starts without enrolled keys: Secure Boot is available, and can be enabled
+    /// from the firmware setup or by the guest, but signatures are not checked until keys are
+    /// enrolled. The firmware keeps its settings in a variable store of its own, so changing this
+    /// option makes the machine start with fresh firmware settings (boot entries included).
+    public var usesSecureBootFirmware: Bool
+
     // MARK: - Initializers
 
     /// Creates a set of options.
@@ -76,13 +91,44 @@ public struct QEMUMachineOptions: Transferable {
     ///   - architecture: The processor architecture of the guest.
     ///   - displayWidth: The initial display width, in pixels. Clamped to a sensible range.
     ///   - displayHeight: The initial display height, in pixels. Clamped to a sensible range.
+    ///   - includesTPM: Whether the machine has a TPM 2.0 device.
+    ///   - usesSecureBootFirmware: Whether the machine boots with Secure Boot capable firmware.
     public init(
         architecture: Architecture = .aarch64,
         displayWidth: Int = 1280,
-        displayHeight: Int = 720
+        displayHeight: Int = 720,
+        includesTPM: Bool = false,
+        usesSecureBootFirmware: Bool = false
     ) {
         self.architecture = architecture
         self.displayWidth = min(max(displayWidth, 640), 7680)
         self.displayHeight = min(max(displayHeight, 480), 4320)
+        self.includesTPM = includesTPM
+        self.usesSecureBootFirmware = usesSecureBootFirmware
+    }
+
+    // MARK: - Codable
+
+    /// The keys of the encoded form.
+    private enum CodingKeys: String, CodingKey {
+        case architecture, displayWidth, displayHeight, includesTPM, usesSecureBootFirmware
+    }
+
+    /// Decodes a set of options.
+    ///
+    /// Options encoded before a property existed decode with that property's default, so options an
+    /// application has stored keep working when it adopts a newer framework.
+    ///
+    /// - Parameter decoder: The decoder to read from.
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        self.init(
+            architecture: try container.decodeIfPresent(Architecture.self, forKey: .architecture) ?? .aarch64,
+            displayWidth: try container.decodeIfPresent(Int.self, forKey: .displayWidth) ?? 1280,
+            displayHeight: try container.decodeIfPresent(Int.self, forKey: .displayHeight) ?? 720,
+            includesTPM: try container.decodeIfPresent(Bool.self, forKey: .includesTPM) ?? false,
+            usesSecureBootFirmware: try container.decodeIfPresent(Bool.self, forKey: .usesSecureBootFirmware) ?? false
+        )
     }
 }
