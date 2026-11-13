@@ -82,6 +82,15 @@ HELPER_SIGN_FLAGS="--force --strict --options runtime --timestamp"
 find "${FRAMEWORK_NAME}.xcframework" -type d -name "QEMUHelper.xpc" -print0 |
 while IFS= read -r -d '' HELPER; do
 
+    TPM="${HELPER}/Contents/MacOS/QEMUTPM"
+
+    if [ -f "${TPM}" ]; then
+        codesign ${HELPER_SIGN_FLAGS} \
+            --entitlements "${SCRIPTPATH}/QEMUSupport/QEMUTPM.entitlements" \
+            --sign "$CERTIFICATE_NAME" \
+            "${TPM}"
+    fi
+
     LAUNCHER="${HELPER}/Contents/MacOS/QEMULauncher"
 
     if [ -f "${LAUNCHER}" ]; then
@@ -121,6 +130,7 @@ mkdir -p DMG/QEMUSupport
 cp "${SCRIPTPATH}/QEMUSupport/resign-embedded-helper.sh" \
     "${SCRIPTPATH}/QEMUSupport/QEMUHelper.entitlements" \
     "${SCRIPTPATH}/QEMUSupport/QEMULauncher.entitlements" \
+    "${SCRIPTPATH}/QEMUSupport/QEMUTPM.entitlements" \
     DMG/QEMUSupport/
 
 hdiutil create -volname "${FRAMEWORK_NAME}" \

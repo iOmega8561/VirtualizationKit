@@ -151,6 +151,82 @@ Libs: -lffi
 PC
 }
 
+# Regenerates the build system of a source tree that ships without one, as the
+# archives of git tags do. Needs autoconf, automake and libtool; on macOS
+# Homebrew installs libtoolize as glibtoolize.
+#   $1  source directory
+autoreconf_source() {
+    (
+        cd "$1" || exit 1
+
+        if command -v glibtoolize >/dev/null 2>&1; then
+            export LIBTOOLIZE=glibtoolize
+        fi
+
+        autoreconf --force --install
+    )
+}
+
+# Builds the software TPM and what it needs, all static, into DEPS_PREFIX:
+# libcrypto (OpenSSL), libtpms, libtasn1, json-glib and swtpm itself. glib must
+# already be there.
+#   $1  OpenSSL configuration target (darwin64-arm64-cc on Apple silicon)
+#   $2  directory holding the downloaded archives
+build_tpm_stack() {
+    local openssl_target="$1" downloads="$2"
+
+    log "Building OpenSSL (libcrypto only)"
+    unpack "${downloads}/openssl.tar.gz" "${BUILD}/openssl"
+    (
+        cd "${BUILD}/openssl" || exit 1
+        ./Configure "${openssl_target}" no-shared no-tests no-docs \
+            --prefix="${DEPS_PREFIX}" --libdir=lib
+        make -j "${JOBS}" build_libs
+        make install_dev
+    )
+
+    # The packages below find libcrypto through the compiler, not pkg-config.
+    local CPPFLAGS="-I${DEPS_PREFIX}/include"
+    local LDFLAGS="${LDFLAGS:-} -L${DEPS_PREFIX}/lib"
+    export CPPFLAGS LDFLAGS
+
+    log "Building libtpms"
+    unpack "${downloads}/libtpms.tar.gz" "${BUILD}/libtpms"
+    autoreconf_source "${BUILD}/libtpms"
+    build_autotools "${BUILD}/libtpms" --with-openssl --with-tpm2 --disable-hardening
+
+    log "Building libtasn1"
+    unpack "${downloads}/libtasn1.tar.gz" "${BUILD}/libtasn1"
+    build_autotools "${BUILD}/libtasn1" --disable-doc
+
+    log "Building json-glib"
+    unpack "${downloads}/json-glib.tar.xz" "${BUILD}/json-glib"
+    build_meson "${BUILD}/json-glib" \
+        -Dintrospection=disabled -Ddocumentation=disabled -Dgtk_doc=disabled \
+        -Dman=false -Dtests=false -Dconformance=false -Dnls=disabled -Dinstalled_tests=false
+
+    log "Building swtpm"
+    unpack "${downloads}/swtpm.tar.gz" "${BUILD}/swtpm"
+    autoreconf_source "${BUILD}/swtpm"
+    # Only the TPM itself is needed; the provisioning tools next to it pull in
+    # further libraries (GMP, GnuTLS) for nothing.
+    (
+        cd "${BUILD}/swtpm" || exit 1
+        ./configure \
+            --prefix="${DEPS_PREFIX}" \
+            --host="${HOST_TRIPLE}" \
+            --enable-static \
+            --disable-shared \
+            --with-openssl --without-gnutls --without-seccomp --without-cuse \
+            --disable-tests --disable-hardening
+        make -j "${JOBS}" -C src/utils
+        make -j "${JOBS}" -C src/swtpm
+        make -C src/swtpm install
+    )
+
+    [ -x "${DEPS_PREFIX}/bin/swtpm" ] || die "swtpm was not installed"
+}
+
 # Stops if a library links against anything outside of the operating system.
 #   $1  the library
 check_system_dependencies_only() {

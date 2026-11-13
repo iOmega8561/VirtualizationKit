@@ -60,3 +60,20 @@ done
 if [ -d "${PAYLOAD_DIR}/share/qemu" ]; then
     rsync -a --delete "${PAYLOAD_DIR}/share/qemu/" "${DATA_DIR}/"
 fi
+
+# The software TPM, started by the launcher next to the emulator. It lives in
+# Contents/MacOS beside the launcher, which looks for it there. It needs its own
+# entitlements (sandbox inheritance), which the embedder's re-sign phase applies.
+if [ -x "${PAYLOAD_DIR}/bin/swtpm" ]; then
+    TPM="${BUNDLE_DIR}/MacOS/QEMUTPM"
+    mkdir -p "${BUNDLE_DIR}/MacOS"
+    cp -f "${PAYLOAD_DIR}/bin/swtpm" "${TPM}"
+    chmod u+w "${TPM}"
+
+    if [ -n "${EXPANDED_CODE_SIGN_IDENTITY}" ]; then
+        codesign --force --options runtime \
+            --entitlements "${SRCROOT}/QEMUSupport/QEMUTPM.entitlements" \
+            --sign "${EXPANDED_CODE_SIGN_IDENTITY}" \
+            "${TPM}"
+    fi
+fi

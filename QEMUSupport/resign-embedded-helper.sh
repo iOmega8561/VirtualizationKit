@@ -28,7 +28,8 @@
 #  identity, each component with its own entitlements:
 #
 #      1. the emulator libraries        (no entitlements)
-#      2. the launcher                  (QEMULauncher.entitlements)
+#      2. the software TPM, if present   (QEMUTPM.entitlements)
+#         and the launcher              (QEMULauncher.entitlements)
 #      3. the helper service bundle     (QEMUHelper.entitlements)
 #      4. the framework itself          (no entitlements, no --deep)
 #
@@ -45,6 +46,7 @@ set -euo pipefail
 
 SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
 LAUNCHER_ENTITLEMENTS="${SCRIPT_DIR}/QEMULauncher.entitlements"
+TPM_ENTITLEMENTS="${SCRIPT_DIR}/QEMUTPM.entitlements"
 HELPER_ENTITLEMENTS="${SCRIPT_DIR}/QEMUHelper.entitlements"
 
 if [ "${CODE_SIGNING_ALLOWED:-YES}" = "NO" ]; then
@@ -59,7 +61,7 @@ if [ -z "${IDENTITY}" ]; then
     IDENTITY="-"
 fi
 
-for FILE in "${LAUNCHER_ENTITLEMENTS}" "${HELPER_ENTITLEMENTS}"; do
+for FILE in "${LAUNCHER_ENTITLEMENTS}" "${HELPER_ENTITLEMENTS}" "${TPM_ENTITLEMENTS}"; do
     [ -f "${FILE}" ] || { echo "error: missing ${FILE}"; exit 1; }
 done
 
@@ -94,6 +96,13 @@ for FRAMEWORK in "${FRAMEWORKS_DIR}"/*.framework; do
             | while IFS= read -r -d '' LIBRARY; do
                 sign "${LIBRARY}"
             done
+    fi
+
+    # The software TPM, present when the payload was built with it.
+    TPM="${HELPER}/Contents/MacOS/QEMUTPM"
+
+    if [ -f "${TPM}" ]; then
+        sign --entitlements "${TPM_ENTITLEMENTS}" "${TPM}"
     fi
 
     LAUNCHER="${HELPER}/Contents/MacOS/QEMULauncher"
