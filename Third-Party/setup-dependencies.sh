@@ -144,6 +144,11 @@ log "Building QEMU (${QEMU_TARGETS})"
 unpack "${DOWNLOADS}/qemu.tar.xz" "${BUILD}/qemu"
 rm -rf "${OUTPUT}"
 
+# Only what the backend uses is enabled. In particular the Apple paravirtualised
+# graphics device is left out: F's guests use virtio-gpu, and the device does
+# not link against every SDK (PGNewDeviceWithDescriptor has been reported
+# missing). vmnet, D-Bus display, SASL, PAM and the command line tools are not
+# used either, and each one adds libraries or frameworks to the emulator.
 (
     mkdir -p "${BUILD}/qemu/build"
     cd "${BUILD}/qemu/build"
@@ -161,6 +166,12 @@ rm -rf "${OUTPUT}"
         --enable-slirp \
         --enable-vnc \
         --enable-coreaudio \
+        --disable-pvg \
+        --disable-vmnet \
+        --disable-dbus-display \
+        --disable-vnc-sasl \
+        --disable-auth-pam \
+        --disable-tools \
         --extra-cflags="-I${DEPS_PREFIX}/include" \
         --extra-ldflags="-L${DEPS_PREFIX}/lib"
 
