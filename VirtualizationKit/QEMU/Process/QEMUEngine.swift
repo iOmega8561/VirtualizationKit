@@ -514,6 +514,8 @@ actor QEMUEngine {
         // The emulator keeps its own duplicate; this one is closed either way.
         defer { try? file.close() }
 
+        let isOpticalDisc = Self.isOpticalDiscImage(file)
+
         let id = UUID()
         let base = "usb" + id.uuidString.replacingOccurrences(of: "-", with: "").prefix(12).lowercased()
         let deviceID = base + "-dev"
@@ -549,15 +551,43 @@ actor QEMUEngine {
         }
 
         do {
-            try await send("device_add", arguments: [
-                "driver": .string("usb-storage"),
-                "id": .string(deviceID),
-                "drive": .string(nodeName),
-                "bus": .string("xhci.0"),
-                "removable": .bool(true)
-            ], in: session)
+            if isOpticalDisc {
+                // A disc image becomes a USB CD-ROM drive. Windows only reads disc file systems from
+                // optical drives; on a USB disk it offers to format the "drive". The plain USB disk
+                // device always presents a hard disk, so the drive is assembled from its parts: a bare
+                // bulk-only USB device, a SCSI CD-ROM on its bus, and then the attachment to the guest.
+                try await send("device_add", arguments: [
+                    "driver": .string("usb-bot"),
+                    "id": .string(deviceID),
+                    "bus": .string("xhci.0")
+                ], in: session)
+
+                try await send("device_add", arguments: [
+                    "driver": .string("scsi-cd"),
+                    "id": .string(base + "-cd"),
+                    "drive": .string(nodeName),
+                    "bus": .string(deviceID + ".0")
+                ], in: session)
+
+                try await send("qom-set", arguments: [
+                    "path": .string(deviceID),
+                    "property": .string("attached"),
+                    "value": .bool(true)
+                ], in: session)
+
+            } else {
+                try await send("device_add", arguments: [
+                    "driver": .string("usb-storage"),
+                    "id": .string(deviceID),
+                    "drive": .string(nodeName),
+                    "bus": .string("xhci.0"),
+                    "removable": .bool(true)
+                ], in: session)
+            }
 
         } catch {
+            // Removing the USB device removes the CD-ROM on its bus with it.
+            _ = try? await send("device_del", arguments: ["id": .string(deviceID)], in: session)
             _ = try? await send("blockdev-del", arguments: ["node-name": .string(nodeName)], in: session)
             _ = try? await send("remove-fd", arguments: ["fdset-id": .integer(descriptorSet)], in: session)
             throw error
@@ -622,6 +652,27 @@ actor QEMUEngine {
         } catch {
             VZKitLogger.default.error("Cleanup after detaching a removable drive failed: \(error.localizedDescription)")
         }
+    }
+
+    /// Whether an image holds a disc file system (ISO 9660 or UDF) rather than a disk layout.
+    ///
+    /// Both standards start their volume recognition sequence at byte 32768, with a one-byte type
+    /// followed by a five-character identifier. Hybrid images, which also carry a partition table so
+    /// that they boot from USB sticks, are disc images too and are detected as such.
+    ///
+    /// - Parameter file: The open image. Its file offset is moved; the emulator reads by position.
+    /// - Returns: `true` for a disc image, `false` otherwise or if the image cannot be read.
+    private static func isOpticalDiscImage(_ file: FileHandle) -> Bool {
+
+        guard (try? file.seek(toOffset: 32769)) != nil,
+              let identifier = try? file.read(upToCount: 5),
+              identifier.count == 5 else { return false }
+
+        let known: Set<Data> = ["CD001", "BEA01", "NSR02", "NSR03", "TEA01"].reduce(into: []) {
+            $0.insert(Data($1.utf8))
+        }
+
+        return known.contains(identifier)
     }
 
     // MARK: - Events

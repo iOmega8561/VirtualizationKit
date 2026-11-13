@@ -154,6 +154,9 @@ public extension QEMUVirtualMachine {
     /// a user-selected file outside of the sandbox container works as long as the URL carries its
     /// security scope. Access stays active while the drive is attached.
     ///
+    /// A disc image (ISO 9660 or UDF, including hybrid images) is attached as a USB CD-ROM drive,
+    /// anything else as a USB disk. Windows in particular only reads disc images from a CD-ROM drive.
+    ///
     /// - Parameter url: A file URL referencing the disk image to attach.
     /// - Returns: A `UUID` identifying the attached drive, for later removal.
     /// - Throws: A localized error if the machine is not running, the image cannot be opened, or the
