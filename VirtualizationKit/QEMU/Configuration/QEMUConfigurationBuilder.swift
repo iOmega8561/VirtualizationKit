@@ -46,8 +46,9 @@ struct QEMUConfigurationBuilder<Template: TransferableTemplate>: Sendable {
     /// reports for unsupported features.
     private func validate() throws {
 
-        guard case .linux = template.operatingSystem else {
-            throw VZKitError.qemuUnsupportedGuest(template.operatingSystem.displayName)
+        switch template.operatingSystem {
+        case .linux, .windows: break
+        case .macos: throw VZKitError.qemuUnsupportedGuest(template.operatingSystem.displayName)
         }
 
         for capability in template.optionalCapabilities {
@@ -97,7 +98,8 @@ struct QEMUConfigurationBuilder<Template: TransferableTemplate>: Sendable {
         }
 
         plan.append("-uuid", template.id.uuidString.lowercased())
-        plan.append("-rtc", "base=utc")
+        // Windows keeps the hardware clock in local time, everything else in UTC.
+        plan.append("-rtc", isWindowsGuest ? "base=localtime" : "base=utc")
     }
 
     /// Emits the machine type, the accelerator and the processor and memory resources.
@@ -144,8 +146,18 @@ struct QEMUConfigurationBuilder<Template: TransferableTemplate>: Sendable {
         let resolution = "xres=\(options.displayWidth),yres=\(options.displayHeight)"
 
         switch options.architecture {
-        case .aarch64: plan.append("-device", "virtio-gpu-pci,\(resolution)")
-        case .x86_64: plan.append("-device", "virtio-vga,\(resolution)")
+        case .aarch64 where isWindowsGuest:
+            // Windows on ARM has no driver for a plain virtio GPU. This device is a virtio GPU that
+            // also exposes a RAM framebuffer, which the firmware and Windows' basic display driver
+            // can use without any driver.
+            plan.append("-device", "virtio-ramfb,\(resolution)")
+
+        case .aarch64:
+            plan.append("-device", "virtio-gpu-pci,\(resolution)")
+
+        case .x86_64:
+            // Includes a VGA-compatible framebuffer, which also serves guests without a virtio driver.
+            plan.append("-device", "virtio-vga,\(resolution)")
         }
 
         plan.append("-device", "qemu-xhci,id=xhci")
@@ -157,6 +169,11 @@ struct QEMUConfigurationBuilder<Template: TransferableTemplate>: Sendable {
 
         plan.append("-device", "virtio-rng-pci")
         plan.append("-device", "virtio-balloon-pci")
+    }
+
+    /// Whether the guest runs Windows, which needs hardware it has drivers for out of the box.
+    var isWindowsGuest: Bool {
+        if case .windows = template.operatingSystem { true } else { false }
     }
 
     // MARK: - Launch Plan

@@ -508,7 +508,8 @@ final class QEMUFramebufferNSView: NSView, FramebufferNSView {
         defer { unsafe window?.invalidateCursorRects(for: self) }
 
         guard let cursor = guestDisplay.cursor else {
-            guestCursor = nil
+            // A guest that draws its own pointer would otherwise show two of them.
+            guestCursor = guestDisplay.guestDrawsPointer ? Self.hiddenCursor : nil
             return
         }
 

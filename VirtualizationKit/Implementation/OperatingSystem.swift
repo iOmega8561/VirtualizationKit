@@ -78,6 +78,12 @@ public enum OperatingSystem: Transferable {
     ///   minimum supported version defined in VirtualizationKit.
     case macos(version: Version = VirtualizationKit.macOSGuestMinVersion)
     
+    /// Represents a Windows virtual machine.
+    ///
+    /// Only the QEMU backend runs Windows guests; it gives them the hardware Windows supports
+    /// without additional drivers (see `QEMUVirtualMachine`). The Apple backend rejects them.
+    case windows
+    
     /// Provides the associated metadata for the operating system case.
     private var metaData: MetaData {
         switch self {
@@ -92,6 +98,12 @@ public enum OperatingSystem: Transferable {
             logoImage: .init(systemName: "apple.logo"),
             fileType: .init(filenameExtension: "ipsw")!,
             version: version
+        )
+        case .windows: .init(
+            displayName: "Windows",
+            logoImage: .init(systemName: "pc"),
+            fileType: .diskImage,
+            version: nil
         )}
     }
     

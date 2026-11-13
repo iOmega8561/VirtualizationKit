@@ -85,6 +85,11 @@ struct AppleConfigurationBuilder<Template: TransferableTemplate> {
                     try VZUSBMassStorageDeviceConfiguration.create(at: url, type: .readOnly)
                 )
             }
+            
+        case .windows:
+            
+            // Rejected by the public entry point already; kept for exhaustiveness.
+            throw VZKitError.appleUnsupportedGuest(template.operatingSystem.displayName)
         }
       
         configuration.storageDevices.append(
@@ -153,6 +158,11 @@ struct AppleConfigurationBuilder<Template: TransferableTemplate> {
             try await createConfiguration(using: restoreImage)
             
         case .linux: try await createConfiguration(using: nil)
+            
+        case .windows:
+            
+            // Virtualization.framework has no support for Windows guests.
+            throw VZKitError.appleUnsupportedGuest(template.operatingSystem.displayName)
         }
         
         try configuration.validate(); return configuration

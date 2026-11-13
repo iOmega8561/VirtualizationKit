@@ -80,7 +80,7 @@ extension VZMacOSInstaller {
     convenience init?<Template: TransferableTemplate>(virtualMachine: AppleVirtualMachine<Template>) async throws {
         
         // Ensure that the operating system is appropriate for a macOS installer.
-        guard virtualMachine.template.operatingSystem != .linux else {
+        guard case .macos = virtualMachine.template.operatingSystem else {
             return nil
         }
         

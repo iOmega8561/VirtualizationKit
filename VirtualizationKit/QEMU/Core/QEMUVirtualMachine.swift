@@ -112,7 +112,13 @@ public struct QEMUVirtualMachine<Template: TransferableTemplate>: VirtualMachine
         let builder = try await QEMUConfigurationBuilder(template: template, options: options)
         let plan = try builder.createLaunchPlan()
         let stateCoordinator = await QEMUStateCoordinator()
-        let display = await QEMUDisplay()
+        let display: QEMUDisplay
+
+        if case .windows = template.operatingSystem {
+            display = await QEMUDisplay(guestDrawsPointer: true)
+        } else {
+            display = await QEMUDisplay()
+        }
 
         self.template = template
         self.options = options

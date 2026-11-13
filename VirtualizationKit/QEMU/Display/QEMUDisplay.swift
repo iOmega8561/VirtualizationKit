@@ -80,6 +80,20 @@ final class QEMUDisplay {
     /// The views showing this display. Held weakly: a view that goes away simply stops being updated.
     private let views = NSHashTable<QEMUFramebufferNSView>.weakObjects()
 
+    /// Whether the guest draws its pointer into the framebuffer itself until it defines a pointer image.
+    ///
+    /// A guest without a driver for the virtio GPU (Windows) never sends a pointer image; its pointer
+    /// is part of every frame. Views then hide the host pointer over the display instead of showing a
+    /// second one on top. Once the guest does define a pointer image, that image is shown as usual.
+    let guestDrawsPointer: Bool
+
+    /// Creates a display.
+    ///
+    /// - Parameter guestDrawsPointer: Whether the guest draws its own pointer into the framebuffer.
+    init(guestDrawsPointer: Bool = false) {
+        self.guestDrawsPointer = guestDrawsPointer
+    }
+
     /// The size of the guest display, in pixels, or zero while there is no frame.
     var frameSize: CGSize {
         guard let frame else { return .zero }

@@ -113,6 +113,22 @@
         }
       }
     },
+    "error-appleUnsupportedGuest" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The Apple Virtualization backend cannot run the following guest operating system: “%@”"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il backend Apple Virtualization non può eseguire il seguente sistema operativo guest: “%@”"
+          }
+        }
+      }
+    },
     "error-auxiliaryFailedSetup" : {
       "localizations" : {
         "en" : {

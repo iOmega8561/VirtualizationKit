@@ -48,6 +48,7 @@ enum VZKitError: LocalizedError {
     // Configuration/Generic
     case macUnsupportedImage
     case macUnsupportedHost
+    case appleUnsupportedGuest(_ name: String)
     case wrongMacImageVersion(_ expected: OperatingSystem.Version,
                               _ actual: OperatingSystem.Version)
     
@@ -89,6 +90,7 @@ enum VZKitError: LocalizedError {
                     
         case .macUnsupportedImage: .init("error-macUnsupportedImage")
         case .macUnsupportedHost: .init("error-macUnsupportedHost")
+        case .appleUnsupportedGuest(let name): .init("error-appleUnsupportedGuest", name)
         case .wrongMacImageVersion(let expected, let actual):
                 .init("error-wrongMacImageVersion", expected, actual)
                     

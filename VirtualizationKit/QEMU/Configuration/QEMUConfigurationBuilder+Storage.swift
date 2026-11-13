@@ -42,7 +42,15 @@ extension QEMUConfigurationBuilder {
         let disk = plan.broker(.init(url: storage.diskImage, access: .readWrite))
 
         plan.append("-drive", "if=none,id=disk0,format=raw,discard=unmap,file=\(disk)")
-        plan.append("-device", "virtio-blk-pci,drive=disk0,bootindex=1")
+
+        if isWindowsGuest {
+            // Windows has no inbox driver for virtio storage, but one for NVMe. The controller needs a
+            // serial number of at most 20 characters; the machine identifier provides a stable one.
+            let serial = template.id.uuidString.replacingOccurrences(of: "-", with: "").prefix(20)
+            plan.append("-device", "nvme,drive=disk0,serial=\(serial),bootindex=1")
+        } else {
+            plan.append("-device", "virtio-blk-pci,drive=disk0,bootindex=1")
+        }
 
         guard let media = template.bootableInstallMedia else { return }
 

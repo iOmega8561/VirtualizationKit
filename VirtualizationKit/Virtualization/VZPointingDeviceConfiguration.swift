@@ -39,7 +39,7 @@ extension VZPointingDeviceConfiguration: SpecializedConstructible {
             
             return VZMacTrackpadConfiguration()
             
-        case .linux:
+        case .linux, .windows:
             
             return VZUSBScreenCoordinatePointingDeviceConfiguration()
         }
