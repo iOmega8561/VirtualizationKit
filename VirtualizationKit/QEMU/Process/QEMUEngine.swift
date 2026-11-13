@@ -358,6 +358,10 @@ actor QEMUEngine {
     /// Reacts to a notification from the emulator.
     private func handle(_ event: QMPClient.Event, in id: UUID) async {
 
+        // Every event is logged. RESET, SHUTDOWN and GUEST_PANICKED carry the reason the guest restarted
+        // or stopped, which is otherwise invisible from the outside.
+        VZKitLogger.default.info("QEMU event \(event.name) \(Self.describe(event.data))")
+
         // Callers waiting for this event come first; the state mapping below is independent of them.
         for (token, waiter) in eventWaiters
         where waiter.sessionID == id && waiter.name == event.name && waiter.matches(event.data) {
@@ -694,6 +698,12 @@ actor QEMUEngine {
     }
 
     // MARK: - Helpers
+
+    /// Renders the payload of an event as compact JSON, for the log.
+    private static func describe(_ value: QMPValue?) -> String {
+        guard let value, let data = try? JSONEncoder().encode(value) else { return "{}" }
+        return String(decoding: data, as: UTF8.self)
+    }
 
     /// Publishes a state, provided the session it belongs to is still the current one.
     private func transition(to state: ExecutionState, in id: UUID) async {
