@@ -111,6 +111,12 @@ for FRAMEWORK in "${FRAMEWORKS_DIR}"/*.framework; do
     sign "${FRAMEWORK}"
 done
 
+# A host that runs this phase embeds the framework on purpose. Finding nothing
+# means the phase ran before the framework was embedded, or user script
+# sandboxing hid the build products from it; either way the application would
+# be unusable, so the build fails here rather than at the first start.
 if [ "${FOUND}" -eq 0 ]; then
-    echo "warning: no embedded framework with a QEMU helper in ${FRAMEWORKS_DIR}"
+    echo "error: no embedded framework with a QEMU helper in ${FRAMEWORKS_DIR}."
+    echo "error: Run this phase after \"Embed Frameworks\" and set ENABLE_USER_SCRIPT_SANDBOXING = NO for the target."
+    exit 1
 fi
