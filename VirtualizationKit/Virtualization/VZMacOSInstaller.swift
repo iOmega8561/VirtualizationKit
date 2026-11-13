@@ -35,7 +35,7 @@ extension VZMacOSInstaller {
     /// - Throws: An error if the installation fails. If the underlying error is available from the
     ///   NSError's `underlyingErrors`, that error is thrown; otherwise, the original error is propagated.
     func install(_ coordinator: AppleStateCoordinator) async throws {
-        return try await withCheckedThrowingContinuation(isolation: VZKitActor.shared) { continuation in
+        return try await withCheckedThrowingContinuation { continuation in
             
             self.install { result in
                 switch result {
