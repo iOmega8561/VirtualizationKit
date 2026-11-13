@@ -124,6 +124,33 @@ WRAPPER
     chmod +x "${directory}/pkg-config"
 }
 
+# Makes the libffi that ships with macOS visible to pkg-config.
+#
+# Building libffi from source is fragile: its hand-written arm64 assembly
+# carries call-frame directives that newer Xcode assemblers reject ("invalid
+# CFI advance_loc expression"). macOS has a libffi of its own, with headers in
+# the SDK, which is also what package managers build glib against. It only
+# lacks a pkg-config file, which is written here. The emulator libraries then
+# link /usr/lib/libffi.dylib, a system library.
+use_system_libffi() {
+    local sdk header_dir
+
+    sdk=$(xcrun --sdk macosx --show-sdk-path) || die "no macOS SDK found"
+    header_dir="${sdk}/usr/include/ffi"
+
+    [ -f "${header_dir}/ffi.h" ] || die "the macOS SDK has no libffi headers at ${header_dir}"
+
+    mkdir -p "${DEPS_PREFIX}/lib/pkgconfig"
+    cat > "${DEPS_PREFIX}/lib/pkgconfig/libffi.pc" <<PC
+# libffi of the macOS SDK. The SDK states no version; glib needs 3.0 or later.
+Name: libffi
+Description: Foreign function interface library (macOS system copy)
+Version: 3.0.0
+Cflags: -I${header_dir}
+Libs: -lffi
+PC
+}
+
 # Stops if a library links against anything outside of the operating system.
 #   $1  the library
 check_system_dependencies_only() {

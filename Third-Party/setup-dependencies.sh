@@ -24,9 +24,10 @@
 #  QEMUSupport/embed-qemu-payload.sh.
 #
 #  The emulator is UTM's QEMU fork, the only one that builds as a shared
-#  library. Its dependencies (pcre2, libffi, glib, pixman, libslirp) are built
-#  as static libraries into a private prefix and linked into the emulator
-#  libraries, which therefore depend on nothing outside of macOS.
+#  library. Its dependencies (pcre2, glib, pixman, libslirp) are built as
+#  static libraries into a private prefix and linked into the emulator
+#  libraries, which therefore depend on nothing outside of macOS. libffi, which
+#  glib needs, is the one macOS ships.
 #
 #  Requirements: Xcode command line tools, meson, ninja, pkg-config, python3.
 #  Apple silicon host. Run from anywhere:
@@ -45,9 +46,6 @@ SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
 # Versions and SHA-256 digests. Update both together.
 PCRE2_URL="https://github.com/PCRE2Project/pcre2/releases/download/pcre2-10.44/pcre2-10.44.tar.bz2"
 PCRE2_SHA256="d34f02e113cf7193a1ebf2770d3ac527088d485d4e047ed10e5d217c6ef5de96"
-
-LIBFFI_URL="https://github.com/libffi/libffi/releases/download/v3.4.6/libffi-3.4.6.tar.gz"
-LIBFFI_SHA256="b0dea9df23c863a7a50e825440f3ebffabd65df1497108e5d437747843895a4e"
 
 GLIB_URL="https://download.gnome.org/sources/glib/2.82/glib-2.82.4.tar.xz"
 GLIB_SHA256="37dd0877fe964cd15e9a2710b044a1830fb1bd93652a6d0cb6b8b2dff187c709"
@@ -102,7 +100,6 @@ mkdir -p "${DOWNLOADS}" "${BUILD}" "${DEPS_PREFIX}"
 make_static_pkg_config "${BUILD}/tools"
 
 fetch "${PCRE2_URL}" "${DOWNLOADS}/pcre2.tar.bz2" "${PCRE2_SHA256}"
-fetch "${LIBFFI_URL}" "${DOWNLOADS}/libffi.tar.gz" "${LIBFFI_SHA256}"
 fetch "${GLIB_URL}" "${DOWNLOADS}/glib.tar.xz" "${GLIB_SHA256}"
 fetch "${PIXMAN_URL}" "${DOWNLOADS}/pixman.tar.gz" "${PIXMAN_SHA256}"
 fetch "${SLIRP_URL}" "${DOWNLOADS}/libslirp.tar.gz" "${SLIRP_SHA256}"
@@ -112,9 +109,8 @@ log "Building pcre2"
 unpack "${DOWNLOADS}/pcre2.tar.bz2" "${BUILD}/pcre2"
 build_autotools "${BUILD}/pcre2" --enable-pcre2-8 --disable-pcre2-16 --disable-pcre2-32 --enable-jit
 
-log "Building libffi"
-unpack "${DOWNLOADS}/libffi.tar.gz" "${BUILD}/libffi"
-build_autotools "${BUILD}/libffi" --disable-docs --disable-multi-os-directory
+log "Using the libffi of the macOS SDK"
+use_system_libffi
 
 log "Building glib"
 unpack "${DOWNLOADS}/glib.tar.xz" "${BUILD}/glib"
