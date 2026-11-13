@@ -168,13 +168,15 @@ struct QEMUConfigurationBuilder<Template: TransferableTemplate>: Sendable {
         let resolution = "xres=\(options.displayWidth),yres=\(options.displayHeight)"
 
         switch options.architecture {
-        case .aarch64 where isWindowsGuest:
-            // Windows on ARM has no driver for a plain virtio GPU. This device is a virtio GPU that
-            // also exposes a RAM framebuffer, which the firmware and Windows' basic display driver
-            // can use without any driver.
+        case .aarch64 where usesFramebufferDisplay:
+            // A virtio GPU that also exposes a RAM framebuffer, which the firmware and Windows' basic
+            // display driver use without any driver.
             plan.append("-device", "virtio-ramfb,\(resolution)")
 
         case .aarch64:
+            plan.append("-device", "virtio-gpu-pci,\(resolution)")
+
+        case .x86_64 where options.displayDevice == .virtioGPU:
             plan.append("-device", "virtio-gpu-pci,\(resolution)")
 
         case .x86_64:
@@ -191,6 +193,15 @@ struct QEMUConfigurationBuilder<Template: TransferableTemplate>: Sendable {
 
         plan.append("-device", "virtio-rng-pci")
         plan.append("-device", "virtio-balloon-pci")
+    }
+
+    /// Whether the display device carries a RAM framebuffer in front of the virtio GPU.
+    var usesFramebufferDisplay: Bool {
+        switch options.displayDevice {
+        case .automatic: isWindowsGuest
+        case .virtioGPU: false
+        case .virtioGPUWithFramebuffer: true
+        }
     }
 
     /// Whether the guest runs Windows, which needs hardware it has drivers for out of the box.

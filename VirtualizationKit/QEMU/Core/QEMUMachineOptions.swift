@@ -83,6 +83,34 @@ public struct QEMUMachineOptions: Transferable {
     /// option makes the machine start with fresh firmware settings (boot entries included).
     public var usesSecureBootFirmware: Bool
 
+    /// The graphics device the guest sees. Defaults to `.automatic`.
+    public var displayDevice: DisplayDevice
+
+    /// The graphics devices a machine can have.
+    public enum DisplayDevice: String, Transferable, CaseIterable {
+
+        /// The device that suits the guest operating system: a virtio GPU with a RAM framebuffer for
+        /// Windows on aarch64 (`.virtioGPUWithFramebuffer`), a virtio GPU otherwise (`.virtioGPU`).
+        case automatic
+
+        /// A virtio GPU only. The guest needs a virtio GPU driver to show anything once it has started:
+        /// Linux has one built in, Windows once the virtio drivers are installed. The firmware and
+        /// boot loaders draw through it as well, but Windows' boot screens may stay black until its
+        /// driver loads.
+        case virtioGPU
+
+        /// A virtio GPU with a plain RAM framebuffer in front, which guests without a virtio GPU driver
+        /// can draw to (Windows during and after setup, before the virtio drivers are installed).
+        ///
+        /// Once a virtio GPU driver is running, the guest sees **two** displays: the framebuffer and the
+        /// virtio GPU. Only the virtio GPU is shown, so parts of the desktop end up on the hidden display
+        /// and pointer positions span both. Switch to `.virtioGPU` after installing the driver.
+        ///
+        /// On x86_64 the framebuffer is part of the virtio GPU itself (a VGA-compatible one), so the
+        /// guest only ever sees one display and both cases are the same device.
+        case virtioGPUWithFramebuffer
+    }
+
     // MARK: - Initializers
 
     /// Creates a set of options.
@@ -98,20 +126,22 @@ public struct QEMUMachineOptions: Transferable {
         displayWidth: Int = 1280,
         displayHeight: Int = 720,
         includesTPM: Bool = false,
-        usesSecureBootFirmware: Bool = false
+        usesSecureBootFirmware: Bool = false,
+        displayDevice: DisplayDevice = .automatic
     ) {
         self.architecture = architecture
         self.displayWidth = min(max(displayWidth, 640), 7680)
         self.displayHeight = min(max(displayHeight, 480), 4320)
         self.includesTPM = includesTPM
         self.usesSecureBootFirmware = usesSecureBootFirmware
+        self.displayDevice = displayDevice
     }
 
     // MARK: - Codable
 
     /// The keys of the encoded form.
     private enum CodingKeys: String, CodingKey {
-        case architecture, displayWidth, displayHeight, includesTPM, usesSecureBootFirmware
+        case architecture, displayWidth, displayHeight, includesTPM, usesSecureBootFirmware, displayDevice
     }
 
     /// Decodes a set of options.
@@ -128,7 +158,8 @@ public struct QEMUMachineOptions: Transferable {
             displayWidth: try container.decodeIfPresent(Int.self, forKey: .displayWidth) ?? 1280,
             displayHeight: try container.decodeIfPresent(Int.self, forKey: .displayHeight) ?? 720,
             includesTPM: try container.decodeIfPresent(Bool.self, forKey: .includesTPM) ?? false,
-            usesSecureBootFirmware: try container.decodeIfPresent(Bool.self, forKey: .usesSecureBootFirmware) ?? false
+            usesSecureBootFirmware: try container.decodeIfPresent(Bool.self, forKey: .usesSecureBootFirmware) ?? false,
+            displayDevice: try container.decodeIfPresent(DisplayDevice.self, forKey: .displayDevice) ?? .automatic
         )
     }
 }
