@@ -21,8 +21,6 @@
 //  Created by Giuseppe Rocco on 20/01/25.
 //
 
-import SwiftUI
-
 import Virtualization
 
 /// An enumeration describing the various states a virtual machine can be in.
@@ -100,23 +98,6 @@ public enum ExecutionState: RawRepresentable, Transferable {
     case installing(progress: Double)
     
     // MARK: - Properties
-    
-    /// Returns the color associated with the current state of the virtual machine.
-    ///
-    /// Use this property in SwiftUI views to visually indicate the status of
-    /// the virtual machine. For example:
-    /// - `.green` for `.running`
-    /// - `.red` for `.stopped`
-    /// - `.orange` for transition states.
-    public var color: Color {
-        switch self {
-        case .stopped: .red
-        case .running: .green
-        case .error: .yellow
-        case .paused, .starting, .pausing, .resuming, .stopping, .saving, .restoring: .orange
-        case .installing: .mint
-        }
-    }
     
     /// Returns a localized string representing the current state of the virtual machine.
     ///
