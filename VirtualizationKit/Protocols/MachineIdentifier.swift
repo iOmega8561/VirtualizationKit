@@ -21,7 +21,7 @@
 //  Created by Giuseppe Rocco on 09/01/25.
 //
 
-import Virtualization
+import Foundation
 
 /// A protocol representing a machine identifier within the VZKit framework.
 ///
@@ -61,15 +61,3 @@ extension MachineIdentifier {
         return try Self.create(dataAt: url)
     }
 }
-
-/// Extends `VZMacMachineIdentifier` to conform to the `MachineIdentifier` protocol.
-///
-/// This extension enables `VZMacMachineIdentifier` to leverage the default functionality provided
-/// by the `MachineIdentifier` protocol, including serialization, deserialization, and file-based persistence.
-extension VZMacMachineIdentifier: MachineIdentifier {}
-
-/// Extends `VZGenericMachineIdentifier` to conform to the `MachineIdentifier` protocol.
-///
-/// This extension enables `VZGenericMachineIdentifier` to leverage the default functionality provided
-/// by the `MachineIdentifier` protocol, including serialization, deserialization, and file-based persistence.
-extension VZGenericMachineIdentifier: MachineIdentifier {}

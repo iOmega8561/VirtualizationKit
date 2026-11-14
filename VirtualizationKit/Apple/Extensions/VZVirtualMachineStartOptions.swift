@@ -40,3 +40,24 @@ extension VZVirtualMachineStartOptions: @unchecked @retroactive Sendable {}
 /// as `@preconcurrency` does not silence all warning, anymore.
 /// The way this framework operates on `VZMacOSVirtualMachineStartOptions` is completely safe.
 extension VZMacOSVirtualMachineStartOptions: @unchecked @retroactive Sendable {}
+
+/// Provides a specialized extension for `ExecutableAction` when the `StartOptions` type is specifically
+/// `VZVirtualMachineStartOptions`.
+public extension ExecutableAction where StartOptions == VZVirtualMachineStartOptions {
+    
+    /// Creates an action to start a virtual machine from macOS Recovery.
+    ///
+    /// This method performs the following steps:
+    /// 1. Creates a default instance of `VZMacOSVirtualMachineStartOptions`.
+    /// 2. Configures the options by setting the `startUpFromMacOSRecovery` property to `true`.
+    /// 3. Calls `start(options:)` with the configured options.
+    ///
+    /// - Returns: An instance representing the start action configured for macOS Recovery.
+    static func macOSRecovery() -> Self {
+        
+        let startOptions: VZMacOSVirtualMachineStartOptions = .init()
+        startOptions.startUpFromMacOSRecovery = true
+        
+        return start(options: startOptions)
+    }
+}

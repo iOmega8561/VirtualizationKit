@@ -21,7 +21,7 @@
 //  Created by Giuseppe Rocco on 11/01/25.
 //
 
-import Virtualization
+import Foundation
 
 /// A protocol representing types that can be converted to and from a `Data` representation.
 ///
@@ -68,9 +68,3 @@ extension DataRepresentable {
         return object
     }
 }
-
-/// Extension to make `VZMacHardwareModel` conform to the `DataRepresentable` protocol.
-///
-/// This extension enables `VZMacHardwareModel` to utilize the default functionality
-/// provided by the `DataRepresentable` protocol, such as serialization and deserialization.
-extension VZMacHardwareModel: DataRepresentable {}

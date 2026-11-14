@@ -21,7 +21,7 @@
 //  Created by Giuseppe Rocco on 09/01/25.
 //
 
-import Virtualization
+import Foundation
 
 /// A protocol that defines a constructible type.
 ///
