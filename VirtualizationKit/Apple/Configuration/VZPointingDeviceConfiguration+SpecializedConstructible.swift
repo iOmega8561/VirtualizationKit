@@ -15,7 +15,7 @@
 //
 //  -----------------------------------------------------------------------
 //
-//  VZPointingDeviceConfiguration.swift
+//  VZPointingDeviceConfiguration+SpecializedConstructible.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 18/05/24.

@@ -21,17 +21,12 @@
 //  Created by Giuseppe Rocco on 16/05/24.
 //
 
-import SwiftUI
-
-import Virtualization
-
 import UniformTypeIdentifiers
 
 /// The `OperatingSystem` enum specifies the supported operating systems for virtual machines
-/// within VirtualizationKit. Reflecting the capabilities of the currently implemented virtualization
-/// backends, it currently supports only Linux and macOS.
+/// within VirtualizationKit.
 ///
-/// Each case is associated with a set of metadata that defines its display name, logo image, expected
+/// Each case is associated with a set of metadata that defines its display name, expected
 /// disk image file type, and, for macOS, an optional OS version. These metadata properties are exposed
 /// via dedicated computed properties, allowing UI components and file handlers to easily access this
 /// information without revealing the underlying implementation details.
@@ -42,7 +37,6 @@ import UniformTypeIdentifiers
 /// ```swift
 /// let os: OperatingSystem = .macos(version: someVersion)
 /// print(os.displayName)  // "macOS"
-/// print(os.logoImage)    // Displays the Apple logo image
 /// print(os.fileType)     // The disk image file type expected for macOS
 /// ```
 ///
@@ -61,8 +55,6 @@ public enum OperatingSystem: Transferable {
     private struct MetaData {
         /// The name to display in the UI.
         let displayName: String
-        /// The logo image representing the operating system.
-        let logoImage: Image
         /// The expected disk image file type.
         let fileType: UTType
         /// The operating system version, if applicable.
@@ -89,19 +81,16 @@ public enum OperatingSystem: Transferable {
         switch self {
         case .linux: .init(
             displayName: "Linux",
-            logoImage: .init("tux", bundle: VirtualizationKit.bundle),
             fileType: .diskImage,
             version: nil
         )
         case .macos(let version): .init(
             displayName: "macOS",
-            logoImage: .init(systemName: "apple.logo"),
             fileType: .init(filenameExtension: "ipsw")!,
             version: version
         )
         case .windows: .init(
             displayName: "Windows",
-            logoImage: .init(systemName: "pc"),
             fileType: .diskImage,
             version: nil
         )}
@@ -110,29 +99,9 @@ public enum OperatingSystem: Transferable {
     /// The display name of the operating system.
     public var displayName: String { metaData.displayName }
     
-    /// The logo image associated with the operating system.
-    public var logoImage: Image { metaData.logoImage }
-    
     /// The expected disk image file type for the operating system.
     public var fileType: UTType { metaData.fileType }
     
     /// The operating system version, if applicable.
     public var version: Version? { metaData.version }
-    
-    /// Asynchronously initializes an `OperatingSystem` from a disk image URL.
-    ///
-    /// This initializer attempts to load a macOS IPSW Restore Image from the provided URL. If successful,
-    /// it infers a macOS operating system and extracts its version information. If the URL does not point
-    /// to a valid macOS Restore Image, the initialization throws the underlying error.
-    ///
-    /// - Parameter location: The URL of the IPSW restore image used to detect the macOS version.
-    public init(fromImageAt location: URL) async throws {
-        
-        let macOSRestoreImage = try await VZMacOSRestoreImage.load(
-            from: location
-        )
-        self = .macos(
-            version: .init(macOSRestoreImage.operatingSystemVersion)
-        )
-    }
 }

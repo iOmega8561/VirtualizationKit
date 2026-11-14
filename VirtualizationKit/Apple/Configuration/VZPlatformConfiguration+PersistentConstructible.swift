@@ -15,7 +15,7 @@
 //
 //  -----------------------------------------------------------------------
 //
-//  VZPlatformConfiguration.swift
+//  VZPlatformConfiguration+PersistentConstructible.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 07/10/24.

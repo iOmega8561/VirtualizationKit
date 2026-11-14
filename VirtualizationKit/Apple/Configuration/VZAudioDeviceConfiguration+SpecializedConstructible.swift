@@ -15,7 +15,7 @@
 //
 //  -----------------------------------------------------------------------
 //
-//  VZAudioDeviceConfiguration.swift
+//  VZAudioDeviceConfiguration+SpecializedConstructible.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 17/05/24.

@@ -21,7 +21,7 @@
 //  Created by Giuseppe Rocco on 12/11/24.
 //
 
-import Virtualization
+import Foundation
 
 extension OperatingSystem {
     

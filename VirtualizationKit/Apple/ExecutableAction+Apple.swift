@@ -1,5 +1,5 @@
 //
-//  Copyright 2025 Giuseppe Rocco
+//  Copyright 2026 Giuseppe Rocco
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -15,31 +15,13 @@
 //
 //  -----------------------------------------------------------------------
 //
-//  VZVirtualMachineStartOptions.swift
+//  ExecutableAction+Apple.swift
 //  VirtualizationKit
 //
-//  Created by Giuseppe Rocco on 12/05/2026.
+//  Created by Giuseppe Rocco on 14/11/2026.
 //
 
-public import Virtualization.VZVirtualMachineStartOptions
-
-public import Virtualization.VZMacOSVirtualMachineStartOptions
-
-/// Extending to `@unchecked @retroactive Sendable` to
-/// suppress concurrency-related warnings.
-///
-/// The Swift 6 compiler is much stricter on concurrency, so much so that importing dependencies
-/// as `@preconcurrency` does not silence all warning, anymore.
-/// The way this framework operates on `VZVirtualMachineStartOptions` is completely safe.
-extension VZVirtualMachineStartOptions: @unchecked @retroactive Sendable {}
-
-/// Extending to `@unchecked @retroactive Sendable` to
-/// suppress concurrency-related warnings.
-///
-/// The Swift 6 compiler is much stricter on concurrency, so much so that importing dependencies
-/// as `@preconcurrency` does not silence all warning, anymore.
-/// The way this framework operates on `VZMacOSVirtualMachineStartOptions` is completely safe.
-extension VZMacOSVirtualMachineStartOptions: @unchecked @retroactive Sendable {}
+import Virtualization
 
 /// Provides a specialized extension for `ExecutableAction` when the `StartOptions` type is specifically
 /// `VZVirtualMachineStartOptions`.

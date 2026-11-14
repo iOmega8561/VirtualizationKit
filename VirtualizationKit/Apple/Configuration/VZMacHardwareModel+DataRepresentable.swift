@@ -15,16 +15,16 @@
 //
 //  -----------------------------------------------------------------------
 //
-//  VZGenericMachineIdentifier.swift
+//  VZMacHardwareModel+DataRepresentable.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 14/11/2026.
 //
 
-import Virtualization.VZGenericMachineIdentifier
+import Virtualization.VZMacHardwareModel
 
-/// Extends `VZGenericMachineIdentifier` to conform to the `MachineIdentifier` protocol.
+/// Extension to make `VZMacHardwareModel` conform to the `DataRepresentable` protocol.
 ///
-/// This extension enables `VZGenericMachineIdentifier` to leverage the default functionality provided
-/// by the `MachineIdentifier` protocol, including serialization, deserialization, and file-based persistence.
-extension VZGenericMachineIdentifier: MachineIdentifier {}
+/// This extension enables `VZMacHardwareModel` to utilize the default functionality
+/// provided by the `DataRepresentable` protocol, such as serialization and deserialization.
+extension VZMacHardwareModel: DataRepresentable {}

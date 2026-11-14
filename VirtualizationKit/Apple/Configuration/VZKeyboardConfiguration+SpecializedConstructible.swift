@@ -15,7 +15,7 @@
 //
 //  -----------------------------------------------------------------------
 //
-//  VZKeyboardConfiguration.swift
+//  VZKeyboardConfiguration+SpecializedConstructible.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 18/05/24.

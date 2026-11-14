@@ -15,7 +15,7 @@
 //
 //  -----------------------------------------------------------------------
 //
-//  VZConsoleDeviceConfiguration.swift
+//  VZConsoleDeviceConfiguration+SpecializedConstructible.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 17/05/24.

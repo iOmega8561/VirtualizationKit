@@ -15,7 +15,7 @@
 //
 //  -----------------------------------------------------------------------
 //
-//  VZBootLoader.swift
+//  VZBootLoader+GenericConstructible.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 07/10/24.

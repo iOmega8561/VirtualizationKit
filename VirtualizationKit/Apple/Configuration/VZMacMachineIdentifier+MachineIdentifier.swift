@@ -15,7 +15,7 @@
 //
 //  -----------------------------------------------------------------------
 //
-//  VZMacMachineIdentifier.swift
+//  VZMacMachineIdentifier+MachineIdentifier.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 14/11/2026.

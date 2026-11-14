@@ -15,7 +15,7 @@
 //
 //  -----------------------------------------------------------------------
 //
-//  VZVirtioBlockDeviceConfiguration.swift
+//  VZVirtioBlockDeviceConfiguration+PersistentConstructible.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 17/05/24.
