@@ -39,7 +39,7 @@ extension VZKeyboardConfiguration: SpecializedConstructible {
             
             return VZMacKeyboardConfiguration()
             
-        case .linux, .windows:
+        default:
             
             return VZUSBKeyboardConfiguration()
         }
