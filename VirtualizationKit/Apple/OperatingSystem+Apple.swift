@@ -28,8 +28,9 @@ public extension OperatingSystem {
     /// Asynchronously initializes an `OperatingSystem` from a disk image URL.
     ///
     /// This initializer attempts to load a macOS IPSW Restore Image from the provided URL. If successful,
-    /// it infers a macOS operating system and extracts its version information. If the URL does not point
-    /// to a valid macOS Restore Image, the initialization throws the underlying error.
+    /// it infers a macOS operating system, extracts its version information and records a security-scoped
+    /// bookmark to the image, so that the result can be persisted and still find the image after a relaunch.
+    /// If the URL does not point to a valid macOS Restore Image, the initialization throws the underlying error.
     ///
     /// - Parameter location: The URL of the IPSW restore image used to detect the macOS version.
     init(fromImageAt location: URL) async throws {
@@ -38,7 +39,10 @@ public extension OperatingSystem {
         )
         
         self = .macos(
-            version: .init(macOSRestoreImage.operatingSystemVersion)
+            version: .init(macOSRestoreImage.operatingSystemVersion),
+            restoreImage: try location.bookmarkData(
+                options: [.withSecurityScope, .securityScopeAllowOnlyReadAccess]
+            )
         )
     }
 }

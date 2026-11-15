@@ -246,13 +246,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Could not create device attachment for main disk"
+            "value" : "Could not create or attach a disk image of the Virtual Machine"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Non è stato possibile creare il dispositivo a blocchi per il disco principale"
+            "value" : "Non è stato possibile creare o collegare un'immagine disco della Macchina Virtuale"
           }
         }
       }

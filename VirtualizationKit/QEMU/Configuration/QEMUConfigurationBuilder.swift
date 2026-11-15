@@ -61,6 +61,8 @@ struct QEMUConfigurationBuilder<Template: TransferableTemplate>: Sendable {
             }
         }
 
+        try validateStorage()
+
         // Rejected here, before any file is provisioned.
         if case .bridged = template.networkTopology {
             throw VZKitError.qemuUnsupportedNetwork(template.networkTopology.localizedName)
@@ -195,6 +197,28 @@ struct QEMUConfigurationBuilder<Template: TransferableTemplate>: Sendable {
         plan.append("-device", "virtio-balloon-pci")
     }
 
+    /// Checks the disks of the template against what this backend can attach.
+    ///
+    /// On top of the rules every backend shares, an optical disc needs a bus that has optical drives.
+    /// Of the interfaces a disk can ask for, that is USB only.
+    private func validateStorage() throws {
+
+        try DiskImage.validate(template.storage)
+
+        for disk in template.storage {
+
+            switch disk.format {
+            case .raw: break
+            }
+
+            switch (disk.kind, disk.interface) {
+            case (.disk, _), (.optical, .usb): break
+            case (.optical, .virtio), (.optical, .nvme):
+                throw VZKitError.unsupportedDiskInterface(disk.kind, disk.interface)
+            }
+        }
+    }
+
     /// Whether the display device carries a RAM framebuffer in front of the virtio GPU.
     var usesFramebufferDisplay: Bool {
         switch options.displayDevice {
@@ -213,9 +237,11 @@ struct QEMUConfigurationBuilder<Template: TransferableTemplate>: Sendable {
 
     /// Validates the template, provisions the files of the machine and builds its launch plan.
     ///
-    /// - Returns: The plan to hand to the process controller.
+    /// - Returns: The plan to hand to the process controller, and the guards of the external disk
+    ///   images it refers to. The plan names files by location only; inside the App Sandbox, the ones
+    ///   outside of the application container can be opened just as long as the guards exist.
     /// - Throws: A localized error if the template is not supported or a file cannot be provisioned.
-    func createLaunchPlan() throws -> QEMULaunchPlan {
+    func createLaunchPlan() throws -> (plan: QEMULaunchPlan, mediaAccess: [SecurityScopedAccess]) {
 
         try validate()
         try storage.prepareDirectory()
@@ -227,11 +253,11 @@ struct QEMUConfigurationBuilder<Template: TransferableTemplate>: Sendable {
         try appendFirmware(to: &plan)
         appendCoreDevices(to: &plan)
         try appendTPM(to: &plan)
-        try appendStorage(to: &plan)
+        let mediaAccess = try appendStorage(to: &plan)
         try appendNetwork(to: &plan)
         appendAudio(to: &plan)
 
-        return plan
+        return (plan, mediaAccess)
     }
 
     // MARK: - Initializers

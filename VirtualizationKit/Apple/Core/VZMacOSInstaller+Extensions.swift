@@ -66,15 +66,15 @@ extension VZMacOSInstaller {
     /// This convenience initializer performs several steps:
     /// - It checks if the provided virtual machine's template has an operating system other than Linux.
     ///   If the operating system is Linux, the initializer returns `nil` since macOS installation is not applicable.
-    /// - It retrieves the bootable install media URL from the virtual machine's template.
-    ///   If the URL is missing, it throws a `VZKitError.missingMacImage` error.
+    /// - It retrieves the location of the restore image the virtual machine's template refers to.
+    ///   If there is none, or it cannot be located anymore, it throws a `VZKitError.missingMacImage` error.
     /// - It calls the designated initializer with the underlying virtual machine (`vzVirtualMachine`)
     ///   and the restore image URL.
     /// - Finally, it registers a publisher with the virtual machine's state coordinator to track the
     ///   installation progress using the installer’s `fractionCompleted` property.
     ///
     /// - Parameter virtualMachine: An instance of `AppleVirtualMachine` parameterized over a `TransferableTemplate`.
-    /// - Throws: An error if the bootable install media URL is missing or if any asynchronous operation fails.
+    /// - Throws: An error if the restore image is missing or if any asynchronous operation fails.
     /// - Returns: An optional instance of `VZMacOSInstaller`. Returns `nil` if the virtual machine's template
     ///   operating system is Linux.
     convenience init?<Template: TransferableTemplate>(virtualMachine: AppleVirtualMachine<Template>) async throws {
@@ -84,9 +84,8 @@ extension VZMacOSInstaller {
             return nil
         }
         
-        // Retrieve the URL for the bootable install media.
-        let restoreImageURL = virtualMachine.template.bootableInstallMedia
-        guard let restoreImageURL else {
+        // Retrieve the location of the restore image.
+        guard let restoreImageURL = virtualMachine.restoreImageURL else {
             throw VZKitError.missingMacImage
         }
                 

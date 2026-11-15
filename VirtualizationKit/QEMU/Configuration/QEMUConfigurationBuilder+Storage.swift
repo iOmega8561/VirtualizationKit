@@ -18,45 +18,77 @@ import Foundation
 
 extension QEMUConfigurationBuilder {
 
-    /// Emits the main disk and, when the template has one, the install media.
+    /// Emits the disks of the template.
     ///
-    /// The main disk is a raw, sparse image created on first use at the size of the template's
-    /// performance preset. It has the same name and location as the disk of the Apple backend.
+    /// Every disk becomes a block backend (`-drive`) and a device that presents it to the guest. The
+    /// device depends on the interface the disk asks for and nothing else:
     ///
-    /// The install media is attached as a removable USB drive that boots before the disk, so a fresh
-    /// machine starts the installer and an installed one keeps booting from its disk once the media
-    /// is removed from the template.
+    /// - `virtio`: a paravirtualized block device.
+    /// - `nvme`: an NVMe controller. It needs a serial number of at most 20 characters; the identifier
+    ///   of the disk provides a stable one.
+    /// - `usb`: a mass storage device on the controller emitted with the core devices. An optical disc
+    ///   is presented as a removable CD-ROM drive.
     ///
-    /// Both files are brokered: the disk read-write (which also hands over a read-only descriptor, see
-    /// `QEMULaunchPlan.broker(_:)`), the media read-only.
+    /// A managed disk is a raw, sparse image created on first use. An external one is resolved from its
+    /// bookmark. A disk with a boot order is announced to the firmware at that position; the others are
+    /// left out of the boot sequence.
+    ///
+    /// All files are brokered: writable ones read-write (which also hands over a read-only descriptor,
+    /// see `QEMULaunchPlan.broker(_:)`), the others read-only.
     ///
     /// - Note: The USB devices reference the controller emitted with the core devices, so this has to
     ///   run after them.
-    func appendStorage(to plan: inout QEMULaunchPlan) throws {
+    ///
+    /// - Returns: The guards keeping the external images reachable, to be held for as long as the plan
+    ///   is in use.
+    func appendStorage(to plan: inout QEMULaunchPlan) throws -> [SecurityScopedAccess] {
 
-        try QEMUMachineStorage.createSparseFile(
-            at: storage.diskImage,
-            size: template.performancePreset.diskSize
-        )
+        let disks = try storage.disks.provision(template.storage)
 
-        let disk = plan.broker(.init(url: storage.diskImage, access: .readWrite))
+        for (index, disk) in disks.enumerated() {
 
-        plan.append("-drive", "if=none,id=disk0,format=raw,discard=unmap,file=\(disk)")
+            let image = disk.image
+            let drive = "disk\(index)"
 
-        if isWindowsGuest {
-            // Windows has no inbox driver for virtio storage, but one for NVMe. The controller needs a
-            // serial number of at most 20 characters; the machine identifier provides a stable one.
-            let serial = template.id.uuidString.replacingOccurrences(of: "-", with: "").prefix(20)
-            plan.append("-device", "nvme,drive=disk0,serial=\(serial),bootindex=1")
-        } else {
-            plan.append("-device", "virtio-blk-pci,drive=disk0,bootindex=1")
+            let file = plan.broker(.init(
+                url: disk.url,
+                access: image.isReadOnly ? .readOnly : .readWrite
+            ))
+
+            var backend = ["if=none", "id=\(drive)"]
+
+            if image.kind == .optical { backend.append("media=cdrom") }
+
+            switch image.format {
+            case .raw: backend.append("format=raw")
+            }
+
+            // Discarded blocks are given back to the host, which keeps a sparse image sparse.
+            backend.append(image.isReadOnly ? "readonly=on" : "discard=unmap")
+            backend.append("file=\(file)")
+
+            var device: [String]
+
+            switch image.interface {
+            case .virtio:
+                device = ["virtio-blk-pci", "drive=\(drive)"]
+
+            case .nvme:
+                let serial = image.id.uuidString.replacingOccurrences(of: "-", with: "").prefix(20)
+                device = ["nvme", "drive=\(drive)", "serial=\(serial)"]
+
+            case .usb:
+                device = ["usb-storage", "drive=\(drive)"]
+                if image.kind == .optical { device.append("removable=on") }
+                device.append("bus=xhci.0")
+            }
+
+            if let bootOrder = image.bootOrder { device.append("bootindex=\(bootOrder)") }
+
+            plan.append("-drive", backend.joined(separator: ","))
+            plan.append("-device", device.joined(separator: ","))
         }
 
-        guard let media = template.bootableInstallMedia else { return }
-
-        let installMedia = plan.broker(.init(url: media, access: .readOnly))
-
-        plan.append("-drive", "if=none,id=cd0,media=cdrom,format=raw,readonly=on,file=\(installMedia)")
-        plan.append("-device", "usb-storage,drive=cd0,removable=on,bus=xhci.0,bootindex=0")
+        return disks.compactMap(\.access)
     }
 }

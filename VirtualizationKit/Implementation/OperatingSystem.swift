@@ -35,7 +35,7 @@ import UniformTypeIdentifiers
 ///
 /// ### Usage Example
 /// ```swift
-/// let os: OperatingSystem = .macos(version: someVersion)
+/// let os: OperatingSystem = .macos(version: someVersion, restoreImage: bookmark)
 /// print(os.displayName)  // "macOS"
 /// print(os.fileType)     // The disk image file type expected for macOS
 /// ```
@@ -66,9 +66,13 @@ public enum OperatingSystem: Transferable {
     
     /// Represents a macOS virtual machine.
     ///
-    /// - Parameter version: The macOS version associated with the virtual machine. Defaults to the
-    ///   minimum supported version defined in VirtualizationKit.
-    case macos(version: Version = VirtualizationKit.macOSGuestMinVersion)
+    /// - Parameters:
+    ///   - version: The macOS version associated with the virtual machine. Defaults to the
+    ///     minimum supported version defined in VirtualizationKit.
+    ///   - restoreImage: A security-scoped bookmark to the IPSW restore image macOS is installed from.
+    ///     It is needed the first time the virtual machine is built and whenever macOS is installed;
+    ///     an installed machine works without it.
+    case macos(version: Version = VirtualizationKit.macOSGuestMinVersion, restoreImage: Data? = nil)
     
     /// Represents a Windows virtual machine.
     ///
@@ -84,7 +88,7 @@ public enum OperatingSystem: Transferable {
             fileType: .diskImage,
             version: nil
         )
-        case .macos(let version): .init(
+        case .macos(let version, _): .init(
             displayName: "macOS",
             fileType: .init(filenameExtension: "ipsw")!,
             version: version

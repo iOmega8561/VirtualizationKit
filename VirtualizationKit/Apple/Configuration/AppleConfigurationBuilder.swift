@@ -48,12 +48,11 @@ struct AppleConfigurationBuilder<Template: TransferableTemplate> {
     ///
     /// - Parameters:
     ///   - image: The macOS restore image object, if needed.
-    private func createConfiguration(using restoreImage: VZMacOSRestoreImage?) async throws {
-        
-        try FileManager.default.createDirectory(
-            at: vmSupportDirectory,
-            withIntermediateDirectories: true
-        )
+    ///   - disks: The disks of the template, located on the host, in the order they are presented in.
+    private func createConfiguration(
+        using restoreImage: VZMacOSRestoreImage?,
+        disks: [ProvisionedDiskImage]
+    ) async throws {
         
         switch template.operatingSystem {
         case .macos:
@@ -80,24 +79,15 @@ struct AppleConfigurationBuilder<Template: TransferableTemplate> {
                 configuration.directorySharingDevices.append(try VZLinuxRosettaDirectoryShare.create())
             }
             
-            if let url = template.bootableInstallMedia {
-                configuration.storageDevices.append(
-                    try VZUSBMassStorageDeviceConfiguration.create(at: url, type: .readOnly)
-                )
-            }
-            
         case .windows:
             
             // Rejected by the public entry point already; kept for exhaustiveness.
             throw VZKitError.appleUnsupportedGuest(template.operatingSystem.displayName)
         }
       
-        configuration.storageDevices.append(
-            try VZVirtioBlockDeviceConfiguration.create(
-                at: vmSupportDirectory.appendingPathComponent("Disk.img"),
-                type: .readWrite(size: template.performancePreset.diskSize)
-            )
-        )
+        for disk in disks {
+            configuration.storageDevices.append(try VZStorageDeviceConfiguration.create(for: disk))
+        }
         
         configuration.consoleDevices.append(.create(type: template.operatingSystem))
         configuration.graphicsDevices.append(.create(type: template.operatingSystem))
@@ -131,17 +121,63 @@ struct AppleConfigurationBuilder<Template: TransferableTemplate> {
         }
     }
     
-    /// This method prepares the macOS restore image for the configuration process.
-    /// Only macOS guests need to go through this part, other OSes will skip directly to `createConfiguration(nil)`.
-    /// After the synchronous call terminates, the methods validates the configuration scheme and returns it to its caller.
-    func createConfiguration() async throws -> VZVirtualMachineConfiguration {
+    /// Checks the disks of the template against what this backend can attach, without touching the
+    /// file system.
+    ///
+    /// On top of the rules every backend shares, Virtualization.framework only offers NVMe
+    /// controllers to Linux guests.
+    private func validateStorage() throws {
+
+        try DiskImage.validate(template.storage)
+
+        for disk in template.storage {
+
+            switch disk.format {
+            case .raw: break
+            }
+
+            switch (disk.interface, template.operatingSystem) {
+            case (.virtio, _), (.usb, _), (.nvme, .linux): break
+            case (.nvme, .macos), (.nvme, .windows):
+                throw VZKitError.unsupportedDiskInterface(disk.kind, disk.interface)
+            }
+        }
+    }
+
+    /// This method builds the configuration of the virtual machine in three steps: the template is checked
+    /// first, so that a description this backend cannot honour leaves nothing behind on disk; then the folder
+    /// of the VM and its disks are located (and created, if missing); finally the configuration scheme is put together.
+    ///
+    /// Only macOS guests need a restore image, other OSes skip directly to `createConfiguration(using: nil, disks:)`.
+    /// After that call terminates, the method validates the configuration scheme and returns it to its caller,
+    /// together with the resources that have to outlive it.
+    func createConfiguration() async throws -> (VZVirtualMachineConfiguration, AppleMachineResources) {
+
+        try validateStorage()
+
+        try FileManager.default.createDirectory(
+            at: vmSupportDirectory,
+            withIntermediateDirectories: true
+        )
+
+        let disks = try DiskImageStore(directory: vmSupportDirectory).provision(
+            DiskImage.bootSequence(of: template.storage)
+        )
+
+        var restoreImageAccess: SecurityScopedAccess? = nil
         
         switch template.operatingSystem {
-        case .macos(let version):
+        case .macos(let version, let bookmark):
             
             var restoreImage: VZMacOSRestoreImage? = nil
             
-            if  let url = template.bootableInstallMedia,
+            // An installed machine works without its restore image, so one that cannot be
+            // located or read anymore is not an error by itself.
+            if let bookmark {
+                restoreImageAccess = try? SecurityScopedAccess(resolving: bookmark)
+            }
+
+            if  let url = restoreImageAccess?.url,
                 let image = try? await VZMacOSRestoreImage.load(from: url) {
                 
                 let macOSImageVersion = OperatingSystem.Version(
@@ -155,9 +191,9 @@ struct AppleConfigurationBuilder<Template: TransferableTemplate> {
                 restoreImage = image
             }
             
-            try await createConfiguration(using: restoreImage)
+            try await createConfiguration(using: restoreImage, disks: disks)
             
-        case .linux: try await createConfiguration(using: nil)
+        case .linux: try await createConfiguration(using: nil, disks: disks)
             
         case .windows:
             
@@ -165,7 +201,12 @@ struct AppleConfigurationBuilder<Template: TransferableTemplate> {
             throw VZKitError.appleUnsupportedGuest(template.operatingSystem.displayName)
         }
         
-        try configuration.validate(); return configuration
+        try configuration.validate()
+
+        return (configuration, .init(
+            mediaAccess: disks.compactMap(\.access),
+            restoreImage: restoreImageAccess
+        ))
     }
     
     /// The explicit initializer of the struct.
@@ -181,4 +222,17 @@ struct AppleConfigurationBuilder<Template: TransferableTemplate> {
             template.id.uuidString
         )
     }
+}
+
+/// What an Apple virtual machine has to keep alive next to its configuration.
+///
+/// The configuration refers to files by location only. Inside the App Sandbox, the ones living outside
+/// of the application container stay reachable just as long as these guards exist.
+struct AppleMachineResources: Sendable {
+
+    /// The guards of the external disk images attached to the machine.
+    let mediaAccess: [SecurityScopedAccess]
+
+    /// The guard of the macOS restore image, when the template refers to one that could be located.
+    let restoreImage: SecurityScopedAccess?
 }

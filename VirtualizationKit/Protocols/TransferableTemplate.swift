@@ -44,11 +44,15 @@ public protocol TransferableTemplate: Identifiable, Transferable {
     /// Use this property to label or display the template in the user interface.
     var name: String { get }
     
-    /// An optional URL pointing to a removable install media, such as a CD-ROM image.
+    /// The disks attached to the VM when it starts.
     ///
-    /// If provided, the Virtual Machine can boot or install from the given image. If `nil`,
-    /// the VM may rely on other sources for installation media.
-    var bootableInstallMedia: URL? { get }
+    /// Each element describes one disk: a hard disk the framework creates and keeps inside the
+    /// directory of the machine, or an image picked by the user, such as the ISO of an installer.
+    /// A machine can have any number of them, including none.
+    ///
+    /// The identifier of a disk has to be unique within the template, and so does its boot order
+    /// when it has one. See `DiskImage` for the meaning of the individual properties.
+    var storage: [DiskImage] { get }
     
     /// The operating system configuration associated with this template.
     ///
@@ -64,8 +68,8 @@ public protocol TransferableTemplate: Identifiable, Transferable {
     
     /// A preset describing the desired hardware resources and performance level.
     ///
-    /// This property indicates how many CPU cores, how much memory, and other performance
-    /// aspects are allocated to the VM.
+    /// This property indicates how many CPU cores and how much memory are allocated to the VM.
+    /// It is resolved against the capabilities of the host every time the VM is built.
     var performancePreset: PerformancePreset { get }
     
     /// A collection of optional capabilities to enable for the VM.

@@ -19,9 +19,9 @@ import Foundation
 /// The on-disk layout of a QEMU virtual machine.
 ///
 /// A machine lives in the same per-template directory the Apple backend uses, inside the support
-/// directory configured for the framework. Files that mean the same thing to both backends share a
-/// name, so a guest installed on a raw disk image can in principle be booted by either one. Files
-/// that are backend specific carry a `QEMU-` prefix and never collide.
+/// directory configured for the framework. Disks are provisioned the same way by both backends (see
+/// `DiskImageStore`), so a guest installed on a raw disk image can in principle be booted by either
+/// one. Files that are backend specific carry a `QEMU-` prefix and never collide.
 struct QEMUMachineStorage: Sendable {
 
     /// The size every flash device of the `virt` machine must have.
@@ -30,10 +30,8 @@ struct QEMUMachineStorage: Sendable {
     /// The directory holding all files of the machine.
     let directory: URL
 
-    /// The main disk of the machine: a raw, sparse image.
-    var diskImage: URL {
-        directory.appendingPathComponent("Disk.img", isDirectory: false)
-    }
+    /// Locates, and creates on first use, the files of the machine's disks.
+    var disks: DiskImageStore { .init(directory: directory) }
 
     /// The UEFI variable store of the machine for a given firmware.
     ///

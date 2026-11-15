@@ -29,7 +29,7 @@ import Virtualization
 ///
 /// `PerformancePreset` provides a set of predefined resource configurations for virtual machines,
 /// along with a customizable option for fine-tuned setups. Each preset is associated with metadata
-/// for localization, and computed properties determine the number of CPU cores, memory size, and disk size.
+/// for localization, and computed properties determine the number of CPU cores and the memory size.
 /// The preset values are constrained by the host system’s capabilities as dictated by the virtualization framework.
 ///
 /// ### Presets
@@ -44,8 +44,10 @@ import Virtualization
 /// print("Preset: \(preset.localizedName)")              // Localized preset name
 /// print("CPU Cores: \(preset.cpuCoreCount)")        // Number of CPU cores
 /// print("Memory Size: \(preset.memorySize) bytes")  // Memory allocation in bytes
-/// print("Disk Size: \(preset.diskSize) bytes")      // Disk allocation in bytes
 /// ```
+///
+/// - Note: A preset does not describe storage. The capacity of a disk is a property of the disk itself,
+///   see `DiskImage.Location.managed(size:)`.
 public enum PerformancePreset: Transferable {
     
     /// Minimal configuration for lightweight workloads.
@@ -68,11 +70,9 @@ public enum PerformancePreset: Transferable {
     /// - Parameters:
     ///   - desiredCoreCount: Desired number of CPU cores (defaults to `balanced` preset).
     ///   - desiredMemorySize: Desired memory size in bytes (defaults to `balanced` preset).
-    ///   - desiredDiskSize: Desired disk size in bytes (defaults to `balanced` preset).
     case custom(
         desiredCoreCount: Int = Self.balanced.cpuCoreCount,
-        desiredMemorySize: UInt64 = Self.balanced.memorySize,
-        desiredDiskSize: UInt64 = Self.balanced.diskSize
+        desiredMemorySize: UInt64 = Self.balanced.memorySize
     )
     
     /// Maximum allowed CPU core count for the host system.
@@ -167,7 +167,7 @@ public enum PerformancePreset: Transferable {
              max(VZVirtualMachineConfiguration.minimumAllowedCPUCount,
                  Self.maximumAllowedCPUCount - 2)
             
-        case .custom(let desideredCoreCount, _, _):
+        case .custom(let desideredCoreCount, _):
              max(min(desideredCoreCount, Self.maximumAllowedCPUCount),
                  VZVirtualMachineConfiguration.minimumAllowedCPUCount)
         }
@@ -227,52 +227,9 @@ public enum PerformancePreset: Transferable {
             max(VZVirtualMachineConfiguration.minimumAllowedMemorySize,
                 Self.maximumAllowedMemorySize / 2)
             
-        case .custom(_, let desiredMemorySize, _):
+        case .custom(_, let desiredMemorySize):
             max(min(desiredMemorySize, Self.maximumAllowedMemorySize),
                 VZVirtualMachineConfiguration.minimumAllowedMemorySize)
-        }
-    }
-    
-    /// The disk size in bytes assigned for the selected virtual machine preset.
-    ///
-    /// This computed property determines the disk size based on the selected preset configuration.
-    /// Predefined sizes are used for standard presets (`basic`, `balanced`, `performance`), while
-    /// the `custom` preset allows user-defined disk sizes.
-    ///
-    /// ## Overview
-    ///
-    /// The property evaluates the selected preset and assigns the disk size as follows:
-    ///
-    /// - **Basic Preset (`.basic`)**:
-    ///   - Suitable for lightweight workloads or minimal storage requirements.
-    ///   - Allocates a fixed disk size of 32 GiB (32 * 1024 * 1024 * 1024 bytes).
-    ///
-    /// - **Balanced Preset (`.balanced`)**:
-    ///   - Designed for typical workloads with moderate storage needs.
-    ///   - Allocates a fixed disk size of 64 GiB (64 * 1024 * 1024 * 1024 bytes).
-    ///
-    /// - **Performance Preset (`.performance`)**:
-    ///   - Optimized for resource-intensive workloads requiring significant storage.
-    ///   - Allocates a fixed disk size of 128 GiB (128 * 1024 * 1024 * 1024 bytes).
-    ///
-    /// - **Custom Preset (`.custom`)**:
-    ///   - Allows users to specify a desired disk size.
-    ///   - Returns the user-defined `desiredDiskSize` without modification.
-    ///
-    /// ## Validations
-    /// Unlike `cpuCoreCount` and `memorySize`, this property does not enforce minimum or maximum bounds.
-    /// Users are responsible for ensuring the validity of the `desiredDiskSize` when using the `custom` preset.
-    ///
-    /// ## Use Case
-    /// The `diskSize` property simplifies virtual machine storage configuration by providing predefined
-    /// disk sizes for common presets while allowing full customization for specific needs. The property is
-    /// particularly useful for ensuring quick setup with standard presets or detailed control with the custom preset.
-    public var diskSize: UInt64 {
-        switch self {
-        case .basic: 32 * 1024 * 1024 * 1024
-        case .balanced: 64 * 1024 * 1024 * 1024
-        case .performance: 128 * 1024 * 1024 * 1024
-        case .custom(_, _, let desiredDiskSize): desiredDiskSize
         }
     }
     

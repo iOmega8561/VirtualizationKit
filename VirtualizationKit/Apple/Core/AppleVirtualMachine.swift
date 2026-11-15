@@ -95,11 +95,15 @@ public struct AppleVirtualMachine<Template: TransferableTemplate>: VirtualMachin
     /// this delegate directly.
     private let errorDelegate: AppleErrorDelegate
     
-    /// Keeps the install media reachable inside the App Sandbox for as long as the machine exists.
+    /// Keeps external disk images and the macOS restore image reachable inside the App Sandbox for as
+    /// long as the machine exists.
     ///
-    /// The media is referenced by the configuration (as an attached image) and by the installer, both of
-    /// which open it long after this value has been created.
-    private let installMediaAccess: SecurityScopedAccess?
+    /// They are referenced by the configuration (as attached images) and by the installer, both of
+    /// which open them long after this value has been created.
+    private let resources: AppleMachineResources
+
+    /// The location of the macOS restore image, when the template refers to one that could be located.
+    var restoreImageURL: URL? { resources.restoreImage?.url }
     
     /// Keeps the images of hot-plugged removable devices reachable while they are attached.
     private let removableMediaAccess: SecurityScopeRegistry
@@ -165,14 +169,14 @@ public struct AppleVirtualMachine<Template: TransferableTemplate>: VirtualMachin
     ///           framework, or initializing the event delegation process.
     public init(template: Template) async throws {
         
-        // Must precede the configuration: building it already opens the install media.
-        self.installMediaAccess = template.bootableInstallMedia.map { SecurityScopedAccess(url: $0) }
         self.removableMediaAccess = .init()
         
         let builder = await AppleConfigurationBuilder(template: template)
-        let configuration = try await builder.createConfiguration()
+        let (configuration, resources) = try await builder.createConfiguration()
         let errorDelegate = AppleErrorDelegate()
         
+        self.resources = resources
+
         self.vzVirtualMachine = await Self.makeVirtualMachine(
             configuration: configuration,
             delegate: errorDelegate
