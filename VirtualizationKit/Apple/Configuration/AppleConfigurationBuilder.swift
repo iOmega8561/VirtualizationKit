@@ -90,7 +90,7 @@ struct AppleConfigurationBuilder<Template: TransferableTemplate> {
         }
         
         configuration.consoleDevices.append(.create(type: template.operatingSystem))
-        configuration.graphicsDevices.append(.create(type: template.operatingSystem))
+        configuration.graphicsDevices.append(.create(type: (template.operatingSystem, template.display)))
         configuration.keyboards.append(.create(type: template.operatingSystem))
         configuration.pointingDevices.append(.create(type: template.operatingSystem))
         configuration.networkDevices.append(try .create(type: template.networkTopology))

@@ -167,7 +167,7 @@ struct QEMUConfigurationBuilder<Template: TransferableTemplate>: Sendable {
     /// and an absolute pointing device, an entropy source and a memory balloon.
     private func appendCoreDevices(to plan: inout QEMULaunchPlan) {
 
-        let resolution = "xres=\(options.displayWidth),yres=\(options.displayHeight)"
+        let resolution = "xres=\(template.display.width),yres=\(template.display.height)"
 
         switch options.architecture {
         case .aarch64 where usesFramebufferDisplay:

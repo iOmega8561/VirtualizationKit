@@ -19,8 +19,8 @@ import Foundation
 /// Settings that only make sense for the QEMU backend.
 ///
 /// A template describes a virtual machine in backend-neutral terms. Everything QEMU needs beyond that
-/// (which processor architecture to emulate, how large the display is at power-on) lives here, so the
-/// template protocol stays untouched and existing templates keep working with both backends.
+/// (which processor architecture to emulate, which graphics device the guest sees) lives here, so the
+/// template stays free of anything only one backend understands.
 ///
 /// Every property has a default that "just works" on Apple silicon:
 /// an `aarch64` guest runs hardware-accelerated through the Hypervisor framework.
@@ -58,15 +58,6 @@ public struct QEMUMachineOptions: Transferable {
 
     /// The processor architecture of the guest. Defaults to `.aarch64`.
     public var architecture: Architecture
-
-    /// The width of the guest display at power-on, in pixels.
-    ///
-    /// The guest is free to change its resolution later, and the framebuffer view can ask it to follow
-    /// the size of its container.
-    public var displayWidth: Int
-
-    /// The height of the guest display at power-on, in pixels.
-    public var displayHeight: Int
 
     /// Whether the machine has a TPM 2.0 device. Defaults to `false`.
     ///
@@ -117,21 +108,15 @@ public struct QEMUMachineOptions: Transferable {
     ///
     /// - Parameters:
     ///   - architecture: The processor architecture of the guest.
-    ///   - displayWidth: The initial display width, in pixels. Clamped to a sensible range.
-    ///   - displayHeight: The initial display height, in pixels. Clamped to a sensible range.
     ///   - includesTPM: Whether the machine has a TPM 2.0 device.
     ///   - usesSecureBootFirmware: Whether the machine boots with Secure Boot capable firmware.
     public init(
         architecture: Architecture = .aarch64,
-        displayWidth: Int = 1280,
-        displayHeight: Int = 720,
         includesTPM: Bool = false,
         usesSecureBootFirmware: Bool = false,
         displayDevice: DisplayDevice = .automatic
     ) {
         self.architecture = architecture
-        self.displayWidth = min(max(displayWidth, 640), 7680)
-        self.displayHeight = min(max(displayHeight, 480), 4320)
         self.includesTPM = includesTPM
         self.usesSecureBootFirmware = usesSecureBootFirmware
         self.displayDevice = displayDevice
@@ -141,7 +126,7 @@ public struct QEMUMachineOptions: Transferable {
 
     /// The keys of the encoded form.
     private enum CodingKeys: String, CodingKey {
-        case architecture, displayWidth, displayHeight, includesTPM, usesSecureBootFirmware, displayDevice
+        case architecture, includesTPM, usesSecureBootFirmware, displayDevice
     }
 
     /// Decodes a set of options.
@@ -155,8 +140,6 @@ public struct QEMUMachineOptions: Transferable {
 
         self.init(
             architecture: try container.decodeIfPresent(Architecture.self, forKey: .architecture) ?? .aarch64,
-            displayWidth: try container.decodeIfPresent(Int.self, forKey: .displayWidth) ?? 1280,
-            displayHeight: try container.decodeIfPresent(Int.self, forKey: .displayHeight) ?? 720,
             includesTPM: try container.decodeIfPresent(Bool.self, forKey: .includesTPM) ?? false,
             usesSecureBootFirmware: try container.decodeIfPresent(Bool.self, forKey: .usesSecureBootFirmware) ?? false,
             displayDevice: try container.decodeIfPresent(DisplayDevice.self, forKey: .displayDevice) ?? .automatic

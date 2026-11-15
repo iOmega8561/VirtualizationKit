@@ -26,22 +26,22 @@ import Virtualization
 extension VZGraphicsDeviceConfiguration: SpecializedConstructible {
     
     /// This factory method can create a graphics device configuration for the guest machine.
-    /// Configuration will be different according to the OS of choice, so the method takes the latter as input parameter
-    /// and returns the appropriate attachment.
+    /// Configuration will be different according to the OS of choice, so the method takes the latter as input parameter,
+    /// together with the size the display starts with, and returns the appropriate attachment.
     ///
     /// - Parameters:
-    ///   - type: The guest operating system.
-    static func create(type: OperatingSystem) -> Product {
+    ///   - type: The guest operating system and the initial size of its display.
+    static func create(type: (operatingSystem: OperatingSystem, display: DisplaySize)) -> Product {
 
-        switch type {
+        switch type.operatingSystem {
         case .macos:
             
             let dev = VZMacGraphicsDeviceConfiguration()
             
             dev.displays.append(
                 VZMacGraphicsDisplayConfiguration(
-                    widthInPixels: 1920,
-                    heightInPixels: 1200,
+                    widthInPixels: type.display.width,
+                    heightInPixels: type.display.height,
                     pixelsPerInch: 80
                 )
             )
@@ -53,8 +53,8 @@ extension VZGraphicsDeviceConfiguration: SpecializedConstructible {
             
             dev.scanouts.append(
                 VZVirtioGraphicsScanoutConfiguration(
-                    widthInPixels: 1280,
-                    heightInPixels: 720
+                    widthInPixels: type.display.width,
+                    heightInPixels: type.display.height
                 )
             )
             

@@ -72,6 +72,11 @@ public protocol TransferableTemplate: Identifiable, Transferable {
     /// It is resolved against the capabilities of the host every time the VM is built.
     var performancePreset: PerformancePreset { get }
     
+    /// The size of the guest display when the VM is powered on.
+    ///
+    /// The guest can change its resolution afterwards; see `DisplaySize`.
+    var display: DisplaySize { get }
+
     /// A collection of optional capabilities to enable for the VM.
     ///
     /// These may include specialized hardware capabilities, security features, or
