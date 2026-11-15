@@ -168,6 +168,33 @@ public struct AppleVirtualMachine<Template: TransferableTemplate>: VirtualMachin
         }
     }
 
+    /// Tells whether this backend can provide an optional capability.
+    ///
+    /// The answer depends on the platform the options select and on the host: Rosetta, for instance, is
+    /// offered to Linux guests only, and is unavailable until it has been installed on the host.
+    ///
+    /// - Parameters:
+    ///   - capability: The capability in question.
+    ///   - options: The options the virtual machine would be created with.
+    /// - Returns: Whether the capability is supported, never provided, or unavailable for the time being.
+    public static func support(
+        for capability: OptionalCapability,
+        options: AppleMachineOptions
+    ) -> CapabilitySupport {
+        AppleConfigurationBuilder<Template>.support(for: capability, on: options.platform)
+    }
+
+    /// Checks whether a virtual machine can be created from a template and a set of options, without
+    /// creating or modifying anything on disk.
+    ///
+    /// - Parameters:
+    ///   - template: The configuration object that describes how the virtual machine should be built.
+    ///   - options: The options the virtual machine would be created with.
+    /// - Throws: A localized error naming the first thing this backend cannot honour.
+    public static func validate(_ template: Template, options: AppleMachineOptions) throws {
+        try AppleConfigurationBuilder.validate(template, options: options)
+    }
+
     /// Initializes a new `AppleVirtualMachine` by creating a `VZVirtualMachine` instance and delegating events.
     ///
     /// - Parameters:

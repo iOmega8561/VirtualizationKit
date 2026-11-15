@@ -19,8 +19,9 @@ import Foundation
 /// Turns a backend-neutral template into the launch plan of an emulator process.
 ///
 /// This is the QEMU counterpart of the configuration builder of the Apple backend. It validates what
-/// the template asks for against what this backend can deliver, provisions the files of the machine,
-/// and emits a command line that references those files through brokered descriptors only.
+/// the template asks for against what this backend can deliver, then provisions the files of the
+/// machine, and finally emits a command line that references those files through brokered descriptors
+/// only. A template that is rejected leaves nothing behind on disk.
 ///
 /// The builder is split by concern. This file holds validation and the machine itself (processor,
 /// memory, firmware, display and input devices); storage, networking and audio live in extensions.
@@ -40,25 +41,104 @@ struct QEMUConfigurationBuilder<Template: TransferableTemplate>: Sendable {
 
     // MARK: - Validation
 
+    /// The file of the helper payload a capability cannot do without, if there is one.
+    ///
+    /// - Parameters:
+    ///   - capability: A capability this backend provides.
+    ///   - options: The backend-specific settings of the machine.
+    ///   - helper: The helper service bundle.
+    /// - Returns: The location the file is expected at, or `nil` if the capability needs no file.
+    private static func payload(
+        for capability: OptionalCapability,
+        options: QEMUMachineOptions,
+        in helper: QEMUHelperBundle
+    ) -> URL? {
+        switch capability {
+        case .tpm:
+            helper.tpmExecutableURL
+
+        case .secureBoot:
+            helper.dataDirectory.appendingPathComponent(
+                QEMUMachineStorage.firmwareCodeName(for: options.architecture, secureBoot: true),
+                isDirectory: false
+            )
+
+        case .rosetta, .nestedVirtualization, .xhciUSBHotSwap, .directoryShare,
+             .audioCaptureDevice, .audioOutputDevice:
+            nil
+        }
+    }
+
+    /// Tells whether this backend can provide an optional capability.
+    ///
+    /// The single source of truth for capabilities: `validate` acts on the same answer. There is
+    /// deliberately no `default`, so a capability added to the framework does not compile until this
+    /// backend has an answer for it.
+    ///
+    /// - Parameters:
+    ///   - capability: The capability in question.
+    ///   - options: The backend-specific settings of the machine.
+    ///   - helper: The helper service bundle, or `nil` if it is not embedded. Without it, everything
+    ///     that needs a file of its payload is unavailable.
+    /// - Returns: Whether the capability is supported, never provided, or unavailable for the time being.
+    static func support(
+        for capability: OptionalCapability,
+        options: QEMUMachineOptions,
+        helper: QEMUHelperBundle?
+    ) -> CapabilitySupport {
+
+        switch capability {
+        case .audioOutputDevice, .xhciUSBHotSwap:
+            return .supported
+
+        case .tpm, .secureBoot:
+            guard let helper,
+                  let file = payload(for: capability, options: options, in: helper),
+                  FileManager.default.fileExists(atPath: file.path(percentEncoded: false)) else {
+                return .unavailable
+            }
+            return .supported
+
+        case .rosetta, .nestedVirtualization, .directoryShare, .audioCaptureDevice:
+            return .unsupported
+        }
+    }
+
     /// Rejects templates that ask for something this backend cannot provide.
     ///
-    /// Failing here, before anything is launched, yields the same localized errors the Apple backend
-    /// reports for unsupported features.
-    private func validate() throws {
+    /// Failing here, before anything is provisioned or launched, yields the same localized errors the
+    /// Apple backend reports for unsupported features. Nothing is created or modified on disk.
+    ///
+    /// - Parameters:
+    ///   - template: The template describing the machine.
+    ///   - options: The backend-specific settings of the machine.
+    ///   - helper: The helper service bundle, which carries the emulator libraries and data files.
+    static func validate(
+        _ template: Template,
+        options: QEMUMachineOptions,
+        helper: QEMUHelperBundle
+    ) throws {
 
         for capability in template.optionalCapabilities {
-            switch capability {
-            case .audioOutputDevice, .xhciUSBHotSwap:
+            switch support(for: capability, options: options, helper: helper) {
+            case .supported:
                 continue
 
-            case .rosetta, .nestedVirtualization, .directoryShare, .audioCaptureDevice:
+            case .unsupported:
                 throw VZKitError.unsupportedFeature(capability)
+
+            case .unavailable:
+                // On this backend a capability is only ever unavailable for want of a file of the
+                // payload. Naming the file is more useful than naming the capability.
+                guard let file = payload(for: capability, options: options, in: helper) else {
+                    throw VZKitError.unavailableFeature(capability)
+                }
+                throw VZKitError.qemuFirmwareMissing(file.lastPathComponent)
             }
         }
 
-        try validateStorage()
+        try validateStorage(template.storage)
 
-        // Rejected here, before any file is provisioned.
         if case .bridged = template.networkTopology {
             throw VZKitError.qemuUnsupportedNetwork(template.networkTopology.localizedName)
         }
@@ -68,12 +148,26 @@ struct QEMUConfigurationBuilder<Template: TransferableTemplate>: Sendable {
         guard FileManager.default.fileExists(atPath: library.path(percentEncoded: false)) else {
             throw VZKitError.qemuFirmwareMissing(library.lastPathComponent)
         }
+    }
 
-        if options.includesTPM {
-            let tpm = helper.tpmExecutableURL
+    /// Checks the disks of the template against what this backend can attach.
+    ///
+    /// On top of the rules every backend shares, an optical disc needs a bus that has optical drives.
+    /// Of the interfaces a disk can ask for, that is USB only.
+    private static func validateStorage(_ storage: [DiskImage]) throws {
 
-            guard FileManager.default.isExecutableFile(atPath: tpm.path(percentEncoded: false)) else {
-                throw VZKitError.qemuFirmwareMissing(tpm.lastPathComponent)
+        try DiskImage.validate(storage)
+
+        for disk in storage {
+
+            switch disk.format {
+            case .raw: break
+            }
+
+            switch (disk.kind, disk.interface) {
+            case (.disk, _), (.optical, .usb): break
+            case (.optical, .virtio), (.optical, .nvme):
+                throw VZKitError.unsupportedDiskInterface(disk.kind, disk.interface)
             }
         }
     }
@@ -118,7 +212,7 @@ struct QEMUConfigurationBuilder<Template: TransferableTemplate>: Sendable {
             plan.append("-accel", "hvf")
             plan.append("-cpu", "host")
 
-        case .x86_64 where options.usesSecureBootFirmware:
+        case .x86_64 where usesSecureBoot:
             // The Secure Boot firmware for x86 protects its variables with System Management Mode.
             plan.append("-machine", "q35,smm=on")
             plan.append("-accel", "tcg")
@@ -137,7 +231,7 @@ struct QEMUConfigurationBuilder<Template: TransferableTemplate>: Sendable {
     /// Emits the UEFI firmware: read-only code out of the helper bundle, plus the per-machine variable store.
     private func appendFirmware(to plan: inout QEMULaunchPlan) throws {
 
-        let secureBoot = options.usesSecureBootFirmware
+        let secureBoot = usesSecureBoot
 
         let code = plan.broker(.init(
             url: try storage.firmwareCode(for: options.architecture, secureBoot: secureBoot, in: helper),
@@ -194,27 +288,11 @@ struct QEMUConfigurationBuilder<Template: TransferableTemplate>: Sendable {
         plan.append("-device", "virtio-balloon-pci")
     }
 
-    /// Checks the disks of the template against what this backend can attach.
-    ///
-    /// On top of the rules every backend shares, an optical disc needs a bus that has optical drives.
-    /// Of the interfaces a disk can ask for, that is USB only.
-    private func validateStorage() throws {
+    /// Whether the machine boots with the Secure Boot capable firmware.
+    var usesSecureBoot: Bool { template.optionalCapabilities.contains(.secureBoot) }
 
-        try DiskImage.validate(template.storage)
-
-        for disk in template.storage {
-
-            switch disk.format {
-            case .raw: break
-            }
-
-            switch (disk.kind, disk.interface) {
-            case (.disk, _), (.optical, .usb): break
-            case (.optical, .virtio), (.optical, .nvme):
-                throw VZKitError.unsupportedDiskInterface(disk.kind, disk.interface)
-            }
-        }
-    }
+    /// Whether the machine has a TPM 2.0 device.
+    var includesTPM: Bool { template.optionalCapabilities.contains(.tpm) }
 
     /// Whether the display device carries a framebuffer that needs no virtio GPU driver.
     var usesFramebufferDisplay: Bool {
@@ -234,7 +312,7 @@ struct QEMUConfigurationBuilder<Template: TransferableTemplate>: Sendable {
     /// - Throws: A localized error if the template is not supported or a file cannot be provisioned.
     func createLaunchPlan() throws -> (plan: QEMULaunchPlan, mediaAccess: [SecurityScopedAccess]) {
 
-        try validate()
+        try Self.validate(template, options: options, helper: helper)
         try storage.prepareDirectory()
 
         var plan = QEMULaunchPlan(libraryName: options.architecture.libraryName)

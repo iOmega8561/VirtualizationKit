@@ -58,6 +58,14 @@ import Virtualization
 ///     func execute(action: MyVMAction) async throws {
 ///         // Handle VM transitions, update state, manage resources, etc.
 ///     }
+///
+///     static func support(for capability: OptionalCapability, options: MyVMOptions) -> CapabilitySupport {
+///         // Tell what this backend provides.
+///     }
+///
+///     static func validate(_ template: MyVMTemplate, options: MyVMOptions) throws {
+///         // Reject what this backend cannot honour, without touching the disk.
+///     }
 /// }
 /// ```
 ///
@@ -130,6 +138,34 @@ public protocol VirtualMachine: Sendable {
     ///           the state is updated or rolled back as appropriate before propagating the error.
     func execute(action: Action) async throws
     
+    /// Tells whether this backend can provide an optional capability.
+    ///
+    /// The answer depends on the backend, on the options (a capability may exist for one guest platform
+    /// and not for another) and on the host. It is the same answer `validate(_:options:)` acts upon,
+    /// which makes it suitable for deciding what a user interface offers.
+    ///
+    /// - Parameters:
+    ///   - capability: The capability in question.
+    ///   - options: The options the virtual machine would be created with.
+    /// - Returns: Whether the capability is supported, never provided, or unavailable for the time being.
+    static func support(for capability: OptionalCapability, options: Options) -> CapabilitySupport
+
+    /// Checks whether a virtual machine can be created from a template and a set of options.
+    ///
+    /// Conforming types reject here everything they can tell from the description alone: capabilities
+    /// they do not provide, disks they cannot attach, networks they cannot build. Nothing is created or
+    /// modified on disk. The initializer performs the same check before it does anything else, so a
+    /// description that is rejected leaves no trace behind.
+    ///
+    /// Passing this check does not guarantee that the initializer succeeds: files can still be missing
+    /// or unreadable, and permissions can still be denied.
+    ///
+    /// - Parameters:
+    ///   - template: The template describing the virtual machine.
+    ///   - options: The options the virtual machine would be created with.
+    /// - Throws: A localized error naming the first thing the backend cannot honour.
+    static func validate(_ template: Template, options: Options) throws
+
     /// Initializes a new virtual machine instance using the specified configuration template and options.
     ///
     /// Conforming types must implement any backend-specific logic needed to transform the given

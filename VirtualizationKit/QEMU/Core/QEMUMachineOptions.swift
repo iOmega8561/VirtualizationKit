@@ -20,7 +20,8 @@ import Foundation
 ///
 /// A template describes a virtual machine in backend-neutral terms. Everything QEMU needs beyond that
 /// (which processor architecture to emulate, which graphics device the guest sees) lives here, so the
-/// template stays free of anything only one backend understands.
+/// template stays free of anything only one backend understands. Technology that is not specific to
+/// QEMU, such as a TPM or Secure Boot, is asked for through the capabilities of the template instead.
 ///
 /// Every property has a default, and together the defaults describe a Linux guest on Apple silicon:
 /// an `aarch64` machine that runs hardware-accelerated through the Hypervisor framework. Nothing is
@@ -82,21 +83,6 @@ public struct QEMUMachineOptions: MachineOptions {
     /// The processor architecture of the guest. Defaults to `.aarch64`.
     public var architecture: Architecture
 
-    /// Whether the machine has a TPM 2.0 device. Defaults to `false`.
-    ///
-    /// The TPM is emulated in software by a separate process next to the emulator, and its state (keys,
-    /// counters) is kept in a file of the machine that survives power cycles. Windows 11 requires one,
-    /// and any guest can use it for measured boot or disk encryption.
-    public var includesTPM: Bool
-
-    /// Whether the machine boots with UEFI firmware that supports Secure Boot. Defaults to `false`.
-    ///
-    /// The firmware starts without enrolled keys: Secure Boot is available, and can be enabled
-    /// from the firmware setup or by the guest, but signatures are not checked until keys are
-    /// enrolled. The firmware keeps its settings in a variable store of its own, so changing this
-    /// option makes the machine start with fresh firmware settings (boot entries included).
-    public var usesSecureBootFirmware: Bool
-
     /// The graphics device the guest sees. Defaults to `.virtioGPU`.
     public var displayDevice: DisplayDevice
 
@@ -139,22 +125,16 @@ public struct QEMUMachineOptions: MachineOptions {
     ///
     /// - Parameters:
     ///   - architecture: The processor architecture of the guest.
-    ///   - includesTPM: Whether the machine has a TPM 2.0 device.
-    ///   - usesSecureBootFirmware: Whether the machine boots with Secure Boot capable firmware.
     ///   - displayDevice: The graphics device the guest sees.
     ///   - clock: What the hardware clock of the machine counts in.
     ///   - guestDrawsPointer: Whether the guest draws its pointer into the picture itself.
     public init(
         architecture: Architecture = .aarch64,
-        includesTPM: Bool = false,
-        usesSecureBootFirmware: Bool = false,
         displayDevice: DisplayDevice = .virtioGPU,
         clock: Clock = .utc,
         guestDrawsPointer: Bool = false
     ) {
         self.architecture = architecture
-        self.includesTPM = includesTPM
-        self.usesSecureBootFirmware = usesSecureBootFirmware
         self.displayDevice = displayDevice
         self.clock = clock
         self.guestDrawsPointer = guestDrawsPointer
@@ -164,7 +144,7 @@ public struct QEMUMachineOptions: MachineOptions {
 
     /// The keys of the encoded form.
     private enum CodingKeys: String, CodingKey {
-        case architecture, includesTPM, usesSecureBootFirmware, displayDevice, clock, guestDrawsPointer
+        case architecture, displayDevice, clock, guestDrawsPointer
     }
 
     /// The encoded form of the display device that 1.x picked from the guest operating system.
@@ -179,6 +159,9 @@ public struct QEMUMachineOptions: MachineOptions {
     /// guest operating system and no longer exists. It decodes to what it resolved to for every guest
     /// but one: `.virtioGPU` on aarch64 and `.virtioGPUWithFramebuffer` on x86_64. The exception is
     /// Windows on aarch64, which used the framebuffer variant and has to ask for it explicitly now.
+    ///
+    /// The TPM and Secure Boot settings of 1.x are not options anymore but capabilities of the template
+    /// (`OptionalCapability.tpm`, `.secureBoot`); their keys are ignored here.
     ///
     /// - Parameter decoder: The decoder to read from.
     public init(from decoder: any Decoder) throws {
@@ -207,8 +190,6 @@ public struct QEMUMachineOptions: MachineOptions {
 
         self.init(
             architecture: architecture,
-            includesTPM: try container.decodeIfPresent(Bool.self, forKey: .includesTPM) ?? false,
-            usesSecureBootFirmware: try container.decodeIfPresent(Bool.self, forKey: .usesSecureBootFirmware) ?? false,
             displayDevice: displayDevice,
             clock: try container.decodeIfPresent(Clock.self, forKey: .clock) ?? .utc,
             guestDrawsPointer: try container.decodeIfPresent(Bool.self, forKey: .guestDrawsPointer) ?? false

@@ -81,6 +81,38 @@
         }
       }
     },
+    "capability-secureBoot" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UEFI Secure Boot"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avvio protetto UEFI (Secure Boot)"
+          }
+        }
+      }
+    },
+    "capability-tpm" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trusted Platform Module (TPM 2.0)"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trusted Platform Module (TPM 2.0)"
+          }
+        }
+      }
+    },
     "capability-xhciUSBHotSwap" : {
       "localizations" : {
         "en" : {

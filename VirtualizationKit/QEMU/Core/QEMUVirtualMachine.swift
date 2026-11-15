@@ -88,6 +88,42 @@ public struct QEMUVirtualMachine<Template: TransferableTemplate>: VirtualMachine
         }
     }
 
+    /// Tells whether this backend can provide an optional capability.
+    ///
+    /// A TPM and Secure Boot depend on files of the emulator payload and are reported as unavailable
+    /// when the payload was built without them, or when the helper service is not embedded at all.
+    ///
+    /// - Parameters:
+    ///   - capability: The capability in question.
+    ///   - options: The options the machine would be created with.
+    /// - Returns: Whether the capability is supported, never provided, or unavailable for the time being.
+    public static func support(
+        for capability: OptionalCapability,
+        options: QEMUMachineOptions
+    ) -> CapabilitySupport {
+        QEMUConfigurationBuilder<Template>.support(
+            for: capability,
+            options: options,
+            helper: try? QEMUHelperBundle.locate()
+        )
+    }
+
+    /// Checks whether a machine can be created from a template and a set of options, without creating
+    /// or modifying anything on disk.
+    ///
+    /// - Parameters:
+    ///   - template: The template describing the machine.
+    ///   - options: The options the machine would be created with.
+    /// - Throws: A localized error if the template asks for something this backend does not support,
+    ///   or if the helper service is not embedded.
+    public static func validate(_ template: Template, options: QEMUMachineOptions) throws {
+        try QEMUConfigurationBuilder.validate(
+            template,
+            options: options,
+            helper: try QEMUHelperBundle.locate()
+        )
+    }
+
     /// Creates a machine.
     ///
     /// - Parameters:

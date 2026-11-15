@@ -33,7 +33,7 @@ extension QEMUConfigurationBuilder {
     /// The TPM ends itself when the emulator closes the control channel, however the emulator exits.
     func appendTPM(to plan: inout QEMULaunchPlan) throws {
 
-        guard options.includesTPM else { return }
+        guard includesTPM else { return }
 
         let state = plan.stage(.init(url: try storage.prepareTPMState(), access: .readWrite))
 

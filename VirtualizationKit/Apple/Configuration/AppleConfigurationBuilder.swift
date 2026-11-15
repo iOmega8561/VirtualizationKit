@@ -113,28 +113,114 @@ struct AppleConfigurationBuilder<Template: TransferableTemplate> {
                 )
             )
         }
-        
+
+        // Hosts older than macOS 15 are turned away by the validation.
         if #available(macOS 15.0, *), template.optionalCapabilities.contains(.xhciUSBHotSwap) {
             configuration.usbControllers.append(VZXHCIControllerConfiguration())
         }
     }
-    
-    /// Checks the disks of the template against what this backend can attach, without touching the
+
+    /// Tells whether this backend can provide an optional capability to a guest of a given platform.
+    ///
+    /// The single source of truth for capabilities: `validate` acts on the same answer. There is
+    /// deliberately no `default`, so a capability added to the framework does not compile until this
+    /// backend has an answer for it.
+    ///
+    /// - Note: Capturing audio also needs the consent of the user. Asking for it shows a prompt, so it is
+    ///   left to the moment the device is created.
+    ///
+    /// - Parameters:
+    ///   - capability: The capability in question.
+    ///   - platform: The platform the guest runs on.
+    /// - Returns: Whether the capability is supported, never provided, or unavailable for the time being.
+    static func support(
+        for capability: OptionalCapability,
+        on platform: AppleMachineOptions.Platform
+    ) -> CapabilitySupport {
+
+        switch (capability, platform) {
+        case (.rosetta, .linux):
+
+            switch VZLinuxRosettaDirectoryShare.availability {
+            case .installed: return .supported
+            case .notSupported: return .unsupported
+            case .notInstalled: return .unavailable
+            @unknown default: return .unavailable
+            }
+
+        case (.rosetta, .macOS):
+            return .unsupported
+
+        case (.nestedVirtualization, .linux):
+            return hostSupportsNestedVirtualization ? .supported : .unsupported
+
+        case (.nestedVirtualization, .macOS):
+            return .unsupported
+
+        case (.xhciUSBHotSwap, _):
+            if #available(macOS 15.0, *) { return .supported }
+            return .unsupported
+
+        case (.directoryShare, .linux):
+            return .supported
+
+        case (.directoryShare, .macOS(let version, _)):
+            return version.major > 12 ? .supported : .unsupported
+
+        case (.audioOutputDevice, _), (.audioCaptureDevice, _):
+            return .supported
+
+        case (.tpm, _), (.secureBoot, _):
+            return .unsupported
+        }
+    }
+
+    /// Whether the host can run a hypervisor inside a guest.
+    private static var hostSupportsNestedVirtualization: Bool {
+        guard #available(macOS 15.0, *) else { return false }
+        return OptionalCapability.isNestedVirtualizationSupported
+    }
+
+    /// Rejects templates that ask for something this backend cannot provide.
+    ///
+    /// Everything that can be told from the template and the options alone is checked here: the optional
+    /// capabilities and the disks. Nothing is created or modified on disk.
+    ///
+    /// - Parameters:
+    ///   - template: The data transfer object containing all the info about the virtual machine.
+    ///   - options: The settings only this backend understands.
+    static func validate(_ template: Template, options: AppleMachineOptions) throws {
+
+        for capability in template.optionalCapabilities {
+            switch support(for: capability, on: options.platform) {
+            case .supported: continue
+            case .unsupported: throw VZKitError.unsupportedFeature(capability)
+            case .unavailable: throw VZKitError.unavailableFeature(capability)
+            }
+        }
+
+        try validateStorage(template.storage, on: options.platform)
+    }
+
+    /// Checks the disks of a template against what this backend can attach, without touching the
     /// file system.
     ///
     /// On top of the rules every backend shares, Virtualization.framework only offers NVMe
     /// controllers to Linux guests.
-    private func validateStorage() throws {
+    private static func validateStorage(
+        _ storage: [DiskImage],
+        on platform: AppleMachineOptions.Platform
+    ) throws {
 
-        try DiskImage.validate(template.storage)
+        try DiskImage.validate(storage)
 
-        for disk in template.storage {
+        for disk in storage {
 
             switch disk.format {
             case .raw: break
             }
 
-            switch (disk.interface, options.platform) {
+            switch (disk.interface, platform) {
             case (.virtio, _), (.usb, _), (.nvme, .linux): break
             case (.nvme, .macOS):
                 throw VZKitError.unsupportedDiskInterface(disk.kind, disk.interface)
@@ -151,7 +237,7 @@ struct AppleConfigurationBuilder<Template: TransferableTemplate> {
     /// together with the resources that have to outlive it.
     func createConfiguration() async throws -> (VZVirtualMachineConfiguration, AppleMachineResources) {
 
-        try validateStorage()
+        try Self.validate(template, options: options)
 
         try FileManager.default.createDirectory(
             at: vmSupportDirectory,

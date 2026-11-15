@@ -62,6 +62,24 @@ struct QEMUMachineStorage: Sendable {
         } catch { throw VZKitError.qemuStorageFailedSetup(directory.lastPathComponent) }
     }
 
+    /// The name of the UEFI firmware image for an architecture, among the emulator's data files.
+    ///
+    /// - Parameters:
+    ///   - architecture: The architecture of the guest.
+    ///   - secureBoot: Whether to name the Secure Boot capable build.
+    /// - Returns: The file name of the firmware code.
+    static func firmwareCodeName(
+        for architecture: QEMUMachineOptions.Architecture,
+        secureBoot: Bool
+    ) -> String {
+        switch (architecture, secureBoot) {
+        case (.aarch64, false): "edk2-aarch64-code.fd"
+        case (.aarch64, true): "edk2-aarch64-secure-code.fd"
+        case (.x86_64, false): "edk2-x86_64-code.fd"
+        case (.x86_64, true): "edk2-x86_64-secure-code.fd"
+        }
+    }
+
     /// Returns the UEFI firmware image for an architecture.
     ///
     /// - Parameters:
@@ -74,12 +92,7 @@ struct QEMUMachineStorage: Sendable {
         secureBoot: Bool,
         in helper: QEMUHelperBundle
     ) throws -> URL {
-        switch (architecture, secureBoot) {
-        case (.aarch64, false): return try helper.dataFile(named: "edk2-aarch64-code.fd")
-        case (.aarch64, true): return try helper.dataFile(named: "edk2-aarch64-secure-code.fd")
-        case (.x86_64, false): return try helper.dataFile(named: "edk2-x86_64-code.fd")
-        case (.x86_64, true): return try helper.dataFile(named: "edk2-x86_64-secure-code.fd")
-        }
+        try helper.dataFile(named: Self.firmwareCodeName(for: architecture, secureBoot: secureBoot))
     }
 
     /// Returns the UEFI variable store for a firmware, creating it on first use.
