@@ -53,16 +53,14 @@ enum VZKitError: LocalizedError {
     // Configuration/Generic
     case macUnsupportedImage
     case macUnsupportedHost
-    case appleUnsupportedGuest(_ name: String)
-    case wrongMacImageVersion(_ expected: OperatingSystem.Version,
-                              _ actual: OperatingSystem.Version)
+    case wrongMacImageVersion(_ expected: AppleMachineOptions.Version,
+                              _ actual: AppleMachineOptions.Version)
     
     // QEMU backend
     case qemuHelperUnavailable
     case qemuHelperFailure(_ reason: String)
     case qemuFirmwareMissing(_ name: String)
     case qemuStorageFailedSetup(_ name: String)
-    case qemuUnsupportedGuest(_ name: String)
     case qemuUnsupportedNetwork(_ name: String)
     case qemuInvalidState(_ name: String)
     case qemuProcessExited(_ status: Int32, _ diagnostics: String)
@@ -101,7 +99,6 @@ enum VZKitError: LocalizedError {
                     
         case .macUnsupportedImage: .init("error-macUnsupportedImage")
         case .macUnsupportedHost: .init("error-macUnsupportedHost")
-        case .appleUnsupportedGuest(let name): .init("error-appleUnsupportedGuest", name)
         case .wrongMacImageVersion(let expected, let actual):
                 .init("error-wrongMacImageVersion", expected, actual)
                     
@@ -109,7 +106,6 @@ enum VZKitError: LocalizedError {
         case .qemuHelperFailure(let reason): .init("error-qemuHelperFailure", reason)
         case .qemuFirmwareMissing(let name): .init("error-qemuFirmwareMissing", name)
         case .qemuStorageFailedSetup(let name): .init("error-qemuStorageFailedSetup", name)
-        case .qemuUnsupportedGuest(let name): .init("error-qemuUnsupportedGuest", name)
         case .qemuUnsupportedNetwork(let name): .init("error-qemuUnsupportedNetwork", name)
         case .qemuInvalidState(let name): .init("error-qemuInvalidState", name)
         case .qemuProcessExited(let status, let diagnostics):

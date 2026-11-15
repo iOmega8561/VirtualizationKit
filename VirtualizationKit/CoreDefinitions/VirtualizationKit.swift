@@ -32,7 +32,7 @@ public final class _VirtualizationKit: Sendable {
     public let version: String = "1.4.6"
     
     /// The minimum macOS version supported as a guest operating system
-    public let macOSGuestMinVersion: OperatingSystem.Version = .init(major: 12, minor: 4, patch: 0)
+    public let macOSGuestMinVersion: AppleMachineOptions.Version = .init(major: 12, minor: 4, patch: 0)
     
     /// The resource bundle of this framework,
     /// to get assets and localized strings from here and not the main bundle

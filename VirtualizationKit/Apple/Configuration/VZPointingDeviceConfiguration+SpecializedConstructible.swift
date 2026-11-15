@@ -29,17 +29,17 @@ extension VZPointingDeviceConfiguration: SpecializedConstructible {
     /// device configuration according to the OS of choice.
     ///
     /// - Parameters:
-    ///   - type: The guest operating system.
-    static func create(type: OperatingSystem) -> Product {
+    ///   - type: The platform the guest runs on.
+    static func create(type: AppleMachineOptions.Platform) -> Product {
         
         switch type {
-        case .macos(let version, _):
+        case .macOS(let version, _):
             
             guard version.major > 12  else { fallthrough }
             
             return VZMacTrackpadConfiguration()
             
-        default:
+        case .linux:
             
             return VZUSBScreenCoordinatePointingDeviceConfiguration()
         }

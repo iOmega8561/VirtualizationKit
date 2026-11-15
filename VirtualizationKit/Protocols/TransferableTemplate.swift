@@ -54,12 +54,6 @@ public protocol TransferableTemplate: Identifiable, Transferable {
     /// when it has one. See `DiskImage` for the meaning of the individual properties.
     var storage: [DiskImage] { get }
     
-    /// The operating system configuration associated with this template.
-    ///
-    /// Provides details about which OS is used in the VM, as well as any
-    /// relevant configuration specific to that OS.
-    var operatingSystem: OperatingSystem { get }
-    
     /// The network configuration defining how the VM connects to other networks or VMs.
     ///
     /// This property encapsulates details such as NIC types, NAT or bridged networking,

@@ -33,8 +33,8 @@ extension VZDirectorySharingDeviceConfiguration: PersistentConstructible {
     ///
     /// - Parameters:
     ///   - url: The location at which the shared mount should be created on the host file system.
-    ///   - type: The guest operating system.
-    static func create(at url: URL, type: OperatingSystem) throws -> Product {
+    ///   - type: The platform the guest runs on.
+    static func create(at url: URL, type: AppleMachineOptions.Platform) throws -> Product {
         
         try FileManager.default.createDirectory(
             atPath: url.path(percentEncoded: false),
@@ -51,7 +51,7 @@ extension VZDirectorySharingDeviceConfiguration: PersistentConstructible {
         let sharingDevice: Product
         
         switch type {
-        case .macos(let version, _):
+        case .macOS(let version, _):
             
             guard version.major > 12 else {
                 throw VZKitError.unsupportedFeature(.directoryShare)
@@ -61,7 +61,7 @@ extension VZDirectorySharingDeviceConfiguration: PersistentConstructible {
                 tag: Product.macOSGuestAutomountTag
             )
             
-        default:
+        case .linux:
             sharingDevice = .init(tag: "DEFAULT_SHARE")
             
         }

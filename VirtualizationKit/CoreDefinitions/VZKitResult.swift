@@ -45,8 +45,9 @@ import Virtualization
 ///
 /// - `vmType`: The concrete type of the virtual machine to be created. This type must conform to `VirtualMachine`.
 /// - `template`: A configuration object conforming to `TransferableTemplate` that specifies the settings for the virtual machine.
+/// - `options`: The backend-specific settings of the virtual machine. When omitted, the default options of the backend are used.
 ///
-/// The initializer uses the `init(template:)` method on the specified `vmType`. If the initialization is successful,
+/// The initializer uses the `init(template:options:)` method on the specified `vmType`. If the initialization is successful,
 /// the instance is stored in the `.success` case; if an error occurs, it is captured in the `.failure` case.
 ///
 /// - Note: The associated `Template` type of the virtual machine must match the type of the provided `template`.
@@ -99,17 +100,19 @@ public enum VZKitResult: Sendable {
     /// using the provided configuration template.
     ///
     /// This initializer takes a specific virtual machine type and a configuration object, then attempts
-    /// to create the virtual machine via its `init(template:)` initializer. If the initialization succeeds,
+    /// to create the virtual machine via its `init(template:options:)` initializer. If the initialization succeeds,
     /// the result is stored in the `.success` case of `VZKitResult`; if an error occurs, it is captured in
     /// the `.failure` case.
     ///
     /// - Parameters:
     ///   - vmType: The concrete type of the virtual machine to be created. This type must conform to `VirtualMachine`.
     ///   - template: A configuration object conforming to `TransferableTemplate` that specifies the settings for the virtual machine.
+    ///   - options: The backend-specific settings of the virtual machine. Defaults to the default options of the backend.
     /// - Note: The associated `Template` type of the virtual machine must match the type of the provided `template`.
     /// - Usage:
     ///   ```swift
     ///   let result = await VZKitResult(MyVirtualMachine.self, using: myTemplate)
+    ///   let other = await VZKitResult(MyVirtualMachine.self, using: myTemplate, options: myOptions)
     ///   ```
     /// - Important: This initializer does not throw errors directly; instead, any errors encountered during
     ///   initialization are captured within the resulting `VZKitResult` instance.
@@ -118,12 +121,13 @@ public enum VZKitResult: Sendable {
         Template: TransferableTemplate
     >(
         _ vmType: Product.Type,
-        using template: Template
+        using template: Template,
+        options: Product.Options = .default
     )
     async where Product.Template == Template {
         do {
             self = .success(
-                try await vmType.init(template: template)
+                try await vmType.init(template: template, options: options)
             )
         } catch {
             

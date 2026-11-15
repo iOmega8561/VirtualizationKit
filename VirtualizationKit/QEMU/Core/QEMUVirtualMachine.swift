@@ -88,20 +88,12 @@ public struct QEMUVirtualMachine<Template: TransferableTemplate>: VirtualMachine
         }
     }
 
-    /// Creates a machine with the default backend options.
-    ///
-    /// - Parameter template: The template describing the machine.
-    /// - Throws: A localized error if the template asks for something this backend does not support,
-    ///   if the helper service is not embedded, or if the files of the machine cannot be provisioned.
-    public init(template: Template) async throws {
-        try await self.init(template: template, options: .init())
-    }
-
-    /// Creates a machine with explicit backend options.
+    /// Creates a machine.
     ///
     /// - Parameters:
     ///   - template: The template describing the machine.
-    ///   - options: The backend-specific settings, such as the guest architecture.
+    ///   - options: The backend-specific settings, such as the guest architecture. `init(template:)`
+    ///     passes the default, which describes an `aarch64` Linux guest.
     /// - Throws: A localized error if the template asks for something this backend does not support,
     ///   if the helper service is not embedded, or if the files of the machine cannot be provisioned.
     public init(template: Template, options: QEMUMachineOptions) async throws {
@@ -109,13 +101,7 @@ public struct QEMUVirtualMachine<Template: TransferableTemplate>: VirtualMachine
         let builder = try await QEMUConfigurationBuilder(template: template, options: options)
         let (plan, mediaAccess) = try builder.createLaunchPlan()
         let stateCoordinator = await QEMUStateCoordinator()
-        let display: QEMUDisplay
-
-        if case .windows = template.operatingSystem {
-            display = await QEMUDisplay(guestDrawsPointer: true)
-        } else {
-            display = await QEMUDisplay()
-        }
+        let display = await QEMUDisplay(guestDrawsPointer: options.guestDrawsPointer)
 
         self.template = template
         self.options = options

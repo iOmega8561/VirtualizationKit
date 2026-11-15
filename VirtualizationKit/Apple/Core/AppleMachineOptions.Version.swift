@@ -15,7 +15,7 @@
 //
 //  -----------------------------------------------------------------------
 //
-//  OperatingSystem.Version.swift
+//  AppleMachineOptions.Version.swift
 //  VirtualizationKit
 //
 //  Created by Giuseppe Rocco on 12/11/24.
@@ -23,8 +23,8 @@
 
 import Foundation
 
-extension OperatingSystem {
-    
+extension AppleMachineOptions {
+
     /// A data structure that standardizes the representation of a guest operating system version.
     ///
     /// The `Version` struct provides a consistent and structured way to store version information, including:
@@ -53,9 +53,9 @@ extension OperatingSystem {
     ///
     /// - Note: When using `Comparable`, versions are compared by their major, minor, patch, and build values in sequence.
     public struct Version: Equatable, Comparable, Transferable {
-        
+
         // MARK: - Comparable Conformance
-            
+
         /// Compares two `Version` instances to determine if the left-hand instance is less than the right-hand instance.
         ///
         /// - Parameters:
@@ -63,43 +63,43 @@ extension OperatingSystem {
         ///   - rhs: The right-hand `Version` instance.
         /// - Returns: `true` if the left-hand version is less than the right-hand version, otherwise `false`.
         public static func < (lhs: Version, rhs: Version) -> Bool {
-            
+
             if lhs.major != rhs.major {
                 lhs.major < rhs.major
-                
+
             } else if let lhsMinor = lhs.minor,
                       let rhsMinor = rhs.minor,
                       lhsMinor != rhsMinor {
                 lhsMinor < rhsMinor
-                
+
             } else if let lhsPatch = lhs.patch,
                       let rhsPatch = rhs.patch,
                       lhsPatch != rhsPatch {
                 lhsPatch < rhsPatch
-                
+
             } else if let lhsBuild = lhs.build,
                       let rhsBuild = rhs.build,
                       lhsBuild != rhsBuild {
-                
+
                 lhsBuild < rhsBuild
-                
+
             } else { lhs.major < rhs.major }
         }
-        
+
         // MARK: - Properties
-        
+
         /// The major version number of the operating system.
         public let major: Int
-        
+
         /// The minor version number of the operating system, if available.
         public let minor: Int?
-        
+
         /// The patch version number of the operating system, if available.
         public let patch: Int?
-        
+
         /// The build identifier string of the operating system, if available.
         public let build: String?
-        
+
         /// A textual representation of the version and build identifier.
         ///
         /// This property combines the major, minor, and patch numbers along with the build string (if available)
@@ -115,9 +115,9 @@ extension OperatingSystem {
             if let build = self.build { version += " (\(build))" }
             return version
         }
-        
+
         // MARK: - Initializers
-        
+
         /// Initializes a `Version` instance with specific major, minor, patch, and build values.
         ///
         /// - Parameters:
@@ -131,7 +131,7 @@ extension OperatingSystem {
             self.patch = patch
             self.build = build
         }
-        
+
         /// Initializes a `Version` instance from an `OperatingSystemVersion` object.
         ///
         /// - Parameters:

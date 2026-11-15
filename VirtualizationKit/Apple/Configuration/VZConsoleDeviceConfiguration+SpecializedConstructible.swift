@@ -30,15 +30,15 @@ extension VZConsoleDeviceConfiguration: SpecializedConstructible {
     /// Static factory method for `VZVirtioConsoleDeviceConfiguration`.
     /// Spice console configuration is standard across the different vm types, the only difference is that currently
     /// Clipboard sharing is not supported for macOS guests, so we explicitly disable it in that case.
-    static func create(type: OperatingSystem) -> Product {
+    static func create(type: AppleMachineOptions.Platform) -> Product {
         let dev = Product()
         let portAttachment = VZSpiceAgentPortAttachment()
         
         switch type {
-        case .macos:
+        case .macOS:
             portAttachment.sharesClipboard = false
             
-        default:
+        case .linux:
             portAttachment.sharesClipboard = true
         }
                 

@@ -40,6 +40,7 @@ import Virtualization
 /// ## Separation of Concerns
 /// - **`template`**: Contains the VM configuration details (memory, CPU, storage, etc.). This is provided
 ///   by user-defined types conforming to `TransferableTemplate`.
+/// - **`options`**: Contains what only this backend understands: the platform the guest runs on.
 /// - **`stateCoordinator`**: Manages execution state (`ExecutionState`) and broadcasts updates through
 ///   Combine publishers. Marked `@MainActor` for thread-safe UI integration.
 /// - **`vzVirtualMachine`**: The primary Apple Virtualization object, handling lifecycle actions like
@@ -74,6 +75,11 @@ public struct AppleVirtualMachine<Template: TransferableTemplate>: VirtualMachin
     /// to `TransferableTemplate`.
     public let template: Template
     
+    /// The settings only this backend understands, such as the platform the guest runs on.
+    ///
+    /// Together with `template`, they identify the machine: persist the two side by side.
+    public let options: AppleMachineOptions
+
     /// Manages the VM’s execution state and communicates changes on the main actor.
     ///
     /// `stateCoordinator` tracks `ExecutionState` updates and provides Combine publishers
@@ -164,14 +170,17 @@ public struct AppleVirtualMachine<Template: TransferableTemplate>: VirtualMachin
 
     /// Initializes a new `AppleVirtualMachine` by creating a `VZVirtualMachine` instance and delegating events.
     ///
-    /// - Parameter template: The configuration object that describes how the virtual machine should be built.
+    /// - Parameters:
+    ///   - template: The configuration object that describes how the virtual machine should be built.
+    ///   - options: The settings only this backend understands. `init(template:)` passes the default,
+    ///     which describes a Linux guest.
     /// - Throws: Errors encountered while generating the VM configuration, setting up the virtualization
     ///           framework, or initializing the event delegation process.
-    public init(template: Template) async throws {
+    public init(template: Template, options: AppleMachineOptions) async throws {
         
         self.removableMediaAccess = .init()
         
-        let builder = await AppleConfigurationBuilder(template: template)
+        let builder = await AppleConfigurationBuilder(template: template, options: options)
         let (configuration, resources) = try await builder.createConfiguration()
         let errorDelegate = AppleErrorDelegate()
         
@@ -184,6 +193,7 @@ public struct AppleVirtualMachine<Template: TransferableTemplate>: VirtualMachin
         
         self.errorDelegate = errorDelegate
         self.template = template
+        self.options = options
         self.stateCoordinator = await .init()
         
         await self.stateCoordinator.subscribe(errorDelegate.errorSubject)

@@ -46,11 +46,6 @@ struct QEMUConfigurationBuilder<Template: TransferableTemplate>: Sendable {
     /// reports for unsupported features.
     private func validate() throws {
 
-        switch template.operatingSystem {
-        case .linux, .windows: break
-        case .macos: throw VZKitError.qemuUnsupportedGuest(template.operatingSystem.displayName)
-        }
-
         for capability in template.optionalCapabilities {
             switch capability {
             case .audioOutputDevice, .xhciUSBHotSwap:
@@ -108,8 +103,10 @@ struct QEMUConfigurationBuilder<Template: TransferableTemplate>: Sendable {
         }
 
         plan.append("-uuid", template.id.uuidString.lowercased())
-        // Windows keeps the hardware clock in local time, everything else in UTC.
-        plan.append("-rtc", isWindowsGuest ? "base=localtime" : "base=utc")
+        switch options.clock {
+        case .utc: plan.append("-rtc", "base=utc")
+        case .localTime: plan.append("-rtc", "base=localtime")
+        }
     }
 
     /// Emits the machine type, the accelerator and the processor and memory resources.
@@ -171,19 +168,19 @@ struct QEMUConfigurationBuilder<Template: TransferableTemplate>: Sendable {
 
         switch options.architecture {
         case .aarch64 where usesFramebufferDisplay:
-            // A virtio GPU that also exposes a RAM framebuffer, which the firmware and Windows' basic
-            // display driver use without any driver.
+            // A virtio GPU that also exposes a RAM framebuffer, which the firmware and guests without
+            // a virtio GPU driver (Windows' basic display driver, for one) draw to.
             plan.append("-device", "virtio-ramfb,\(resolution)")
 
         case .aarch64:
             plan.append("-device", "virtio-gpu-pci,\(resolution)")
 
-        case .x86_64 where options.displayDevice == .virtioGPU:
-            plan.append("-device", "virtio-gpu-pci,\(resolution)")
-
-        case .x86_64:
+        case .x86_64 where usesFramebufferDisplay:
             // Includes a VGA-compatible framebuffer, which also serves guests without a virtio driver.
             plan.append("-device", "virtio-vga,\(resolution)")
+
+        case .x86_64:
+            plan.append("-device", "virtio-gpu-pci,\(resolution)")
         }
 
         plan.append("-device", "qemu-xhci,id=xhci")
@@ -219,18 +216,12 @@ struct QEMUConfigurationBuilder<Template: TransferableTemplate>: Sendable {
         }
     }
 
-    /// Whether the display device carries a RAM framebuffer in front of the virtio GPU.
+    /// Whether the display device carries a framebuffer that needs no virtio GPU driver.
     var usesFramebufferDisplay: Bool {
         switch options.displayDevice {
-        case .automatic: isWindowsGuest
         case .virtioGPU: false
         case .virtioGPUWithFramebuffer: true
         }
-    }
-
-    /// Whether the guest runs Windows, which needs hardware it has drivers for out of the box.
-    var isWindowsGuest: Bool {
-        if case .windows = template.operatingSystem { true } else { false }
     }
 
     // MARK: - Launch Plan

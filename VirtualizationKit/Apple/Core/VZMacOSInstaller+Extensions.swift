@@ -64,8 +64,8 @@ extension VZMacOSInstaller {
     /// Asynchronously initializes a new `VZMacOSInstaller` using the specified virtual machine.
     ///
     /// This convenience initializer performs several steps:
-    /// - It checks if the provided virtual machine's template has an operating system other than Linux.
-    ///   If the operating system is Linux, the initializer returns `nil` since macOS installation is not applicable.
+    /// - It checks if the provided virtual machine runs on the macOS platform.
+    ///   If the platform is Linux, the initializer returns `nil` since macOS installation is not applicable.
     /// - It retrieves the location of the restore image the virtual machine's template refers to.
     ///   If there is none, or it cannot be located anymore, it throws a `VZKitError.missingMacImage` error.
     /// - It calls the designated initializer with the underlying virtual machine (`vzVirtualMachine`)
@@ -75,12 +75,12 @@ extension VZMacOSInstaller {
     ///
     /// - Parameter virtualMachine: An instance of `AppleVirtualMachine` parameterized over a `TransferableTemplate`.
     /// - Throws: An error if the restore image is missing or if any asynchronous operation fails.
-    /// - Returns: An optional instance of `VZMacOSInstaller`. Returns `nil` if the virtual machine's template
-    ///   operating system is Linux.
+    /// - Returns: An optional instance of `VZMacOSInstaller`. Returns `nil` if the virtual machine's
+    ///   platform is Linux.
     convenience init?<Template: TransferableTemplate>(virtualMachine: AppleVirtualMachine<Template>) async throws {
         
-        // Ensure that the operating system is appropriate for a macOS installer.
-        guard case .macos = virtualMachine.template.operatingSystem else {
+        // Ensure that the platform is appropriate for a macOS installer.
+        guard case .macOS = virtualMachine.options.platform else {
             return nil
         }
         

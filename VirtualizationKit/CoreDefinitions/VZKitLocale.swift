@@ -113,12 +113,12 @@ struct VZKitLocale {
     ///
     /// - Parameters:
     ///   - key: A `String.LocalizationValue` representing the localization key.
-    ///   - lver: A `OperatingSystem.Version` representing the left-hand version in the comparison.
-    ///   - rver: A `OperatingSystem.Version` representing the right-hand version in the comparison.
+    ///   - lver: A `AppleMachineOptions.Version` representing the left-hand version in the comparison.
+    ///   - rver: A `AppleMachineOptions.Version` representing the right-hand version in the comparison.
     init(
         _ key: String.LocalizationValue,
-        _ lver: OperatingSystem.Version,
-        _ rver: OperatingSystem.Version
+        _ lver: AppleMachineOptions.Version,
+        _ rver: AppleMachineOptions.Version
     ) {
         self.init(key, lver.description, rver.description)
     }

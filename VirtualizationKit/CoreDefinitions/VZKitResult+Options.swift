@@ -20,12 +20,13 @@ public extension VZKitResult {
 
     /// Creates a result from any expression that creates a virtual machine.
     ///
-    /// This is the general form of the type-based initializer, for virtual machines that take more
-    /// than a template, such as options:
+    /// This is the general form of the type-based initializer, for virtual machines whose creation
+    /// involves more than a call to their initializer:
     ///
     /// ```swift
     /// let result = await VZKitResult {
-    ///     try await QEMUVirtualMachine(template: template, options: options)
+    ///     let options = AppleMachineOptions(platform: try await .macOS(restoreImageAt: imageURL))
+    ///     return try await AppleVirtualMachine(template: template, options: options)
     /// }
     /// ```
     ///
@@ -37,34 +38,6 @@ public extension VZKitResult {
             self = .success(try await makeVirtualMachine())
         } catch {
             self = .failure(error)
-        }
-    }
-
-    /// Creates a QEMU virtual machine with machine options, capturing the outcome.
-    ///
-    /// The counterpart of `init(_:using:)` for the QEMU backend, which takes options in addition to the
-    /// template. That initializer creates QEMU machines with default options.
-    ///
-    /// ```swift
-    /// let result = await VZKitResult(
-    ///     QEMUVirtualMachine<MyTemplate>.self,
-    ///     using: template,
-    ///     options: .init(architecture: .aarch64, includesTPM: true)
-    /// )
-    /// ```
-    ///
-    /// - Parameters:
-    ///   - vmType: The QEMU virtual machine type, specialised for the template type.
-    ///   - template: The template describing the machine.
-    ///   - options: The options of the QEMU backend.
-    /// - Important: This initializer does not throw; errors are captured within the result.
-    init<Template: TransferableTemplate>(
-        _ vmType: QEMUVirtualMachine<Template>.Type,
-        using template: Template,
-        options: QEMUMachineOptions
-    ) async {
-        self = await VZKitResult {
-            try await vmType.init(template: template, options: options)
         }
     }
 }

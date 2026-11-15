@@ -30,11 +30,11 @@ extension VZGraphicsDeviceConfiguration: SpecializedConstructible {
     /// together with the size the display starts with, and returns the appropriate attachment.
     ///
     /// - Parameters:
-    ///   - type: The guest operating system and the initial size of its display.
-    static func create(type: (operatingSystem: OperatingSystem, display: DisplaySize)) -> Product {
+    ///   - type: The platform the guest runs on and the initial size of its display.
+    static func create(type: (platform: AppleMachineOptions.Platform, display: DisplaySize)) -> Product {
 
-        switch type.operatingSystem {
-        case .macos:
+        switch type.platform {
+        case .macOS:
             
             let dev = VZMacGraphicsDeviceConfiguration()
             
@@ -47,7 +47,7 @@ extension VZGraphicsDeviceConfiguration: SpecializedConstructible {
             )
             
             return dev
-        default:
+        case .linux:
             
             let dev = VZVirtioGraphicsDeviceConfiguration()
             

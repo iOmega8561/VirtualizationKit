@@ -34,7 +34,8 @@ import Virtualization
 ///
 /// ## Key Responsibilities
 /// - **Action Dispatch**: Implement a mechanism to handle and execute high-level VM actions (e.g., start, stop).
-/// - **Configuration**: Provide a template object describing how the VM is set up (e.g., memory, disk, CPU).
+/// - **Configuration**: Provide a template object describing how the VM is set up (e.g., memory, disk, CPU),
+///   and an options object for what only the backend at hand understands.
 /// - **State Management**: Expose a state coordinator that observes and broadcasts execution state changes.
 ///
 /// ## Concurrency
@@ -47,9 +48,11 @@ import Virtualization
 /// struct MyCustomVM: VirtualMachine {
 ///     typealias ExecutableAction = MyVMAction
 ///     typealias Template = MyVMTemplate
+///     typealias Options = MyVMOptions
 ///     typealias StateCoordinator = MyStateCoordinator
 ///
 ///     var template: MyVMTemplate
+///     var options: MyVMOptions
 ///     var stateCoordinator: MyStateCoordinator
 ///
 ///     func execute(action: MyVMAction) async throws {
@@ -77,6 +80,13 @@ public protocol VirtualMachine: Sendable {
     /// essential configuration details (e.g., CPU count, memory allocation, storage parameters).
     associatedtype Template: TransferableTemplate
     
+    /// Defines the settings that only this backend understands.
+    ///
+    /// A template is written in terms every backend shares. Whatever is specific to one of them, such as
+    /// the platform a guest of the Apple backend runs on or the processor architecture QEMU emulates, is
+    /// described by its options. Every options type has a default; see `MachineOptions`.
+    associatedtype Options: MachineOptions
+
     /// Manages and broadcasts the execution state of the virtual machine.
     ///
     /// `Coordinator` is responsible for tracking state changes such as transitioning from
@@ -93,6 +103,12 @@ public protocol VirtualMachine: Sendable {
     /// remains consistent with any backend-specific requirements.
     var template: Template { get }
     
+    /// The backend-specific settings the virtual machine was created with.
+    ///
+    /// Together with `template`, they identify the machine. An application that persists templates
+    /// persists the options next to them.
+    var options: Options { get }
+
     /// The state manager responsible for tracking the VM's execution state.
     ///
     /// Conforming implementations should keep the `stateCoordinator` in sync with any state
@@ -114,7 +130,7 @@ public protocol VirtualMachine: Sendable {
     ///           the state is updated or rolled back as appropriate before propagating the error.
     func execute(action: Action) async throws
     
-    /// Initializes a new virtual machine instance using the specified configuration template.
+    /// Initializes a new virtual machine instance using the specified configuration template and options.
     ///
     /// Conforming types must implement any backend-specific logic needed to transform the given
     /// `Template` into a functioning virtual machine. This could involve preparing hardware
@@ -122,10 +138,30 @@ public protocol VirtualMachine: Sendable {
     /// If the initialization process encounters issues—such as incompatible template data
     /// or resource limitations—an error should be thrown.
     ///
+    /// - Parameters:
+    ///   - template: An instance conforming to `TransferableTemplate`, providing the configuration
+    ///     details required to set up the virtual machine.
+    ///   - options: The settings that only this backend understands.
+    /// - Throws: An error if the virtual machine cannot be properly initialized from the provided template.
+    init(template: Template, options: Options) async throws
+}
+
+// MARK: - Default Options
+
+public extension VirtualMachine {
+
+    /// Initializes a new virtual machine instance using the specified configuration template and the
+    /// default options of the backend.
+    ///
+    /// The defaults of the backends shipped with the framework describe a 64-bit ARM Linux guest. Any
+    /// other kind of machine needs explicit options; see `init(template:options:)`.
+    ///
     /// - Parameter template: An instance conforming to `TransferableTemplate`, providing the configuration
     ///   details required to set up the virtual machine.
     /// - Throws: An error if the virtual machine cannot be properly initialized from the provided template.
-    init(template: Template) async throws
+    init(template: Template) async throws {
+        try await self.init(template: template, options: .default)
+    }
 }
 
 

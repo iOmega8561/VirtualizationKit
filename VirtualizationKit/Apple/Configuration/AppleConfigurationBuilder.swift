@@ -35,6 +35,9 @@ struct AppleConfigurationBuilder<Template: TransferableTemplate> {
     /// A copy of the DTO to have all the necessary info about the VM template
     let template: Template
     
+    /// The settings only this backend understands, such as the platform the guest runs on
+    let options: AppleMachineOptions
+
     /// Reference to the native `Virtualization` framework configuration object
     let configuration: VZVirtualMachineConfiguration
     
@@ -42,7 +45,7 @@ struct AppleConfigurationBuilder<Template: TransferableTemplate> {
     private let vmSupportDirectory: URL
     
     /// This method is responsible of building the full fledged virtual machine configuration scheme.
-    /// To do that it makes a distinction between the different guest operating systems, since they need completely different
+    /// To do that it makes a distinction between the different guest platforms, since they need completely different
     /// configuration schemes. Its workings are helped by the several static factory methods implemented for every virtual device.
     /// It also creates the VM folder if the latter doesn't exist already.
     ///
@@ -54,8 +57,8 @@ struct AppleConfigurationBuilder<Template: TransferableTemplate> {
         disks: [ProvisionedDiskImage]
     ) async throws {
         
-        switch template.operatingSystem {
-        case .macos:
+        switch options.platform {
+        case .macOS:
             
             configuration.platform = try .create(
                 at: vmSupportDirectory,
@@ -78,21 +81,16 @@ struct AppleConfigurationBuilder<Template: TransferableTemplate> {
             if template.optionalCapabilities.contains(.rosetta) {
                 configuration.directorySharingDevices.append(try VZLinuxRosettaDirectoryShare.create())
             }
-            
-        case .windows:
-            
-            // Rejected by the public entry point already; kept for exhaustiveness.
-            throw VZKitError.appleUnsupportedGuest(template.operatingSystem.displayName)
         }
       
         for disk in disks {
             configuration.storageDevices.append(try VZStorageDeviceConfiguration.create(for: disk))
         }
         
-        configuration.consoleDevices.append(.create(type: template.operatingSystem))
-        configuration.graphicsDevices.append(.create(type: (template.operatingSystem, template.display)))
-        configuration.keyboards.append(.create(type: template.operatingSystem))
-        configuration.pointingDevices.append(.create(type: template.operatingSystem))
+        configuration.consoleDevices.append(.create(type: options.platform))
+        configuration.graphicsDevices.append(.create(type: (options.platform, template.display)))
+        configuration.keyboards.append(.create(type: options.platform))
+        configuration.pointingDevices.append(.create(type: options.platform))
         configuration.networkDevices.append(try .create(type: template.networkTopology))
         configuration.cpuCount = template.performancePreset.cpuCoreCount
         configuration.memorySize = template.performancePreset.memorySize
@@ -111,7 +109,7 @@ struct AppleConfigurationBuilder<Template: TransferableTemplate> {
             configuration.directorySharingDevices.append(
                 try .create(
                     at: vmSupportDirectory.appendingPathComponent(template.name),
-                    type: template.operatingSystem
+                    type: options.platform
                 )
             )
         }
@@ -136,9 +134,9 @@ struct AppleConfigurationBuilder<Template: TransferableTemplate> {
             case .raw: break
             }
 
-            switch (disk.interface, template.operatingSystem) {
+            switch (disk.interface, options.platform) {
             case (.virtio, _), (.usb, _), (.nvme, .linux): break
-            case (.nvme, .macos), (.nvme, .windows):
+            case (.nvme, .macOS):
                 throw VZKitError.unsupportedDiskInterface(disk.kind, disk.interface)
             }
         }
@@ -148,7 +146,7 @@ struct AppleConfigurationBuilder<Template: TransferableTemplate> {
     /// first, so that a description this backend cannot honour leaves nothing behind on disk; then the folder
     /// of the VM and its disks are located (and created, if missing); finally the configuration scheme is put together.
     ///
-    /// Only macOS guests need a restore image, other OSes skip directly to `createConfiguration(using: nil, disks:)`.
+    /// Only macOS guests need a restore image, other platforms skip directly to `createConfiguration(using: nil, disks:)`.
     /// After that call terminates, the method validates the configuration scheme and returns it to its caller,
     /// together with the resources that have to outlive it.
     func createConfiguration() async throws -> (VZVirtualMachineConfiguration, AppleMachineResources) {
@@ -165,12 +163,12 @@ struct AppleConfigurationBuilder<Template: TransferableTemplate> {
         )
 
         var restoreImageAccess: SecurityScopedAccess? = nil
-        
-        switch template.operatingSystem {
-        case .macos(let version, let bookmark):
-            
+
+        switch options.platform {
+        case .macOS(let version, let bookmark):
+
             var restoreImage: VZMacOSRestoreImage? = nil
-            
+
             // An installed machine works without its restore image, so one that cannot be
             // located or read anymore is not an error by itself.
             if let bookmark {
@@ -180,7 +178,7 @@ struct AppleConfigurationBuilder<Template: TransferableTemplate> {
             if  let url = restoreImageAccess?.url,
                 let image = try? await VZMacOSRestoreImage.load(from: url) {
                 
-                let macOSImageVersion = OperatingSystem.Version(
+                let macOSImageVersion = AppleMachineOptions.Version(
                     image.operatingSystemVersion
                 )
                 
@@ -194,11 +192,6 @@ struct AppleConfigurationBuilder<Template: TransferableTemplate> {
             try await createConfiguration(using: restoreImage, disks: disks)
             
         case .linux: try await createConfiguration(using: nil, disks: disks)
-            
-        case .windows:
-            
-            // Virtualization.framework has no support for Windows guests.
-            throw VZKitError.appleUnsupportedGuest(template.operatingSystem.displayName)
         }
         
         try configuration.validate()
@@ -213,8 +206,10 @@ struct AppleConfigurationBuilder<Template: TransferableTemplate> {
     ///
     /// - Parameters:
     ///   - template: The data transfer object containing all the info about the virtual machine.
-    init(template: Template) async {
+    ///   - options: The settings only this backend understands.
+    init(template: Template, options: AppleMachineOptions) async {
         self.template = template
+        self.options = options
         
         self.configuration = VZVirtualMachineConfiguration()
         
