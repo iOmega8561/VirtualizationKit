@@ -35,6 +35,11 @@ enum VZKitError: LocalizedError {
     case coreFilesMissing
     case missingMacImage
     
+    // Storage
+    case diskImageUnreachable(_ name: String?)
+    case invalidDiskImage(_ id: UUID)
+    case unsupportedDiskInterface(_ kind: DiskImage.Kind, _ interface: DiskImage.Interface)
+
     // Features
     case unavailableFeature(_ capability: OptionalCapability)
     case permissionDenied(_ capability: OptionalCapability)
@@ -77,6 +82,12 @@ enum VZKitError: LocalizedError {
         case .coreFilesTampered: .init("error-coreFilesTampered")
         case .coreFilesMissing: .init("error-coreFilesMissing")
         case .missingMacImage: .init("error-missingMacImage")
+
+        case .diskImageUnreachable(let name?): .init("error-diskImageUnreachable", name)
+        case .diskImageUnreachable(nil): .init("error-diskImageUnreachableGeneric")
+        case .invalidDiskImage(let id): .init("error-invalidDiskImage", id.uuidString)
+        case .unsupportedDiskInterface(let kind, let interface):
+            .init("error-unsupportedDiskInterface", kind.localizedName, interface.displayName)
                 
         case .permissionDenied(let capability): .init("error-permissionDenied", capability)
         case .unavailableFeature(let capability): .init("error-unavailableFeature", capability)

@@ -29,13 +29,13 @@ import os
 /// nothing is balanced on release. This makes the guard safe to use unconditionally, for sandboxed and
 /// non-sandboxed hosts alike.
 ///
-/// - Important: A URL loses its security scope when it is encoded and decoded. The embedding
-///   application is expected to persist a security-scoped bookmark and to hand the framework a URL
-///   freshly resolved from it.
+/// - Important: A URL loses its security scope when it is encoded and decoded. What gets persisted
+///   is therefore a security-scoped bookmark, and the guard is created from the bookmark with
+///   `init(resolving:)`.
 final class SecurityScopedAccess: Sendable {
 
     /// The resource this guard keeps reachable.
-    private let url: URL
+    let url: URL
 
     /// Whether access was actually started, and therefore has to be balanced.
     private let isAccessing: Bool
@@ -46,6 +46,41 @@ final class SecurityScopedAccess: Sendable {
     init(url: URL) {
         self.url = url
         self.isAccessing = url.startAccessingSecurityScopedResource()
+    }
+
+    /// Starts accessing the resource a bookmark refers to.
+    ///
+    /// The bookmark is resolved with its security scope first. Bookmarks created without one, as an
+    /// application outside of the App Sandbox may do, are resolved as plain bookmarks.
+    ///
+    /// - Parameter bookmark: Bookmark data, as produced by `URL.bookmarkData(options:)`.
+    /// - Throws: The error of the bookmark resolution if the resource cannot be located anymore.
+    convenience init(resolving bookmark: Data) throws {
+        var isStale = false
+        let url: URL
+
+        do {
+            url = try URL(
+                resolvingBookmarkData: bookmark,
+                options: [.withSecurityScope],
+                relativeTo: nil,
+                bookmarkDataIsStale: &isStale
+            )
+        } catch {
+            url = try URL(
+                resolvingBookmarkData: bookmark,
+                options: [],
+                relativeTo: nil,
+                bookmarkDataIsStale: &isStale
+            )
+        }
+
+        if isStale {
+            // Still usable, but the application should store a fresh bookmark for the resource.
+            VZKitLogger.default.info("The bookmark of \(url.lastPathComponent) is stale")
+        }
+
+        self.init(url: url)
     }
 
     deinit {

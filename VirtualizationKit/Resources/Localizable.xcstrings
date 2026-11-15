@@ -97,6 +97,38 @@
         }
       }
     },
+    "diskkind-disk" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hard disk"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disco rigido"
+          }
+        }
+      }
+    },
+    "diskkind-optical" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Optical disc"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disco ottico"
+          }
+        }
+      }
+    },
     "error-appleLimitExceeded" : {
       "localizations" : {
         "en" : {
@@ -221,6 +253,54 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Non è stato possibile creare il dispositivo a blocchi per il disco principale"
+          }
+        }
+      }
+    },
+    "error-diskImageUnreachable" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The disk image “%@” cannot be reached. It may have been moved, renamed or deleted"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossibile raggiungere l'immagine disco “%@”. Potrebbe essere stata spostata, rinominata o eliminata"
+          }
+        }
+      }
+    },
+    "error-diskImageUnreachableGeneric" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A disk image of the Virtual Machine cannot be reached. It may have been moved, renamed or deleted"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossibile raggiungere un'immagine disco della Macchina Virtuale. Potrebbe essere stata spostata, rinominata o eliminata"
+          }
+        }
+      }
+    },
+    "error-invalidDiskImage" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The configuration of the disk “%@” is not valid"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La configurazione del disco “%@” non è valida"
           }
         }
       }
@@ -477,6 +557,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "La seguente funzionalità è supportata ma non disponibile sulla macchina o sistema operativo %@: “%@”"
+          }
+        }
+      }
+    },
+    "error-unsupportedDiskInterface" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disks of type “%@” cannot be attached through the “%@” interface on this Virtual Machine"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I dischi di tipo “%@” non possono essere collegati tramite l'interfaccia “%@” su questa Macchina Virtuale"
           }
         }
       }
