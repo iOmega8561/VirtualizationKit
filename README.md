@@ -29,14 +29,16 @@
 
 ## Back-ends
 
-Both back-ends implement the same `VirtualMachine` protocol and are driven by the same templates, actions and execution states. Pick the one that fits the guest:
+Both back-ends implement the same `VirtualMachine` protocol and are driven by the same templates, actions and execution states. What only one of them understands goes into its options. Pick the one that fits the guest:
 
 | | Apple Virtualization | QEMU |
 |---|---|---|
 | **Type** | `AppleVirtualMachine` | `QEMUVirtualMachine` |
+| **Options** | `AppleMachineOptions` | `QEMUMachineOptions` |
 | **Guests** | macOS, Linux | Linux, Windows (and other UEFI guests) |
 | **Architectures** | arm64 | arm64 (hardware accelerated), x86_64 (emulated) |
 | **Display** | `AppleFramebufferView` | `QEMUFramebufferView` |
+| **Disks** | virtio, USB, NVMe (Linux guests) | virtio, NVMe, USB (optical discs on USB) |
 | **Networking** | NAT, bridged | NAT |
 | **Extras** | Rosetta, directory sharing, macOS installation | TPM 2.0, Secure Boot firmware |
 | **Shared** | Removable USB drives at run time, audio output, pause and resume |
@@ -49,8 +51,9 @@ Built on a sandboxed, embedded build of QEMU, for guests Apple Virtualization ca
 
 - **Process model.** The emulator runs in an XPC service embedded in the framework, never in your app's process. Files are opened by your app and handed over as open file descriptors, so the emulator never needs file-access entitlements of its own.
 - **Display.** A native Swift client renders the guest display; no third-party display libraries are linked into your app.
-- **Windows.** Windows guests (`OperatingSystem.windows`) get hardware Windows supports out of the box: an NVMe disk, a framebuffer display and USB install media. Once the virtio drivers are installed, set `displayDevice` to `.virtioGPU`.
-- **Machine options.** `QEMUMachineOptions` selects the architecture, the initial display size, the display device, a TPM 2.0 and Secure Boot capable firmware.
+- **Explicit hardware.** Nothing is derived from the guest operating system. A guest gets the disk interface, display device and clock it is given, so a machine keeps describing the same hardware in every release.
+- **Windows.** Windows has no virtio drivers until they are installed, so give it hardware it supports out of the box: an NVMe system disk, the install media on USB, `displayDevice: .virtioGPUWithFramebuffer`, `clock: .localTime` and `guestDrawsPointer: true` (see the example below). Once the virtio drivers are installed, set `displayDevice` to `.virtioGPU`.
+- **Machine options.** `QEMUMachineOptions` selects the architecture, the display device, the hardware clock and how the pointer is drawn. A TPM 2.0 and Secure Boot capable firmware are capabilities of the template (`.tpm`, `.secureBoot`).
 
 > [!IMPORTANT]
 > **Using the QEMU back-end in an app**
@@ -66,7 +69,7 @@ Built on a sandboxed, embedded build of QEMU, for guests Apple Virtualization ca
 ## Usage
 
 ### Templates
-A template describes a machine independently of the back-end that runs it. Conform your own type to `TransferableTemplate`:
+A template describes a machine in terms every back-end shares: processors, memory, disks, network, display and optional capabilities. Conform your own type to `TransferableTemplate`:
 
 ```swift
 import VirtualizationKit
@@ -74,13 +77,36 @@ import VirtualizationKit
 struct MyTemplate: TransferableTemplate {
     var id = UUID()
     var name = "MySampleVM"
-    var bootableInstallMedia: URL? = URL(filePath: "/path/to/installer.iso")
-    var operatingSystem: OperatingSystem = .linux
+    var storage: [DiskImage] = []
     var networkTopology: NetworkTopology = .nat()
     var performancePreset: PerformancePreset = .balanced
+    var display = DisplaySize(width: 1280, height: 720)
     var optionalCapabilities: [OptionalCapability] = []
 }
 ```
+
+### Disks
+A machine has any number of disks. Each one says where its file lives, what the guest sees and whether the firmware boots from it:
+
+```swift
+var template = MyTemplate()
+
+template.storage = [
+    // Created by the framework inside the machine's directory, 64 GiB, sparse.
+    DiskImage(location: .managed(size: 64 << 30), interface: .virtio, bootOrder: 1),
+
+    // A file the user picked. It is stored as a security-scoped bookmark,
+    // so the template still finds it after a relaunch inside the App Sandbox.
+    DiskImage(
+        location: try .external(fileAt: isoURL, readOnly: true),
+        kind: .optical,
+        interface: .usb,
+        bootOrder: 0
+    )
+]
+```
+
+The interface is always explicit. `bootOrder` is passed to the firmware by the QEMU back-end; Virtualization.framework has no such setting, so the Apple back-end presents the disks in that order instead.
 
 ### Running a machine
 ```swift
@@ -88,7 +114,7 @@ import VirtualizationKit
 import Combine
 
 // 1. Create the machine with the back-end of your choice
-let vm = try await AppleVirtualMachine(template: MyTemplate())
+let vm = try await AppleVirtualMachine(template: template)
 
 // 2. Subscribe to state updates
 var cancellables = Set<AnyCancellable>()
@@ -107,24 +133,62 @@ vm.stateCoordinator.stateSubject
 try await vm.execute(action: .start())
 ```
 
-The same code drives a QEMU machine; only the type changes. Back-end specific settings go into the options:
+The same code drives a QEMU machine; only the type changes.
+
+### Machine options
+`init(template:)` uses the default options of the back-end. Both defaults describe the same machine, a 64-bit ARM Linux guest, which is also the one case where a template runs on either back-end unchanged. Anything else is stated in the options:
 
 ```swift
+// A macOS guest, installed from a restore image the user picked
+let mac = try await AppleVirtualMachine(
+    template: template,
+    options: .init(platform: try await .macOS(restoreImageAt: ipswURL))
+)
+
+try await mac.execute(action: .install)
+```
+
+```swift
+// A Windows 11 guest
 var windows = MyTemplate()
-windows.operatingSystem = .windows
+
+windows.optionalCapabilities = [.tpm, .secureBoot, .audioOutputDevice]
+windows.storage = [
+    DiskImage(location: .managed(size: 64 << 30), interface: .nvme, bootOrder: 1),
+    DiskImage(location: try .external(fileAt: isoURL, readOnly: true), kind: .optical, interface: .usb, bootOrder: 0)
+]
 
 let vm = try await QEMUVirtualMachine(
     template: windows,
-    options: .init(architecture: .aarch64, includesTPM: true, usesSecureBootFirmware: true)
+    options: .init(
+        displayDevice: .virtioGPUWithFramebuffer,
+        clock: .localTime,
+        guestDrawsPointer: true
+    )
 )
-
-try await vm.execute(action: .start())
 ```
+
+> [!IMPORTANT]
+> Options are part of the identity of a machine, just like its template. Persist the two together: a machine restored with different options is a different machine.
+
+### Checking what a back-end supports
+A template can ask for more than a back-end offers. Ask before you build, for instance to decide what your UI shows:
+
+```swift
+// .supported, .unsupported (never offered here) or .unavailable (e.g. Rosetta is not installed)
+let rosetta = AppleVirtualMachine<MyTemplate>.support(for: .rosetta, options: options)
+
+// Throws a localized error for the first thing the back-end cannot honour.
+// Nothing is created or modified on disk.
+try QEMUVirtualMachine.validate(windows, options: options)
+```
+
+The initializers run the same validation before they do anything else, so a rejected template leaves no files behind.
 
 To capture creation errors instead of throwing them, for instance to present them later in SwiftUI, use `VZKitResult`:
 
 ```swift
-let result = await VZKitResult(QEMUVirtualMachine<MyTemplate>.self, using: windows, options: .init())
+let result = await VZKitResult(QEMUVirtualMachine<MyTemplate>.self, using: windows, options: options)
 ```
 
 ### Showing the display
@@ -163,3 +227,24 @@ struct MachineView: View {
       print("Failed to start VM: \(error.localizedDescription)")
   }
   ```
+
+---
+
+## Migrating from 1.x
+
+2.0 changes how a machine is described. The runtime API (actions, states, views) is unchanged.
+
+| 1.x | 2.0 |
+|---|---|
+| `bootableInstallMedia` | A `DiskImage` in `storage` with `kind: .optical`. For macOS, `AppleMachineOptions.Platform.macOS(restoreImageAt:)` |
+| `performancePreset.diskSize`, `.custom(_, _, diskSize)` | `DiskImage.Location.managed(size:)` |
+| `operatingSystem: .linux` | Nothing: it is the default of both back-ends |
+| `operatingSystem: .macos(version:)` | `AppleMachineOptions(platform: .macOS(version:restoreImage:))` |
+| `operatingSystem: .windows` | An NVMe system disk plus `QEMUMachineOptions(displayDevice: .virtioGPUWithFramebuffer, clock: .localTime, guestDrawsPointer: true)` |
+| `QEMUMachineOptions.displayWidth` / `displayHeight` | `display: DisplaySize` in the template (1920×1200 was the fixed size of macOS guests, 1280×720 of the others) |
+| `QEMUMachineOptions.includesTPM` / `usesSecureBootFirmware` | `.tpm` / `.secureBoot` in `optionalCapabilities` |
+| `DisplayDevice.automatic` | `.virtioGPU`, or `.virtioGPUWithFramebuffer` for x86_64 and for Windows before its drivers are installed |
+
+**Existing machines.** The system disk of a 1.x machine is the file `Disk.img` in its directory. A managed disk is now named after its identifier, so rename the file to `Disk-<disk id>.img` once. Giving that disk the identifier of the template also keeps the NVMe serial number of QEMU machines.
+
+**Stored values.** `PerformancePreset` and `QEMUMachineOptions` values persisted by 1.x still decode; keys that no longer exist are ignored.
