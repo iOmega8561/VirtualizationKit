@@ -227,8 +227,15 @@ struct QEMUMachineStorage: Sendable {
     ///
     /// - Parameter machineID: The identifier of the template the machine is built from.
     init(machineID: UUID) async {
-        self.directory = await VirtualizationKit.supportDirectory.appendingPathComponent(
+        self.init(directory: await VirtualizationKit.supportDirectory.appendingPathComponent(
             machineID.uuidString
-        )
+        ))
+    }
+
+    /// Locates the files of a machine in an explicit directory.
+    ///
+    /// - Parameter directory: The directory holding the files of the machine.
+    init(directory: URL) {
+        self.directory = directory
     }
 }

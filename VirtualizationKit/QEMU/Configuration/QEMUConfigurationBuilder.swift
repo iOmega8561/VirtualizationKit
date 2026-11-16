@@ -332,9 +332,28 @@ struct QEMUConfigurationBuilder<Template: TransferableTemplate>: Sendable {
     ///   - options: The backend-specific settings.
     /// - Throws: `VZKitError.qemuHelperUnavailable` if the helper service is not embedded.
     init(template: Template, options: QEMUMachineOptions) async throws {
+        self.init(
+            template: template,
+            options: options,
+            helper: try QEMUHelperBundle.locate(),
+            storage: await QEMUMachineStorage(machineID: template.id)
+        )
+    }
+
+    /// Creates a builder with an explicit helper bundle and storage.
+    ///
+    /// This is what the public entry points use once they have located both, and what tests use to build
+    /// launch plans without an embedded helper service.
+    ///
+    /// - Parameters:
+    ///   - template: The template describing the machine.
+    ///   - options: The backend-specific settings.
+    ///   - helper: The helper service bundle carrying the emulator's libraries and data files.
+    ///   - storage: Where the files of the machine live.
+    init(template: Template, options: QEMUMachineOptions, helper: QEMUHelperBundle, storage: QEMUMachineStorage) {
         self.template = template
         self.options = options
-        self.helper = try QEMUHelperBundle.locate()
-        self.storage = await QEMUMachineStorage(machineID: template.id)
+        self.helper = helper
+        self.storage = storage
     }
 }

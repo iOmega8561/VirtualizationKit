@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		E3C0DE012F1A00010020F006 /* QEMULauncher in Embed Launcher */ = {isa = PBXBuildFile; fileRef = E3C0DE082F1A00010020F006 /* QEMULauncher */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		E3C0DE022F1A00010020F006 /* QEMUHelper.xpc in Embed XPC Services */ = {isa = PBXBuildFile; fileRef = E3C0DE072F1A00010020F006 /* QEMUHelper.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		E3D7E5000000002F2B000103 /* VirtualizationKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E32B65482CBA93C200FED006 /* VirtualizationKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -25,6 +26,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = E3C0DE0E2F1A00010020F006;
 			remoteInfo = QEMUHelper;
+		};
+		E3D7E5000000002F2B000107 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E32B653F2CBA93C200FED006 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E32B65472CBA93C200FED006;
+			remoteInfo = VirtualizationKit;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -61,6 +69,7 @@
 		E3C0DE072F1A00010020F006 /* QEMUHelper.xpc */ = {isa = PBXFileReference; explicitFileType = "wrapper.xpc-service"; includeInIndex = 0; path = QEMUHelper.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3C0DE082F1A00010020F006 /* QEMULauncher */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = QEMULauncher; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3C0DE092F1A00010020F006 /* QEMUSupport */ = {isa = PBXFileReference; lastKnownFileType = folder; path = QEMUSupport; sourceTree = "<group>"; };
+		E3D7E5000000002F2B000101 /* VirtualizationKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VirtualizationKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -77,6 +86,11 @@
 		E3C0DE0B2F1A00010020F006 /* QEMULauncher */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = QEMULauncher;
+			sourceTree = "<group>";
+		};
+		E3D7E5000000002F2B000102 /* VirtualizationKitTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = VirtualizationKitTests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -103,6 +117,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E3D7E5000000002F2B000104 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E3D7E5000000002F2B000103 /* VirtualizationKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -112,6 +134,7 @@
 				E34509AB2D312AC000286A37 /* VirtualizationKit */,
 				E3C0DE0A2F1A00010020F006 /* QEMUHelper */,
 				E3C0DE0B2F1A00010020F006 /* QEMULauncher */,
+				E3D7E5000000002F2B000102 /* VirtualizationKitTests */,
 				E3C0DE092F1A00010020F006 /* QEMUSupport */,
 				E3A9CA892ECE3629001720F3 /* make-release.sh */,
 				E32B5FEC30AB189B005A8B12 /* MIGRATION.md */,
@@ -126,6 +149,7 @@
 				E32B65482CBA93C200FED006 /* VirtualizationKit.framework */,
 				E3C0DE072F1A00010020F006 /* QEMUHelper.xpc */,
 				E3C0DE082F1A00010020F006 /* QEMULauncher */,
+				E3D7E5000000002F2B000101 /* VirtualizationKitTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -214,6 +238,29 @@
 			productReference = E3C0DE082F1A00010020F006 /* QEMULauncher */;
 			productType = "com.apple.product-type.tool";
 		};
+		E3D7E5000000002F2B000109 /* VirtualizationKitTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E3D7E5000000002F2B00010C /* Build configuration list for PBXNativeTarget "VirtualizationKitTests" */;
+			buildPhases = (
+				E3D7E5000000002F2B000105 /* Sources */,
+				E3D7E5000000002F2B000104 /* Frameworks */,
+				E3D7E5000000002F2B000106 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E3D7E5000000002F2B000108 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				E3D7E5000000002F2B000102 /* VirtualizationKitTests */,
+			);
+			name = VirtualizationKitTests;
+			packageProductDependencies = (
+			);
+			productName = VirtualizationKitTests;
+			productReference = E3D7E5000000002F2B000101 /* VirtualizationKitTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -231,6 +278,9 @@
 					};
 					E3C0DE0F2F1A00010020F006 = {
 						CreatedOnToolsVersion = 16.0;
+					};
+					E3D7E5000000002F2B000109 = {
+						CreatedOnToolsVersion = 26.0;
 					};
 				};
 			};
@@ -252,6 +302,7 @@
 				E32B65472CBA93C200FED006 /* VirtualizationKit */,
 				E3C0DE0E2F1A00010020F006 /* QEMUHelper */,
 				E3C0DE0F2F1A00010020F006 /* QEMULauncher */,
+				E3D7E5000000002F2B000109 /* VirtualizationKitTests */,
 			);
 		};
 /* End PBXProject section */
@@ -265,6 +316,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		E3C0DE102F1A00010020F006 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E3D7E5000000002F2B000106 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -317,6 +375,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E3D7E5000000002F2B000105 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -329,6 +394,11 @@
 			isa = PBXTargetDependency;
 			target = E3C0DE0E2F1A00010020F006 /* QEMUHelper */;
 			targetProxy = E3C0DE042F1A00010020F006 /* PBXContainerItemProxy */;
+		};
+		E3D7E5000000002F2B000108 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E32B65472CBA93C200FED006 /* VirtualizationKit */;
+			targetProxy = E3D7E5000000002F2B000107 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -654,6 +724,54 @@
 			};
 			name = Release;
 		};
+		E3D7E5000000002F2B00010A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.giusepperocco.VirtualizationKitTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		E3D7E5000000002F2B00010B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.giusepperocco.VirtualizationKitTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -689,6 +807,15 @@
 			buildConfigurations = (
 				E3C0DE182F1A00010020F006 /* Debug */,
 				E3C0DE192F1A00010020F006 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E3D7E5000000002F2B00010C /* Build configuration list for PBXNativeTarget "VirtualizationKitTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E3D7E5000000002F2B00010A /* Debug */,
+				E3D7E5000000002F2B00010B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

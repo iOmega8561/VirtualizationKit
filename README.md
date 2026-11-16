@@ -276,6 +276,16 @@ struct MachineView: View {
 
 ---
 
+## Running the tests
+
+The `VirtualizationKitTests` target uses Swift Testing. Select its scheme and run the tests (⌘U); they need no virtual machine, entitlement or emulator payload. They cover the rules that do not depend on a running machine: disk images and their storage, execution states and how failures are reported, capabilities and validation on both back-ends, values stored by 1.x, error messages, the QMP client over a real socket pair, and the emulator command lines of representative machines.
+
+The command lines are pinned on purpose. A change to one changes the hardware an existing machine boots with, so update the expectation together with the change, deliberately.
+
+Booting guests is not covered: try a Linux, a macOS and a Windows guest by hand before a release.
+
+---
+
 ## Migrating from 1.x
 
 2.0 changes how a machine is described, and parts of the runtime API: some actions, the state publisher and removable drives. See [MIGRATION.md](MIGRATION.md) for the full list of changes and how to keep existing machines.
