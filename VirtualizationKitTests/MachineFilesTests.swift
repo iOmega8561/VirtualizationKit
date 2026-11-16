@@ -99,19 +99,19 @@ struct MachineFilesTests {
         var template = machine(in: directory)
         let file = try create(template)
 
-        let grown = try await VirtualizationKit.resize(template.storage[0], of: template, to: 4 << 20)
+        let grown = try await template.storage[0].resized(to: 4 << 20, in: template)
         #expect(grown.location == .managed(size: 4 << 20) && grown.id == template.storage[0].id)
         #expect(try size(of: file) == 4 << 20)
         template.storage[0] = grown
 
         await #expect(throws: VZKitError.cannotShrinkDisk(grown.id)) {
-            try await VirtualizationKit.resize(grown, of: template, to: 1 << 20)
+            try await grown.resized(to: 1 << 20, in: template)
         }
         #expect(try size(of: file) == 4 << 20)
 
         let inUse = try MachineLock(directory: VirtualizationKit.machineDirectory(for: template))
         await #expect(throws: VZKitError.machineInUse) {
-            try await VirtualizationKit.resize(grown, of: template, to: 8 << 20)
+            try await grown.resized(to: 8 << 20, in: template)
         }
         _ = inUse
     }
@@ -121,18 +121,31 @@ struct MachineFilesTests {
         let directory = try TemporaryDirectory()
         var template = machine(in: directory)
 
-        let notCreated = try await VirtualizationKit.resize(template.storage[0], of: template, to: 2 << 20)
+        let notCreated = try await template.storage[0].resized(to: 2 << 20, in: template)
         #expect(notCreated.location == .managed(size: 2 << 20))
 
         let external = DiskImage(location: .external(bookmark: Data()), interface: .usb)
         template.storage.append(external)
         await #expect(throws: VZKitError.invalidDiskImage(external.id)) {
-            try await VirtualizationKit.resize(external, of: template, to: 1 << 30)
+            try await external.resized(to: 1 << 30, in: template)
         }
 
         let stranger = DiskImage(location: .managed(size: 1 << 20), interface: .virtio)
         await #expect(throws: VZKitError.invalidDiskImage(stranger.id)) {
-            try await VirtualizationKit.resize(stranger, of: template, to: 1 << 30)
+            try await stranger.resized(to: 1 << 30, in: template)
+        }
+    }
+
+    @Test("The size of a disk: the capacity it describes, or the length of an external image")
+    func size() throws {
+        let directory = try TemporaryDirectory()
+        #expect(try DiskImage(location: .managed(size: 3 << 20), interface: .virtio).size() == 3 << 20)
+
+        let file = directory.file("data.img", size: 4096)
+        #expect(try DiskImage(location: .external(bookmark: try bookmark(to: file)), interface: .usb).size() == 4096)
+
+        #expect(throws: VZKitError.diskImageUnreachable(nil)) {
+            try DiskImage(location: .external(bookmark: Data([0xFF])), interface: .usb).size()
         }
     }
 }

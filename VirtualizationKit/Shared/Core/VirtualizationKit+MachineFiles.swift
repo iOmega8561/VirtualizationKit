@@ -45,6 +45,46 @@ public extension _VirtualizationKit {
             try FileManager.default.removeItem(at: directory)
         }
     }
+}
+
+public extension DiskImage {
+
+    /// The capacity of the disk, in bytes: the size the guest sees.
+    ///
+    /// For a disk the framework manages, this is the capacity the disk describes, which its file was created
+    /// with; `resized(to:in:)` returns the disk with its new capacity, so store that result in the template.
+    /// For an external image, the bookmark is resolved and the length of the file is returned, which for a raw
+    /// image is its capacity.
+    ///
+    /// - Note: Images are sparse files. The space they take on disk grows as the guest writes, and is usually
+    ///   much smaller than their capacity.
+    ///
+    /// - Returns: The capacity in bytes.
+    /// - Throws: `VZKitError.diskImageUnreachable` if an external image cannot be located or read.
+    func size() throws -> UInt64 {
+        switch location {
+        case .managed(let size):
+            return size
+
+        case .external(let bookmark):
+            let access: SecurityScopedAccess
+            do {
+                access = try SecurityScopedAccess(resolving: bookmark)
+            } catch {
+                VZKitLogger.default.error("Disk \(id.uuidString): \(error.localizedDescription)")
+                throw VZKitError.diskImageUnreachable(nil)
+            }
+
+            return try withExtendedLifetime(access) {
+                let path = access.url.path(percentEncoded: false)
+                guard let attributes = try? FileManager.default.attributesOfItem(atPath: path),
+                      let size = (attributes[.size] as? NSNumber)?.uint64Value else {
+                    throw VZKitError.diskImageUnreachable(access.url.lastPathComponent)
+                }
+                return size
+            }
+        }
+    }
 
     /// Gives a disk the framework manages a larger capacity.
     ///
@@ -52,23 +92,24 @@ public extension _VirtualizationKit {
     /// partitions: extend them from inside the guest afterwards. Store the returned disk in the template, so
     /// that it describes the new capacity.
     ///
+    /// ```swift
+    /// template.storage[0] = try await template.storage[0].resized(to: 128 << 30, in: template)
+    /// ```
+    ///
     /// A disk whose file does not exist yet is only described with the new capacity; it is created with it.
     ///
     /// - Parameters:
-    ///   - disk: A managed disk of the template.
-    ///   - template: The template the disk belongs to.
     ///   - size: The new capacity, in bytes. It cannot be smaller than the current one.
+    ///   - template: The template the disk belongs to, which locates its file.
     /// - Returns: The disk with its new capacity.
     /// - Throws:
     ///   - `VZKitError.invalidDiskImage` if the disk is not a managed disk of the template.
     ///   - `VZKitError.cannotShrinkDisk` if the new capacity is smaller than the current one.
     ///   - `VZKitError.machineInUse` if a machine created from the template exists.
     ///   - `VZKitError.diskImageFailedSetup` if the file cannot be resized.
-    func resize(
-        _ disk: DiskImage,
-        of template: some TransferableTemplate,
-        to size: UInt64
-    ) async throws -> DiskImage {
+    func resized(to size: UInt64, in template: some TransferableTemplate) async throws -> DiskImage {
+
+        let disk = self
 
         guard case .managed = disk.location, template.storage.contains(where: { $0.id == disk.id }) else {
             VZKitLogger.default.error("Disk \(disk.id.uuidString) is not a managed disk of the template")
@@ -78,7 +119,7 @@ public extension _VirtualizationKit {
         var resized = disk
         resized.location = .managed(size: size)
 
-        let directory = await machineDirectory(for: template)
+        let directory = await VirtualizationKit.machineDirectory(for: template)
         let file = DiskImageStore(directory: directory).managedURL(for: disk)
 
         guard FileManager.default.fileExists(atPath: file.path(percentEncoded: false)) else { return resized }

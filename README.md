@@ -205,7 +205,10 @@ Each machine keeps its files (the disks the framework manages, firmware variable
 ```swift
 // Give a managed disk more room, then store the result in the template.
 // The guest still has to extend its partition.
-template.storage[0] = try await VirtualizationKit.resize(template.storage[0], of: template, to: 128 << 30)
+template.storage[0] = try await template.storage[0].resized(to: 128 << 30, in: template)
+
+// The capacity of a disk, managed or picked by the user.
+let capacity = try template.storage[0].size()
 
 // Delete everything the machine has on disk, when the user deletes it.
 try await VirtualizationKit.deleteFiles(of: template)
