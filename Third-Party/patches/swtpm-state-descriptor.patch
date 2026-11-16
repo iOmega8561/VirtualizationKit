@@ -8,7 +8,7 @@ through dup(), which needs no file access of its own. Any other path is
 opened as before.
 
 --- a/src/swtpm/swtpm_nvstore_linear_file.c	2025-04-30 12:32:33.000000000 +0000
-+++ b/src/swtpm/swtpm_nvstore_linear_file.c	2026-11-16 17:29:37.672112458 +0000
++++ b/src/swtpm/swtpm_nvstore_linear_file.c	2026-11-16 17:58:32.809623924 +0000
 @@ -2,6 +2,7 @@
  
  #define _GNU_SOURCE
@@ -17,19 +17,21 @@ opened as before.
  #include <string.h>
  #include <errno.h>
  #include <sys/stat.h>
-@@ -162,8 +163,15 @@
+@@ -162,8 +163,17 @@
      if (mmap_state.fd >= 0)
          return TPM_SUCCESS;
  
 -    mmap_state.fd = open(path, O_RDWR|O_CREAT,
 -                         tpmstate_get_mode(&mode_is_default));
 +    /* VirtualizationKit: a descriptor the parent passed ("/dev/fd/N") is used
-+       as is. Re-opening it by path is a new open, which a sandbox refuses. */
++       as is. Re-opening it by path is a new open, which a sandbox refuses.
++       The parent created the file, so its mode bits are left as they are. */
 +    int passed_fd;
 +    char trailing;
-+    if (sscanf(path, "/dev/fd/%d%c", &passed_fd, &trailing) == 1 && passed_fd >= 0)
++    if (sscanf(path, "/dev/fd/%d%c", &passed_fd, &trailing) == 1 && passed_fd >= 0) {
 +        mmap_state.fd = dup(passed_fd);
-+    else
++        mode_is_default = true;
++    } else
 +        mmap_state.fd = open(path, O_RDWR|O_CREAT,
 +                             tpmstate_get_mode(&mode_is_default));
      if (mmap_state.fd < 0) {
