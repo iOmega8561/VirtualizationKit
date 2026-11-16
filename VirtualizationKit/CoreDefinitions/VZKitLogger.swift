@@ -64,7 +64,9 @@ struct VZKitLogger {
     /// - Note: Use this method only for irrecoverable conditions in the application.
     func fatalError(_ message: String) -> Never {
         self.logger.error("VirtualizationKit: \(message, privacy: .public)")
-        fatalError("VirtualizationKit: \(message)")
+        // Qualified on purpose: unqualified, the name resolves to this very method, which then calls
+        // itself until the stack overflows, and the message never reaches the crash report.
+        Swift.fatalError("VirtualizationKit: \(message)")
     }
     
     /// Initializes a new `VZKitLogger` instance for a specific category.
