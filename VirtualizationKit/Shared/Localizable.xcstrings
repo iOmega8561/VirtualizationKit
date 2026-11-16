@@ -369,6 +369,22 @@
         }
       }
     },
+    "error-macPlatformRequired" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS can only be installed on a Virtual Machine created for macOS"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS può essere installato solo su una Macchina Virtuale creata per macOS"
+          }
+        }
+      }
+    },
     "error-macUnsupportedHost" : {
       "localizations" : {
         "en" : {

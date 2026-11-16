@@ -161,6 +161,45 @@ final class AppleMachineHandle {
         }
     }
 
+    /// Installs macOS on the machine from a restore image.
+    ///
+    /// The installer operates on the machine, so it is created and run here, on the machine's queue. Its
+    /// `Progress` is thread-safe and handed to the coordinator, which shows it as `.installing(progress:)`.
+    ///
+    /// - Parameters:
+    ///   - restoreImage: The location of the IPSW restore image.
+    ///   - coordinator: The coordinator showing the progress.
+    /// - Throws: The error of the installation, unwrapped from its `underlyingErrors` where the framework
+    ///   wraps it.
+    func installMacOS(from restoreImage: URL, reportingTo coordinator: AppleStateCoordinator) async throws {
+
+        let installer = VZMacOSInstaller(virtualMachine: machine, restoringFromImageAt: restoreImage)
+
+        await coordinator.subscribe(installationProgress: installer.progress)
+
+        // Swift may release an object after its last use. This use keeps the installer alive until the
+        // installation has ended, not only until it has started.
+        defer { withExtendedLifetime(installer) {} }
+
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, any Error>) in
+            installer.install { @Sendable result in
+                switch result {
+                case .failure(let error):
+                    Task { @MainActor in
+                        coordinator.eraseSubscription(for: .macOSInstaller, shouldReset: true)
+                    }
+                    continuation.resume(throwing: (error as NSError).underlyingErrors.first ?? error)
+
+                case .success:
+                    Task { @MainActor in
+                        coordinator.eraseSubscription(for: .macOSInstaller)
+                    }
+                    continuation.resume()
+                }
+            }
+        }
+    }
+
     /// A completion handler reporting an optional error, resuming a continuation with it.
     private static func resuming(
         _ continuation: CheckedContinuation<Void, any Error>

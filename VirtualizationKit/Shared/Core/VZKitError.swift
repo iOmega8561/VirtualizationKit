@@ -71,6 +71,9 @@ public enum VZKitError: LocalizedError, Equatable, Sendable {
     /// located anymore.
     case missingMacImage
 
+    /// macOS can only be installed on a virtual machine created for the macOS platform.
+    case macPlatformRequired
+
     /// The restore image offers no configuration this host can run.
     case macUnsupportedImage
 
@@ -182,6 +185,7 @@ public enum VZKitError: LocalizedError, Equatable, Sendable {
         case .coreFilesTampered: .init("error-coreFilesTampered")
         case .coreFilesMissing: .init("error-coreFilesMissing")
         case .missingMacImage: .init("error-missingMacImage")
+        case .macPlatformRequired: .init("error-macPlatformRequired")
         case .internalVirtualizationError: .init("error-internalVirtualizationError")
 
         case .diskImageUnreachable(let name?): .init("error-diskImageUnreachable", name)

@@ -29,6 +29,8 @@ The runtime API (actions, execution states, framebuffer views) is unchanged.
 | `attachRemovableUSBDisk(usingImageAt:)` | `attachRemovableDrive(imageAt:)`, part of the `VirtualMachine` protocol |
 | `detachRemovableUSBDisk(identifiedBy:)` | `detachRemovableDrive(identifiedBy:)`, part of the `VirtualMachine` protocol |
 
+`.install` on an Apple machine that is not a macOS guest now throws `VZKitError.macPlatformRequired`; it used to return without doing anything.
+
 `ExecutableAction` requires `requestStop`, so custom action types add that case, and its `StartOptions` must be `Sendable`. `canRequestStop` tells whether the guest can react to it (the machine is running).
 
 On the Apple back-end the drive methods used to be marked `@available(macOS 15.0, *)`. They are now available everywhere and check at run time instead: before macOS 15 they throw `unsupportedFeature(.xhciUSBHotSwap, .hostSystem)`, and on a machine created without `.xhciUSBHotSwap` they throw `featureNotEnabled(.xhciUSBHotSwap)`. `if #available` checks around the calls can go. Custom `VirtualMachine` types implement both methods.

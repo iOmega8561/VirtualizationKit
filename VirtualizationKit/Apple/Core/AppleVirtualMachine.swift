@@ -25,31 +25,25 @@ import Virtualization
 
 /// A specialized struct implementing `VirtualMachine` for the Apple Virtualization framework.
 ///
-/// `AppleVirtualMachine` encapsulates configuration details, state management, and direct interaction
-/// with a `VZVirtualMachine` instance. By composing references to a `TransferableTemplate`, a state coordinator,
-/// and a delegate, it provides a clear separation of responsibilities. This lightweight, value-oriented
-/// design allows easy passing and copying of the virtual machine interface without duplicating large
-/// internal state, while still adhering to `Sendable` requirements.
+/// `AppleVirtualMachine` is a small value that refers to the components of a machine. Copies refer to the
+/// same machine, so it can be passed around freely; it is `Sendable`.
 ///
 /// ## Concurrency
-/// - Methods like `execute(action:)` are pinned to `@VZKitActor`, ensuring they run on the same queue
-///   used to create the underlying `VZVirtualMachine`.
-/// - Conforming to `Sendable` enforces safe usage of `AppleVirtualMachine` instances across concurrency
-///   domains, provided your `Template` also respects these constraints.
+/// Virtualization.framework requires every operation on a machine to happen on the queue the machine was
+/// created with. The machine is owned by an `AppleMachineHandle`, isolated to `VZKitActor`, whose executor
+/// is that queue: the compiler rejects any use of the machine from elsewhere. `execute(action:)` and the
+/// removable-drive methods run on `VZKitActor` as well.
 ///
-/// ## Separation of Concerns
-/// - **`template`**: Contains the VM configuration details (memory, CPU, storage, etc.). This is provided
-///   by user-defined types conforming to `TransferableTemplate`.
-/// - **`options`**: Contains what only this backend understands: the platform the guest runs on.
-/// - **`stateCoordinator`**: Manages execution state (`ExecutionState`) and broadcasts updates through
-///   Combine publishers. Marked `@MainActor` for thread-safe UI integration.
-/// - **`vzVirtualMachine`**: The primary Apple Virtualization object, handling lifecycle actions like
-///   start, stop, pause, and resume.
-/// - **`delegate`**: Listens to events from the Virtualization framework and communicates them back
-///   to `stateCoordinator`.
-///
-/// - Note: This struct is not responsible for storing or mutating substantial state. Instead, it
-///   references specialized components that each manage a specific aspect of the VM's lifecycle.
+/// ## Components
+/// - **`template`**: The description of the machine every backend shares (memory, CPU, storage, etc.),
+///   provided by user-defined types conforming to `TransferableTemplate`.
+/// - **`options`**: What only this backend understands: the platform the guest runs on.
+/// - **`stateCoordinator`**: The execution state (`ExecutionState`), on the main actor, for user interfaces.
+///   It follows what the machine reports, through the observation of its state and through its delegate.
+/// - **`handle`** (internal): The `VZVirtualMachine`, its operations, and the connection to framebuffer views.
+/// - **`errorDelegate`** (internal): Receives the error that stopped the machine and reports it to
+///   `stateCoordinator`.
+/// - **`resources`** (internal): Keeps files outside the application container reachable.
 public struct AppleVirtualMachine<Template: TransferableTemplate>: VirtualMachine {
     
     /// An enum of high-level actions that can be performed on the Apple Virtual Machine.
@@ -60,7 +54,7 @@ public struct AppleVirtualMachine<Template: TransferableTemplate>: VirtualMachin
     /// - `.requestStop`: Ask the guest to shut itself down, as pressing the power button would.
     /// - `.pause`: Suspend the VM.
     /// - `.resume`: Resume the VM from a paused state.
-    /// - `.install`: Run an installation procedure, typically for macOS guests.
+    /// - `.install`: Install macOS from the restore image the options refer to. macOS guests only.
     public enum Action: ExecutableAction {
         case start(options: AppleStartOptions?)
         case stop
@@ -93,17 +87,16 @@ public struct AppleVirtualMachine<Template: TransferableTemplate>: VirtualMachin
     /// it on the machine's queue. Shared by all copies of this value.
     let handle: AppleMachineHandle
     
-    /// Handles error event callbacks from the `VZVirtualMachine` and forwards them to other components.
+    /// The delegate of the `VZVirtualMachine`.
     ///
-    /// `errorDelegate` observes the VM’s lifecycle and propagates state changes or errors
-    /// to `stateCoordinator`. Conforming code typically does not need to interact with
-    /// this delegate directly.
+    /// It receives the error that stopped the machine and reports it to `stateCoordinator`. A network
+    /// attachment that disconnects is only logged: the machine keeps running.
     private let errorDelegate: AppleErrorDelegate
     
     /// Keeps external disk images and the macOS restore image reachable inside the App Sandbox for as
     /// long as the machine exists.
     ///
-    /// They are referenced by the configuration (as attached images) and by the installer, both of
+    /// They are referenced by the configuration (as attached images) and by the macOS installer, both of
     /// which open them long after this value has been created.
     private let resources: AppleMachineResources
 
@@ -113,14 +106,18 @@ public struct AppleVirtualMachine<Template: TransferableTemplate>: VirtualMachin
     /// Keeps the images of hot-plugged removable devices reachable while they are attached.
     private let removableMediaAccess: SecurityScopeRegistry
     
-    /// Executes a high-level VM action and manages resulting state changes within the same actor context.
+    /// Executes a high-level action on the machine's queue.
     ///
-    /// Supported actions include `.start`, `.stop`, `.pause`, `.resume`, and `.install`. Upon encountering
-    /// a `VZError.virtualMachineLimitExceeded`, this method rethrows a more descriptive `VZKitError.appleLimitExceeded`.
+    /// The method returns once Virtualization.framework has completed the operation. It does not change the
+    /// execution state itself: the state follows what the machine reports, so it may be updated a moment
+    /// after the method returns.
     ///
-    /// - Parameter action: An instance of `Action` describing the requested operation (start, stop, etc.).
-    /// - Throws: `VZKitError.appleLimitExceeded` if the virtual machine limit is exceeded, or other errors
-    ///           specific to the operation or Virtualization framework.
+    /// - Parameter action: The requested operation; see `Action`.
+    /// - Throws:
+    ///   - `VZKitError.appleLimitExceeded` if the host runs as many macOS virtual machines as it allows.
+    ///   - `VZKitError.macPlatformRequired` or `VZKitError.missingMacImage` for `.install`, if the machine is
+    ///     not a macOS guest, or its restore image cannot be located.
+    ///   - The errors of Virtualization.framework otherwise, unchanged.
     @VZKitActor public func execute(action: Action) async throws {
         // Failures propagate unchanged, except one. The state needs no repair here: it follows what the
         // machine reports, through the observation of its state and through its delegate.
@@ -137,7 +134,9 @@ public struct AppleVirtualMachine<Template: TransferableTemplate>: VirtualMachin
             case .resume:
                 try await handle.resume()
             case .install:
-                try await VZMacOSInstaller(virtualMachine: self)?.install(stateCoordinator)
+                guard case .macOS = options.platform else { throw VZKitError.macPlatformRequired }
+                guard let restoreImage = restoreImageURL else { throw VZKitError.missingMacImage }
+                try await handle.installMacOS(from: restoreImage, reportingTo: stateCoordinator)
             }
         } catch VZError.virtualMachineLimitExceeded {
             
@@ -187,14 +186,18 @@ public struct AppleVirtualMachine<Template: TransferableTemplate>: VirtualMachin
         try AppleConfigurationBuilder.validate(template, options: options)
     }
 
-    /// Initializes a new `AppleVirtualMachine` by creating a `VZVirtualMachine` instance and delegating events.
+    /// Creates a virtual machine.
+    ///
+    /// The template and the options are validated first; a description this backend cannot honour is rejected
+    /// before anything is written to disk. Then the files of the machine are located or created, the
+    /// configuration is assembled, and the `VZVirtualMachine` is created on its queue.
     ///
     /// - Parameters:
     ///   - template: The configuration object that describes how the virtual machine should be built.
     ///   - options: The settings only this backend understands. `init(template:)` passes the default,
     ///     which describes a Linux guest.
-    /// - Throws: Errors encountered while generating the VM configuration, setting up the virtualization
-    ///           framework, or initializing the event delegation process.
+    /// - Throws: A localized error if the description is not valid for this backend, or if a file of the
+    ///   machine cannot be located or created; the errors of Virtualization.framework otherwise.
     public init(template: Template, options: AppleMachineOptions) async throws {
         
         self.removableMediaAccess = .init()
