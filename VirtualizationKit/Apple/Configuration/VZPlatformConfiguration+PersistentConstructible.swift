@@ -77,8 +77,8 @@ extension VZPlatformConfiguration: PersistentConstructible {
             guard nestedVZ else { platform = genericPlatform; break }
             
             guard #available(macOS 15.0, *),
-                  OptionalCapability.isNestedVirtualizationSupported else {
-                throw VZKitError.unsupportedFeature(.nestedVirtualization)
+                  VZGenericPlatformConfiguration.isNestedVirtualizationSupported else {
+                throw VZKitError.unsupportedFeature(.nestedVirtualization, .hostHardware)
             }
             
             genericPlatform.isNestedVirtualizationEnabled = nestedVZ

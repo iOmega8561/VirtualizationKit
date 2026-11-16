@@ -95,12 +95,12 @@ struct QEMUConfigurationBuilder<Template: TransferableTemplate>: Sendable {
             guard let helper,
                   let file = payload(for: capability, options: options, in: helper),
                   FileManager.default.fileExists(atPath: file.path(percentEncoded: false)) else {
-                return .unavailable
+                return .unavailable(.frameworkPayload)
             }
             return .supported
 
         case .rosetta, .nestedVirtualization, .directoryShare, .audioCaptureDevice:
-            return .unsupported
+            return .unsupported(.backend)
         }
     }
 
@@ -120,21 +120,15 @@ struct QEMUConfigurationBuilder<Template: TransferableTemplate>: Sendable {
     ) throws {
 
         for capability in template.optionalCapabilities {
-            switch support(for: capability, options: options, helper: helper) {
-            case .supported:
-                continue
+            let support = support(for: capability, options: options, helper: helper)
 
-            case .unsupported:
-                throw VZKitError.unsupportedFeature(capability)
-
-            case .unavailable:
-                // On this backend a capability is only ever unavailable for want of a file of the
-                // payload. Naming the file is more useful than naming the capability.
-                guard let file = payload(for: capability, options: options, in: helper) else {
-                    throw VZKitError.unavailableFeature(capability)
-                }
+            // A file missing from the payload is named: more useful than naming the capability.
+            if case .unavailable(.frameworkPayload) = support,
+               let file = payload(for: capability, options: options, in: helper) {
                 throw VZKitError.qemuFirmwareMissing(file.lastPathComponent)
             }
+
+            try support.check(capability)
         }
 
         try validateStorage(template.storage)

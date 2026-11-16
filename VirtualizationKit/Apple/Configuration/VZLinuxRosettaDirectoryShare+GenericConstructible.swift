@@ -60,13 +60,13 @@ extension VZLinuxRosettaDirectoryShare: GenericConstructible {
             return sharingDevice
             
         case .notSupported:
-            throw VZKitError.unsupportedFeature(.rosetta)
+            throw VZKitError.unsupportedFeature(.rosetta, .hostHardware)
             
         case .notInstalled:
             fallthrough
             
         default:
-            throw VZKitError.unavailableFeature(.rosetta)
+            throw VZKitError.unavailableFeature(.rosetta, .hostSoftware)
         }
     }
 }

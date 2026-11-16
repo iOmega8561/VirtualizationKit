@@ -97,13 +97,13 @@ struct VZKitLocale {
     
     /// Initializes a localized string with a key and a `OptionalCapability` object for context.
     ///
-    /// This initializer retrieves a localized string and formats it using details from the provided `OptionalCapability` object.
+    /// This initializer retrieves a localized string and formats it with the localized name of the capability.
     ///
     /// - Parameters:
     ///   - key: A `String.LocalizationValue` representing the localization key.
     ///   - capability: A `OptionalCapability` object providing additional context for the localized string.
     init(_ key: String.LocalizationValue, _ capability: OptionalCapability) {
-        self.init(key, capability.featureScope, capability.localizedName)
+        self.init(key, capability.localizedName)
     }
     
     /// Initializes a localized string with a key and two operating system versions for comparison.

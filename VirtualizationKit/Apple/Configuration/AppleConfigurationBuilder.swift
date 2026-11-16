@@ -143,42 +143,39 @@ struct AppleConfigurationBuilder<Template: TransferableTemplate> {
 
             switch VZLinuxRosettaDirectoryShare.availability {
             case .installed: return .supported
-            case .notSupported: return .unsupported
-            case .notInstalled: return .unavailable
-            @unknown default: return .unavailable
+            case .notInstalled: return .unavailable(.hostSoftware)
+            // Rosetta does not exist on Macs with Intel processors.
+            case .notSupported: return .unsupported(.hostHardware)
+            @unknown default: return .unsupported(.hostHardware)
             }
 
-        case (.rosetta, .macOS):
-            return .unsupported
+        case (.rosetta, .macOS), (.nestedVirtualization, .macOS):
+            return .unsupported(.guestPlatform)
 
         case (.nestedVirtualization, .linux):
-            return hostSupportsNestedVirtualization ? .supported : .unsupported
-
-        case (.nestedVirtualization, .macOS):
-            return .unsupported
+            guard #available(macOS 15.0, *) else { return .unsupported(.hostSystem) }
+            // Needs an M3 or later.
+            return VZGenericPlatformConfiguration.isNestedVirtualizationSupported
+                ? .supported
+                : .unsupported(.hostHardware)
 
         case (.xhciUSBHotSwap, _):
             if #available(macOS 15.0, *) { return .supported }
-            return .unsupported
+            return .unsupported(.hostSystem)
 
         case (.directoryShare, .linux):
             return .supported
 
         case (.directoryShare, .macOS(let version, _)):
-            return version.major > 12 ? .supported : .unsupported
+            // macOS 12 has no driver for the automount tag.
+            return version.major > 12 ? .supported : .unsupported(.guestPlatform)
 
         case (.audioOutputDevice, _), (.audioCaptureDevice, _):
             return .supported
 
         case (.tpm, _), (.secureBoot, _):
-            return .unsupported
+            return .unsupported(.backend)
         }
-    }
-
-    /// Whether the host can run a hypervisor inside a guest.
-    private static var hostSupportsNestedVirtualization: Bool {
-        guard #available(macOS 15.0, *) else { return false }
-        return OptionalCapability.isNestedVirtualizationSupported
     }
 
     /// Rejects templates that ask for something this backend cannot provide.
@@ -192,11 +189,7 @@ struct AppleConfigurationBuilder<Template: TransferableTemplate> {
     static func validate(_ template: Template, options: AppleMachineOptions) throws {
 
         for capability in template.optionalCapabilities {
-            switch support(for: capability, on: options.platform) {
-            case .supported: continue
-            case .unsupported: throw VZKitError.unsupportedFeature(capability)
-            case .unavailable: throw VZKitError.unavailableFeature(capability)
-            }
+            try support(for: capability, on: options.platform).check(capability)
         }
 
         try validateStorage(template.storage, on: options.platform)

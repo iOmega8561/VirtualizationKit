@@ -27,20 +27,20 @@ import Virtualization
 
 /// An enumeration of optional features available within VirtualizationKit.
 ///
-/// `OptionalCapability` defines a set of capabilities that can be supported on either the host system
-/// or the guest virtual machine. Each case is associated with metadata that includes a localization key
-/// and a scope (host or guest) to facilitate consistent UI representation and internationalization.
+/// `OptionalCapability` defines a set of features a template can ask for on top of the machine every
+/// backend builds. A capability names the feature only; whether it can be provided depends on the
+/// backend, its options and the host, and is answered by `VirtualMachine.support(for:options:)`
+/// together with the reason when it cannot.
 ///
 /// ### Key Features
 /// - **Localization**: Each capability exposes a `localizedName` property that returns its localized name
 ///   using VirtualizationKit's localization utilities.
-/// - **Scope**: The `featureScope` property indicates whether the capability applies to the host system or the guest VM.
-/// - **Extensibility**: New capabilities can be added by defining additional cases and updating the corresponding metadata.
+/// - **Extensibility**: New capabilities can be added by defining additional cases. Every backend then has
+///   to say whether it provides them before the framework compiles again.
 ///
 /// ### Supported Capabilities
 /// - **rosetta**: Represents the Rosetta translation layer available on the host system.
-/// - **nestedVirtualization**: Represents support for nested virtualization on the host.
-///   *Note*: Requires macOS 15 or later and appropriate hardware support (e.g., Apple M3).
+/// - **nestedVirtualization**: Represents the ability to run a hypervisor inside the guest.
 /// - **xhciUSBHotSwap**: Represents support for XHCI USB hot-swapping on the host.
 /// - **directoryShare**: Represents the ability to share directories with the guest virtual machine.
 /// - **audioCaptureDevice**: Represents the ability to use the host's microphone for audio capture.
@@ -56,47 +56,21 @@ import Virtualization
 /// ```swift
 /// let capability: OptionalCapability = .rosetta
 /// print("Capability: \(capability.localizedName)") // Prints the localized name
-/// print("Scope: \(capability.featureScope.rawValue)")   // Prints "Host" or "Guest"
 /// ```
 ///
 /// `OptionalCapability` conforms to `Transferable` for seamless integration within VirtualizationKit.
 public enum OptionalCapability: Transferable, CaseIterable {
-    
-    // MARK: - Supporting Types
-    
-    /// Represents the scope of a capability: whether it applies to the host or the guest virtual machine.
-    private enum Scope: String {
-        case host = "Host"
-        case guest = "Guest"
-    }
-    
-    /// Encapsulates metadata associated with a capability, including its localization key and scope.
-    private struct MetaData {
-        /// The localization key for the capability's name.
-        let localizationKey: String.LocalizationValue
-        /// The scope indicating whether the capability is a host or guest feature.
-        let featureScope: Scope
-        /// Returns the localized name of the capability.
-        var localizedName: String { VZKitLocale(localizationKey).value }
-    }
-    
-    // MARK: - Static properties
-    
-    /// Indicates if nested virtualization is supported on the current host.
-    @available(macOS 15.0, *)
-    public static var isNestedVirtualizationSupported: Bool {
-        VZGenericPlatformConfiguration.isNestedVirtualizationSupported
-    }
     
     // MARK: - Enum Cases
     
     /// Represents the Rosetta translation layer for the host system.
     case rosetta
     
-    /// Represents nested virtualization support on the host.
+    /// Represents the ability to run a hypervisor inside the guest.
     case nestedVirtualization
     
-    /// Represents support for XHCI USB hot-swapping on the host.
+    /// Represents a USB controller that removable drives can be attached to and detached from while
+    /// the virtual machine runs.
     case xhciUSBHotSwap
     
     /// Represents the ability to share directories with the guest virtual machine.
@@ -122,27 +96,19 @@ public enum OptionalCapability: Transferable, CaseIterable {
     /// this capability makes the machine start with fresh firmware settings (boot entries included).
     case secureBoot
 
-    // MARK: - Private Metadata Access
-    
-    /// Retrieves the metadata for each capability, including its localization key and scope.
-    private var metaData: MetaData {
-        switch self {
-        case .rosetta: .init(localizationKey: "capability-rosetta", featureScope: .host)
-        case .nestedVirtualization: .init(localizationKey: "capability-nestedVirtualization", featureScope: .host)
-        case .xhciUSBHotSwap: .init(localizationKey: "capability-xhciUSBHotSwap", featureScope: .host)
-        case .directoryShare: .init(localizationKey: "capability-directoryShare", featureScope: .guest)
-        case .audioCaptureDevice: .init(localizationKey: "capability-audioCaptureDevice", featureScope: .host)
-        case .audioOutputDevice: .init(localizationKey: "capability-audioOutputDevice", featureScope: .host)
-        case .tpm: .init(localizationKey: "capability-tpm", featureScope: .host)
-        case .secureBoot: .init(localizationKey: "capability-secureBoot", featureScope: .host)
-        }
-    }
-    
     // MARK: - Instance Properties
     
     /// The localized name of the capability.
-    public var localizedName: String { metaData.localizedName }
-    
-    /// The scope of the capability, indicating whether it applies to the host or guest.
-    public var featureScope: String { metaData.featureScope.rawValue }
+    public var localizedName: String {
+        switch self {
+        case .rosetta: VZKitLocale("capability-rosetta").value
+        case .nestedVirtualization: VZKitLocale("capability-nestedVirtualization").value
+        case .xhciUSBHotSwap: VZKitLocale("capability-xhciUSBHotSwap").value
+        case .directoryShare: VZKitLocale("capability-directoryShare").value
+        case .audioCaptureDevice: VZKitLocale("capability-audioCaptureDevice").value
+        case .audioOutputDevice: VZKitLocale("capability-audioOutputDevice").value
+        case .tpm: VZKitLocale("capability-tpm").value
+        case .secureBoot: VZKitLocale("capability-secureBoot").value
+        }
+    }
 }

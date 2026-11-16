@@ -271,11 +271,11 @@ public struct AppleVirtualMachine<Template: TransferableTemplate>: VirtualMachin
     /// - Parameter url: A file URL referencing the disk image to be attached.
     /// - Returns: A `UUID` uniquely identifying the attached USB device for future tracking or removal.
     /// - Throws:
-    ///   - `VZKitError.unsupportedFeature(.xhciUSBHotSwap)` if no suitable USB controller is found.
+    ///   - `VZKitError.featureNotEnabled(.xhciUSBHotSwap)` if the machine was created without a USB controller.
     ///   - Other Apple Virtualization–related errors if attachment fails.
     func attachRemovableUSBDisk(usingImageAt url: URL) async throws -> UUID {
         guard let controller = vzVirtualMachine.usbControllers.first else {
-            throw VZKitError.unsupportedFeature(.xhciUSBHotSwap)
+            throw VZKitError.featureNotEnabled(.xhciUSBHotSwap)
         }
         
         // Released again if anything below throws, kept for as long as the device stays attached.
@@ -297,12 +297,12 @@ public struct AppleVirtualMachine<Template: TransferableTemplate>: VirtualMachin
     ///
     /// - Parameter id: The `UUID` used to identify the USB device during attachment.
     /// - Throws:
-    ///   - `VZKitError.unsupportedFeature(.xhciUSBHotSwap)` if no suitable USB controller is found.
+    ///   - `VZKitError.featureNotEnabled(.xhciUSBHotSwap)` if the machine was created without a USB controller.
     ///   - `VZKitError.usbDeviceNotFound(id)` if the specified device is not attached.
     ///   - Other errors originating from the Apple Virtualization framework during detachment.
     func detachRemovableUSBDisk(identifiedBy id: UUID) async throws {
         guard let controller = vzVirtualMachine.usbControllers.first else {
-            throw VZKitError.unsupportedFeature(.xhciUSBHotSwap)
+            throw VZKitError.featureNotEnabled(.xhciUSBHotSwap)
         }
         
         guard let device = controller.usbDevices.first(where: { $0.uuid == id }) else {

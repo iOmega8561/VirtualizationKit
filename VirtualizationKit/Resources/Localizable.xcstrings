@@ -305,6 +305,22 @@
         }
       }
     },
+    "error-featureNotEnabled" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The Virtual Machine has been created without “%@”"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La Macchina Virtuale è stata creata senza “%@”"
+          }
+        }
+      }
+    },
     "error-invalidDiskImage" : {
       "localizations" : {
         "en" : {
@@ -390,13 +406,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The following feature cannot be accessed on the %@ machine or operating system because permission has been denied: “%@”"
+            "value" : "Permission to use “%@” has been denied. It can be granted again in System Settings"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Non è possibile accedere alla seguente funzionalità della macchina o del sistema operativo %@ a causa di mancanza di autorizzazione: “%@”"
+            "value" : "L'autorizzazione a usare “%@” è stata negata. È possibile concederla di nuovo dalle Impostazioni di Sistema"
           }
         }
       }
@@ -545,18 +561,34 @@
         }
       }
     },
-    "error-unavailableFeature" : {
+    "error-unavailableFeatureFrameworkPayload" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The following feature is supported but not available on the %@ machine or operating system: “%@”"
+            "value" : "“%@” is supported, but a component it needs is missing from the application"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La seguente funzionalità è supportata ma non disponibile sulla macchina o sistema operativo %@: “%@”"
+            "value" : "“%@” è supportato, ma all'applicazione manca un componente necessario"
+          }
+        }
+      }
+    },
+    "error-unavailableFeatureHostSoftware" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” is supported, but has not been installed on this Mac yet"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” è supportato, ma non è ancora stato installato su questo Mac"
           }
         }
       }
@@ -577,18 +609,66 @@
         }
       }
     },
-    "error-unsupportedFeature" : {
+    "error-unsupportedFeatureBackend" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The following feature is not supported by the %@ machine or operating system: “%@”"
+            "value" : "“%@” is not provided by the virtualization engine of this Virtual Machine"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La seguente funzionalità non è supportata dalla macchina o sistema operativo %@: “%@”"
+            "value" : "“%@” non è fornito dal motore di virtualizzazione di questa Macchina Virtuale"
+          }
+        }
+      }
+    },
+    "error-unsupportedFeatureGuestPlatform" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” is not available to the operating system of this Virtual Machine"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” non è disponibile per il sistema operativo di questa Macchina Virtuale"
+          }
+        }
+      }
+    },
+    "error-unsupportedFeatureHostHardware" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This Mac does not support “%@”"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questo Mac non supporta “%@”"
+          }
+        }
+      }
+    },
+    "error-unsupportedFeatureHostSystem" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” requires a newer version of macOS on this Mac"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” richiede una versione più recente di macOS su questo Mac"
           }
         }
       }

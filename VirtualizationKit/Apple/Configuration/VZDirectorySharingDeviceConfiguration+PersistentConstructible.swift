@@ -54,7 +54,7 @@ extension VZDirectorySharingDeviceConfiguration: PersistentConstructible {
         case .macOS(let version, _):
             
             guard version.major > 12 else {
-                throw VZKitError.unsupportedFeature(.directoryShare)
+                throw VZKitError.unsupportedFeature(.directoryShare, .guestPlatform)
             }
             
             sharingDevice = .init(

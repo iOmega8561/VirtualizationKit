@@ -41,9 +41,10 @@ enum VZKitError: LocalizedError {
     case unsupportedDiskInterface(_ kind: DiskImage.Kind, _ interface: DiskImage.Interface)
 
     // Features
-    case unavailableFeature(_ capability: OptionalCapability)
+    case unavailableFeature(_ capability: OptionalCapability, _ missing: CapabilitySupport.MissingComponent)
     case permissionDenied(_ capability: OptionalCapability)
-    case unsupportedFeature(_ capability: OptionalCapability)
+    case unsupportedFeature(_ capability: OptionalCapability, _ limitation: CapabilitySupport.Limitation)
+    case featureNotEnabled(_ capability: OptionalCapability)
     case usbDeviceNotFound(_ id: UUID)
     
     // Networking
@@ -88,8 +89,21 @@ enum VZKitError: LocalizedError {
             .init("error-unsupportedDiskInterface", kind.localizedName, interface.displayName)
                 
         case .permissionDenied(let capability): .init("error-permissionDenied", capability)
-        case .unavailableFeature(let capability): .init("error-unavailableFeature", capability)
-        case .unsupportedFeature(let capability): .init("error-unsupportedFeature", capability)
+        case .featureNotEnabled(let capability): .init("error-featureNotEnabled", capability)
+
+        case .unavailableFeature(let capability, .hostSoftware):
+            .init("error-unavailableFeatureHostSoftware", capability)
+        case .unavailableFeature(let capability, .frameworkPayload):
+            .init("error-unavailableFeatureFrameworkPayload", capability)
+
+        case .unsupportedFeature(let capability, .backend):
+            .init("error-unsupportedFeatureBackend", capability)
+        case .unsupportedFeature(let capability, .guestPlatform):
+            .init("error-unsupportedFeatureGuestPlatform", capability)
+        case .unsupportedFeature(let capability, .hostSystem):
+            .init("error-unsupportedFeatureHostSystem", capability)
+        case .unsupportedFeature(let capability, .hostHardware):
+            .init("error-unsupportedFeatureHostHardware", capability)
         case .usbDeviceNotFound(let id): .init("error-usbDeviceNotFound", id.uuidString)
                     
         case .invalidMacAddress(let macAddress): .init("error-invalidMacAddress", macAddress)
