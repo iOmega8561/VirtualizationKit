@@ -77,3 +77,34 @@ public protocol TransferableTemplate: Identifiable, Transferable {
     /// experimental functionalities that can be toggled on for the VM.
     var optionalCapabilities: [OptionalCapability] { get }
 }
+
+// MARK: - Machine Files
+
+public extension TransferableTemplate {
+
+    /// Deletes the files the machine of this template has on disk.
+    ///
+    /// Call it when the user deletes a virtual machine. Nothing happens if the machine has no files yet.
+    ///
+    /// ```swift
+    /// try await template.deleteMachineFiles()
+    /// ```
+    ///
+    /// - Important: This includes the folder an Apple machine shares with the guest, and whatever the guest
+    ///   put there. Disk images outside the directory of the machine, such as installers or disks the user
+    ///   picked, are kept.
+    ///
+    /// - Throws: `VZKitError.machineInUse` if a machine created from this template exists, here or in another
+    ///   application; the error of the file system if a file cannot be removed.
+    func deleteMachineFiles() async throws {
+        let directory = await VirtualizationKit.machineDirectory(for: self)
+
+        guard FileManager.default.fileExists(atPath: directory.path(percentEncoded: false)) else { return }
+
+        let lock = try MachineLock(directory: directory)
+
+        try withExtendedLifetime(lock) {
+            try FileManager.default.removeItem(at: directory)
+        }
+    }
+}

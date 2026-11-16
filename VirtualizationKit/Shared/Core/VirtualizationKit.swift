@@ -65,3 +65,14 @@ public final class _VirtualizationKit: Sendable {
 }
 
 public let VirtualizationKit: _VirtualizationKit = .init()
+
+// MARK: - Machine Files
+
+extension _VirtualizationKit {
+
+    /// The directory holding the files of the machine of a template, shared by both backends.
+    @MainActor
+    func machineDirectory(for template: some TransferableTemplate) -> URL {
+        supportDirectory.appendingPathComponent(template.id.uuidString, isDirectory: true)
+    }
+}
