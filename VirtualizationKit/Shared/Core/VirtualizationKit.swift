@@ -29,7 +29,8 @@ public final class _VirtualizationKit: Sendable {
     public let bundleIdentifier: String = "com.giusepperocco.VirtualizationKit"
     
     /// The version string of this framework
-    public let version: String = "1.4.6"
+    /// The version of the framework, as `year.release` (for example "2026.1"), from its bundle.
+    public let version: String
     
     /// The minimum macOS version supported as a guest operating system
     public let macOSGuestMinVersion: AppleMachineOptions.Version = .init(major: 12, minor: 4, patch: 0)
@@ -58,6 +59,7 @@ public final class _VirtualizationKit: Sendable {
         // The identifier lookup fails as soon as an embedding application re-identifies the
         // framework, which would silently redirect every lookup to the main bundle.
         self.bundle = Bundle(identifier: bundleIdentifier) ?? Bundle(for: _VirtualizationKit.self)
+        self.version = bundle?.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "unknown"
         self.supportDirectory = .applicationSupportDirectory.appendingPathComponent(bundleIdentifier)
     }
 }

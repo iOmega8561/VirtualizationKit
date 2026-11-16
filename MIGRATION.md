@@ -1,15 +1,17 @@
-# Migrating from 1.x to 2.0
+# Migrating from 1.x to 2026.1
 
-2.0 changes how a machine is described. A template now holds what every back-end shares, and each back-end has an options type for what only it understands. Nothing is derived from the guest operating system anymore: the hardware a guest needs is stated explicitly.
+VirtualizationKit is now versioned by year and release: 2026.1 is the first release of 2026, and the successor of 1.4.6.
+
+2026.1 changes how a machine is described. A template now holds what every back-end shares, and each back-end has an options type for what only it understands. Nothing is derived from the guest operating system anymore: the hardware a guest needs is stated explicitly.
 
 Parts of the runtime API changed too: some actions, the state publisher and removable drives. The framebuffer views are unchanged.
 
 > [!NOTE]
-> Building 2.0 needs Xcode with the macOS 27 SDK. The framework still runs on macOS 14.
+> Building 2026.1 needs Xcode with the macOS 27 SDK. The framework still runs on macOS 14.
 
 ## Templates and options
 
-| 1.x | 2.0 |
+| 1.x | 2026.1 |
 |---|---|
 | `bootableInstallMedia` | A `DiskImage` in `storage` with `kind: .optical`. For macOS, the restore image goes into the options: `AppleMachineOptions.Platform.macOS(restoreImageAt:)` |
 | `performancePreset.diskSize`, `.custom(_, _, diskSize)` | `DiskImage.Location.managed(size:)` |
@@ -27,7 +29,7 @@ Parts of the runtime API changed too: some actions, the state publisher and remo
 
 ## Actions
 
-| 1.x | 2.0 |
+| 1.x | 2026.1 |
 |---|---|
 | `QEMUVirtualMachine.requestPowerDown()` | `execute(action: .requestStop)`, on both back-ends |
 | `QEMUVirtualMachine.reset()` | `execute(action: .reset)` (QEMU only) |
@@ -45,7 +47,7 @@ The QEMU back-end now requires `.xhciUSBHotSwap` for removable drives too, as th
 
 ## Capabilities
 
-| 1.x | 2.0 |
+| 1.x | 2026.1 |
 |---|---|
 | `OptionalCapability.featureScope` | `VirtualMachine.support(for:options:)`, whose answer carries the reason: `.unsupported(Limitation)` or `.unavailable(MissingComponent)` |
 | `OptionalCapability.isNestedVirtualizationSupported` | `AppleVirtualMachine<T>.support(for: .nestedVirtualization, options:)` |

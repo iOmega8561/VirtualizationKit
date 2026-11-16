@@ -61,6 +61,7 @@ CERTIFICATE_NAME="Developer ID Application: ${DEV_NAME} (${TEAM_ID})"
 # Cleanup old builds
 rm -rf "${FRAMEWORK_NAME}.xcframework" \
     "${FRAMEWORK_NAME}.dmg" \
+    "${FRAMEWORK_NAME}-sources.tar.gz" \
     DMG
 
 echo "🛠 ️ Creating XCFramework..."
@@ -124,6 +125,46 @@ mkdir -p DMG
 cp -R "${FRAMEWORK_NAME}.xcframework" DMG/
 cp "${SCRIPTPATH}/LICENSE" DMG/
 
+# The QEMU payload is built from third-party sources under their own licences. Their texts ship in the
+# DMG, and the exact sources next to it: the GPL requires them to be available with the binaries.
+DOWNLOADS="${SCRIPTPATH}/Third-Party/downloads"
+
+if ! ls "${DOWNLOADS}"/*.tar.* > /dev/null 2>&1; then
+    echo "❌ Error: No sources in ${DOWNLOADS}. Run Third-Party/setup-dependencies.sh first."
+    exit 1
+fi
+
+echo "📜 Collecting third-party licences..."
+cp "${SCRIPTPATH}/THIRD-PARTY-NOTICES.md" DMG/
+mkdir -p DMG/ThirdPartyLicenses
+
+for TARBALL in "${DOWNLOADS}"/*.tar.*; do
+    NAME=$(basename "${TARBALL}")
+    NAME="${NAME%%.tar.*}"
+    FILES=$(tar -tf "${TARBALL}" | grep -E \
+        '^[^/]+/(COPYING|LICENSE|LICENCE)[^/]*$|^[^/]+/pc-bios/edk2-licenses\.txt$' || true)
+
+    if [ -z "${FILES}" ]; then
+        echo "❌ Error: No licence file found in ${NAME}."
+        exit 1
+    fi
+
+    mkdir -p "DMG/ThirdPartyLicenses/${NAME}"
+    echo "${FILES}" | while read -r FILE; do
+        tar -xOf "${TARBALL}" "${FILE}" > "DMG/ThirdPartyLicenses/${NAME}/$(basename "${FILE}")"
+    done
+done
+
+echo "🗜️  Archiving the sources of the QEMU payload..."
+SOURCES="${FRAMEWORK_NAME}-sources"
+rm -rf "${SOURCES}"
+mkdir -p "${SOURCES}/downloads" "${SOURCES}/scripts"
+cp "${DOWNLOADS}"/*.tar.* "${SOURCES}/downloads/"
+cp "${SCRIPTPATH}/Third-Party/"*.sh "${SCRIPTPATH}/QEMUSupport/"*.sh "${SOURCES}/scripts/"
+cp "${SCRIPTPATH}/THIRD-PARTY-NOTICES.md" "${SOURCES}/"
+tar -czf "${SOURCES}.tar.gz" "${SOURCES}"
+rm -rf "${SOURCES}"
+
 # Host applications re-sign the helper with their own identity and need the
 # script and the entitlements for that.
 mkdir -p DMG/QEMUSupport
@@ -156,3 +197,4 @@ rm -fr DMG
 rm -fr "${FRAMEWORK_NAME}.xcframework"
 
 echo "✅ Done! XCFramework is notarized and ready for distribution."
+echo "   Publish ${FRAMEWORK_NAME}-sources.tar.gz together with ${FRAMEWORK_NAME}.dmg."

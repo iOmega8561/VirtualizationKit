@@ -290,6 +290,12 @@ struct MachineView: View {
 
 ---
 
+## Releases
+
+Versions follow the year and the release within it: 2026.1 is the first release of 2026. `make-release.sh` produces the notarized DMG and, next to it, `VirtualizationKit-sources.tar.gz` with the exact sources of the bundled QEMU payload. Publish both: QEMU is licensed under the GPL, which requires its sources to be available to whoever receives the binaries. `THIRD-PARTY-NOTICES.md` lists every bundled component and its licence.
+
+---
+
 ## Running the tests
 
 The `VirtualizationKitTests` target uses Swift Testing. Select its scheme and run the tests (⌘U); they need no virtual machine, entitlement or emulator payload. They cover the rules that do not depend on a running machine: disk images and their storage, execution states and how failures are reported, capabilities and validation on both back-ends, values stored by 1.x, error messages, the QMP client over a real socket pair, and the emulator command lines of representative machines.
@@ -302,4 +308,4 @@ Booting guests is not covered: try a Linux, a macOS and a Windows guest by hand 
 
 ## Migrating from 1.x
 
-2.0 changes how a machine is described, and parts of the runtime API: some actions, the state publisher and removable drives. See [MIGRATION.md](MIGRATION.md) for the full list of changes and how to keep existing machines.
+2026.1 changes how a machine is described, and parts of the runtime API: some actions, the state publisher and removable drives. See [MIGRATION.md](MIGRATION.md) for the full list of changes and how to keep existing machines.
