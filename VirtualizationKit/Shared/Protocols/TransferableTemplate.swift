@@ -107,4 +107,49 @@ public extension TransferableTemplate {
             try FileManager.default.removeItem(at: directory)
         }
     }
+
+    /// Waits until no machine created from this template is in use, here or in another application.
+    ///
+    /// A machine holds the files of its template for as long as it exists: until the last copy of it is
+    /// released, or its process ends. Creating another machine from the same template meanwhile fails with
+    /// `VZKitError.machineInUse`. This waits for that moment instead, checking about every 100 milliseconds.
+    ///
+    /// ```swift
+    /// try await template.waitForMachineRelease(timeout: .seconds(10))
+    /// let machine = try await AppleVirtualMachine(template: template)
+    /// ```
+    ///
+    /// - Note: Another application could still create a machine from the template between this method
+    ///   returning and your next step. Within one application, that cannot happen unnoticed.
+    ///
+    /// - Parameter timeout: How long to wait at most, or `nil` to wait until the machine is released or the
+    ///   task is cancelled.
+    /// - Throws: `VZKitError.machineInUse` if the machine is still in use when the time is up;
+    ///   `CancellationError` if the task is cancelled while waiting.
+    func waitForMachineRelease(timeout: Duration? = nil) async throws {
+        let directory = await VirtualizationKit.machineDirectory(for: self)
+        let clock = ContinuousClock()
+        let deadline = timeout.map { clock.now.advanced(by: $0) }
+
+        while true {
+            // A machine that has no files yet is not in use.
+            guard FileManager.default.fileExists(atPath: directory.path(percentEncoded: false)) else { return }
+
+            do {
+                // Taken and released at once: only whether it can be taken matters.
+                _ = try MachineLock(directory: directory)
+                return
+            } catch VZKitError.machineInUse {
+                var pause = Duration.milliseconds(100)
+
+                if let deadline {
+                    let remaining = clock.now.duration(to: deadline)
+                    guard remaining > .zero else { throw VZKitError.machineInUse }
+                    pause = min(pause, remaining)
+                }
+
+                try await Task.sleep(for: pause)
+            }
+        }
+    }
 }

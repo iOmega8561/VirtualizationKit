@@ -214,6 +214,12 @@ let capacity = try template.storage[0].size()
 try await template.deleteMachineFiles()
 ```
 
+A machine holds its template's files for as long as it exists, so creating another machine from the same template meanwhile fails with `VZKitError.machineInUse`. To wait for the first one to be released, here or in another app:
+
+```swift
+try await template.waitForMachineRelease(timeout: .seconds(10))
+```
+
 Deleting includes the folder an Apple machine shares with the guest. Disk images the user picked live elsewhere and are kept.
 
 ### Checking what a back-end supports

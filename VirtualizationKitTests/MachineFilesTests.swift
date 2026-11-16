@@ -18,6 +18,13 @@ import Foundation
 import Testing
 @testable import VirtualizationKit
 
+/// Holds a machine lock until a test lets it go.
+@MainActor
+private final class LockBox {
+    var lock: MachineLock?
+    init(_ lock: MachineLock) { self.lock = lock }
+}
+
 @Suite("Machine files", .serialized)
 @MainActor
 struct MachineFilesTests {
@@ -147,5 +154,63 @@ struct MachineFilesTests {
         #expect(throws: VZKitError.diskImageUnreachable(nil)) {
             try DiskImage(location: .external(bookmark: Data([0xFF])), interface: .usb).size()
         }
+    }
+
+    @Test("Waiting returns at once when no machine is in use, or none has files yet")
+    func waitFree() async throws {
+        let directory = try TemporaryDirectory()
+        let template = machine(in: directory)
+        try await template.waitForMachineRelease(timeout: .zero)       // no files yet
+        _ = try create(template)
+        try await template.waitForMachineRelease(timeout: .zero)       // files, nobody holding them
+    }
+
+    @Test("Waiting ends when the machine is released")
+    func waitRelease() async throws {
+        let directory = try TemporaryDirectory()
+        let template = machine(in: directory)
+        _ = try create(template)
+        // Held by the box only: a local constant would keep the lock until the end of this test.
+        let box = LockBox(try MachineLock(directory: VirtualizationKit.machineDirectory(for: template)))
+
+        let started = ContinuousClock.now
+        let holder = Task { @MainActor in
+            try await Task.sleep(for: .milliseconds(300))
+            box.lock = nil
+        }
+        try await template.waitForMachineRelease(timeout: .seconds(5))
+        let waited = ContinuousClock.now - started
+        #expect(waited >= .milliseconds(250) && waited < .seconds(3), "\(waited)")
+        _ = try await holder.value
+    }
+
+    @Test("Waiting gives up with machineInUse when the time is up")
+    func waitTimeout() async throws {
+        let directory = try TemporaryDirectory()
+        let template = machine(in: directory)
+        _ = try create(template)
+        let lock = try MachineLock(directory: VirtualizationKit.machineDirectory(for: template))
+
+        let started = ContinuousClock.now
+        await #expect(throws: VZKitError.machineInUse) {
+            try await template.waitForMachineRelease(timeout: .milliseconds(250))
+        }
+        let waited = ContinuousClock.now - started
+        #expect(waited >= .milliseconds(250) && waited < .seconds(2), "\(waited)")
+        withExtendedLifetime(lock) {}
+    }
+
+    @Test("Waiting without a time limit ends when the task is cancelled")
+    func waitCancelled() async throws {
+        let directory = try TemporaryDirectory()
+        let template = machine(in: directory)
+        _ = try create(template)
+        let lock = try MachineLock(directory: VirtualizationKit.machineDirectory(for: template))
+
+        let waiter = Task { try await template.waitForMachineRelease() }
+        try await Task.sleep(for: .milliseconds(200))
+        waiter.cancel()
+        await #expect(throws: CancellationError.self) { try await waiter.value }
+        withExtendedLifetime(lock) {}
     }
 }
