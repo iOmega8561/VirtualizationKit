@@ -19,3 +19,5 @@ VirtualizationKit itself is licensed under the Apache License, Version 2.0 (see 
 ## Sources
 
 QEMU is licensed under the GNU General Public License, version 2, and several components under the GNU Lesser General Public License. Each release is published together with `VirtualizationKit-sources.tar.gz`, which contains the exact source archives listed above and the scripts used to build and embed the payload (`Third-Party/` and `QEMUSupport/`).
+
+swtpm is built with one change, `Third-Party/patches/swtpm-state-descriptor.patch`, which lets it use its state file through a descriptor it was given. The patch is included in the sources archive.

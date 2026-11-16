@@ -207,6 +207,10 @@ build_tpm_stack() {
 
     log "Building swtpm"
     unpack "${downloads}/swtpm.tar.gz" "${BUILD}/swtpm"
+    # Lets swtpm use the state descriptor the launcher passes; see the patch for why.
+    patch -d "${BUILD}/swtpm" -p1 --forward --silent \
+        < "${SCRIPT_DIR}/patches/swtpm-state-descriptor.patch" \
+        || die "The swtpm patch does not apply"
     autoreconf_source "${BUILD}/swtpm"
     # Only the TPM itself is needed; the provisioning tools next to it pull in
     # further libraries (GMP, GnuTLS) for nothing.

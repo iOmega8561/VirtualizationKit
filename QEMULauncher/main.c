@@ -143,6 +143,9 @@ static int start_tpm(int state_descriptor) {
     posix_spawn_file_actions_addopen(&actions, STDIN_FILENO, "/dev/null", O_RDONLY, 0);
     posix_spawn_file_actions_adddup2(&actions, channel[1], 3);
     posix_spawn_file_actions_adddup2(&actions, state_descriptor, 4);
+    /* POSIX_SPAWN_CLOEXEC_DEFAULT closes everything not named here, stdout and stderr included. */
+    posix_spawn_file_actions_addinherit_np(&actions, STDOUT_FILENO);
+    posix_spawn_file_actions_addinherit_np(&actions, STDERR_FILENO);
 
     /* Nothing but stdout, stderr (shared with the emulator's diagnostics), 3 and 4. */
     posix_spawnattr_t attributes;
@@ -156,6 +159,7 @@ static int start_tpm(int state_descriptor) {
         "--terminate",
         "--ctrl", "type=unixio,clientfd=3",
         "--tpmstate", "backend-uri=file:///dev/fd/4",
+        "--log", "fd=2,level=1",
         NULL
     };
 

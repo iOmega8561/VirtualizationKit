@@ -1,0 +1,37 @@
+VirtualizationKit: let swtpm use a state file passed as a descriptor.
+
+The launcher passes the TPM state as an open descriptor and names it
+file:///dev/fd/4. The linear file backend of swtpm opens that path, which
+is a new open: the sandbox the helper and swtpm run in refuses it, and
+CMD_INIT fails with TPM_FAIL. With this change, a /dev/fd/N path is used
+through dup(), which needs no file access of its own. Any other path is
+opened as before.
+
+--- a/src/swtpm/swtpm_nvstore_linear_file.c	2025-04-30 12:32:33.000000000 +0000
++++ b/src/swtpm/swtpm_nvstore_linear_file.c	2026-11-16 17:29:37.672112458 +0000
+@@ -2,6 +2,7 @@
+ 
+ #define _GNU_SOURCE
+ #include <unistd.h>
++#include <stdio.h>
+ #include <string.h>
+ #include <errno.h>
+ #include <sys/stat.h>
+@@ -162,8 +163,15 @@
+     if (mmap_state.fd >= 0)
+         return TPM_SUCCESS;
+ 
+-    mmap_state.fd = open(path, O_RDWR|O_CREAT,
+-                         tpmstate_get_mode(&mode_is_default));
++    /* VirtualizationKit: a descriptor the parent passed ("/dev/fd/N") is used
++       as is. Re-opening it by path is a new open, which a sandbox refuses. */
++    int passed_fd;
++    char trailing;
++    if (sscanf(path, "/dev/fd/%d%c", &passed_fd, &trailing) == 1 && passed_fd >= 0)
++        mmap_state.fd = dup(passed_fd);
++    else
++        mmap_state.fd = open(path, O_RDWR|O_CREAT,
++                             tpmstate_get_mode(&mode_is_default));
+     if (mmap_state.fd < 0) {
+         logprintf(STDERR_FILENO,
+                   "SWTPM_NVRAM_LinearFile_Open: Could not open file: %s\n",
