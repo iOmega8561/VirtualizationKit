@@ -176,6 +176,7 @@
 				E32B65452CBA93C200FED006 /* Frameworks */,
 				E32B65462CBA93C200FED006 /* Resources */,
 				E3C0DE062F1A00010020F006 /* Embed XPC Services */,
+				E3D7E5000000002F2B000201 /* Embed Signing Support */,
 			);
 			buildRules = (
 			);
@@ -350,6 +351,33 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/QEMUSupport/embed-qemu-payload.sh\"\n";
+		};
+		E3D7E5000000002F2B000201 /* Embed Signing Support */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/QEMUSupport/embed-signing-support.sh",
+				"$(SRCROOT)/QEMUSupport/resign-embedded-helper.sh",
+				"$(SRCROOT)/QEMUSupport/QEMUHelper.entitlements",
+				"$(SRCROOT)/QEMUSupport/QEMULauncher.entitlements",
+				"$(SRCROOT)/QEMUSupport/QEMUTPM.entitlements",
+			);
+			name = "Embed Signing Support";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/QEMUSupport/resign-embedded-helper.sh",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/QEMUSupport/QEMUHelper.entitlements",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/QEMUSupport/QEMULauncher.entitlements",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/QEMUSupport/QEMUTPM.entitlements",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/QEMUSupport/embed-signing-support.sh\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

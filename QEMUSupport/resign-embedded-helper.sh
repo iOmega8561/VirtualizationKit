@@ -33,10 +33,12 @@
 #      3. the helper service bundle     (QEMUHelper.entitlements)
 #      4. the framework itself          (no entitlements, no --deep)
 #
-#  Add it as a "Run Script" phase of the application target, after the phase
-#  that embeds the framework:
+#  The framework carries this script and the entitlements files in its
+#  Resources/QEMUSupport folder. Add a "Run Script" phase to the application
+#  target, after the phase that embeds the framework, that runs the embedded
+#  copy:
 #
-#      "${SRCROOT}/<path to the framework checkout>/QEMUSupport/resign-embedded-helper.sh"
+#      /bin/bash "${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/VirtualizationKit.framework/Resources/QEMUSupport/resign-embedded-helper.sh"
 #
 #  The entitlements files are looked up next to this script. With user script
 #  sandboxing enabled, declare the embedded framework as an input and output of

@@ -168,12 +168,7 @@ rm -rf "${SOURCES}"
 
 # Host applications re-sign the helper with their own identity and need the
 # script and the entitlements for that.
-mkdir -p DMG/QEMUSupport
-cp "${SCRIPTPATH}/QEMUSupport/resign-embedded-helper.sh" \
-    "${SCRIPTPATH}/QEMUSupport/QEMUHelper.entitlements" \
-    "${SCRIPTPATH}/QEMUSupport/QEMULauncher.entitlements" \
-    "${SCRIPTPATH}/QEMUSupport/QEMUTPM.entitlements" \
-    DMG/QEMUSupport/
+# The re-signing script and its entitlements ship inside the framework (Resources/QEMUSupport).
 
 hdiutil create -volname "${FRAMEWORK_NAME}" \
   -srcfolder ./DMG \

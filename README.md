@@ -61,7 +61,13 @@ Built on a sandboxed, embedded build of QEMU, for guests Apple Virtualization ca
 > [!IMPORTANT]
 > **Using the QEMU back-end in an app**
 > 1. Build the emulator payload once with `Third-Party/setup-dependencies.sh` (requires Homebrew's `meson`, `ninja`, `pkg-config`, `autoconf`, `automake` and `libtool`). The framework embeds it when it is built.
-> 2. Embed the framework, then add a *Run Script* phase **after** “Embed Frameworks” that runs `QEMUSupport/resign-embedded-helper.sh`. It re-signs the embedded helper, its launcher and its libraries with your identity and their own entitlements. Set `ENABLE_USER_SCRIPT_SANDBOXING = NO` for that target.
+> 2. Embed the framework, then add a *Run Script* phase **after** “Embed Frameworks” that runs the copy of `resign-embedded-helper.sh` the framework carries:
+>
+>    ```sh
+>    /bin/bash "${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/VirtualizationKit.framework/Resources/QEMUSupport/resign-embedded-helper.sh"
+>    ```
+>
+>    That path works whether the framework comes from a project dependency or from a release. It re-signs the embedded helper, its launcher and its libraries with your identity and their own entitlements. Set `ENABLE_USER_SCRIPT_SANDBOXING = NO` for that target.
 > 3. Your app needs no additional entitlements for QEMU. If guests talk to devices on your local network, add `NSLocalNetworkUsageDescription` to its `Info.plist`.
 
 > [!NOTE]
