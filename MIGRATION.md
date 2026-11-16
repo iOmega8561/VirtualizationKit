@@ -25,10 +25,11 @@ The runtime API (actions, execution states, framebuffer views) is unchanged.
 |---|---|
 | `QEMUVirtualMachine.requestPowerDown()` | `execute(action: .requestStop)`, on both back-ends |
 | `QEMUVirtualMachine.reset()` | `execute(action: .reset)` (QEMU only) |
+| `.start(options: VZVirtualMachineStartOptions)` (Apple) | `.start(options: AppleStartOptions(startsFromRecovery:))`. `.macOSRecovery()` is unchanged |
 | `attachRemovableUSBDisk(usingImageAt:)` | `attachRemovableDrive(imageAt:)`, part of the `VirtualMachine` protocol |
 | `detachRemovableUSBDisk(identifiedBy:)` | `detachRemovableDrive(identifiedBy:)`, part of the `VirtualMachine` protocol |
 
-`ExecutableAction` requires `requestStop`, so custom action types add that case. `canRequestStop` tells whether the guest can react to it (the machine is running).
+`ExecutableAction` requires `requestStop`, so custom action types add that case, and its `StartOptions` must be `Sendable`. `canRequestStop` tells whether the guest can react to it (the machine is running).
 
 On the Apple back-end the drive methods used to be marked `@available(macOS 15.0, *)`. They are now available everywhere and check at run time instead: before macOS 15 they throw `unsupportedFeature(.xhciUSBHotSwap, .hostSystem)`, and on a machine created without `.xhciUSBHotSwap` they throw `featureNotEnabled(.xhciUSBHotSwap)`. `if #available` checks around the calls can go. Custom `VirtualMachine` types implement both methods.
 
@@ -54,6 +55,10 @@ Validation has become stricter on the Apple back-end. Rosetta or nested virtuali
 - An Apple machine whose network attachment is disconnected keeps its state (usually `.running`) instead of switching to `.error`. The disconnect is logged. `.error` now always means the machine has stopped.
 - `ExecutionState` is no longer `Codable` (it was `Transferable`); it stays `Hashable` and `Sendable`. A stored state is stale as soon as it is read back, since a machine is always `.stopped` when it is created, so stop persisting it.
 - When Virtualization.framework reports an error state on its own, an Apple machine now shows `.error(error: VZKitError.internalVirtualizationError)`; it used to be dropped, or turned into `.stopped`. When the specific error is known, the state carries that one instead. Either way, an error state stays until the machine is started again: a `.stopped` reported for the same failure no longer replaces it.
+
+## Concurrency
+
+VirtualizationKit no longer declares Virtualization's `VZVirtualMachineStartOptions`, `VZMacOSVirtualMachineStartOptions` and `VZMacOSRestoreImage` `Sendable`. Those declarations applied to every app importing the framework. Code of your own that passes these objects between actors and relied on them now gets the compiler's diagnostics; Apple does not declare them `Sendable`.
 
 ## Existing machines
 

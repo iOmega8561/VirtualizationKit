@@ -21,25 +21,16 @@
 //  Created by Giuseppe Rocco on 14/11/2026.
 //
 
-import Virtualization
+import Foundation
 
 /// Provides a specialized extension for `ExecutableAction` when the `StartOptions` type is specifically
-/// `VZVirtualMachineStartOptions`.
-public extension ExecutableAction where StartOptions == VZVirtualMachineStartOptions {
-    
-    /// Creates an action to start a virtual machine from macOS Recovery.
-    ///
-    /// This method performs the following steps:
-    /// 1. Creates a default instance of `VZMacOSVirtualMachineStartOptions`.
-    /// 2. Configures the options by setting the `startUpFromMacOSRecovery` property to `true`.
-    /// 3. Calls `start(options:)` with the configured options.
+/// `AppleStartOptions`.
+public extension ExecutableAction where StartOptions == AppleStartOptions {
+
+    /// Creates an action to start a macOS virtual machine from macOS Recovery.
     ///
     /// - Returns: An instance representing the start action configured for macOS Recovery.
     static func macOSRecovery() -> Self {
-        
-        let startOptions: VZMacOSVirtualMachineStartOptions = .init()
-        startOptions.startUpFromMacOSRecovery = true
-        
-        return start(options: startOptions)
+        start(options: AppleStartOptions(startsFromRecovery: true))
     }
 }

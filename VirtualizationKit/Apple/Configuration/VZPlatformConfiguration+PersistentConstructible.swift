@@ -27,7 +27,7 @@ extension VZPlatformConfiguration: PersistentConstructible {
     
     enum PlatformType {
         case generic(nestedVirtualization: Bool = false)
-        case macintosh(restoreImage: VZMacOSRestoreImage?)
+        case macintosh(restoreImage: RestoreImageSummary?)
     }
     
     // MARK: - Macintosh Platform Specific
@@ -98,20 +98,21 @@ extension VZPlatformConfiguration: PersistentConstructible {
             
             if let restoreImage, !hasPersistedModel {
                 
-                guard let requirements = restoreImage.mostFeaturefulSupportedConfiguration else {
+                guard let modelData = restoreImage.hardwareModel,
+                      let hardwareModel = VZMacHardwareModel(dataRepresentation: modelData) else {
                     throw VZKitError.macUnsupportedImage
                 }
-                
-                guard requirements.hardwareModel.isSupported else {
+
+                guard hardwareModel.isSupported else {
                     throw VZKitError.macUnsupportedHost
                 }
-                
-                try requirements.hardwareModel.dataRepresentation.write(
+
+                try modelData.write(
                     to: hardwareModelURL,
                     options: .atomic
                 )
-                
-                macintoshPlatform.hardwareModel = requirements.hardwareModel
+
+                macintoshPlatform.hardwareModel = hardwareModel
                 
             } else {
                 

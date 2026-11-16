@@ -79,12 +79,10 @@ public struct AppleMachineOptions: MachineOptions {
         /// - Throws: The underlying error if the location does not hold a valid restore image, or if no
         ///   bookmark can be created for it.
         public static func macOS(restoreImageAt location: URL) async throws -> Platform {
-            let macOSRestoreImage = try await VZMacOSRestoreImage.load(
-                from: location
-            )
+            let restoreImage = try await VZMacOSRestoreImage.loadSummary(from: location)
 
             return .macOS(
-                version: .init(macOSRestoreImage.operatingSystemVersion),
+                version: restoreImage.version,
                 restoreImage: try location.bookmarkData(
                     options: [.withSecurityScope, .securityScopeAllowOnlyReadAccess]
                 )

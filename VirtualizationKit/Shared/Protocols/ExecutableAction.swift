@@ -36,7 +36,7 @@
 /// ### Associated Type
 /// - `StartOptions`: A type that encapsulates the options or parameters needed to start a virtual machine.
 ///   This type allows customization of the start action, such as specifying configuration details.
-///   It is constrained to `Any` so that different implementations can use whatever they need and suits best.
+///   It has to be `Sendable`, because an action is created in one place and executed on the machine's queue.
 ///
 /// ### Requirements
 /// - `static func start(options: StartOptions) -> Self`
@@ -53,8 +53,9 @@ public protocol ExecutableAction: Sendable {
     
     /// The type that encapsulates the options required to start a virtual machine.
     ///
-    /// Constrained to `Any` so that different implementations can use whatever they need and suits best.
-    associatedtype StartOptions: Any
+    /// Each backend uses whatever suits it, as long as it is `Sendable`: an action is created in one place and
+    /// executed on the machine's queue.
+    associatedtype StartOptions: Sendable
     
     /// Creates an action to start a virtual machine with the specified options.
     ///
@@ -86,15 +87,13 @@ public protocol ExecutableAction: Sendable {
 
 /// Provides a default implementation for the no-argument `start()` method.
 ///
-/// This extension leverages the fact that `StartOptions` is an `NSObject` (which provides
-/// a default initializer via `init()`). Thus, calling `start()` without parameters automatically
-/// uses a default-initialized instance of `StartOptions`.
+/// Calling `start()` without parameters passes no options, so the backend starts the virtual machine
+/// the default way.
 public extension ExecutableAction {
         
     /// Creates an action to start a virtual machine using the default options.
     ///
-    /// This convenience method calls `start(options:)` with a default-constructed instance of
-    /// `StartOptions`.
+    /// This convenience method calls `start(options:)` with `nil`.
     ///
     /// - Returns: An instance representing the start action with default configuration.
     static func start() -> Self {
