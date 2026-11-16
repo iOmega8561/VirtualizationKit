@@ -54,6 +54,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		E32B5FEC30AB189B005A8B12 /* MIGRATION.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = MIGRATION.md; sourceTree = "<group>"; };
 		E32B65482CBA93C200FED006 /* VirtualizationKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VirtualizationKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3A9CA892ECE3629001720F3 /* make-release.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "make-release.sh"; sourceTree = "<group>"; };
 		E3A9CA8A2ECE3629001720F3 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -113,6 +114,7 @@
 				E3C0DE0B2F1A00010020F006 /* QEMULauncher */,
 				E3C0DE092F1A00010020F006 /* QEMUSupport */,
 				E3A9CA892ECE3629001720F3 /* make-release.sh */,
+				E32B5FEC30AB189B005A8B12 /* MIGRATION.md */,
 				E3A9CA8A2ECE3629001720F3 /* README.md */,
 				E32B65492CBA93C200FED006 /* Products */,
 			);

@@ -134,4 +134,27 @@ public enum VZKitResult: Sendable {
             self = .failure(error)
         }
     }
+    
+    /// Creates a result from any expression that creates a virtual machine.
+    ///
+    /// This is the general form of the type-based initializer, for virtual machines whose creation
+    /// involves more than a call to their initializer:
+    ///
+    /// ```swift
+    /// let result = await VZKitResult {
+    ///     let options = AppleMachineOptions(platform: try await .macOS(restoreImageAt: imageURL))
+    ///     return try await AppleVirtualMachine(template: template, options: options)
+    /// }
+    /// ```
+    ///
+    /// - Parameter makeVirtualMachine: Creates the virtual machine. Whatever it throws is captured in
+    ///   the `.failure` case.
+    /// - Important: This initializer does not throw; errors are captured within the result.
+    public init(_ makeVirtualMachine: @Sendable () async throws -> any VirtualMachine) async {
+        do {
+            self = .success(try await makeVirtualMachine())
+        } catch {
+            self = .failure(error)
+        }
+    }
 }
