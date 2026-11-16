@@ -173,12 +173,16 @@ public extension QEMUVirtualMachine {
     /// A disc image (ISO 9660 or UDF, including hybrid images) is attached as a USB CD-ROM drive,
     /// anything else as a USB disk. Windows in particular only reads disc images from a CD-ROM drive.
     ///
+    /// Like on the Apple backend, the machine has to be created with the `.xhciUSBHotSwap` capability.
+    ///
     /// - Parameter url: A file URL referencing the disk image to attach.
     /// - Returns: A `UUID` identifying the attached drive, for later removal.
-    /// - Throws: A localized error if the machine is not running, the image cannot be opened, or the
-    ///   emulator rejects the drive.
+    /// - Throws: `VZKitError.featureNotEnabled(.xhciUSBHotSwap)` if the machine was created without the
+    ///   capability, or a localized error if the machine is not running, the image cannot be opened, or
+    ///   the emulator rejects the drive.
     func attachRemovableDrive(imageAt url: URL) async throws -> UUID {
-        try await engine.attachRemovableDisk(at: url)
+        try Self.checkRemovableDriveSupport(in: template)
+        return try await engine.attachRemovableDisk(at: url)
     }
 
     /// Detaches a removable USB drive attached with `attachRemovableDrive(imageAt:)`.
@@ -186,10 +190,26 @@ public extension QEMUVirtualMachine {
     /// Returns once the guest has let go of the drive.
     ///
     /// - Parameter id: The `UUID` returned when the drive was attached.
-    /// - Throws: `VZKitError.usbDeviceNotFound(id)` if no such drive is attached, or a localized error
+    /// - Throws: `VZKitError.featureNotEnabled(.xhciUSBHotSwap)` if the machine was created without the
+    ///   capability, `VZKitError.usbDeviceNotFound(id)` if no such drive is attached, or a localized error
     ///   if the emulator does not release it.
     func detachRemovableDrive(identifiedBy id: UUID) async throws {
+        try Self.checkRemovableDriveSupport(in: template)
         try await engine.detachRemovableDisk(identifiedBy: id)
+    }
+
+    /// Checks that a machine described by a template may use removable drives.
+    ///
+    /// The USB controller exists on every QEMU machine, because the keyboard and the pointer are
+    /// attached to it. Drives still need the capability, so that a template means the same on both
+    /// backends: generic code gets the same answer whichever one runs the machine.
+    ///
+    /// - Parameter template: The template of the machine.
+    /// - Throws: `VZKitError.featureNotEnabled(.xhciUSBHotSwap)` without the capability.
+    internal static func checkRemovableDriveSupport(in template: Template) throws {
+        guard template.optionalCapabilities.contains(.xhciUSBHotSwap) else {
+            throw VZKitError.featureNotEnabled(.xhciUSBHotSwap)
+        }
     }
 
     /// The last failure of the guest display, if any.

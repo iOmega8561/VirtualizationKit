@@ -145,8 +145,9 @@ public protocol VirtualMachine: Sendable {
     /// the user outside of the sandbox container works as long as the URL carries its security scope;
     /// access is held for as long as the drive stays attached.
     ///
-    /// - Note: The Apple backend needs macOS 15 or later and a virtual machine created with the
-    ///   `.xhciUSBHotSwap` capability.
+    /// - Note: The virtual machine has to be created with the `.xhciUSBHotSwap` capability; without it,
+    ///   both methods throw `VZKitError.featureNotEnabled(.xhciUSBHotSwap)`. The Apple backend also
+    ///   needs macOS 15 or later.
     ///
     /// - Parameter url: The location of the disk image.
     /// - Returns: An identifier for the drive, to pass to `detachRemovableDrive(identifiedBy:)`.

@@ -32,6 +32,8 @@ The runtime API (actions, execution states, framebuffer views) is unchanged.
 
 On the Apple back-end the drive methods used to be marked `@available(macOS 15.0, *)`. They are now available everywhere and check at run time instead: before macOS 15 they throw `unsupportedFeature(.xhciUSBHotSwap, .hostSystem)`, and on a machine created without `.xhciUSBHotSwap` they throw `featureNotEnabled(.xhciUSBHotSwap)`. `if #available` checks around the calls can go. Custom `VirtualMachine` types implement both methods.
 
+The QEMU back-end now requires `.xhciUSBHotSwap` for removable drives too, as the Apple one always did, so a template means the same on both. A QEMU template that attaches drives without it has to add the capability; the emulator command line does not change.
+
 ## Capabilities
 
 | 1.x | 2.0 |
