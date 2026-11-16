@@ -99,6 +99,11 @@ public enum VZKitError: LocalizedError, Equatable, Sendable {
     /// Only one machine at a time can use the files of a template.
     case machineInUse
 
+    /// A disk cannot be given a smaller capacity: the guest data beyond it would be lost.
+    ///
+    /// - Parameter id: The identifier of the disk.
+    case cannotShrinkDisk(_ id: UUID)
+
     /// A disk of the template breaks a rule every backend shares, such as a duplicate identifier or
     /// boot order. The log says which rule.
     ///
@@ -195,6 +200,7 @@ public enum VZKitError: LocalizedError, Equatable, Sendable {
         case .diskImageUnreachable(let name?): .init("error-diskImageUnreachable", name)
         case .diskImageUnreachable(nil): .init("error-diskImageUnreachableGeneric")
         case .machineInUse: .init("error-machineInUse")
+        case .cannotShrinkDisk(let id): .init("error-cannotShrinkDisk", id.uuidString)
         case .invalidDiskImage(let id): .init("error-invalidDiskImage", id.uuidString)
         case .unsupportedDiskInterface(let kind, let interface):
             .init("error-unsupportedDiskInterface", kind.localizedName, interface.displayName)

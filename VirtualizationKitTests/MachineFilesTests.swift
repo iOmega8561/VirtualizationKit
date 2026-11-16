@@ -18,7 +18,8 @@ import Foundation
 import Testing
 @testable import VirtualizationKit
 
-@Suite("Machine files")
+@Suite("Machine files", .serialized)
+@MainActor
 struct MachineFilesTests {
 
     @Test("A machine directory can be locked once at a time, and is free again when released")
@@ -54,5 +55,84 @@ struct MachineFilesTests {
         #expect(Builder.sharedFolderName(for: ".hidden") == "hidden")
         #expect(Builder.sharedFolderName(for: "  ") == "Shared")
         #expect(Builder.sharedFolderName(for: "..") == "Shared")
+    }
+
+    /// A template with a managed disk, whose machine directory lives in a temporary support directory.
+    private func machine(in directory: TemporaryDirectory) -> TestTemplate {
+        VirtualizationKit.setSupportDirectory(directory.url)
+        var template = TestTemplate()
+        template.storage = [DiskImage(location: .managed(size: 1 << 20), interface: .virtio)]
+        return template
+    }
+
+    private func create(_ template: TestTemplate) throws -> URL {
+        let folder = VirtualizationKit.machineDirectory(for: template)
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        return try DiskImageStore(directory: folder).provision(template.storage[0]).url
+    }
+
+    private func size(of file: URL) throws -> UInt64? {
+        (try FileManager.default.attributesOfItem(atPath: file.path)[.size] as? NSNumber)?.uint64Value
+    }
+
+    @Test("Deleting removes the machine directory, and refuses while the machine is in use")
+    func delete() async throws {
+        let directory = try TemporaryDirectory()
+        let template = machine(in: directory)
+        try await VirtualizationKit.deleteFiles(of: template)   // nothing there yet
+
+        _ = try create(template)
+        let folder = VirtualizationKit.machineDirectory(for: template)
+        var inUse: MachineLock? = try MachineLock(directory: folder)
+        await #expect(throws: VZKitError.machineInUse) { try await VirtualizationKit.deleteFiles(of: template) }
+        #expect(FileManager.default.fileExists(atPath: folder.path))
+
+        _ = inUse
+        inUse = nil
+        try await VirtualizationKit.deleteFiles(of: template)
+        #expect(!FileManager.default.fileExists(atPath: folder.path))
+    }
+
+    @Test("A managed disk grows, never shrinks, and not while the machine is in use")
+    func resize() async throws {
+        let directory = try TemporaryDirectory()
+        var template = machine(in: directory)
+        let file = try create(template)
+
+        let grown = try await VirtualizationKit.resize(template.storage[0], of: template, to: 4 << 20)
+        #expect(grown.location == .managed(size: 4 << 20) && grown.id == template.storage[0].id)
+        #expect(try size(of: file) == 4 << 20)
+        template.storage[0] = grown
+
+        await #expect(throws: VZKitError.cannotShrinkDisk(grown.id)) {
+            try await VirtualizationKit.resize(grown, of: template, to: 1 << 20)
+        }
+        #expect(try size(of: file) == 4 << 20)
+
+        let inUse = try MachineLock(directory: VirtualizationKit.machineDirectory(for: template))
+        await #expect(throws: VZKitError.machineInUse) {
+            try await VirtualizationKit.resize(grown, of: template, to: 8 << 20)
+        }
+        _ = inUse
+    }
+
+    @Test("Only managed disks of the template can be resized; a disk not created yet is only described")
+    func resizeRules() async throws {
+        let directory = try TemporaryDirectory()
+        var template = machine(in: directory)
+
+        let notCreated = try await VirtualizationKit.resize(template.storage[0], of: template, to: 2 << 20)
+        #expect(notCreated.location == .managed(size: 2 << 20))
+
+        let external = DiskImage(location: .external(bookmark: Data()), interface: .usb)
+        template.storage.append(external)
+        await #expect(throws: VZKitError.invalidDiskImage(external.id)) {
+            try await VirtualizationKit.resize(external, of: template, to: 1 << 30)
+        }
+
+        let stranger = DiskImage(location: .managed(size: 1 << 20), interface: .virtio)
+        await #expect(throws: VZKitError.invalidDiskImage(stranger.id)) {
+            try await VirtualizationKit.resize(stranger, of: template, to: 1 << 30)
+        }
     }
 }

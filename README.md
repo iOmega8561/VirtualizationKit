@@ -199,6 +199,20 @@ let drive = try await vm.attachRemovableDrive(imageAt: imageURL)
 try await vm.detachRemovableDrive(identifiedBy: drive)
 ```
 
+### Machine files
+Each machine keeps its files (the disks the framework manages, firmware variables, and the like) in a directory of its own. Two operations manage them, and both refuse while a machine created from the template is in use:
+
+```swift
+// Give a managed disk more room, then store the result in the template.
+// The guest still has to extend its partition.
+template.storage[0] = try await VirtualizationKit.resize(template.storage[0], of: template, to: 128 << 30)
+
+// Delete everything the machine has on disk, when the user deletes it.
+try await VirtualizationKit.deleteFiles(of: template)
+```
+
+Deleting includes the folder an Apple machine shares with the guest. Disk images the user picked live elsewhere and are kept.
+
 ### Checking what a back-end supports
 A template can ask for more than a back-end offers. Ask before you build, for instance to decide what your UI shows:
 

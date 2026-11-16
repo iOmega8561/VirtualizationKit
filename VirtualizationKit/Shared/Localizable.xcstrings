@@ -225,6 +225,22 @@
         }
       }
     },
+    "error-cannotShrinkDisk" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The disk “%@” cannot be made smaller: the data beyond its new size would be lost"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il disco “%@” non può essere ridotto: i dati oltre la nuova dimensione andrebbero persi"
+          }
+        }
+      }
+    },
     "error-coreFilesMissing" : {
       "localizations" : {
         "en" : {
