@@ -233,6 +233,17 @@ struct MachineView: View {
   }
   ```
 
+- Errors thrown by the framework are `VZKitError` values, so a specific failure can be handled on its own:
+
+  ```swift
+  do {
+      try await vm.execute(action: .start())
+
+  } catch VZKitError.unavailableFeature(.rosetta, .hostSoftware) {
+      // Offer to install Rosetta, then try again
+  }
+  ```
+
 ---
 
 ## Migrating from 1.x

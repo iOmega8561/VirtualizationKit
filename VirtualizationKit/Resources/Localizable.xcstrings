@@ -358,13 +358,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "This mac is not supported by the chosen macOS restore image"
+            "value" : "This Mac is not supported by the chosen macOS restore image"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Questo mac non è supportato dall'immagine di ripristino di macOS scelta"
+            "value" : "Questo Mac non è supportato dall'immagine di ripristino di macOS scelta"
           }
         }
       }
@@ -694,7 +694,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The Virtual Machine has been created using a  macOS %@ restore image, but the currently selected image’s version is %@"
+            "value" : "The Virtual Machine has been created using a macOS %@ restore image, but the currently selected image’s version is %@"
           }
         },
         "it" : {

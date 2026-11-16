@@ -23,51 +23,147 @@
 
 import Foundation
 
-enum VZKitError: LocalizedError {
-    
-    // "Something blew up in Virtualization.framework"
-    case appleLimitExceeded
-    
-    // "Something went wrong writing/reading files"
-    case auxiliaryFailedSetup
-    case diskImageFailedSetup
-    case coreFilesTampered
-    case coreFilesMissing
-    case missingMacImage
-    
-    // Storage
-    case diskImageUnreachable(_ name: String?)
-    case invalidDiskImage(_ id: UUID)
-    case unsupportedDiskInterface(_ kind: DiskImage.Kind, _ interface: DiskImage.Interface)
+/// The errors VirtualizationKit throws.
+///
+/// Every error carries a localized description meant to be shown to the user as is, through
+/// `localizedDescription`. Match on the cases to react to a specific failure:
+///
+/// ```swift
+/// do {
+///     try await vm.execute(action: .start())
+/// } catch VZKitError.unavailableFeature(let capability, .hostSoftware) {
+///     offerToInstall(capability)
+/// } catch {
+///     present(error.localizedDescription)
+/// }
+/// ```
+///
+/// Errors raised by Virtualization.framework itself are passed through unchanged, except where a case
+/// below says otherwise. Cases may be added in later releases, so a `switch` over this type needs an
+/// `@unknown default`.
+public enum VZKitError: LocalizedError, Equatable, Sendable {
 
-    // Features
-    case unavailableFeature(_ capability: OptionalCapability, _ missing: CapabilitySupport.MissingComponent)
-    case permissionDenied(_ capability: OptionalCapability)
-    case unsupportedFeature(_ capability: OptionalCapability, _ limitation: CapabilitySupport.Limitation)
-    case featureNotEnabled(_ capability: OptionalCapability)
-    case usbDeviceNotFound(_ id: UUID)
-    
-    // Networking
-    case invalidMacAddress(_ macAddress: String)
-    case bridgeNicUnavailable(_ id: String?)
-    
-    // Configuration/Generic
+    // MARK: - Apple backend
+
+    /// The host runs as many macOS virtual machines as the macOS license allows (two at a time).
+    case appleLimitExceeded
+
+    /// The auxiliary storage of a macOS virtual machine could not be created.
+    case auxiliaryFailedSetup
+
+    /// A disk image could not be created inside the directory of the machine, or could not be attached
+    /// to it.
+    case diskImageFailedSetup
+
+    /// A file that identifies the virtual machine (its machine identifier or hardware model) exists but
+    /// cannot be read. The machine has to be recreated.
+    case coreFilesTampered
+
+    /// A file that identifies the virtual machine is missing, and cannot be recreated without a restore
+    /// image. The machine has to be recreated.
+    case coreFilesMissing
+
+    /// macOS cannot be installed because the options refer to no restore image, or to one that cannot be
+    /// located anymore.
+    case missingMacImage
+
+    /// The restore image offers no configuration this host can run.
     case macUnsupportedImage
+
+    /// The hardware model of the virtual machine cannot run on this host.
     case macUnsupportedHost
+
+    /// The restore image is for a different major macOS version than the one the machine was created for.
+    ///
+    /// - Parameters:
+    ///   - expected: The version the options describe.
+    ///   - actual: The version of the restore image.
     case wrongMacImageVersion(_ expected: AppleMachineOptions.Version,
                               _ actual: AppleMachineOptions.Version)
-    
-    // QEMU backend
+
+    // MARK: - Storage
+
+    /// An external disk image cannot be located or opened.
+    ///
+    /// - Parameter name: The file name, when the bookmark could still be resolved to one.
+    case diskImageUnreachable(_ name: String?)
+
+    /// A disk of the template breaks a rule every backend shares, such as a duplicate identifier or
+    /// boot order. The log says which rule.
+    ///
+    /// - Parameter id: The identifier of the disk.
+    case invalidDiskImage(_ id: UUID)
+
+    /// The backend cannot attach a disk of this kind through this interface.
+    case unsupportedDiskInterface(_ kind: DiskImage.Kind, _ interface: DiskImage.Interface)
+
+    // MARK: - Capabilities
+
+    /// The backend would provide the capability, but something it depends on is missing.
+    case unavailableFeature(_ capability: OptionalCapability, _ missing: CapabilitySupport.MissingComponent)
+
+    /// The user has denied the permission the capability needs, such as access to the microphone.
+    case permissionDenied(_ capability: OptionalCapability)
+
+    /// The capability is never provided in this setting. The limitation says why.
+    case unsupportedFeature(_ capability: OptionalCapability, _ limitation: CapabilitySupport.Limitation)
+
+    /// The operation needs a capability the virtual machine was created without.
+    case featureNotEnabled(_ capability: OptionalCapability)
+
+    /// No removable drive with this identifier is attached to the virtual machine.
+    case usbDeviceNotFound(_ id: UUID)
+
+    // MARK: - Networking
+
+    /// A MAC address in the network topology is not valid.
+    case invalidMacAddress(_ macAddress: String)
+
+    /// The host network interface to bridge to does not exist.
+    ///
+    /// - Parameter id: The identifier of the interface, or `nil` when the host has none to bridge to.
+    case bridgeNicUnavailable(_ id: String?)
+
+    // MARK: - QEMU backend
+
+    /// The QEMU helper service is not embedded in the application, or cannot be reached.
     case qemuHelperUnavailable
+
+    /// The QEMU helper service failed to prepare or start the emulator.
     case qemuHelperFailure(_ reason: String)
+
+    /// A file of the embedded QEMU payload is missing: an emulator library, a firmware image or the TPM.
+    ///
+    /// - Parameter name: The name of the file.
     case qemuFirmwareMissing(_ name: String)
+
+    /// A file of the virtual machine could not be created or opened.
     case qemuStorageFailedSetup(_ name: String)
+
+    /// The QEMU backend does not support this network topology.
     case qemuUnsupportedNetwork(_ name: String)
+
+    /// The action is not possible in the current execution state.
+    ///
+    /// - Parameter name: The localized name of the state.
     case qemuInvalidState(_ name: String)
+
+    /// The emulator exited while it was being started or while an operation was in progress.
+    ///
+    /// - Parameters:
+    ///   - status: The exit status.
+    ///   - diagnostics: What the emulator printed before exiting.
     case qemuProcessExited(_ status: Int32, _ diagnostics: String)
+
+    /// The emulator rejected a control command, or did not answer it in time.
     case qemuCommandFailed(_ command: String, _ reason: String)
+
+    /// The connection to the display of the guest failed.
     case qemuDisplayFailure(_ reason: String)
 
+    // MARK: - LocalizedError
+
+    /// A localized description of the error, meant to be shown to the user.
     public var errorDescription: String? { self.errorLocale.value }
     
     private var errorLocale: VZKitLocale {
