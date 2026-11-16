@@ -95,6 +95,10 @@ public enum VZKitError: LocalizedError, Equatable, Sendable {
     /// - Parameter name: The file name, when the bookmark could still be resolved to one.
     case diskImageUnreachable(_ name: String?)
 
+    /// Another virtual machine created from the same template is in use, in this application or another one.
+    /// Only one machine at a time can use the files of a template.
+    case machineInUse
+
     /// A disk of the template breaks a rule every backend shares, such as a duplicate identifier or
     /// boot order. The log says which rule.
     ///
@@ -190,6 +194,7 @@ public enum VZKitError: LocalizedError, Equatable, Sendable {
 
         case .diskImageUnreachable(let name?): .init("error-diskImageUnreachable", name)
         case .diskImageUnreachable(nil): .init("error-diskImageUnreachableGeneric")
+        case .machineInUse: .init("error-machineInUse")
         case .invalidDiskImage(let id): .init("error-invalidDiskImage", id.uuidString)
         case .unsupportedDiskInterface(let kind, let interface):
             .init("error-unsupportedDiskInterface", kind.localizedName, interface.displayName)

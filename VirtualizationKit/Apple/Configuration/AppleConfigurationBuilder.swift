@@ -108,7 +108,7 @@ struct AppleConfigurationBuilder<Template: TransferableTemplate> {
         if template.optionalCapabilities.contains(.directoryShare) {
             configuration.directorySharingDevices.append(
                 try .create(
-                    at: vmSupportDirectory.appendingPathComponent(template.name),
+                    at: vmSupportDirectory.appendingPathComponent(Self.sharedFolderName(for: template.name)),
                     type: options.platform
                 )
             )
@@ -118,6 +118,20 @@ struct AppleConfigurationBuilder<Template: TransferableTemplate> {
         if #available(macOS 15.0, *), template.optionalCapabilities.contains(.xhciUSBHotSwap) {
             configuration.usbControllers.append(VZXHCIControllerConfiguration())
         }
+    }
+
+    /// The name of the folder shared with the guest, inside the directory of the machine.
+    ///
+    /// It is the name of the template, made safe as one path component: separators (`/`, `:`) become
+    /// hyphens, leading dots are removed, so the folder can be neither hidden nor elsewhere. A name that is
+    /// left empty becomes "Shared". Names without those characters are kept as they are.
+    ///
+    /// - Parameter name: The name of the template.
+    /// - Returns: A single path component.
+    static func sharedFolderName(for name: String) -> String {
+        let replaced = String(name.map { $0 == "/" || $0 == ":" ? "-" : $0 })
+        let trimmed = replaced.trimmingCharacters(in: .whitespacesAndNewlines).drop { $0 == "." }
+        return trimmed.isEmpty ? "Shared" : String(trimmed)
     }
 
     /// Tells whether this backend can provide an optional capability to a guest of a given platform.
@@ -237,6 +251,9 @@ struct AppleConfigurationBuilder<Template: TransferableTemplate> {
             withIntermediateDirectories: true
         )
 
+        // Taken before any file of the machine is touched, and held for as long as the machine exists.
+        let lock = try MachineLock(directory: vmSupportDirectory)
+
         let disks = try DiskImageStore(directory: vmSupportDirectory).provision(
             DiskImage.bootSequence(of: template.storage)
         )
@@ -272,6 +289,7 @@ struct AppleConfigurationBuilder<Template: TransferableTemplate> {
         try configuration.validate()
 
         return (configuration, .init(
+            lock: lock,
             mediaAccess: disks.compactMap(\.access),
             restoreImage: restoreImageAccess
         ))
@@ -299,6 +317,9 @@ struct AppleConfigurationBuilder<Template: TransferableTemplate> {
 /// The configuration refers to files by location only. Inside the App Sandbox, the ones living outside
 /// of the application container stay reachable just as long as these guards exist.
 struct AppleMachineResources: Sendable {
+
+    /// Keeps a second machine from using the files of this one.
+    let lock: MachineLock
 
     /// The guards of the external disk images attached to the machine.
     let mediaAccess: [SecurityScopedAccess]

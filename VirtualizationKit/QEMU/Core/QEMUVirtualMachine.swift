@@ -74,6 +74,9 @@ public struct QEMUVirtualMachine<Template: TransferableTemplate>: VirtualMachine
     /// The images are opened at every power-on, long after this value has been created.
     private let mediaAccess: [SecurityScopedAccess]
 
+    /// Keeps a second machine from using the files of this one, for as long as this one exists.
+    private let machineLock: MachineLock
+
     /// Executes a high-level action.
     ///
     /// - Parameter action: The requested operation.
@@ -144,13 +147,14 @@ public struct QEMUVirtualMachine<Template: TransferableTemplate>: VirtualMachine
     public init(template: Template, options: QEMUMachineOptions) async throws {
 
         let builder = try await QEMUConfigurationBuilder(template: template, options: options)
-        let (plan, mediaAccess) = try builder.createLaunchPlan()
+        let (plan, mediaAccess, machineLock) = try builder.createLaunchPlan()
         let stateCoordinator = await QEMUStateCoordinator()
         let display = await QEMUDisplay(guestDrawsPointer: options.guestDrawsPointer)
 
         self.template = template
         self.options = options
         self.mediaAccess = mediaAccess
+        self.machineLock = machineLock
         self.stateCoordinator = stateCoordinator
         self.display = display
         self.engine = .init(

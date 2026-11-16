@@ -304,10 +304,13 @@ struct QEMUConfigurationBuilder<Template: TransferableTemplate>: Sendable {
     ///   images it refers to. The plan names files by location only; inside the App Sandbox, the ones
     ///   outside of the application container can be opened just as long as the guards exist.
     /// - Throws: A localized error if the template is not supported or a file cannot be provisioned.
-    func createLaunchPlan() throws -> (plan: QEMULaunchPlan, mediaAccess: [SecurityScopedAccess]) {
+    func createLaunchPlan() throws -> (plan: QEMULaunchPlan, mediaAccess: [SecurityScopedAccess], lock: MachineLock) {
 
         try Self.validate(template, options: options, helper: helper)
         try storage.prepareDirectory()
+
+        // Taken before any file of the machine is touched, and held for as long as the machine exists.
+        let lock = try MachineLock(directory: storage.directory)
 
         var plan = QEMULaunchPlan(libraryName: options.architecture.libraryName)
 
@@ -320,7 +323,7 @@ struct QEMUConfigurationBuilder<Template: TransferableTemplate>: Sendable {
         try appendNetwork(to: &plan)
         appendAudio(to: &plan)
 
-        return (plan, mediaAccess)
+        return (plan, mediaAccess, lock)
     }
 
     // MARK: - Initializers

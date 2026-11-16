@@ -417,6 +417,22 @@
         }
       }
     },
+    "error-machineInUse" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This Virtual Machine is already in use, here or in another application"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questa Macchina Virtuale è già in uso, qui o in un'altra applicazione"
+          }
+        }
+      }
+    },
     "error-missingMacImage" : {
       "localizations" : {
         "en" : {

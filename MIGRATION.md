@@ -71,6 +71,10 @@ VirtualizationKit no longer declares Virtualization's `VZVirtualMachine`, `VZVir
 
 **Disks.** The system disk of a 1.x machine is the file `Disk.img` in its directory. A managed disk is now named after its identifier, so rename the file to `Disk-<disk id>.img` once. Giving that disk the identifier of the template also keeps the NVMe serial number of QEMU machines.
 
+**One machine per template at a time.** Creating a second virtual machine from a template whose machine is still in use now fails with `VZKitError.machineInUse`, in the same application or another one: the two would have written to the same disks. Release the first machine before creating it again.
+
+**Shared folders.** The folder an Apple machine shares with the guest is named after the template. Separators (`/`, `:`) and leading dots are now replaced, so such a name gets a different folder; other names keep theirs.
+
 **Options.** Persist the options of a machine next to its template. A 1.x machine created with `.macos` needs `AppleMachineOptions(platform: .macOS(...))` from now on, and a Windows machine the QEMU options listed above; created with the default options instead, they would be rebuilt as Linux machines.
 
 **Stored values.** `PerformancePreset` and `QEMUMachineOptions` values persisted by 1.x still decode, with two things to watch:
