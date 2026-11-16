@@ -449,22 +449,6 @@
         }
       }
     },
-    "error-qemuFirmwareMissing" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The following QEMU component is missing from the helper service: “%@”"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il seguente componente di QEMU non è presente nel servizio ausiliario: “%@”"
-          }
-        }
-      }
-    },
     "error-qemuHelperFailure" : {
       "localizations" : {
         "en" : {
@@ -509,6 +493,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "L’operazione richiesta non è possibile mentre la Macchina Virtuale si trova nel seguente stato: “%@”"
+          }
+        }
+      }
+    },
+    "error-qemuPayloadMissing" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A component of the virtualization engine is missing from the application: “%@”. Reinstalling the application may solve the problem"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All'applicazione manca un componente del motore di virtualizzazione: “%@”. Reinstallare l'applicazione potrebbe risolvere il problema"
           }
         }
       }

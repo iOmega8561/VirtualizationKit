@@ -132,10 +132,11 @@ public enum VZKitError: LocalizedError, Equatable, Sendable {
     /// The QEMU helper service failed to prepare or start the emulator.
     case qemuHelperFailure(_ reason: String)
 
-    /// A file of the embedded QEMU payload is missing: an emulator library, a firmware image or the TPM.
+    /// A file of the QEMU payload embedded in the application is missing: an emulator library, a
+    /// firmware image or the TPM. The application has to be rebuilt with the complete payload.
     ///
     /// - Parameter name: The name of the file.
-    case qemuFirmwareMissing(_ name: String)
+    case qemuPayloadMissing(_ name: String)
 
     /// A file of the virtual machine could not be created or opened.
     case qemuStorageFailedSetup(_ name: String)
@@ -214,7 +215,7 @@ public enum VZKitError: LocalizedError, Equatable, Sendable {
                     
         case .qemuHelperUnavailable: .init("error-qemuHelperUnavailable")
         case .qemuHelperFailure(let reason): .init("error-qemuHelperFailure", reason)
-        case .qemuFirmwareMissing(let name): .init("error-qemuFirmwareMissing", name)
+        case .qemuPayloadMissing(let name): .init("error-qemuPayloadMissing", name)
         case .qemuStorageFailedSetup(let name): .init("error-qemuStorageFailedSetup", name)
         case .qemuUnsupportedNetwork(let name): .init("error-qemuUnsupportedNetwork", name)
         case .qemuInvalidState(let name): .init("error-qemuInvalidState", name)

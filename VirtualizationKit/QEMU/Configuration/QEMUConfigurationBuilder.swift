@@ -125,7 +125,7 @@ struct QEMUConfigurationBuilder<Template: TransferableTemplate>: Sendable {
             // A file missing from the payload is named: more useful than naming the capability.
             if case .unavailable(.frameworkPayload) = support,
                let file = payload(for: capability, options: options, in: helper) {
-                throw VZKitError.qemuFirmwareMissing(file.lastPathComponent)
+                throw VZKitError.qemuPayloadMissing(file.lastPathComponent)
             }
 
             try support.check(capability)
@@ -140,7 +140,7 @@ struct QEMUConfigurationBuilder<Template: TransferableTemplate>: Sendable {
         let library = helper.libraryURL(named: options.architecture.libraryName)
 
         guard FileManager.default.fileExists(atPath: library.path(percentEncoded: false)) else {
-            throw VZKitError.qemuFirmwareMissing(library.lastPathComponent)
+            throw VZKitError.qemuPayloadMissing(library.lastPathComponent)
         }
     }
 

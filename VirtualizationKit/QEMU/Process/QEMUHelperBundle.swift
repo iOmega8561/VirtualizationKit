@@ -56,12 +56,12 @@ struct QEMUHelperBundle: Sendable {
     ///
     /// - Parameter name: The file name, relative to the data directory.
     /// - Returns: The location of the file.
-    /// - Throws: `VZKitError.qemuFirmwareMissing` if the file is not part of the bundle.
+    /// - Throws: `VZKitError.qemuPayloadMissing` if the file is not part of the bundle.
     func dataFile(named name: String) throws -> URL {
         let file = dataDirectory.appendingPathComponent(name, isDirectory: false)
 
         guard FileManager.default.fileExists(atPath: file.path(percentEncoded: false)) else {
-            throw VZKitError.qemuFirmwareMissing(name)
+            throw VZKitError.qemuPayloadMissing(name)
         }
 
         return file

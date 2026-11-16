@@ -27,6 +27,7 @@ The runtime API (actions, execution states, framebuffer views) is unchanged.
 | `OptionalCapability.isNestedVirtualizationSupported` | `AppleVirtualMachine<T>.support(for: .nestedVirtualization, options:)` |
 | Errors `unsupportedFeature(_)` / `unavailableFeature(_)` | The same errors carry the reason, and their messages state it |
 | Hot-plugging a USB drive without a USB controller: "unsupported" | `featureNotEnabled(.xhciUSBHotSwap)` |
+| `VZKitError.qemuFirmwareMissing` (internal in 1.x) | `VZKitError.qemuPayloadMissing`: it also covers a missing emulator library or TPM, not only firmware |
 
 Validation has become stricter on the Apple back-end. Rosetta or nested virtualization on a macOS guest, and USB hot-plug on a host older than macOS 15, used to be ignored silently. They are now rejected, before any file is written. Call `validate(_:options:)` to find out ahead of time.
 
