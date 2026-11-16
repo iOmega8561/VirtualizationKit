@@ -30,6 +30,11 @@ The runtime API (actions, execution states, framebuffer views) is unchanged.
 
 Validation has become stricter on the Apple back-end. Rosetta or nested virtualization on a macOS guest, and USB hot-plug on a host older than macOS 15, used to be ignored silently. They are now rejected, before any file is written. Call `validate(_:options:)` to find out ahead of time.
 
+## Execution state
+
+- An Apple machine whose network attachment is disconnected keeps its state (usually `.running`) instead of switching to `.error`. The disconnect is logged. `.error` now always means the machine has stopped.
+- `ExecutionState` encodes `.error` and `.installing` together with their value, and decodes them. The other states are encoded as before, and states stored by 1.x decode.
+
 ## Existing machines
 
 **Disks.** The system disk of a 1.x machine is the file `Disk.img` in its directory. A managed disk is now named after its identifier, so rename the file to `Disk-<disk id>.img` once. Giving that disk the identifier of the template also keeps the NVMe serial number of QEMU machines.

@@ -100,11 +100,11 @@ public final class AppleStateCoordinator: StateCoordinator {
            .sink { [weak self] newVZState in
                guard let newExecutionState = ExecutionState(newVZState)
                else { return }
-           
-               // Prevent transitioning from .stopped to anything else if rawValue == 10
-               guard self?.executionState.rawValue != 10 ||
-                     newExecutionState == .stopped else { return }
-           
+
+               // While macOS is being installed, the installer drives the machine through states of
+               // its own. Only the final stop is let through; the progress stays on screen until then.
+               if case .installing = self?.executionState, newExecutionState != .stopped { return }
+
                self?.executionState = newExecutionState
                self?.stateSubject.send(newExecutionState)
            }

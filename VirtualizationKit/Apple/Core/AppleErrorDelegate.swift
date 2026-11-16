@@ -40,7 +40,7 @@ final class AppleErrorDelegate: NSObject, VZVirtualMachineDelegate, Sendable {
     /// A Combine publisher that emits errors encountered during the virtual machine's execution.
     ///
     /// Observers can subscribe to this `PassthroughSubject` to be notified whenever the virtual machine
-    /// stops due to an error or when a network device detaches unexpectedly.
+    /// stops due to an error.
     let errorSubject: PassthroughSubject<Error, Never> = .init()
     
     /// Called when the virtual machine stops due to an error.
@@ -60,15 +60,14 @@ final class AppleErrorDelegate: NSObject, VZVirtualMachineDelegate, Sendable {
     /// Called when a network device detaches from the virtual machine due to an error.
     ///
     /// This method is triggered when a network attachment disconnects unexpectedly because of an error.
-    /// The delegate handles the event by publishing the encountered error through the `errorSubject` and logging
-    /// the error details for debugging purposes.
+    /// The guest keeps running without that network, so the error is logged but not published: publishing
+    /// it would put a running machine in the `.error` state, where it could be started but not stopped.
     ///
     /// - Parameters:
     ///   - virtualMachine: The virtual machine instance associated with the network device.
     ///   - networkDevice: The network device that was disconnected.
     ///   - attachmentWasDisconnectedWithError: The error that caused the disconnection.
     func virtualMachine(_ virtualMachine: VZVirtualMachine, networkDevice: VZNetworkDevice, attachmentWasDisconnectedWithError error: any Error) {
-        errorSubject.send(error)
-        VZKitLogger.default.error(error.localizedDescription)
+        VZKitLogger.default.error("A network attachment was disconnected: \(error.localizedDescription)")
     }
 }

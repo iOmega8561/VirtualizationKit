@@ -244,29 +244,29 @@ public extension VirtualMachine {
     
     /// Indicates whether the virtual machine can be started.
     ///
-    /// Returns `true` if the current execution state's raw value is either 0 or 3.
+    /// Returns `true` if the current execution state is `.stopped` or `.error`.
     var canStart: Bool {
-        [0, 3].contains(stateCoordinator.executionState.rawValue)
+        stateCoordinator.executionState.allowsStart
     }
     
     /// Indicates whether the virtual machine can be stopped.
     ///
-    /// Returns `true` if the current execution state's raw value is either 1 or 2.
+    /// Returns `true` if the current execution state is `.running` or `.paused`.
     var canStop: Bool {
-        [1, 2].contains(stateCoordinator.executionState.rawValue)
+        stateCoordinator.executionState.allowsStop
     }
     
     /// Indicates whether the virtual machine can be paused.
     ///
     /// Returns `true` if the current execution state is `.running`.
     var canPause: Bool {
-        stateCoordinator.executionState == .running
+        stateCoordinator.executionState.allowsPause
     }
     
     /// Indicates whether the virtual machine can be resumed.
     ///
     /// Returns `true` if the current execution state is `.paused`.
     var canResume: Bool {
-        stateCoordinator.executionState == .paused
+        stateCoordinator.executionState.allowsResume
     }
 }
