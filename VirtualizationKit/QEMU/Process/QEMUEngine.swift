@@ -190,6 +190,9 @@ actor QEMUEngine {
     ///
     /// The emulator is first asked to quit, which lets it flush and close its disk images. If it has not
     /// exited after a grace period, the helper service ends the process.
+    ///
+    /// The grace period starts before the request is sent, not when it is answered: an emulator that
+    /// is stuck answers nothing, and ending such an emulator is precisely what the escalation is for.
     func stop() async throws {
 
         guard let session else {
@@ -199,17 +202,19 @@ actor QEMUEngine {
         isStopRequested = true
         await transition(to: .stopping, in: session.id)
 
-        // A failure here only means the process is already on its way out.
-        _ = try? await session.control.execute("quit")
-
         let escalation = Task { [helper = session.helper] in
             try? await Task.sleep(for: Self.quitGracePeriod)
 
             if !Task.isCancelled { await helper.terminate() }
         }
 
+        defer { escalation.cancel() }
+
+        // A failure here only means the process is on its way out already, or is stuck and about
+        // to be ended by the escalation. Either way the exit below is what counts.
+        _ = try? await session.control.execute("quit", timeout: Self.quitGracePeriod)
+
         _ = await session.exitTask.value
-        escalation.cancel()
     }
 
     /// Halts the guest processors.

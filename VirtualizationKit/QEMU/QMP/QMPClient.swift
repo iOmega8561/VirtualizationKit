@@ -25,6 +25,10 @@ import Foundation
 /// The client is an actor. A dedicated thread performs the blocking reads and feeds complete lines
 /// into a stream that is drained on the actor, so replies and events are processed strictly in the
 /// order they were received. Commands are correlated with their replies through an identifier.
+///
+/// Every command has a deadline. An emulator that stops processing its control channel (because it
+/// is stuck, or busy for longer than any command should take) would otherwise leave the caller
+/// suspended forever; past the deadline the command fails, and a reply that arrives later is ignored.
 actor QMPClient {
 
     /// An asynchronous notification sent by the emulator.
@@ -42,6 +46,11 @@ actor QMPClient {
         let command: String
         let continuation: CheckedContinuation<QMPValue, any Error>
     }
+
+    /// How long a command may wait for its reply by default.
+    ///
+    /// Commands are answered from the emulator's main loop, within milliseconds when it is healthy.
+    static let replyTimeout: Duration = .seconds(10)
 
     /// The events reported by the emulator, in order. The stream ends when the connection closes.
     nonisolated let events: AsyncStream<Event>
@@ -139,14 +148,16 @@ actor QMPClient {
     ///   - arguments: The arguments of the command, if it takes any.
     ///   - descriptor: An open descriptor to transfer together with the command. Commands such as
     ///     `getfd` and `add-fd` pick it up on the receiving side.
+    ///   - timeout: How long to wait for the reply.
     /// - Returns: The value returned by the emulator.
-    /// - Throws: `VZKitError.qemuCommandFailed` if the emulator rejects the command,
-    ///   `UnixSocketError` if the connection fails.
+    /// - Throws: `VZKitError.qemuCommandFailed` if the emulator rejects the command or does not answer
+    ///   in time, `UnixSocketError` if the connection fails.
     @discardableResult
     func execute(
         _ command: String,
         arguments: [String: QMPValue]? = nil,
-        passing descriptor: Int32? = nil
+        passing descriptor: Int32? = nil,
+        timeout: Duration = QMPClient.replyTimeout
     ) async throws -> QMPValue {
 
         guard !isClosed else { throw UnixSocketError.closed }
@@ -162,6 +173,16 @@ actor QMPClient {
         if let arguments { message["arguments"] = .object(arguments) }
 
         let payload = try JSONEncoder().encode(QMPValue.object(message)) + Data([0x0A])
+
+        let deadline = Task { [weak self] in
+            try? await Task.sleep(for: timeout)
+
+            guard !Task.isCancelled else { return }
+
+            await self?.expire(identifier)
+        }
+
+        defer { deadline.cancel() }
 
         return try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<QMPValue, any Error>) in
             pending[identifier] = Request(command: command, continuation: continuation)
@@ -203,6 +224,18 @@ actor QMPClient {
         } else {
             request.continuation.resume(returning: message["return"] ?? .null)
         }
+    }
+
+    /// Fails a command whose reply has not arrived in time.
+    ///
+    /// The request is forgotten, so a reply that still arrives later is ignored by `receive(_:)`.
+    private func expire(_ identifier: String) {
+        guard let request = pending.removeValue(forKey: identifier) else { return }
+
+        VZKitLogger.default.error("QMP command \(request.command) received no reply in time")
+        request.continuation.resume(
+            throwing: VZKitError.qemuCommandFailed(request.command, "no reply from the emulator")
+        )
     }
 
     /// Fails everything that is still waiting once the connection is gone.
