@@ -25,8 +25,12 @@ The runtime API (actions, execution states, framebuffer views) is unchanged.
 |---|---|
 | `QEMUVirtualMachine.requestPowerDown()` | `execute(action: .requestStop)`, on both back-ends |
 | `QEMUVirtualMachine.reset()` | `execute(action: .reset)` (QEMU only) |
+| `attachRemovableUSBDisk(usingImageAt:)` | `attachRemovableDrive(imageAt:)`, part of the `VirtualMachine` protocol |
+| `detachRemovableUSBDisk(identifiedBy:)` | `detachRemovableDrive(identifiedBy:)`, part of the `VirtualMachine` protocol |
 
 `ExecutableAction` requires `requestStop`, so custom action types add that case. `canRequestStop` tells whether the guest can react to it (the machine is running).
+
+On the Apple back-end the drive methods used to be marked `@available(macOS 15.0, *)`. They are now available everywhere and check at run time instead: before macOS 15 they throw `unsupportedFeature(.xhciUSBHotSwap, .hostSystem)`, and on a machine created without `.xhciUSBHotSwap` they throw `featureNotEnabled(.xhciUSBHotSwap)`. `if #available` checks around the calls can go. Custom `VirtualMachine` types implement both methods.
 
 ## Capabilities
 

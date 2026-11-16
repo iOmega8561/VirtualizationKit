@@ -138,6 +138,29 @@ public protocol VirtualMachine: Sendable {
     ///           the state is updated or rolled back as appropriate before propagating the error.
     func execute(action: Action) async throws
     
+    /// Attaches a removable drive to the running virtual machine.
+    ///
+    /// The drive is backed by a disk image and attached read-only, through USB, as a stick or a disc
+    /// would be plugged into a physical machine. The application opens the file, so an image picked by
+    /// the user outside of the sandbox container works as long as the URL carries its security scope;
+    /// access is held for as long as the drive stays attached.
+    ///
+    /// - Note: The Apple backend needs macOS 15 or later and a virtual machine created with the
+    ///   `.xhciUSBHotSwap` capability.
+    ///
+    /// - Parameter url: The location of the disk image.
+    /// - Returns: An identifier for the drive, to pass to `detachRemovableDrive(identifiedBy:)`.
+    /// - Throws: A localized error if the machine is not running, the backend cannot attach drives,
+    ///   or the image cannot be opened.
+    func attachRemovableDrive(imageAt url: URL) async throws -> UUID
+
+    /// Detaches a drive attached with `attachRemovableDrive(imageAt:)`.
+    ///
+    /// - Parameter id: The identifier returned when the drive was attached.
+    /// - Throws: `VZKitError.usbDeviceNotFound(id)` if no such drive is attached, or a localized error
+    ///   if the backend cannot detach it.
+    func detachRemovableDrive(identifiedBy id: UUID) async throws
+
     /// Tells whether this backend can provide an optional capability.
     ///
     /// The answer depends on the backend, on the options (a capability may exist for one guest platform

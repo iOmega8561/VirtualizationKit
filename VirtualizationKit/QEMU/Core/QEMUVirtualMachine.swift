@@ -177,18 +177,18 @@ public extension QEMUVirtualMachine {
     /// - Returns: A `UUID` identifying the attached drive, for later removal.
     /// - Throws: A localized error if the machine is not running, the image cannot be opened, or the
     ///   emulator rejects the drive.
-    func attachRemovableUSBDisk(usingImageAt url: URL) async throws -> UUID {
+    func attachRemovableDrive(imageAt url: URL) async throws -> UUID {
         try await engine.attachRemovableDisk(at: url)
     }
 
-    /// Detaches a removable USB drive attached with `attachRemovableUSBDisk(usingImageAt:)`.
+    /// Detaches a removable USB drive attached with `attachRemovableDrive(imageAt:)`.
     ///
     /// Returns once the guest has let go of the drive.
     ///
     /// - Parameter id: The `UUID` returned when the drive was attached.
     /// - Throws: `VZKitError.usbDeviceNotFound(id)` if no such drive is attached, or a localized error
     ///   if the emulator does not release it.
-    func detachRemovableUSBDisk(identifiedBy id: UUID) async throws {
+    func detachRemovableDrive(identifiedBy id: UUID) async throws {
         try await engine.detachRemovableDisk(identifiedBy: id)
     }
 

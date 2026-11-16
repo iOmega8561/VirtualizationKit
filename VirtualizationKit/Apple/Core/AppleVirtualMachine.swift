@@ -263,25 +263,29 @@ public struct AppleVirtualMachine<Template: TransferableTemplate>: VirtualMachin
     }
 }
 
-@available(macOS 15.0, *)
 @VZKitActor public extension AppleVirtualMachine {
     
-    /// Attaches a removable USB mass storage device to the VM from a specified disk image.
+    /// Attaches a removable drive to the running virtual machine, as a USB mass storage device.
     ///
-    /// This method finds the first available XHCI USB controller on the virtual machine and attaches
-    /// a `VZUSBMassStorageDevice` representing the given disk image. A read-only image is commonly
-    /// used for installation media or data discs.
+    /// The drive is attached read-only, to the USB controller of the machine.
     ///
-    /// - Parameter url: A file URL referencing the disk image to be attached.
-    /// - Returns: A `UUID` uniquely identifying the attached USB device for future tracking or removal.
+    /// - Parameter url: The location of the disk image.
+    /// - Returns: An identifier for the drive, to pass to `detachRemovableDrive(identifiedBy:)`.
     /// - Throws:
-    ///   - `VZKitError.featureNotEnabled(.xhciUSBHotSwap)` if the machine was created without a USB controller.
+    ///   - `VZKitError.unsupportedFeature(.xhciUSBHotSwap, .hostSystem)` before macOS 15.
+    ///   - `VZKitError.featureNotEnabled(.xhciUSBHotSwap)` if the machine was created without the capability.
     ///   - Other Apple Virtualization–related errors if attachment fails.
-    func attachRemovableUSBDisk(usingImageAt url: URL) async throws -> UUID {
-        guard let controller = vzVirtualMachine.usbControllers.first else {
-            throw VZKitError.featureNotEnabled(.xhciUSBHotSwap)
+    func attachRemovableDrive(imageAt url: URL) async throws -> UUID {
+
+        try checkRemovableDriveSupport()
+
+        // Unreachable before macOS 15, which the check above turns away. Required by the compiler.
+        guard #available(macOS 15.0, *) else {
+            throw VZKitError.unsupportedFeature(.xhciUSBHotSwap, .hostSystem)
         }
-        
+
+        let controller = try removableDriveController()
+
         // Released again if anything below throws, kept for as long as the device stays attached.
         let access = SecurityScopedAccess(url: url)
         
@@ -294,26 +298,55 @@ public struct AppleVirtualMachine<Template: TransferableTemplate>: VirtualMachin
         return massStorageDev.uuid
     }
     
-    /// Detaches a previously attached removable USB mass storage device from the VM.
+    /// Detaches a drive attached with `attachRemovableDrive(imageAt:)`.
     ///
-    /// This method searches the first XHCI USB controller for the device matching the provided `UUID`.
-    /// If found, it detaches the mass storage device, making it no longer available within the VM.
-    ///
-    /// - Parameter id: The `UUID` used to identify the USB device during attachment.
+    /// - Parameter id: The identifier returned when the drive was attached.
     /// - Throws:
-    ///   - `VZKitError.featureNotEnabled(.xhciUSBHotSwap)` if the machine was created without a USB controller.
-    ///   - `VZKitError.usbDeviceNotFound(id)` if the specified device is not attached.
+    ///   - `VZKitError.unsupportedFeature(.xhciUSBHotSwap, .hostSystem)` before macOS 15.
+    ///   - `VZKitError.featureNotEnabled(.xhciUSBHotSwap)` if the machine was created without the capability.
+    ///   - `VZKitError.usbDeviceNotFound(id)` if the specified drive is not attached.
     ///   - Other errors originating from the Apple Virtualization framework during detachment.
-    func detachRemovableUSBDisk(identifiedBy id: UUID) async throws {
-        guard let controller = vzVirtualMachine.usbControllers.first else {
-            throw VZKitError.featureNotEnabled(.xhciUSBHotSwap)
+    func detachRemovableDrive(identifiedBy id: UUID) async throws {
+
+        try checkRemovableDriveSupport()
+
+        // Unreachable before macOS 15, which the check above turns away. Required by the compiler.
+        guard #available(macOS 15.0, *) else {
+            throw VZKitError.unsupportedFeature(.xhciUSBHotSwap, .hostSystem)
         }
-        
+
+        let controller = try removableDriveController()
+
         guard let device = controller.usbDevices.first(where: { $0.uuid == id }) else {
             throw VZKitError.usbDeviceNotFound(id)
         }
         
         try await controller.detach(device: device)
         removableMediaAccess.release(id)
+    }
+
+    /// Checks that removable drives can be used: first the host, then the machine.
+    ///
+    /// The host is checked through the support table, the same answer validation gives, so the error
+    /// names the same reason ("requires a newer version of macOS"). The machine needs the capability,
+    /// because its USB controller exists only if the template asked for it.
+    private func checkRemovableDriveSupport() throws {
+
+        try Self.support(for: .xhciUSBHotSwap, options: options).check(.xhciUSBHotSwap)
+
+        guard template.optionalCapabilities.contains(.xhciUSBHotSwap) else {
+            throw VZKitError.featureNotEnabled(.xhciUSBHotSwap)
+        }
+    }
+
+    /// The USB controller removable drives are attached to.
+    @available(macOS 15.0, *)
+    private func removableDriveController() throws -> VZUSBController {
+
+        guard let controller = vzVirtualMachine.usbControllers.first else {
+            throw VZKitError.featureNotEnabled(.xhciUSBHotSwap)
+        }
+
+        return controller
     }
 }
