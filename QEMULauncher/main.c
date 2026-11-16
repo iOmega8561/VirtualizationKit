@@ -159,7 +159,6 @@ static int start_tpm(int state_descriptor) {
         "--terminate",
         "--ctrl", "type=unixio,clientfd=3",
         "--tpmstate", "backend-uri=file:///dev/fd/4",
-        "--log", "fd=2,level=1",
         NULL
     };
 
