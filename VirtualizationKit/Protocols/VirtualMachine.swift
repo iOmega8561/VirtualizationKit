@@ -257,6 +257,13 @@ public extension VirtualMachine {
         stateCoordinator.executionState.allowsStop
     }
     
+    /// Indicates whether the guest can be asked to shut itself down.
+    ///
+    /// Returns `true` if the current execution state is `.running`.
+    var canRequestStop: Bool {
+        stateCoordinator.executionState.allowsRequestStop
+    }
+
     /// Indicates whether the virtual machine can be paused.
     ///
     /// Returns `true` if the current execution state is `.running`.

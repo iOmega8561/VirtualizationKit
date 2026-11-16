@@ -56,13 +56,15 @@ public struct AppleVirtualMachine<Template: TransferableTemplate>: VirtualMachin
     ///
     /// Examples include:
     /// - `.start(options: ... )`: Boot the VM using the specified launch options.
-    /// - `.stop`: Gracefully shut down the VM.
+    /// - `.stop`: Power the VM off at once, without involving the guest.
+    /// - `.requestStop`: Ask the guest to shut itself down, as pressing the power button would.
     /// - `.pause`: Suspend the VM.
     /// - `.resume`: Resume the VM from a paused state.
     /// - `.install`: Run an installation procedure, typically for macOS guests.
     public enum Action: ExecutableAction {
         case start(options: VZVirtualMachineStartOptions?)
         case stop
+        case requestStop
         case pause
         case resume
         case install
@@ -131,6 +133,8 @@ public struct AppleVirtualMachine<Template: TransferableTemplate>: VirtualMachin
                 try await vzVirtualMachine.start()
             case .stop:
                 try await vzVirtualMachine.stop()
+            case .requestStop:
+                try vzVirtualMachine.requestStop()
             case .pause:
                 try await vzVirtualMachine.pause()
             case .resume:

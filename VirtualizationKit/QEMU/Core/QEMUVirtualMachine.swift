@@ -40,11 +40,16 @@ public struct QEMUVirtualMachine<Template: TransferableTemplate>: VirtualMachine
     ///
     /// - `.start(options:)`: Power the machine on.
     /// - `.stop`: Power the machine off without involving the guest.
+    /// - `.requestStop`: Press the virtual power button, asking the guest to shut itself down.
+    /// - `.reset`: Restart the machine at once, as the reset button of a physical one would. The guest is
+    ///   not involved, so it can lose data it has not written yet; the state does not change.
     /// - `.pause`: Halt the guest processors.
     /// - `.resume`: Let a paused guest run again.
     public enum Action: ExecutableAction {
         case start(options: QEMUStartOptions?)
         case stop
+        case requestStop
+        case reset
         case pause
         case resume
     }
@@ -81,6 +86,10 @@ public struct QEMUVirtualMachine<Template: TransferableTemplate>: VirtualMachine
             try await engine.start(paused: options?.startsPaused ?? false)
         case .stop:
             try await engine.stop()
+        case .requestStop:
+            try await engine.requestPowerDown()
+        case .reset:
+            try await engine.reset()
         case .pause:
             try await engine.pause()
         case .resume:
@@ -154,19 +163,6 @@ public struct QEMUVirtualMachine<Template: TransferableTemplate>: VirtualMachine
 }
 
 public extension QEMUVirtualMachine {
-
-    /// Presses the virtual power button.
-    ///
-    /// The guest decides how to react; an operating system with power management shuts itself down,
-    /// after which the machine reports `.stopped`. Use `.stop` to power off unconditionally.
-    func requestPowerDown() async throws {
-        try await engine.requestPowerDown()
-    }
-
-    /// Resets the machine without powering it off, as the reset button of a physical one would.
-    func reset() async throws {
-        try await engine.reset()
-    }
 
     /// Attaches a removable USB drive backed by a disk image to the running machine.
     ///

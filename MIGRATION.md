@@ -19,6 +19,15 @@ The runtime API (actions, execution states, framebuffer views) is unchanged.
 | `VirtualMachine.init(template:)` | Still available, and uses the default options of the back-end. Conforming types implement `init(template:options:)` instead |
 | `VZKitResult(_:using:options:)` (QEMU only) | `VZKitResult(_:using:options:)` for any back-end, with the options optional |
 
+## Actions
+
+| 1.x | 2.0 |
+|---|---|
+| `QEMUVirtualMachine.requestPowerDown()` | `execute(action: .requestStop)`, on both back-ends |
+| `QEMUVirtualMachine.reset()` | `execute(action: .reset)` (QEMU only) |
+
+`ExecutableAction` requires `requestStop`, so custom action types add that case. `canRequestStop` tells whether the guest can react to it (the machine is running).
+
 ## Capabilities
 
 | 1.x | 2.0 |

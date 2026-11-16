@@ -27,6 +27,9 @@
 /// such as starting, stopping, pausing, and resuming its execution. Each action is modeled
 /// as a static member or method, allowing for a clear, type-safe specification of commands.
 ///
+/// The protocol requires the actions every backend can perform. A backend can offer more, as further
+/// cases of its own action type: the Apple backend installs macOS, the QEMU backend resets the machine.
+///
 /// Conformance to `Sendable` ensures that instances of the conforming types are safe to use
 /// across concurrency domains.
 ///
@@ -40,6 +43,8 @@
 ///   Creates an instance representing a start action with the provided options.
 /// - `static var stop: Self { get }`
 ///   A static property that represents a stop action.
+/// - `static var requestStop: Self { get }`
+///   A static property that represents a request to the guest to shut itself down.
 /// - `static var pause: Self { get }`
 ///   A static property that represents a pause action.
 /// - `static var resume: Self { get }`
@@ -59,7 +64,18 @@ public protocol ExecutableAction: Sendable {
     static func start(options: StartOptions?) -> Self
     
     /// Represents the action to stop a virtual machine.
+    ///
+    /// The machine is powered off at once, without involving the guest: like pulling the plug, it can
+    /// lose data the guest has not written yet. Prefer `requestStop` while the guest can still react.
     static var stop: Self { get }
+
+    /// Represents the action of asking the guest to shut itself down.
+    ///
+    /// This presses the virtual power button. A guest with power management shuts down in an orderly
+    /// way, after which the machine reports `.stopped`; a guest without one, or busy, may ignore the
+    /// request. The action returns as soon as the request has been delivered, not when the guest has
+    /// stopped. It needs a running machine.
+    static var requestStop: Self { get }
     
     /// Represents the action to pause a virtual machine.
     static var pause: Self { get }

@@ -203,6 +203,13 @@ public enum ExecutionState: RawRepresentable, Transferable {
         }
     }
 
+    /// Whether a virtual machine in this state can be asked to shut down: it is running.
+    ///
+    /// A paused guest cannot react to the request.
+    public var allowsRequestStop: Bool {
+        if case .running = self { true } else { false }
+    }
+
     /// Whether a virtual machine in this state can be paused: it is running.
     public var allowsPause: Bool {
         if case .running = self { true } else { false }

@@ -132,6 +132,10 @@ vm.statePublisher
 
 // 3. Start it
 try await vm.execute(action: .start())
+
+// 4. Later: ask the guest to shut down, or power it off at once
+try await vm.execute(action: .requestStop)
+try await vm.execute(action: .stop)
 ```
 
 The same code drives a QEMU machine; only the type changes.
