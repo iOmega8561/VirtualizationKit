@@ -24,6 +24,9 @@
 >
 > - **Processor**: Apple Silicon (M1, M2, or newer)
 > - **Operating System**: macOS Sonoma 14.0 or later
+> - **Building**: Xcode with the macOS 27 SDK. The framework still runs on macOS 14; the SDK is needed for the display of the Apple back-end, which uses `VZVirtualMachineViewAdaptor` where available.
+>
+> Some features need more at run time: removable drives on the Apple back-end and nested virtualization need macOS 15, and nested virtualization also needs an M3 or later. `support(for:options:)` tells whether the current Mac qualifies (see below).
 
 ---
 
@@ -40,11 +43,11 @@ Both back-ends implement the same `VirtualMachine` protocol and are driven by th
 | **Display** | `AppleFramebufferView` | `QEMUFramebufferView` |
 | **Disks** | virtio, USB, NVMe (Linux guests) | virtio, NVMe, USB (optical discs on USB) |
 | **Networking** | NAT, bridged | NAT |
-| **Extras** | Rosetta, directory sharing, macOS installation | TPM 2.0, Secure Boot firmware |
-| **Shared** | Removable USB drives at run time, audio output, pause and resume |
+| **Extras** | Rosetta, nested virtualization, directory sharing, microphone input, macOS installation | TPM 2.0, Secure Boot firmware, reset |
+| **Shared** | Removable drives at run time, audio output, power button, pause and resume |
 
 ### Apple Virtualization
-Built on Apple's `Virtualization.framework`. It is the natural choice for macOS guests and for Linux guests that benefit from Rosetta or directory sharing. Apps using it need the `com.apple.security.virtualization` entitlement.
+Built on Apple's `Virtualization.framework`. It is the natural choice for macOS guests and for Linux guests that benefit from Rosetta or directory sharing. Apps using it need the `com.apple.security.virtualization` entitlement; bridged networking also needs `com.apple.vm.networking`, a restricted entitlement Apple grants on request.
 
 ### QEMU
 Built on a sandboxed, embedded build of QEMU, for guests Apple Virtualization cannot run, most notably **Windows**.
@@ -138,7 +141,9 @@ try await vm.execute(action: .requestStop)
 try await vm.execute(action: .stop)
 ```
 
-The same code drives a QEMU machine; only the type changes.
+The same code drives a QEMU machine; only the type changes. Each back-end has a few actions of its own: `.install` and `.macOSRecovery()` on the Apple back-end, `.reset` on the QEMU one.
+
+`execute(action:)` returns once the operation is done. The state follows what the machine reports, so it can be updated a moment later; observe it rather than reading it right after the call.
 
 ### Machine options
 `init(template:)` uses the default options of the back-end. Both defaults describe the same machine, a 64-bit ARM Linux guest, which is also the one case where a template runs on either back-end unchanged. Anything else is stated in the options:
@@ -182,6 +187,17 @@ let vm = try await QEMUVirtualMachine(
 
 > [!IMPORTANT]
 > Options are part of the identity of a machine, just like its template. Persist the two together: a machine restored with different options is a different machine.
+
+### Removable drives
+A disk image can be attached to a running machine as a removable drive, as a USB stick or disc would be plugged in, and detached again. The machine needs the `.xhciUSBHotSwap` capability, on both back-ends:
+
+```swift
+template.optionalCapabilities.append(.xhciUSBHotSwap)
+
+let drive = try await vm.attachRemovableDrive(imageAt: imageURL)
+// ...
+try await vm.detachRemovableDrive(identifiedBy: drive)
+```
 
 ### Checking what a back-end supports
 A template can ask for more than a back-end offers. Ask before you build, for instance to decide what your UI shows:
@@ -228,20 +244,20 @@ struct MachineView: View {
 `AppleFramebufferView` takes an `AppleVirtualMachine` with the same parameters.
 
 ### Simplified Management
-- Ready-to-use configurations for common virtualization needs—like typical CPU, memory, and disk settings.
-- Mask low-level error codes with approachable, localized descriptions and actionable suggestions.
+- `PerformancePreset` offers ready-made processor and memory sizes, resolved against the host every time a machine is created. The size of a disk is set on the disk itself.
+- Low-level error codes become approachable, localized descriptions, in English and Italian.
 
   **Example:**
   ```swift
   do {
-      try await vm.execute(action: .start())
+      let mac = try await AppleVirtualMachine(template: template, options: options)
 
   } catch {
 
       // Prints an error description that is actually useful like
-      // "The Virtual Machine has been created using a macOS 15.2
-      //  restore image, but the currently selected image’s version is 12.6"
-      print("Failed to start VM: \(error.localizedDescription)")
+      // "The Virtual Machine has been created using a macOS 15.2.0
+      //  restore image, but the currently selected image’s version is 14.6.1"
+      print("Failed to create VM: \(error.localizedDescription)")
   }
   ```
 
@@ -249,15 +265,17 @@ struct MachineView: View {
 
   ```swift
   do {
-      try await vm.execute(action: .start())
+      let vm = try await AppleVirtualMachine(template: template)
 
   } catch VZKitError.unavailableFeature(.rosetta, .hostSoftware) {
       // Offer to install Rosetta, then try again
   }
   ```
 
+  A template is checked when the machine is created, so that is where a missing capability or an unsuitable restore image is reported.
+
 ---
 
 ## Migrating from 1.x
 
-2.0 changes how a machine is described; the runtime API (actions, states, views) is unchanged. See [MIGRATION.md](MIGRATION.md) for the full list of changes and how to keep existing machines.
+2.0 changes how a machine is described, and parts of the runtime API: some actions, the state publisher and removable drives. See [MIGRATION.md](MIGRATION.md) for the full list of changes and how to keep existing machines.

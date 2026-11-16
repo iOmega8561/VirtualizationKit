@@ -2,16 +2,22 @@
 
 2.0 changes how a machine is described. A template now holds what every back-end shares, and each back-end has an options type for what only it understands. Nothing is derived from the guest operating system anymore: the hardware a guest needs is stated explicitly.
 
-The runtime API (actions, execution states, framebuffer views) is unchanged.
+Parts of the runtime API changed too: some actions, the state publisher and removable drives. The framebuffer views are unchanged.
+
+> [!NOTE]
+> Building 2.0 needs Xcode with the macOS 27 SDK. The framework still runs on macOS 14.
 
 ## Templates and options
 
 | 1.x | 2.0 |
 |---|---|
-| `bootableInstallMedia` | A `DiskImage` in `storage` with `kind: .optical`. For macOS, `AppleMachineOptions.Platform.macOS(restoreImageAt:)` |
+| `bootableInstallMedia` | A `DiskImage` in `storage` with `kind: .optical`. For macOS, the restore image goes into the options: `AppleMachineOptions.Platform.macOS(restoreImageAt:)` |
 | `performancePreset.diskSize`, `.custom(_, _, diskSize)` | `DiskImage.Location.managed(size:)` |
 | `operatingSystem: .linux` | Nothing: it is the default of both back-ends |
 | `operatingSystem: .macos(version:)` | `AppleMachineOptions(platform: .macOS(version:restoreImage:))` |
+| `OperatingSystem(fromImageAt:)` | `AppleMachineOptions.Platform.macOS(restoreImageAt:)`, or `MacOSRestoreImage.load(from:)` followed by `.macOS(restoreImage:)` to show the image first |
+| `OperatingSystem.Version` | `AppleMachineOptions.Version`, unchanged otherwise |
+| `OperatingSystem.displayName` | `AppleMachineOptions.Platform.displayName`. `fileType` has no successor |
 | `operatingSystem: .windows` | An NVMe system disk plus `QEMUMachineOptions(displayDevice: .virtioGPUWithFramebuffer, clock: .localTime, guestDrawsPointer: true)` |
 | `QEMUMachineOptions.displayWidth` / `displayHeight` | `display: DisplaySize` in the template (1920×1200 was the fixed size of macOS guests, 1280×720 of the others) |
 | `QEMUMachineOptions.includesTPM` / `usesSecureBootFirmware` | `.tpm` / `.secureBoot` in `optionalCapabilities` |
@@ -43,15 +49,14 @@ The QEMU back-end now requires `.xhciUSBHotSwap` for removable drives too, as th
 |---|---|
 | `OptionalCapability.featureScope` | `VirtualMachine.support(for:options:)`, whose answer carries the reason: `.unsupported(Limitation)` or `.unavailable(MissingComponent)` |
 | `OptionalCapability.isNestedVirtualizationSupported` | `AppleVirtualMachine<T>.support(for: .nestedVirtualization, options:)` |
-| Errors `unsupportedFeature(_)` / `unavailableFeature(_)` | The same errors carry the reason, and their messages state it |
-| Hot-plugging a USB drive without a USB controller: "unsupported" | `featureNotEnabled(.xhciUSBHotSwap)` |
-| `VZKitError.qemuFirmwareMissing` (internal in 1.x) | `VZKitError.qemuPayloadMissing`: it also covers a missing emulator library or TPM, not only firmware |
+
+`VZKitError` was internal in 1.x, so errors could only be shown. It is public now: match its cases to handle a specific failure. Several messages are more precise than before; in particular, an unsupported capability now says why (the back-end, the guest platform, the version of macOS or the hardware).
 
 Validation has become stricter on the Apple back-end. Rosetta or nested virtualization on a macOS guest, and USB hot-plug on a host older than macOS 15, used to be ignored silently. They are now rejected, before any file is written. Call `validate(_:options:)` to find out ahead of time.
 
 ## Execution state
 
-- `stateSubject` is replaced by `statePublisher`, an `AnyPublisher<ExecutionState, Never>`, on the virtual machine and on its state coordinator. Replace `.stateSubject` with `.statePublisher`; nothing else changes for code that only subscribes.
+- `stateSubject` is replaced by `statePublisher`, an `AnyPublisher<ExecutionState, Never>`, on the virtual machine and on its state coordinator. Replace `.stateSubject` with `.statePublisher`; nothing else changes for code that only subscribes. Custom `StateCoordinator` types implement `statePublisher` instead.
   - A subscriber receives the current state as soon as it subscribes, then every change. With `stateSubject` it only received later changes, so a `sink` now runs once more, right away.
   - Only the framework changes the state: the publisher has no `send`.
 - An Apple machine whose network attachment is disconnected keeps its state (usually `.running`) instead of switching to `.error`. The disconnect is logged. `.error` now always means the machine has stopped.
