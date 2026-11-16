@@ -79,17 +79,17 @@ struct MachineFilesTests {
     func delete() async throws {
         let directory = try TemporaryDirectory()
         let template = machine(in: directory)
-        try await VirtualizationKit.deleteFiles(of: template)   // nothing there yet
+        try await template.deleteMachineFiles()   // nothing there yet
 
         _ = try create(template)
         let folder = VirtualizationKit.machineDirectory(for: template)
         var inUse: MachineLock? = try MachineLock(directory: folder)
-        await #expect(throws: VZKitError.machineInUse) { try await VirtualizationKit.deleteFiles(of: template) }
+        await #expect(throws: VZKitError.machineInUse) { try await template.deleteMachineFiles() }
         #expect(FileManager.default.fileExists(atPath: folder.path))
 
         _ = inUse
         inUse = nil
-        try await VirtualizationKit.deleteFiles(of: template)
+        try await template.deleteMachineFiles()
         #expect(!FileManager.default.fileExists(atPath: folder.path))
     }
 

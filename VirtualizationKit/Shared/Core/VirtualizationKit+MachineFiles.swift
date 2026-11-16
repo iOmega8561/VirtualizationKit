@@ -21,21 +21,24 @@ import Foundation
 /// The machine of a template keeps its files in a directory of its own: the disks the framework manages,
 /// firmware variables, TPM state, the identity of a virtual Mac, and the folder an Apple machine shares
 /// with the guest. Disk images the user picked live elsewhere and are never touched here.
-public extension _VirtualizationKit {
+public extension TransferableTemplate {
 
-    /// Deletes the files of the machine of a template.
+    /// Deletes the files the machine of this template has on disk.
     ///
     /// Call it when the user deletes a virtual machine. Nothing happens if the machine has no files yet.
+    ///
+    /// ```swift
+    /// try await template.deleteMachineFiles()
+    /// ```
     ///
     /// - Important: This includes the folder an Apple machine shares with the guest, and whatever the guest
     ///   put there. Disk images outside the directory of the machine, such as installers or disks the user
     ///   picked, are kept.
     ///
-    /// - Parameter template: The template whose machine is deleted.
-    /// - Throws: `VZKitError.machineInUse` if a machine created from the template exists, here or in another
+    /// - Throws: `VZKitError.machineInUse` if a machine created from this template exists, here or in another
     ///   application; the error of the file system if a file cannot be removed.
-    func deleteFiles(of template: some TransferableTemplate) async throws {
-        let directory = await machineDirectory(for: template)
+    func deleteMachineFiles() async throws {
+        let directory = await VirtualizationKit.machineDirectory(for: self)
 
         guard FileManager.default.fileExists(atPath: directory.path(percentEncoded: false)) else { return }
 

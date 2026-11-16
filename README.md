@@ -211,7 +211,7 @@ template.storage[0] = try await template.storage[0].resized(to: 128 << 30, in: t
 let capacity = try template.storage[0].size()
 
 // Delete everything the machine has on disk, when the user deletes it.
-try await VirtualizationKit.deleteFiles(of: template)
+try await template.deleteMachineFiles()
 ```
 
 Deleting includes the folder an Apple machine shares with the guest. Disk images the user picked live elsewhere and are kept.
