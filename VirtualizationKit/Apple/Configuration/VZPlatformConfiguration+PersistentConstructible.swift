@@ -74,14 +74,13 @@ extension VZPlatformConfiguration: PersistentConstructible {
                 at: url.appendingPathComponent("MachineIdentifier")
             )
             
-            guard nestedVZ else { platform = genericPlatform; break }
-            
-            guard #available(macOS 15.0, *),
-                  VZGenericPlatformConfiguration.isNestedVirtualizationSupported else {
-                throw VZKitError.unsupportedFeature(.nestedVirtualization, .hostHardware)
+            // Whether the host can run nested virtualization is decided by
+            // `AppleConfigurationBuilder.validate`, which turns away every host that cannot (older
+            // than macOS 15 included) before this runs. The availability check is for the compiler.
+            if nestedVZ, #available(macOS 15.0, *) {
+                genericPlatform.isNestedVirtualizationEnabled = true
             }
-            
-            genericPlatform.isNestedVirtualizationEnabled = nestedVZ
+
             platform = genericPlatform
             
         case .macintosh(let restoreImage):

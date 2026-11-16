@@ -114,7 +114,7 @@ struct AppleConfigurationBuilder<Template: TransferableTemplate> {
             )
         }
 
-        // Hosts older than macOS 15 are turned away by the validation.
+        // Hosts older than macOS 15 are turned away by the validation; the check is for the compiler.
         if #available(macOS 15.0, *), template.optionalCapabilities.contains(.xhciUSBHotSwap) {
             configuration.usbControllers.append(VZXHCIControllerConfiguration())
         }
@@ -122,9 +122,9 @@ struct AppleConfigurationBuilder<Template: TransferableTemplate> {
 
     /// Tells whether this backend can provide an optional capability to a guest of a given platform.
     ///
-    /// The single source of truth for capabilities: `validate` acts on the same answer. There is
-    /// deliberately no `default`, so a capability added to the framework does not compile until this
-    /// backend has an answer for it.
+    /// The single source of truth for capabilities: `validate` acts on the same answer, and the device
+    /// factories rely on it rather than checking the host again. There is deliberately no `default`,
+    /// so a capability added to the framework does not compile until this backend has an answer for it.
     ///
     /// - Note: Capturing audio also needs the consent of the user. Asking for it shows a prompt, so it is
     ///   left to the moment the device is created.
