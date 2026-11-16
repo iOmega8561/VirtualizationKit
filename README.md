@@ -175,8 +175,13 @@ let vm = try await QEMUVirtualMachine(
 A template can ask for more than a back-end offers. Ask before you build, for instance to decide what your UI shows:
 
 ```swift
-// .supported, .unsupported (never offered here) or .unavailable (e.g. Rosetta is not installed)
-let rosetta = AppleVirtualMachine<MyTemplate>.support(for: .rosetta, options: options)
+// .supported, .unsupported(why) or .unavailable(what is missing)
+switch AppleVirtualMachine<MyTemplate>.support(for: .rosetta, options: options) {
+case .supported:                     print("Rosetta can be used")
+case .unavailable(.hostSoftware):    print("Rosetta has to be installed first")
+case .unsupported(.guestPlatform):   print("Rosetta only runs in Linux guests")
+case .unsupported, .unavailable:     print("Rosetta cannot be used here")
+}
 
 // Throws a localized error for the first thing the back-end cannot honour.
 // Nothing is created or modified on disk.
@@ -232,19 +237,4 @@ struct MachineView: View {
 
 ## Migrating from 1.x
 
-2.0 changes how a machine is described. The runtime API (actions, states, views) is unchanged.
-
-| 1.x | 2.0 |
-|---|---|
-| `bootableInstallMedia` | A `DiskImage` in `storage` with `kind: .optical`. For macOS, `AppleMachineOptions.Platform.macOS(restoreImageAt:)` |
-| `performancePreset.diskSize`, `.custom(_, _, diskSize)` | `DiskImage.Location.managed(size:)` |
-| `operatingSystem: .linux` | Nothing: it is the default of both back-ends |
-| `operatingSystem: .macos(version:)` | `AppleMachineOptions(platform: .macOS(version:restoreImage:))` |
-| `operatingSystem: .windows` | An NVMe system disk plus `QEMUMachineOptions(displayDevice: .virtioGPUWithFramebuffer, clock: .localTime, guestDrawsPointer: true)` |
-| `QEMUMachineOptions.displayWidth` / `displayHeight` | `display: DisplaySize` in the template (1920×1200 was the fixed size of macOS guests, 1280×720 of the others) |
-| `QEMUMachineOptions.includesTPM` / `usesSecureBootFirmware` | `.tpm` / `.secureBoot` in `optionalCapabilities` |
-| `DisplayDevice.automatic` | `.virtioGPU`, or `.virtioGPUWithFramebuffer` for x86_64 and for Windows before its drivers are installed |
-
-**Existing machines.** The system disk of a 1.x machine is the file `Disk.img` in its directory. A managed disk is now named after its identifier, so rename the file to `Disk-<disk id>.img` once. Giving that disk the identifier of the template also keeps the NVMe serial number of QEMU machines.
-
-**Stored values.** `PerformancePreset` and `QEMUMachineOptions` values persisted by 1.x still decode; keys that no longer exist are ignored.
+2.0 changes how a machine is described; the runtime API (actions, states, views) is unchanged. See [MIGRATION.md](MIGRATION.md) for the full list of changes and how to keep existing machines.
