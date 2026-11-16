@@ -23,8 +23,6 @@
 
 import Foundation
 
-import Virtualization
-
 /// An enumeration of optional features available within VirtualizationKit.
 ///
 /// `OptionalCapability` defines a set of features a template can ask for on top of the machine every

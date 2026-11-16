@@ -321,6 +321,22 @@
         }
       }
     },
+    "error-internalVirtualizationError" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "An internal virtualization error stopped the Virtual Machine"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un errore interno di virtualizzazione ha arrestato la Macchina Virtuale"
+          }
+        }
+      }
+    },
     "error-invalidDiskImage" : {
       "localizations" : {
         "en" : {

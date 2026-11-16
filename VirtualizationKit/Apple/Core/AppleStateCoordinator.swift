@@ -109,6 +109,9 @@ public final class AppleStateCoordinator: StateCoordinator {
                // its own. Only the final stop is let through; the progress stays on screen until then.
                if case .installing = self?.executionState, newExecutionState != .stopped { return }
 
+               // The delegate may have reported the specific error first; the generic one must not replace it.
+               if case .error = newExecutionState, case .error = self?.executionState { return }
+
                self?.publish(newExecutionState)
            }
     }
@@ -117,6 +120,9 @@ public final class AppleStateCoordinator: StateCoordinator {
     ///
     /// Whenever an error is received, the `executionState` is updated to `.error(error:)` and broadcast through
     /// `statePublisher`. This enables centralized handling and observation of errors that may occur during VM operations.
+    ///
+    /// An error received here always replaces the current one: it is specific, while the error of an `.error` state
+    /// reported by Virtualization.framework itself is the generic `VZKitError.internalVirtualizationError`.
     ///
     /// - Parameter publisher: A `Publisher` that emits `Error` values, representing VM or system-level issues.
     func subscribe<T: Publisher>(_ publisher: T) where T.Output == Error,
@@ -149,19 +155,26 @@ public final class AppleStateCoordinator: StateCoordinator {
     
     /// Re-aligns the coordinator with the hypervisor after a lifecycle request failed.
     ///
-    /// The framework state `.error` has no representation that can be built from a raw value, so the
-    /// state observation drops it. A request that fails while the coordinator sits in a transitional
-    /// state (for example a start that is rejected) would therefore leave it there forever, and the
-    /// machine could never be started again. The caller reads the framework state on the machine's
-    /// queue and hands it over.
+    /// A request can fail without the observed framework state reaching the coordinator in a form that
+    /// ends the transition it started (for example a start that is rejected), which would leave the
+    /// coordinator in a transitional state, and the machine could never be started again. The caller
+    /// reads the framework state on the machine's queue and hands it over.
+    ///
+    /// A specific error already published by the delegate is kept; otherwise a framework `.error` is
+    /// reported with the generic `VZKitError.internalVirtualizationError`.
     ///
     /// - Parameter vzState: The state reported by the hypervisor right after the failure.
     func reconcile(with vzState: VZVirtualMachine.State) {
         switch vzState {
-        case .stopped, .error:
+        case .stopped:
             // An error published by the delegate carries more information than a bare stop.
             if case .error = executionState { return }
             if executionState != .stopped { resetExecutionState() }
+
+        case .error:
+            // Keep the specific error if the delegate published one; report the generic one otherwise.
+            if case .error = executionState { return }
+            if let error = ExecutionState(vzState) { publish(error) }
 
         default:
             guard let newExecutionState = ExecutionState(vzState),

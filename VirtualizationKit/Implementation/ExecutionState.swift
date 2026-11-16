@@ -21,7 +21,7 @@
 //  Created by Giuseppe Rocco on 20/01/25.
 //
 
-import Virtualization
+import Foundation
 
 /// An enumeration describing the various states a virtual machine can be in.
 ///
@@ -33,9 +33,11 @@ import Virtualization
 /// The primary use case for this enum is to centralize and observe the state transitions of a virtual
 /// machine, providing a consistent way to track and display its status in a user interface.
 ///
-/// - Note: `init?(rawValue:)` cannot produce `.error` and `.installing`, which carry a value. Encoding and
-///   decoding preserve every state, value included; see `encode(to:)`.
-public enum ExecutionState: RawRepresentable, Transferable {
+/// The state describes a running process, so it is deliberately not `Codable`: a stored state would be
+/// stale as soon as it was read back, since a virtual machine is always `.stopped` when it is created.
+///
+/// - Note: `init?(rawValue:)` cannot produce `.error` and `.installing`, which carry a value.
+public enum ExecutionState: RawRepresentable, Hashable, Sendable {
     
     // MARK: - RawValue
     
@@ -161,30 +163,6 @@ public enum ExecutionState: RawRepresentable, Transferable {
         }
     }
     
-    /// Initializes an `ExecutionState` from a `VZVirtualMachine.State`.
-    ///
-    /// The mapping is spelled out case by case rather than going through raw values, which would tie
-    /// this type to the numbering of Virtualization.framework.
-    ///
-    /// - Parameter vzState: The `VZVirtualMachine.State` to map to an `ExecutionState`.
-    /// - Returns: `nil` for `.error`, which needs the error it carries (the delegate of the machine reports
-    ///   it), and for states added to the framework later.
-    init?(_ vzState: VZVirtualMachine.State) {
-        switch vzState {
-        case .stopped: self = .stopped
-        case .running: self = .running
-        case .paused: self = .paused
-        case .error: return nil
-        case .starting: self = .starting
-        case .pausing: self = .pausing
-        case .resuming: self = .resuming
-        case .stopping: self = .stopping
-        case .saving: self = .saving
-        case .restoring: self = .restoring
-        @unknown default: return nil
-        }
-    }
-
     // MARK: - Actions
 
     /// Whether a virtual machine in this state can be started: it is stopped, or it stopped because of an error.
@@ -218,100 +196,5 @@ public enum ExecutionState: RawRepresentable, Transferable {
     /// Whether a virtual machine in this state can be resumed: it is paused.
     public var allowsResume: Bool {
         if case .paused = self { true } else { false }
-    }
-}
-
-// MARK: - Codable
-
-extension ExecutionState {
-
-    /// An error restored from an encoded execution state.
-    ///
-    /// Errors are not encodable in general, so an `.error` state keeps only the description of its
-    /// error when it is encoded. Decoding gives it back as this type, which compares equal to the
-    /// original state.
-    public struct RestoredError: LocalizedError, Sendable, Hashable {
-
-        /// The description of the original error.
-        public let errorDescription: String?
-    }
-
-    /// The keys of the encoded form of the states that carry a value.
-    private enum CodingKeys: String, CodingKey {
-        case state, progress, error
-    }
-
-    /// Encodes the state.
-    ///
-    /// States without a value are encoded as their raw value, as before. `.installing` and `.error`
-    /// are encoded as an object that also holds the progress, or the description of the error.
-    ///
-    /// - Parameter encoder: The encoder to write to.
-    public func encode(to encoder: any Encoder) throws {
-        switch self {
-        case .installing(let progress):
-            var container = encoder.container(keyedBy: CodingKeys.self)
-            try container.encode(rawValue, forKey: .state)
-            try container.encode(progress, forKey: .progress)
-
-        case .error(let error):
-            var container = encoder.container(keyedBy: CodingKeys.self)
-            try container.encode(rawValue, forKey: .state)
-            try container.encode(error.localizedDescription, forKey: .error)
-
-        default:
-            var container = encoder.singleValueContainer()
-            try container.encode(rawValue)
-        }
-    }
-
-    /// Decodes a state, in either of the forms `encode(to:)` writes.
-    ///
-    /// Before 2.0 every state was encoded as its bare raw value, including `.error` and `.installing`, which
-    /// then failed to decode. They decode now, without the value they never stored: an error with no
-    /// description, and no installation progress.
-    ///
-    /// - Parameter decoder: The decoder to read from.
-    public init(from decoder: any Decoder) throws {
-        if let single = try? decoder.singleValueContainer(), let rawValue = try? single.decode(RawValue.self) {
-            switch rawValue {
-            case ExecutionState.installing(progress: 0).rawValue:
-                self = .installing(progress: 0)
-
-            case ExecutionState.error(error: RestoredError(errorDescription: nil)).rawValue:
-                self = .error(error: RestoredError(errorDescription: nil))
-
-            default:
-                guard let state = ExecutionState(rawValue: rawValue) else {
-                    throw DecodingError.dataCorruptedError(
-                        in: single,
-                        debugDescription: "No execution state with raw value \(rawValue)"
-                    )
-                }
-                self = state
-            }
-            return
-        }
-
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-
-        switch try container.decode(RawValue.self, forKey: .state) {
-        case ExecutionState.installing(progress: 0).rawValue:
-            self = .installing(progress: try container.decode(Double.self, forKey: .progress))
-
-        case ExecutionState.error(error: RestoredError(errorDescription: nil)).rawValue:
-            let description = try container.decodeIfPresent(String.self, forKey: .error)
-            self = .error(error: RestoredError(errorDescription: description))
-
-        case let rawValue:
-            guard let state = ExecutionState(rawValue: rawValue) else {
-                throw DecodingError.dataCorruptedError(
-                    forKey: .state,
-                    in: container,
-                    debugDescription: "No execution state with raw value \(rawValue)"
-                )
-            }
-            self = state
-        }
     }
 }

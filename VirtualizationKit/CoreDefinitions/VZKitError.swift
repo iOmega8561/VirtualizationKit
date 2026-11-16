@@ -55,6 +55,10 @@ public enum VZKitError: LocalizedError, Equatable, Sendable {
     /// to it.
     case diskImageFailedSetup
 
+    /// Virtualization.framework stopped the virtual machine because of an internal error, without saying
+    /// which. When it does say, the execution state carries that error instead.
+    case internalVirtualizationError
+
     /// A file that identifies the virtual machine (its machine identifier or hardware model) exists but
     /// cannot be read. The machine has to be recreated.
     case coreFilesTampered
@@ -178,6 +182,7 @@ public enum VZKitError: LocalizedError, Equatable, Sendable {
         case .coreFilesTampered: .init("error-coreFilesTampered")
         case .coreFilesMissing: .init("error-coreFilesMissing")
         case .missingMacImage: .init("error-missingMacImage")
+        case .internalVirtualizationError: .init("error-internalVirtualizationError")
 
         case .diskImageUnreachable(let name?): .init("error-diskImageUnreachable", name)
         case .diskImageUnreachable(nil): .init("error-diskImageUnreachableGeneric")

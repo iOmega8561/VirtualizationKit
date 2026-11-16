@@ -163,8 +163,7 @@ public struct AppleVirtualMachine<Template: TransferableTemplate>: VirtualMachin
 
         } catch {
 
-            // Any other failure can strand the coordinator in a transitional state as well:
-            // the hypervisor reports `.error`, which the state observation cannot represent.
+            // Any other failure can strand the coordinator in a transitional state as well.
             // Read the real state here, on the machine's queue, and let the coordinator catch up.
             await self.stateCoordinator.reconcile(with: vzVirtualMachine.state)
 
