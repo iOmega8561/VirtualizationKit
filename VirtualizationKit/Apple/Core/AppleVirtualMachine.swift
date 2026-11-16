@@ -89,12 +89,9 @@ public struct AppleVirtualMachine<Template: TransferableTemplate>: VirtualMachin
     /// are safe for UI binding.
     public let stateCoordinator: AppleStateCoordinator
     
-    /// The core Apple Virtualization object responsible for lifecycle operations.
-    ///
-    /// `vzVirtualMachine` underlies all major operations like starting, stopping, or installing
-    /// an OS onto the virtual machine. While publicly scoped, direct calls on this property
-    /// are generally discouraged in favor of higher-level methods provided by this struct.
-    let vzVirtualMachine: VZVirtualMachine
+    /// Owns the Apple Virtualization object responsible for lifecycle operations, and keeps every use of
+    /// it on the machine's queue. Shared by all copies of this value.
+    let handle: AppleMachineHandle
     
     /// Handles error event callbacks from the `VZVirtualMachine` and forwards them to other components.
     ///
@@ -129,21 +126,16 @@ public struct AppleVirtualMachine<Template: TransferableTemplate>: VirtualMachin
         // machine reports, through the observation of its state and through its delegate.
         do {
             switch action {
-            case .start(let options?) where options.startsFromRecovery:
-                // Created here, on the machine's queue, where the framework expects to use it.
-                let vzStartOptions = VZMacOSVirtualMachineStartOptions()
-                vzStartOptions.startUpFromMacOSRecovery = true
-                try await vzVirtualMachine.start(options: vzStartOptions)
-            case .start:
-                try await vzVirtualMachine.start()
+            case .start(let options):
+                try await handle.start(fromRecovery: options?.startsFromRecovery ?? false)
             case .stop:
-                try await vzVirtualMachine.stop()
+                try await handle.stop()
             case .requestStop:
-                try vzVirtualMachine.requestStop()
+                try handle.requestStop()
             case .pause:
-                try await vzVirtualMachine.pause()
+                try await handle.pause()
             case .resume:
-                try await vzVirtualMachine.resume()
+                try await handle.resume()
             case .install:
                 try await VZMacOSInstaller(virtualMachine: self)?.install(stateCoordinator)
             }
@@ -213,7 +205,7 @@ public struct AppleVirtualMachine<Template: TransferableTemplate>: VirtualMachin
         
         self.resources = resources
 
-        self.vzVirtualMachine = await Self.makeVirtualMachine(
+        self.handle = await AppleMachineHandle(
             configuration: configuration,
             delegate: errorDelegate
         )
@@ -224,39 +216,18 @@ public struct AppleVirtualMachine<Template: TransferableTemplate>: VirtualMachin
         self.stateCoordinator = await .init()
         
         await self.stateCoordinator.subscribe(errorDelegate.errorSubject)
-        
-        // The observation must not read the machine from the main thread, which is what the
-        // `.initial` option does at subscription time. A new machine is always stopped, so the
-        // first value is supplied here instead and only real changes are observed.
-        await self.stateCoordinator.subscribe(
-            vzVirtualMachine.publisher(for: \.state, options: [.new]).prepend(.stopped)
-        )
+
+        // A new machine is always stopped, so the first value is supplied here, and only real changes
+        // are observed. The observation starts after the coordinator subscribed, on the machine's queue.
+        await self.stateCoordinator.subscribe(handle.stateChanges.prepend(.stopped))
+        await handle.startObservingState()
     }
-    
-    /// Creates the hypervisor object and wires its delegate on the queue the machine operates on.
-    ///
-    /// Every operation on a `VZVirtualMachine`, including the assignment of its delegate, has to happen
-    /// on the queue handed to its initializer. The public initializer of this type is not isolated, so
-    /// the work is funnelled through the global actor, whose executor is that very queue.
-    ///
-    /// - Parameters:
-    ///   - configuration: The validated configuration. It is not used by the caller afterwards.
-    ///   - delegate: The delegate receiving error callbacks.
-    /// - Returns: The configured machine.
-    @VZKitActor
-    private static func makeVirtualMachine(
-        configuration: VZVirtualMachineConfiguration,
-        delegate: AppleErrorDelegate
-    ) -> VZVirtualMachine {
-        
-        let virtualMachine = VZVirtualMachine(
-            configuration: configuration,
-            queue: VZKitActor.queue
-        )
-        
-        virtualMachine.delegate = delegate
-        return virtualMachine
-    }
+}
+
+@VZKitActor extension AppleVirtualMachine {
+
+    /// The Apple Virtualization object, on the machine's queue.
+    var vzVirtualMachine: VZVirtualMachine { handle.machine }
 }
 
 @VZKitActor public extension AppleVirtualMachine {
@@ -289,7 +260,7 @@ public struct AppleVirtualMachine<Template: TransferableTemplate>: VirtualMachin
             configuration: .create(at: url, type: .readOnly)
         )
         
-        try await controller.attach(device: massStorageDev)
+        try await handle.attach(massStorageDev, to: controller)
         removableMediaAccess.retain(access, for: massStorageDev.uuid)
         return massStorageDev.uuid
     }
@@ -317,7 +288,7 @@ public struct AppleVirtualMachine<Template: TransferableTemplate>: VirtualMachin
             throw VZKitError.usbDeviceNotFound(id)
         }
         
-        try await controller.detach(device: device)
+        try await handle.detach(device, from: controller)
         removableMediaAccess.release(id)
     }
 

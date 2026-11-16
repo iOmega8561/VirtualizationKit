@@ -58,7 +58,7 @@ Validation has become stricter on the Apple back-end. Rosetta or nested virtuali
 
 ## Concurrency
 
-VirtualizationKit no longer declares Virtualization's `VZVirtualMachineStartOptions`, `VZMacOSVirtualMachineStartOptions` and `VZMacOSRestoreImage` `Sendable`. Those declarations applied to every app importing the framework. Code of your own that passes these objects between actors and relied on them now gets the compiler's diagnostics; Apple does not declare them `Sendable`.
+VirtualizationKit no longer declares Virtualization's `VZVirtualMachine`, `VZVirtualMachineStartOptions`, `VZMacOSVirtualMachineStartOptions` and `VZMacOSRestoreImage` `Sendable`. Those declarations applied to every app importing the framework. Code of your own that passes these objects between actors and relied on them now gets the compiler's diagnostics; Apple does not declare them `Sendable`.
 
 ## Existing machines
 

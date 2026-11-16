@@ -90,6 +90,16 @@ public final class AppleStateCoordinator: StateCoordinator {
             }
     }
 
+    /// Observes the progress of a macOS installation, showing it as `.installing(progress:)`.
+    ///
+    /// The observation is created here, on the main actor; `Progress` is thread-safe, so the installer can
+    /// hand it over from the machine's queue.
+    ///
+    /// - Parameter progress: The progress of the installer.
+    func subscribe(installationProgress progress: Progress) {
+        subscribe(progress.publisher(for: \.fractionCompleted))
+    }
+
     /// Registers a `Publisher` emitting `VZVirtualMachine.State`, mapping those states to an `ExecutionState`.
     ///
     /// Whenever a new state is emitted, it is converted to the corresponding `ExecutionState`. If the transition is valid,

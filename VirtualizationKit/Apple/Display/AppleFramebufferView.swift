@@ -51,10 +51,41 @@ public struct AppleFramebufferView: NSViewRepresentable, FramebufferView {
     /// When `true`, input events are suppressed, allowing the display to act as a read-only preview.
     public let disablesInputRedirection: Bool
     
-    /// The underlying virtual machine instance whose display is rendered by this view.
+    /// The machine whose display is rendered by this view.
     ///
-    /// This property provides the necessary connection to the VM’s display and state.
-    private let vzVirtualMachine: VZVirtualMachine
+    /// The view never touches the machine directly: it connects through what the handle provides for
+    /// displays, which on macOS 27 and later is Virtualization's `VZVirtualMachineViewAdaptor`.
+    private let handle: AppleMachineHandle
+
+    /// Remembers which machine an `NSView` is connected to, so it is only connected again when that changes.
+    public final class Coordinator {
+        fileprivate var connectedHandle: ObjectIdentifier?
+    }
+
+    /// Creates the object that remembers which machine the view is connected to.
+    public func makeCoordinator() -> Coordinator {
+        Coordinator()
+    }
+
+    /// Connects a view to the machine, unless it already is.
+    ///
+    /// - Parameters:
+    ///   - vmView: The view to connect.
+    ///   - coordinator: Remembers the machine the view is connected to.
+    private func connect(_ vmView: VZVirtualMachineView, using coordinator: Coordinator) {
+        let identity = ObjectIdentifier(handle)
+        guard coordinator.connectedHandle != identity else { return }
+
+        if #available(macOS 27.0, *), let adaptor = handle.displayAdaptor as? VZVirtualMachineViewAdaptor {
+            vmView.adaptor = adaptor
+        } else {
+            // Before macOS 27, Virtualization.framework offers no way to hand the view a machine running
+            // on another queue without crossing isolation; see `AppleMachineHandle.machineForDisplay`.
+            vmView.virtualMachine = unsafe handle.machineForDisplay
+        }
+
+        coordinator.connectedHandle = identity
+    }
     
     /// Creates and configures the NSView that displays the virtual machine screen.
     ///
@@ -65,7 +96,7 @@ public struct AppleFramebufferView: NSViewRepresentable, FramebufferView {
     /// - Returns: A fully configured NSView that displays the virtual machine’s output.
     public func makeNSView(context: Context) -> NSView {
         let vmView: VZVirtualMachineView = .init()
-        vmView.virtualMachine = vzVirtualMachine
+        connect(vmView, using: context.coordinator)
         vmView.disablesInputRedirection = disablesInputRedirection
         return vmView
     }
@@ -85,7 +116,7 @@ public struct AppleFramebufferView: NSViewRepresentable, FramebufferView {
             VZKitLogger.default.fatalError("AppleFramebufferView unexpectedly received \(type(of: nsView))")
         }
         
-        vmView.virtualMachine = vzVirtualMachine
+        connect(vmView, using: context.coordinator)
         vmView.automaticallyReconfiguresDisplay = automaticallyReconfiguresDisplay
         vmView.capturesSystemKeys = capturesSystemKeys
         vmView.disablesInputRedirection = disablesInputRedirection
@@ -104,7 +135,7 @@ public struct AppleFramebufferView: NSViewRepresentable, FramebufferView {
         capturesSystemKeys: Bool = false,
         disablesInputRedirection: Bool = true
     ) {
-        self.vzVirtualMachine = virtualMachine.vzVirtualMachine
+        self.handle = virtualMachine.handle
         self.automaticallyReconfiguresDisplay = automaticallyReconfiguresDisplay
         self.capturesSystemKeys = capturesSystemKeys
         self.disablesInputRedirection = disablesInputRedirection

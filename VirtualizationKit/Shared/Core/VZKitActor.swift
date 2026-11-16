@@ -65,6 +65,16 @@ import Virtualization
         func asUnownedSerialExecutor() -> UnownedSerialExecutor {
             return unsafe UnownedSerialExecutor(ordinary: self)
         }
+
+        /// Confirms that the current code runs on this executor's queue.
+        ///
+        /// Virtualization.framework calls delegate methods, observers and completion handlers directly on the
+        /// queue, outside of any job of this executor. When code isolated to `VZKitActor` runs that way, the
+        /// Swift runtime asks here whether it is on the right executor; being on the queue is exactly that.
+        /// Without this, the runtime cannot tell, and treats the call as a data race.
+        func checkIsolated() {
+            dispatchPrecondition(condition: .onQueue(queue))
+        }
         
         /// Initializes a new instance of `Executor` with a specific dispatch queue.
         ///

@@ -89,15 +89,15 @@ extension VZMacOSInstaller {
             throw VZKitError.missingMacImage
         }
                 
-        // Initialize the installer with the underlying virtual machine and restore image.
+        // Initialize the installer with the underlying virtual machine and restore image, on the
+        // machine's queue, which the installer operates on as well.
         self.init(
             virtualMachine: virtualMachine.vzVirtualMachine,
             restoringFromImageAt: restoreImageURL
         )
         
-        // Register a publisher for monitoring installation progress.
-        await virtualMachine.stateCoordinator.subscribe(
-            self.progress.publisher(for: \.fractionCompleted)
-        )
+        // Register for installation progress. `Progress` is thread-safe, so it is handed over as is and
+        // observed on the main actor, rather than sending a publisher created here.
+        await virtualMachine.stateCoordinator.subscribe(installationProgress: self.progress)
     }
 }
