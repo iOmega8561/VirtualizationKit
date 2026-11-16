@@ -63,7 +63,7 @@ struct QEMUConfigurationBuilder<Template: TransferableTemplate>: Sendable {
                 isDirectory: false
             )
 
-        case .rosetta, .nestedVirtualization, .xhciUSBHotSwap, .directoryShare,
+        case .rosetta, .nestedVirtualization, .xhciUSBHotSwap, .directoryShare, .entropyDevice, .memoryBalloonDevice,
              .audioCaptureDevice, .audioOutputDevice:
             nil
         }
@@ -88,7 +88,7 @@ struct QEMUConfigurationBuilder<Template: TransferableTemplate>: Sendable {
     ) -> CapabilitySupport {
 
         switch capability {
-        case .audioOutputDevice, .xhciUSBHotSwap:
+        case .audioOutputDevice, .xhciUSBHotSwap, .entropyDevice, .memoryBalloonDevice:
             return .supported
 
         case .tpm, .secureBoot:
@@ -278,8 +278,13 @@ struct QEMUConfigurationBuilder<Template: TransferableTemplate>: Sendable {
         // without having to capture the mouse.
         plan.append("-device", "usb-tablet,bus=xhci.0")
 
-        plan.append("-device", "virtio-rng-pci")
-        plan.append("-device", "virtio-balloon-pci")
+        if template.optionalCapabilities.contains(.entropyDevice) {
+            plan.append("-device", "virtio-rng-pci")
+        }
+
+        if template.optionalCapabilities.contains(.memoryBalloonDevice) {
+            plan.append("-device", "virtio-balloon-pci")
+        }
     }
 
     /// Whether the machine boots with the Secure Boot capable firmware.

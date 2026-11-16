@@ -45,6 +45,8 @@ import Foundation
 /// - **audioOutputDevice**: Represents the ability to use the host's speakers for audio output.
 /// - **tpm**: Represents a TPM 2.0 device in the virtual machine.
 /// - **secureBoot**: Represents UEFI firmware that supports Secure Boot.
+/// - **entropyDevice**: Represents a paravirtualized random number generator for the guest.
+/// - **memoryBalloonDevice**: Represents a paravirtualized memory balloon for the guest.
 ///
 /// ### Backends
 /// No backend provides every capability. Ask the backend at hand with `VirtualMachine.support(for:options:)`;
@@ -94,6 +96,16 @@ public enum OptionalCapability: Transferable, CaseIterable {
     /// this capability makes the machine start with fresh firmware settings (boot entries included).
     case secureBoot
 
+    /// Represents a paravirtualized random number generator, which feeds the guest's entropy pool from the host.
+    ///
+    /// Guests with a virtio driver (Linux, macOS) use it to have enough randomness early, during boot.
+    case entropyDevice
+
+    /// Represents a paravirtualized memory balloon, through which the host can ask the guest to give memory back.
+    ///
+    /// Guests with a virtio driver report how much memory they really use through it.
+    case memoryBalloonDevice
+
     // MARK: - Instance Properties
     
     /// The localized name of the capability.
@@ -107,6 +119,8 @@ public enum OptionalCapability: Transferable, CaseIterable {
         case .audioOutputDevice: VZKitLocale("capability-audioOutputDevice").value
         case .tpm: VZKitLocale("capability-tpm").value
         case .secureBoot: VZKitLocale("capability-secureBoot").value
+        case .entropyDevice: VZKitLocale("capability-entropyDevice").value
+        case .memoryBalloonDevice: VZKitLocale("capability-memoryBalloonDevice").value
         }
     }
 }

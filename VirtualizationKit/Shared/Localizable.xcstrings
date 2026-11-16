@@ -49,6 +49,38 @@
         }
       }
     },
+    "capability-entropyDevice" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Random number generator"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generatore di numeri casuali"
+          }
+        }
+      }
+    },
+    "capability-memoryBalloonDevice" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Memory balloon"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Balloon di memoria"
+          }
+        }
+      }
+    },
     "capability-nestedVirtualization" : {
       "localizations" : {
         "en" : {

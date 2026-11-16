@@ -32,6 +32,7 @@ struct QEMULaunchPlanTests {
         template.networkTopology = .nat(macAddress: "02:11:22:33:44:55")
         template.performancePreset = .custom(desiredCoreCount: 2, desiredMemorySize: 4 << 30)
         template.storage = [DiskImage(id: Self.machineID, location: .managed(size: 1 << 20), interface: systemInterface, bootOrder: 1)]
+        template.optionalCapabilities = [.entropyDevice, .memoryBalloonDevice]
         return template
     }
 
@@ -41,7 +42,7 @@ struct QEMULaunchPlanTests {
             location: .external(bookmark: try bookmark(to: installer)),
             kind: .optical, interface: .usb, bootOrder: 0
         ))
-        template.optionalCapabilities = [.audioOutputDevice, .xhciUSBHotSwap, .tpm, .secureBoot]
+        template.optionalCapabilities += [.audioOutputDevice, .xhciUSBHotSwap, .tpm, .secureBoot]
         return template
     }
 
@@ -196,6 +197,16 @@ struct QEMULaunchPlanTests {
         #expect(value(after: "-device", matching: "virtio-vga") == ["virtio-vga,xres=1280,yres=720"])
         #expect(value(after: "-device", matching: "tpm") == ["tpm-crb,tpmdev=tpm0"])
         #expect(descriptors(plan).first == "edk2-x86_64-secure-code.fd readOnly")
+    }
+
+    @Test("The random number generator and the memory balloon are there only when asked for")
+    func optionalDevices() throws {
+        let directory = try TemporaryDirectory()
+        var template = template(.virtio)
+        template.optionalCapabilities = []
+        let plan = try plan(template, .default, in: directory)
+        #expect(!plan.arguments.contains("virtio-rng-pci"))
+        #expect(!plan.arguments.contains("virtio-balloon-pci"))
     }
 
     @Test("A rejected template leaves nothing behind")

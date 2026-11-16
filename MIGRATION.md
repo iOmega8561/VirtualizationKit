@@ -73,6 +73,8 @@ VirtualizationKit no longer declares Virtualization's `VZVirtualMachine`, `VZVir
 
 **Disks.** The system disk of a 1.x machine is the file `Disk.img` in its directory. A managed disk is now named after its identifier, so rename the file to `Disk-<disk id>.img` once. Giving that disk the identifier of the template also keeps the NVMe serial number of QEMU machines.
 
+**Random number generator and memory balloon.** Both back-ends used to add a paravirtualized random number generator and a memory balloon to every machine. They are now the capabilities `.entropyDevice` and `.memoryBalloonDevice`. To keep an existing machine's hardware as it is, add both to its template's `optionalCapabilities`.
+
 **One machine per template at a time.** Creating a second virtual machine from a template whose machine is still in use now fails with `VZKitError.machineInUse`, in the same application or another one: the two would have written to the same disks. Release the first machine before creating it again.
 
 **Shared folders.** The folder an Apple machine shares with the guest is named after the template. Separators (`/`, `:`) and leading dots are now replaced, so such a name gets a different folder; other names keep theirs.

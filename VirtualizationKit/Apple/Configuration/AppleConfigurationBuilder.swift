@@ -94,8 +94,13 @@ struct AppleConfigurationBuilder<Template: TransferableTemplate> {
         configuration.networkDevices.append(try .create(type: template.networkTopology))
         configuration.cpuCount = template.performancePreset.cpuCoreCount
         configuration.memorySize = template.performancePreset.memorySize
-        configuration.memoryBalloonDevices.append(VZVirtioTraditionalMemoryBalloonDeviceConfiguration())
-        configuration.entropyDevices.append(VZVirtioEntropyDeviceConfiguration())
+        if template.optionalCapabilities.contains(.memoryBalloonDevice) {
+            configuration.memoryBalloonDevices.append(VZVirtioTraditionalMemoryBalloonDeviceConfiguration())
+        }
+
+        if template.optionalCapabilities.contains(.entropyDevice) {
+            configuration.entropyDevices.append(VZVirtioEntropyDeviceConfiguration())
+        }
         
         if template.optionalCapabilities.contains(.audioOutputDevice) {
             configuration.audioDevices.append(try await .create(type: .output))
@@ -183,6 +188,9 @@ struct AppleConfigurationBuilder<Template: TransferableTemplate> {
         case (.directoryShare, .macOS(let version, _)):
             // macOS 12 has no driver for the automount tag.
             return version.major > 12 ? .supported : .unsupported(.guestPlatform)
+
+        case (.entropyDevice, _), (.memoryBalloonDevice, _):
+            return .supported
 
         case (.audioOutputDevice, _), (.audioCaptureDevice, _):
             return .supported

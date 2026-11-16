@@ -39,6 +39,11 @@ struct CapabilityTests {
         #expect(Apple.support(for: .directoryShare, options: macOS12) == .unsupported(.guestPlatform))
         #expect(Apple.support(for: .audioOutputDevice, options: macOS12) == .supported)
         #expect(Apple.support(for: .audioCaptureDevice, options: linux) == .supported)
+        for capability in [OptionalCapability.entropyDevice, .memoryBalloonDevice] {
+            #expect(Apple.support(for: capability, options: linux) == .supported)
+            #expect(Apple.support(for: capability, options: macOS13) == .supported)
+            #expect(QEMU.support(for: capability, options: .default, helper: nil) == .supported)
+        }
         for capability in [OptionalCapability.tpm, .secureBoot] {
             #expect(Apple.support(for: capability, options: linux) == .unsupported(.backend))
             #expect(Apple.support(for: capability, options: macOS13) == .unsupported(.backend))
