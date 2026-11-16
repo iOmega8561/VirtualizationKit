@@ -28,18 +28,20 @@ import Virtualization
 /// A protocol defining a main-actor-isolated coordinator for managing a virtual machine's execution state.
 ///
 /// Conforming types must provide real-time tracking of the virtual machine's state (`executionState`), as well as
-/// a mechanism (`stateSubject`) to broadcast state changes. Additionally, they may implement a method for registering
-/// external Combine publishers to integrate updates, making this protocol suitable for bridging lower-level or
-/// asynchronous APIs into a SwiftUI or Combine-based application.
+/// a read-only publisher (`statePublisher`) that broadcasts state changes. Only the coordinator itself changes the
+/// state; observers can read it, observe it with SwiftUI, or subscribe to it with Combine.
 ///
 /// By enforcing `@MainActor`, all state updates are guaranteed to occur on the main thread, preserving thread safety
 /// and ensuring compatibility with UI-bound components.
 @MainActor public protocol StateCoordinator {
     
-    /// A Combine subject that broadcasts new `ExecutionState` values to observers.
+    /// A Combine publisher of the execution state.
     ///
-    /// Implementers should use this subject to emit any state changes in conjunction with updates to `executionState`.
-    nonisolated var stateSubject: PassthroughSubject<ExecutionState, Never> { get }
+    /// A subscriber receives the current state as soon as it subscribes, then every change, so it never has to
+    /// read `executionState` separately to know where the machine stands. Changes are delivered on the main actor.
+    ///
+    /// Implementers emit every change together with the update of `executionState`, so that the two never disagree.
+    nonisolated var statePublisher: AnyPublisher<ExecutionState, Never> { get }
     
     /// The current execution state of the virtual machine.
     ///

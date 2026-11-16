@@ -116,9 +116,10 @@ import Combine
 // 1. Create the machine with the back-end of your choice
 let vm = try await AppleVirtualMachine(template: template)
 
-// 2. Subscribe to state updates
+// 2. Subscribe to state updates. The current state arrives right away, then every change.
+//    In SwiftUI, reading `vm.executionState` is enough: the coordinators are @Observable.
 var cancellables = Set<AnyCancellable>()
-vm.stateCoordinator.stateSubject
+vm.statePublisher
     .sink { state in
         switch state {
         case .installing(let progress): print("Installation at: \(progress)")

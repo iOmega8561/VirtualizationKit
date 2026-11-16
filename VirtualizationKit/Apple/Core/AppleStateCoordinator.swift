@@ -48,18 +48,23 @@ public final class AppleStateCoordinator: StateCoordinator {
         case errorDelegate
     }
     
-    /// A Combine subject that broadcasts updates to the virtual machine's execution state.
+    /// Broadcasts the execution state. Private, so that only this coordinator can change it.
     ///
-    /// Although declared as `nonisolated`, updates originate from the main actor,
+    /// Although declared as `nonisolated`, values are only ever sent from the main actor,
     /// ensuring thread safety in SwiftUI or other UI-related components.
     @ObservationIgnored
-    nonisolated public let stateSubject: PassthroughSubject<ExecutionState, Never> = .init()
+    private nonisolated let subject = CurrentValueSubject<ExecutionState, Never>(.stopped)
+
+    /// A Combine publisher of the execution state: the current state on subscription, then every change.
+    public nonisolated var statePublisher: AnyPublisher<ExecutionState, Never> {
+        subject.eraseToAnyPublisher()
+    }
     
     /// The current execution state of the virtual machine.
     ///
     /// This property reflects the active `ExecutionState` at any given time. It is marked
     /// `private(set)` to restrict external modifications but remains accessible for observers
-    /// or UI components. State changes automatically trigger broadcasts to `stateSubject`.
+    /// or UI components. Every change is also broadcast through `statePublisher`; see `publish(_:)`.
     @ObservationTracked
     public private(set) var executionState: ExecutionState = .stopped
     
@@ -73,7 +78,7 @@ public final class AppleStateCoordinator: StateCoordinator {
     /// Registers a `Publisher` emitting `Double` values, typically representing progress updates.
     ///
     /// Each new `Double` output updates the `executionState` to `.installing(progress:)` and broadcasts
-    /// that state through `stateSubject`. This pattern helps reflect installation or setup progress in real time.
+    /// that state through `statePublisher`. This pattern helps reflect installation or setup progress in real time.
     ///
     /// - Parameter publisher: A `Publisher` emitting progress values (`Double`), often from a `Progress` object.
     func subscribe<T: Publisher>(_ publisher: T) where T.Output == Double,
@@ -81,15 +86,14 @@ public final class AppleStateCoordinator: StateCoordinator {
         cancellables[.macOSInstaller] = publisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] progress in
-                self?.executionState = .installing(progress: progress)
-                self?.stateSubject.send(.installing(progress: progress))
+                self?.publish(.installing(progress: progress))
             }
     }
 
     /// Registers a `Publisher` emitting `VZVirtualMachine.State`, mapping those states to an `ExecutionState`.
     ///
     /// Whenever a new state is emitted, it is converted to the corresponding `ExecutionState`. If the transition is valid,
-    /// the `executionState` is updated and the new state is broadcast through `stateSubject`. This approach cleanly
+    /// the `executionState` is updated and the new state is broadcast through `statePublisher`. This approach cleanly
     /// integrates VirtualizationKit state changes into the coordinator's observable model.
     ///
     /// - Parameter publisher: A `Publisher` that emits `VZVirtualMachine.State` values.
@@ -105,15 +109,14 @@ public final class AppleStateCoordinator: StateCoordinator {
                // its own. Only the final stop is let through; the progress stays on screen until then.
                if case .installing = self?.executionState, newExecutionState != .stopped { return }
 
-               self?.executionState = newExecutionState
-               self?.stateSubject.send(newExecutionState)
+               self?.publish(newExecutionState)
            }
     }
     
     /// Registers a `Publisher` emitting `Error` values, converting those errors into an `.error` execution state.
     ///
     /// Whenever an error is received, the `executionState` is updated to `.error(error:)` and broadcast through
-    /// `stateSubject`. This enables centralized handling and observation of errors that may occur during VM operations.
+    /// `statePublisher`. This enables centralized handling and observation of errors that may occur during VM operations.
     ///
     /// - Parameter publisher: A `Publisher` that emits `Error` values, representing VM or system-level issues.
     func subscribe<T: Publisher>(_ publisher: T) where T.Output == Error,
@@ -121,8 +124,7 @@ public final class AppleStateCoordinator: StateCoordinator {
         cancellables[.errorDelegate] = publisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self]  error in
-                self?.executionState = .error(error: error)
-                self?.stateSubject.send(.error(error: error))
+                self?.publish(.error(error: error))
             }
     }
     
@@ -165,8 +167,7 @@ public final class AppleStateCoordinator: StateCoordinator {
             guard let newExecutionState = ExecutionState(vzState),
                   newExecutionState != executionState else { return }
 
-            self.executionState = newExecutionState
-            self.stateSubject.send(newExecutionState)
+            publish(newExecutionState)
         }
     }
 
@@ -175,7 +176,7 @@ public final class AppleStateCoordinator: StateCoordinator {
     /// This method is typically called when an operation needs to be aborted mid-execution,
     /// when a fatal error prevents further progress, or when a clean slate is required
     /// between distinct VM lifecycles. It ensures that both the observable property and
-    /// the Combine subject (`stateSubject`) reflect the `.stopped` state, keeping all
+    /// the Combine publisher (`statePublisher`) reflect the `.stopped` state, keeping all
     /// subscribers in sync.
     ///
     /// - Note: Use this method with caution. It does not perform any teardown of the
@@ -183,7 +184,16 @@ public final class AppleStateCoordinator: StateCoordinator {
     ///   result in inconsistent state between the coordinator and the VM itself. Always
     ///   ensure the VM has been properly stopped before invoking this method.
     func resetExecutionState() {
-        self.executionState = .stopped
-        self.stateSubject.send(.stopped)
+        publish(.stopped)
+    }
+
+    /// Moves to a state and broadcasts it.
+    ///
+    /// The only place the state changes, so that `executionState` and `statePublisher` never disagree.
+    ///
+    /// - Parameter state: The new state.
+    private func publish(_ state: ExecutionState) {
+        self.executionState = state
+        self.subject.send(state)
     }
 }

@@ -33,6 +33,9 @@ Validation has become stricter on the Apple back-end. Rosetta or nested virtuali
 
 ## Execution state
 
+- `stateSubject` is replaced by `statePublisher`, an `AnyPublisher<ExecutionState, Never>`, on the virtual machine and on its state coordinator. Replace `.stateSubject` with `.statePublisher`; nothing else changes for code that only subscribes.
+  - A subscriber receives the current state as soon as it subscribes, then every change. With `stateSubject` it only received later changes, so a `sink` now runs once more, right away.
+  - Only the framework changes the state: the publisher has no `send`.
 - An Apple machine whose network attachment is disconnected keeps its state (usually `.running`) instead of switching to `.error`. The disconnect is logged. `.error` now always means the machine has stopped.
 - `ExecutionState` encodes `.error` and `.installing` together with their value, and decodes them. The other states are encoded as before, and states stored by 1.x decode.
 

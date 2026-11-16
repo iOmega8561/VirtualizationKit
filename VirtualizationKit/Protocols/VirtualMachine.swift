@@ -121,7 +121,7 @@ public protocol VirtualMachine: Sendable {
     ///
     /// Conforming implementations should keep the `stateCoordinator` in sync with any state
     /// transitions triggered by `execute(action:)` or other internal operations. Observers
-    /// can listen for state changes through the coordinator's `stateSubject` or similar mechanism.
+    /// can listen for state changes through the coordinator's `statePublisher`.
     var stateCoordinator: Coordinator { get }
     
     // MARK: - Methods
@@ -205,17 +205,18 @@ public extension VirtualMachine {
 
 /// Provides a convenience property to access the virtual machine's state publisher.
 ///
-/// This extension of `VirtualMachine` exposes a computed property `stateSubject`
+/// This extension of `VirtualMachine` exposes a computed property `statePublisher`
 /// that directly retrieves the state coordinator’s publisher. This allows client code to subscribe
 /// to execution state updates without having to access the state coordinator directly.
 public extension VirtualMachine {
-    
-    /// A Combine publisher that emits updates to the virtual machine's execution state.
+
+    /// A Combine publisher of the virtual machine's execution state.
     ///
-    /// This property forwards to the underlying `stateCoordinator.stateSubject`, enabling observers
-    /// (e.g., view models or UI components) to react to state changes as they occur.
-    var stateSubject: PassthroughSubject<ExecutionState, Never> {
-        stateCoordinator.stateSubject
+    /// This property forwards to the underlying `stateCoordinator.statePublisher`. A subscriber receives the
+    /// current state right away, then every change, enabling observers (e.g., view models or UI components)
+    /// to stay in sync with the machine wherever they subscribe.
+    var statePublisher: AnyPublisher<ExecutionState, Never> {
+        stateCoordinator.statePublisher
     }
 }
 

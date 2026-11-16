@@ -23,17 +23,22 @@ import Observation
 /// The main-actor-isolated owner of a QEMU virtual machine's execution state.
 ///
 /// It mirrors the coordinator of the Apple backend from the outside: an observable `executionState`
-/// plus a Combine subject broadcasting every change. The difference is where the changes come from.
+/// plus a read-only Combine publisher broadcasting every change. The difference is where the changes come from.
 /// QEMU has no object to observe; its state is derived from the lifecycle of the emulator process and
 /// from the events it reports over its control channel, and is pushed in through `transition(to:)`.
 @MainActor @Observable
 public final class QEMUStateCoordinator: StateCoordinator {
 
-    /// A Combine subject that broadcasts updates to the virtual machine's execution state.
+    /// Broadcasts the execution state. Private, so that only this coordinator can change it.
     ///
-    /// Although declared as `nonisolated`, updates originate from the main actor.
+    /// Although declared as `nonisolated`, values are only ever sent from the main actor.
     @ObservationIgnored
-    nonisolated public let stateSubject: PassthroughSubject<ExecutionState, Never> = .init()
+    private nonisolated let subject = CurrentValueSubject<ExecutionState, Never>(.stopped)
+
+    /// A Combine publisher of the execution state: the current state on subscription, then every change.
+    public nonisolated var statePublisher: AnyPublisher<ExecutionState, Never> {
+        subject.eraseToAnyPublisher()
+    }
 
     /// The current execution state of the virtual machine.
     public private(set) var executionState: ExecutionState = .stopped
@@ -45,6 +50,6 @@ public final class QEMUStateCoordinator: StateCoordinator {
         guard newState != executionState else { return }
 
         self.executionState = newState
-        self.stateSubject.send(newState)
+        self.subject.send(newState)
     }
 }
