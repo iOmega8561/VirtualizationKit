@@ -27,7 +27,7 @@ extension VZPlatformConfiguration: PersistentConstructible {
     
     enum PlatformType {
         case generic(nestedVirtualization: Bool = false)
-        case macintosh(restoreImage: RestoreImageSummary?)
+        case macintosh(restoreImage: MacOSRestoreImage?)
     }
     
     // MARK: - Macintosh Platform Specific

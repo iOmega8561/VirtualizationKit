@@ -53,7 +53,7 @@ struct AppleConfigurationBuilder<Template: TransferableTemplate> {
     ///   - image: The macOS restore image object, if needed.
     ///   - disks: The disks of the template, located on the host, in the order they are presented in.
     private func createConfiguration(
-        using restoreImage: RestoreImageSummary?,
+        using restoreImage: MacOSRestoreImage?,
         disks: [ProvisionedDiskImage]
     ) async throws {
         
@@ -246,7 +246,7 @@ struct AppleConfigurationBuilder<Template: TransferableTemplate> {
         switch options.platform {
         case .macOS(let version, let bookmark):
 
-            var restoreImage: RestoreImageSummary? = nil
+            var restoreImage: MacOSRestoreImage? = nil
 
             // An installed machine works without its restore image, so one that cannot be
             // located or read anymore is not an error by itself.
@@ -255,7 +255,7 @@ struct AppleConfigurationBuilder<Template: TransferableTemplate> {
             }
 
             if  let url = restoreImageAccess?.url,
-                let image = try? await VZMacOSRestoreImage.loadSummary(from: url) {
+                let image = try? await MacOSRestoreImage.load(from: url) {
 
                 guard image.version.major == version.major else {
                     throw VZKitError.wrongMacImageVersion(version, image.version)

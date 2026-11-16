@@ -153,6 +153,13 @@ let mac = try await AppleVirtualMachine(
 try await mac.execute(action: .install)
 ```
 
+To show the restore image before creating the machine (its macOS version and build, whether this Mac can run it, and the minimum processors and memory it needs), load it first and create the platform from it:
+
+```swift
+let image = try await MacOSRestoreImage.load(from: ipswURL)
+let options = AppleMachineOptions(platform: try .macOS(restoreImage: image))
+```
+
 ```swift
 // A Windows 11 guest
 var windows = MyTemplate()

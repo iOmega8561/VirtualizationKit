@@ -68,25 +68,35 @@ public struct AppleMachineOptions: MachineOptions {
             }
         }
 
-        /// Describes the virtual Mac a restore image installs.
+        /// Describes the virtual Mac a loaded restore image installs.
         ///
-        /// This loads the macOS IPSW restore image at the given location, reads the macOS version it
-        /// contains and records a security-scoped bookmark to it, so that the result can be persisted
-        /// and still finds the image after the application is relaunched.
+        /// Records a security-scoped bookmark to the image, so that the result can be persisted and still
+        /// finds the image after the application is relaunched. Call it while the image is reachable, as
+        /// with `DiskImage.Location.external(fileAt:)`.
+        ///
+        /// - Parameter restoreImage: The restore image, as `MacOSRestoreImage.load(from:)` returned it.
+        /// - Returns: A `macOS` platform for the version of the image, referring to the image.
+        /// - Throws: The underlying error if no bookmark can be created for the image.
+        public static func macOS(restoreImage: MacOSRestoreImage) throws -> Platform {
+            .macOS(
+                version: restoreImage.version,
+                restoreImage: try restoreImage.url.bookmarkData(
+                    options: [.withSecurityScope, .securityScopeAllowOnlyReadAccess]
+                )
+            )
+        }
+
+        /// Describes the virtual Mac a restore image installs, loading the image first.
+        ///
+        /// To show the image to the user before creating the machine, load it with
+        /// `MacOSRestoreImage.load(from:)` and use `macOS(restoreImage:)` instead.
         ///
         /// - Parameter location: The location of the IPSW restore image.
         /// - Returns: A `macOS` platform for the version of the image, referring to the image.
         /// - Throws: The underlying error if the location does not hold a valid restore image, or if no
         ///   bookmark can be created for it.
         public static func macOS(restoreImageAt location: URL) async throws -> Platform {
-            let restoreImage = try await VZMacOSRestoreImage.loadSummary(from: location)
-
-            return .macOS(
-                version: restoreImage.version,
-                restoreImage: try location.bookmarkData(
-                    options: [.withSecurityScope, .securityScopeAllowOnlyReadAccess]
-                )
-            )
+            try macOS(restoreImage: await MacOSRestoreImage.load(from: location))
         }
     }
 
