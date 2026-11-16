@@ -102,18 +102,45 @@ public final class AppleStateCoordinator: StateCoordinator {
        cancellables[.vzVirtualMachine] = publisher
            .receive(on: DispatchQueue.main)
            .sink { [weak self] newVZState in
-               guard let newExecutionState = ExecutionState(newVZState)
+               guard let self,
+                     let observed = ExecutionState(newVZState),
+                     let next = Self.state(after: self.executionState, observing: observed)
                else { return }
 
-               // While macOS is being installed, the installer drives the machine through states of
-               // its own. Only the final stop is let through; the progress stays on screen until then.
-               if case .installing = self?.executionState, newExecutionState != .stopped { return }
-
-               // The delegate may have reported the specific error first; the generic one must not replace it.
-               if case .error = newExecutionState, case .error = self?.executionState { return }
-
-               self?.publish(newExecutionState)
+               self.publish(next)
            }
+    }
+
+    /// Decides what an observed framework state does to the current state.
+    ///
+    /// Two sources report a failure: the observed state, which becomes `.error` with the generic
+    /// `VZKitError.internalVirtualizationError`, and the delegate, which reports the specific error. Both
+    /// reach the coordinator one at a time on the main queue, in the order Virtualization.framework
+    /// produced them, but that order is not documented, a `.stopped` may follow, and the delegate may not
+    /// be called at all. These rules give the same result in every order:
+    ///
+    /// - An error shown stays until a new lifecycle begins: neither an observed `.error`, which is
+    ///   generic, nor an observed `.stopped`, which belongs to the same failure, replaces it. Errors from
+    ///   the delegate are not decided here; they always replace the state.
+    /// - While macOS is being installed, the installer drives the machine through states of its own, and
+    ///   the progress stays until the installation ends, with `.stopped` or `.error`.
+    /// - A state equal to the current one is not published again.
+    ///
+    /// - Parameters:
+    ///   - current: The state the coordinator is in.
+    ///   - observed: The state reported by Virtualization.framework, already mapped.
+    /// - Returns: The state to move to, or `nil` to stay.
+    static func state(after current: ExecutionState, observing observed: ExecutionState) -> ExecutionState? {
+        switch (current, observed) {
+        case (.installing, .stopped), (.installing, .error):
+            return observed
+
+        case (.installing, _), (.error, .error), (.error, .stopped):
+            return nil
+
+        default:
+            return observed == current ? nil : observed
+        }
     }
     
     /// Registers a `Publisher` emitting `Error` values, converting those errors into an `.error` execution state.
@@ -142,7 +169,7 @@ public final class AppleStateCoordinator: StateCoordinator {
     /// - Parameters:
     ///   - kind: The `CancellableKind` of the subscription to erase.
     ///   - shouldReset: A Boolean flag indicating whether the `executionState` should be reset to `.stopped`
-    ///     after the subscription is cancelled. Defaults to `false`.
+    ///     after the subscription is cancelled, if it is still `.installing`. Defaults to `false`.
     func eraseSubscription(for kind: CancellableKind, shouldReset: Bool = false) {
         guard let cancellable = cancellables[kind]
         else { return }
@@ -150,40 +177,10 @@ public final class AppleStateCoordinator: StateCoordinator {
         cancellable.cancel()
         cancellables.removeValue(forKey: kind)
         
-        if shouldReset { resetExecutionState() }
+        // Only a progress that is still on screen is cleared: an error that ended the installation stays.
+        if shouldReset, case .installing = executionState { resetExecutionState() }
     }
     
-    /// Re-aligns the coordinator with the hypervisor after a lifecycle request failed.
-    ///
-    /// A request can fail without the observed framework state reaching the coordinator in a form that
-    /// ends the transition it started (for example a start that is rejected), which would leave the
-    /// coordinator in a transitional state, and the machine could never be started again. The caller
-    /// reads the framework state on the machine's queue and hands it over.
-    ///
-    /// A specific error already published by the delegate is kept; otherwise a framework `.error` is
-    /// reported with the generic `VZKitError.internalVirtualizationError`.
-    ///
-    /// - Parameter vzState: The state reported by the hypervisor right after the failure.
-    func reconcile(with vzState: VZVirtualMachine.State) {
-        switch vzState {
-        case .stopped:
-            // An error published by the delegate carries more information than a bare stop.
-            if case .error = executionState { return }
-            if executionState != .stopped { resetExecutionState() }
-
-        case .error:
-            // Keep the specific error if the delegate published one; report the generic one otherwise.
-            if case .error = executionState { return }
-            if let error = ExecutionState(vzState) { publish(error) }
-
-        default:
-            guard let newExecutionState = ExecutionState(vzState),
-                  newExecutionState != executionState else { return }
-
-            publish(newExecutionState)
-        }
-    }
-
     /// Resets the virtual machine's execution state to `.stopped` and broadcasts the new state.
     ///
     /// This method is typically called when an operation needs to be aborted mid-execution,

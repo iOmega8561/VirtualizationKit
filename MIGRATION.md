@@ -53,7 +53,7 @@ Validation has become stricter on the Apple back-end. Rosetta or nested virtuali
   - Only the framework changes the state: the publisher has no `send`.
 - An Apple machine whose network attachment is disconnected keeps its state (usually `.running`) instead of switching to `.error`. The disconnect is logged. `.error` now always means the machine has stopped.
 - `ExecutionState` is no longer `Codable` (it was `Transferable`); it stays `Hashable` and `Sendable`. A stored state is stale as soon as it is read back, since a machine is always `.stopped` when it is created, so stop persisting it.
-- When Virtualization.framework reports an error state on its own, an Apple machine now shows `.error(error: VZKitError.internalVirtualizationError)`; it used to be dropped, or turned into `.stopped`. When the specific error is known, the state carries that one instead.
+- When Virtualization.framework reports an error state on its own, an Apple machine now shows `.error(error: VZKitError.internalVirtualizationError)`; it used to be dropped, or turned into `.stopped`. When the specific error is known, the state carries that one instead. Either way, an error state stays until the machine is started again: a `.stopped` reported for the same failure no longer replaces it.
 
 ## Existing machines
 

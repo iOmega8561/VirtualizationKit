@@ -125,6 +125,8 @@ public struct AppleVirtualMachine<Template: TransferableTemplate>: VirtualMachin
     /// - Throws: `VZKitError.appleLimitExceeded` if the virtual machine limit is exceeded, or other errors
     ///           specific to the operation or Virtualization framework.
     @VZKitActor public func execute(action: Action) async throws {
+        // Failures propagate unchanged, except one. The state needs no repair here: it follows what the
+        // machine reports, through the observation of its state and through its delegate.
         do {
             switch action {
             case .start(let vzStartOptions?):
@@ -160,14 +162,6 @@ public struct AppleVirtualMachine<Template: TransferableTemplate>: VirtualMachin
             }
 
             throw VZKitError.appleLimitExceeded
-
-        } catch {
-
-            // Any other failure can strand the coordinator in a transitional state as well.
-            // Read the real state here, on the machine's queue, and let the coordinator catch up.
-            await self.stateCoordinator.reconcile(with: vzVirtualMachine.state)
-
-            throw error
         }
     }
 
