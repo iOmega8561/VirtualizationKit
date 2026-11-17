@@ -1,0 +1,73 @@
+//
+//  Copyright 2025 Giuseppe Rocco
+//
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
+//
+//  -----------------------------------------------------------------------
+//
+//  AppleErrorDelegate.swift
+//  VirtualizationKit
+//
+//  Created by Giuseppe Rocco on 08/11/24.
+//
+
+import Virtualization
+
+@unsafe @preconcurrency import Combine
+    
+/// The `AppleErrorDelegate` class is a specialized delegate for handling execution errors in a
+/// `VZVirtualMachine` instance. Conforming to `VZVirtualMachineDelegate` and `Sendable`, this class
+/// captures error-related events during the virtual machine’s lifecycle and broadcasts them through a
+/// Combine publisher. This allows other components, such as the state coordinator, to observe and respond to errors
+/// that occur during VM execution.
+///
+/// The delegate logs error messages using the framework’s logging facility, making them available in the
+/// Console application, and it provides a centralized mechanism to manage error propagation.
+///
+/// - Note: This delegate is intended solely for error handling, not for general state change notifications.
+final class AppleErrorDelegate: NSObject, VZVirtualMachineDelegate, Sendable {
+    
+    /// A Combine publisher that emits errors encountered during the virtual machine's execution.
+    ///
+    /// Observers can subscribe to this `PassthroughSubject` to be notified whenever the virtual machine
+    /// stops due to an error.
+    let errorSubject: PassthroughSubject<Error, Never> = .init()
+    
+    /// Called when the virtual machine stops due to an error.
+    ///
+    /// This method is invoked when the virtual machine encounters a fatal error that forces it to shut down.
+    /// Upon receiving such an event, the delegate publishes the error via the `errorSubject` and logs the error
+    /// using the framework's logging system.
+    ///
+    /// - Parameters:
+    ///   - virtualMachine: The virtual machine instance that has stopped.
+    ///   - error: The error that caused the virtual machine to stop unexpectedly.
+    func virtualMachine(_ virtualMachine: VZVirtualMachine, didStopWithError error: any Error) {
+        errorSubject.send(error)
+        VZKitLogger.default.error(error.localizedDescription)
+    }
+    
+    /// Called when a network device detaches from the virtual machine due to an error.
+    ///
+    /// This method is triggered when a network attachment disconnects unexpectedly because of an error.
+    /// The guest keeps running without that network, so the error is logged but not published: publishing
+    /// it would put a running machine in the `.error` state, where it could be started but not stopped.
+    ///
+    /// - Parameters:
+    ///   - virtualMachine: The virtual machine instance associated with the network device.
+    ///   - networkDevice: The network device that was disconnected.
+    ///   - attachmentWasDisconnectedWithError: The error that caused the disconnection.
+    func virtualMachine(_ virtualMachine: VZVirtualMachine, networkDevice: VZNetworkDevice, attachmentWasDisconnectedWithError error: any Error) {
+        VZKitLogger.default.error("A network attachment was disconnected: \(error.localizedDescription)")
+    }
+}

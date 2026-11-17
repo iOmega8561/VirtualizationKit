@@ -1,0 +1,102 @@
+//
+//  Copyright 2025 Giuseppe Rocco
+//
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
+//
+//  -----------------------------------------------------------------------
+//
+//  ExecutableAction.swift
+//  VirtualizationKit
+//
+//  Created by Giuseppe Rocco on 15/02/25.
+//
+
+/// A protocol defining executable actions for controlling a virtual machine.
+///
+/// Conforming types represent high-level commands that can be issued to a virtual machine,
+/// such as starting, stopping, pausing, and resuming its execution. Each action is modeled
+/// as a static member or method, allowing for a clear, type-safe specification of commands.
+///
+/// The protocol requires the actions every backend can perform. A backend can offer more, as further
+/// cases of its own action type: the Apple backend installs macOS, the QEMU backend resets the machine.
+///
+/// Conformance to `Sendable` ensures that instances of the conforming types are safe to use
+/// across concurrency domains.
+///
+/// ### Associated Type
+/// - `StartOptions`: A type that encapsulates the options or parameters needed to start a virtual machine.
+///   This type allows customization of the start action, such as specifying configuration details.
+///   It has to be `Sendable`, because an action is created in one place and executed on the machine's queue.
+///
+/// ### Requirements
+/// - `static func start(options: StartOptions) -> Self`
+///   Creates an instance representing a start action with the provided options.
+/// - `static var stop: Self { get }`
+///   A static property that represents a stop action.
+/// - `static var requestStop: Self { get }`
+///   A static property that represents a request to the guest to shut itself down.
+/// - `static var pause: Self { get }`
+///   A static property that represents a pause action.
+/// - `static var resume: Self { get }`
+///   A static property that represents a resume action.
+public protocol ExecutableAction: Sendable {
+    
+    /// The type that encapsulates the options required to start a virtual machine.
+    ///
+    /// Each backend uses whatever suits it, as long as it is `Sendable`: an action is created in one place and
+    /// executed on the machine's queue.
+    associatedtype StartOptions: Sendable
+    
+    /// Creates an action to start a virtual machine with the specified options.
+    ///
+    /// - Parameter options: An instance of `StartOptions` containing the parameters needed to
+    ///   configure the start action.
+    /// - Returns: An instance of the conforming type representing the start action.
+    static func start(options: StartOptions?) -> Self
+    
+    /// Represents the action to stop a virtual machine.
+    ///
+    /// The machine is powered off at once, without involving the guest: like pulling the plug, it can
+    /// lose data the guest has not written yet. Prefer `requestStop` while the guest can still react.
+    static var stop: Self { get }
+
+    /// Represents the action of asking the guest to shut itself down.
+    ///
+    /// This presses the virtual power button. A guest with power management shuts down in an orderly
+    /// way, after which the machine reports `.stopped`; a guest without one, or busy, may ignore the
+    /// request. The action returns as soon as the request has been delivered, not when the guest has
+    /// stopped. It needs a running machine.
+    static var requestStop: Self { get }
+    
+    /// Represents the action to pause a virtual machine.
+    static var pause: Self { get }
+    
+    /// Represents the action to resume a paused virtual machine.
+    static var resume: Self { get }
+}
+
+/// Provides a default implementation for the no-argument `start()` method.
+///
+/// Calling `start()` without parameters passes no options, so the backend starts the virtual machine
+/// the default way.
+public extension ExecutableAction {
+        
+    /// Creates an action to start a virtual machine using the default options.
+    ///
+    /// This convenience method calls `start(options:)` with `nil`.
+    ///
+    /// - Returns: An instance representing the start action with default configuration.
+    static func start() -> Self {
+        start(options: nil)
+    }
+}

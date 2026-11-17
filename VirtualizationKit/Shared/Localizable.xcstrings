@@ -1,0 +1,1094 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "capability-audioCaptureDevice" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Audio capture device"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dispositivo audio di cattura"
+          }
+        }
+      }
+    },
+    "capability-audioOutputDevice" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Audio output device"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dispositivo audio di uscita"
+          }
+        }
+      }
+    },
+    "capability-directoryShare" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shared directory"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cartella condivisa"
+          }
+        }
+      }
+    },
+    "capability-entropyDevice" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Random number generator"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generatore di numeri casuali"
+          }
+        }
+      }
+    },
+    "capability-memoryBalloonDevice" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Memory balloon"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Balloon di memoria"
+          }
+        }
+      }
+    },
+    "capability-nestedVirtualization" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nested virtualization"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Virtualizzazione nidificata"
+          }
+        }
+      }
+    },
+    "capability-rosetta" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rosetta x86_64 Emulator"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Emulatore x86_64 Rosetta"
+          }
+        }
+      }
+    },
+    "capability-secureBoot" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UEFI Secure Boot"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avvio protetto UEFI (Secure Boot)"
+          }
+        }
+      }
+    },
+    "capability-tpm" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trusted Platform Module (TPM 2.0)"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trusted Platform Module (TPM 2.0)"
+          }
+        }
+      }
+    },
+    "capability-xhciUSBHotSwap" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para-virtualized USB device hot swap"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gestione a caldo dei dispositivi USB para-virtualizzati"
+          }
+        }
+      }
+    },
+    "diskkind-disk" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hard disk"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disco rigido"
+          }
+        }
+      }
+    },
+    "diskkind-optical" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Optical disc"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disco ottico"
+          }
+        }
+      }
+    },
+    "error-appleLimitExceeded" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Due to limitations imposed by Apple’s license agreement, it is only possible to run a fixed amount of macOS Virtual Machines at the same time."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A causa di una limitazione prevista dagli accordi di licenza di Apple, non è possibile avviare più di un certo numero di Macchine Virtuali macOS in contemporanea."
+          }
+        }
+      }
+    },
+    "error-auxiliaryFailedSetup" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Could not create macOS auxiliary storage file"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non è stato possibile create il file di memorizzazione ausiliario per macOS"
+          }
+        }
+      }
+    },
+    "error-bridgeNicUnavailable" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The following network interface is not available on the host system: “%@”"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La seguente interfaccia di rete non è disponibile sul sistema host: “%@”"
+          }
+        }
+      }
+    },
+    "error-bridgeNoNicsAvailable" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There isn’t any available network interface to setup Bridged networking"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non esistono interfacce di rete disponibili per costruire una rete Bridged"
+          }
+        }
+      }
+    },
+    "error-cannotShrinkDisk" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The disk “%@” cannot be made smaller: the data beyond its new size would be lost"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il disco “%@” non può essere ridotto: i dati oltre la nuova dimensione andrebbero persi"
+          }
+        }
+      }
+    },
+    "error-coreFilesMissing" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Critical Virtual Machine files are missing or have been deleted. Please delete or recreate the Virtual Machine"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "File critici per il funzionamento della Macchina Virtuale sono mancanti o sono stati eliminati. Si prega di eliminare o ricreare la Macchina Virtuale."
+          }
+        }
+      }
+    },
+    "error-coreFilesTampered" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Critical Virtual Machine files are corrupted or have been tampered with. Please delete or recreate the Virtual Machine."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "File critici per il funzionamento della Macchina Virtuale sono stati corrotti o manomessi. Si prega di eliminare o ricreare la Macchina Virtuale"
+          }
+        }
+      }
+    },
+    "error-diskImageFailedSetup" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Could not create or attach a disk image of the Virtual Machine"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non è stato possibile creare o collegare un'immagine disco della Macchina Virtuale"
+          }
+        }
+      }
+    },
+    "error-diskImageUnreachable" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The disk image “%@” cannot be reached. It may have been moved, renamed or deleted"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossibile raggiungere l'immagine disco “%@”. Potrebbe essere stata spostata, rinominata o eliminata"
+          }
+        }
+      }
+    },
+    "error-diskImageUnreachableGeneric" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A disk image of the Virtual Machine cannot be reached. It may have been moved, renamed or deleted"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossibile raggiungere un'immagine disco della Macchina Virtuale. Potrebbe essere stata spostata, rinominata o eliminata"
+          }
+        }
+      }
+    },
+    "error-featureNotEnabled" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The Virtual Machine has been created without “%@”"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La Macchina Virtuale è stata creata senza “%@”"
+          }
+        }
+      }
+    },
+    "error-internalVirtualizationError" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "An internal virtualization error stopped the Virtual Machine"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un errore interno di virtualizzazione ha arrestato la Macchina Virtuale"
+          }
+        }
+      }
+    },
+    "error-invalidDiskImage" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The configuration of the disk “%@” is not valid"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La configurazione del disco “%@” non è valida"
+          }
+        }
+      }
+    },
+    "error-invalidMacAddress" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The specified MAC Address is not valid: “%@”"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il MAC Address specificato non è valido: “%@”"
+          }
+        }
+      }
+    },
+    "error-macPlatformRequired" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS can only be installed on a Virtual Machine created for macOS"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS può essere installato solo su una Macchina Virtuale creata per macOS"
+          }
+        }
+      }
+    },
+    "error-macUnsupportedHost" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This Mac is not supported by the chosen macOS restore image"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questo Mac non è supportato dall'immagine di ripristino di macOS scelta"
+          }
+        }
+      }
+    },
+    "error-macUnsupportedImage" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The chosen macOS restore image does not support any feasible configuration"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'immagine di ripristino di macOS scelta non supporta alcuna configurazione possibile"
+          }
+        }
+      }
+    },
+    "error-machineInUse" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This Virtual Machine is already in use, here or in another application"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questa Macchina Virtuale è già in uso, qui o in un'altra applicazione"
+          }
+        }
+      }
+    },
+    "error-missingMacImage" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The macOS installation image could not be found"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non è stato possibile trovare l'immagine di ripristino di macOS "
+          }
+        }
+      }
+    },
+    "error-permissionDenied" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Permission to use “%@” has been denied. It can be granted again in System Settings"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'autorizzazione a usare “%@” è stata negata. È possibile concederla di nuovo dalle Impostazioni di Sistema"
+          }
+        }
+      }
+    },
+    "error-qemuCommandFailed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "QEMU rejected the “%@” command: %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "QEMU ha rifiutato il comando “%@”: %@"
+          }
+        }
+      }
+    },
+    "error-qemuDisplayFailure" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The connection to the Virtual Machine display failed: %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La connessione allo schermo della Macchina Virtuale non è riuscita: %@"
+          }
+        }
+      }
+    },
+    "error-qemuHelperFailure" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The QEMU helper service could not start the Virtual Machine: %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il servizio ausiliario di QEMU non è riuscito ad avviare la Macchina Virtuale: %@"
+          }
+        }
+      }
+    },
+    "error-qemuHelperUnavailable" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The QEMU helper service could not be found or reached. Make sure it is embedded and signed together with the application."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non è stato possibile trovare o contattare il servizio ausiliario di QEMU. Assicurarsi che sia incluso e firmato insieme all’applicazione."
+          }
+        }
+      }
+    },
+    "error-qemuInvalidState" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The requested operation is not possible while the Virtual Machine is in the following state: “%@”"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’operazione richiesta non è possibile mentre la Macchina Virtuale si trova nel seguente stato: “%@”"
+          }
+        }
+      }
+    },
+    "error-qemuPayloadMissing" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A component of the virtualization engine is missing from the application: “%@”. Reinstalling the application may solve the problem"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All'applicazione manca un componente del motore di virtualizzazione: “%@”. Reinstallare l'applicazione potrebbe risolvere il problema"
+          }
+        }
+      }
+    },
+    "error-qemuProcessExited" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "QEMU terminated unexpectedly (status %@). %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "QEMU è terminato in modo inatteso (stato %@). %@"
+          }
+        }
+      }
+    },
+    "error-qemuStorageFailedSetup" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Could not create or open the following Virtual Machine file: “%@”"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non è stato possibile creare o aprire il seguente file della Macchina Virtuale: “%@”"
+          }
+        }
+      }
+    },
+    "error-qemuUnsupportedNetwork" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The QEMU backend does not support the following network mode: “%@”"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il backend QEMU non supporta la seguente modalità di rete: “%@”"
+          }
+        }
+      }
+    },
+    "error-unavailableFeatureFrameworkPayload" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” is supported, but a component it needs is missing from the application"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” è supportato, ma all'applicazione manca un componente necessario"
+          }
+        }
+      }
+    },
+    "error-unavailableFeatureHostSoftware" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” is supported, but has not been installed on this Mac yet"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” è supportato, ma non è ancora stato installato su questo Mac"
+          }
+        }
+      }
+    },
+    "error-unsupportedDiskInterface" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disks of type “%@” cannot be attached through the “%@” interface on this Virtual Machine"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I dischi di tipo “%@” non possono essere collegati tramite l'interfaccia “%@” su questa Macchina Virtuale"
+          }
+        }
+      }
+    },
+    "error-unsupportedFeatureBackend" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” is not provided by the virtualization engine of this Virtual Machine"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” non è fornito dal motore di virtualizzazione di questa Macchina Virtuale"
+          }
+        }
+      }
+    },
+    "error-unsupportedFeatureGuestPlatform" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” is not available to the operating system of this Virtual Machine"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” non è disponibile per il sistema operativo di questa Macchina Virtuale"
+          }
+        }
+      }
+    },
+    "error-unsupportedFeatureHostHardware" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This Mac does not support “%@”"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questo Mac non supporta “%@”"
+          }
+        }
+      }
+    },
+    "error-unsupportedFeatureHostSystem" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” requires a newer version of macOS on this Mac"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” richiede una versione più recente di macOS su questo Mac"
+          }
+        }
+      }
+    },
+    "error-usbDeviceNotFound" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The para-virtualized USB device with the following identifier does not exist: “%@”"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il dispositivo USB para-virtualizzato con il seguente identificativo non esiste: “%@”"
+          }
+        }
+      }
+    },
+    "error-wrongMacImageVersion" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The Virtual Machine has been created using a macOS %@ restore image, but the currently selected image’s version is %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La Macchina Virtuale è stata creata utilizzando un’immagine di ripristino di macOS %@, ma la versione dell’immagine attualmente selezionata è %@"
+          }
+        }
+      }
+    },
+    "networktopo-bridged" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Advanced"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avanzata"
+          }
+        }
+      }
+    },
+    "networktopo-nat" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shared"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Condivisa"
+          }
+        }
+      }
+    },
+    "networktopo-none" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "None"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nessuna"
+          }
+        }
+      }
+    },
+    "perfpreset-balanced" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Balanced"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bilanciato"
+          }
+        }
+      }
+    },
+    "perfpreset-basic" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Basic"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minimo"
+          }
+        }
+      }
+    },
+    "perfpreset-custom" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Custom"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Personalizzato"
+          }
+        }
+      }
+    },
+    "perfpreset-performance" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Performance"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Performante"
+          }
+        }
+      }
+    },
+    "vmstate-error" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Errore"
+          }
+        }
+      }
+    },
+    "vmstate-installing" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Installing"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Installazione"
+          }
+        }
+      }
+    },
+    "vmstate-paused" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paused"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In pausa"
+          }
+        }
+      }
+    },
+    "vmstate-pausing" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pausing"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Metto in pausa"
+          }
+        }
+      }
+    },
+    "vmstate-restoring" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restoring"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ripristino"
+          }
+        }
+      }
+    },
+    "vmstate-resuming" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resuming"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ripresa"
+          }
+        }
+      }
+    },
+    "vmstate-running" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Running"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In esecuzione"
+          }
+        }
+      }
+    },
+    "vmstate-saving" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saving"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salvataggio"
+          }
+        }
+      }
+    },
+    "vmstate-starting" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Initialization"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avvio"
+          }
+        }
+      }
+    },
+    "vmstate-stopped" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stopped"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ferma"
+          }
+        }
+      }
+    },
+    "vmstate-stopping" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stopping"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arresto"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
