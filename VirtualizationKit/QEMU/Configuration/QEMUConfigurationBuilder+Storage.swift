@@ -64,7 +64,7 @@ extension QEMUConfigurationBuilder {
             }
 
             // Discarded blocks are given back to the host, which keeps a sparse image sparse.
-            backend.append(image.isReadOnly ? "readonly=on" : "discard=unmap")
+            backend.append(contentsOf: image.isReadOnly ? ["readonly=on", "file.locking=off"] : ["discard=unmap"])
             backend.append("file=\(file)")
 
             var device: [String]
