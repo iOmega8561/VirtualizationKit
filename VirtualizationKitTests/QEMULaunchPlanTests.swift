@@ -160,7 +160,7 @@ struct QEMULaunchPlanTests {
             "-drive", "if=none,id=disk0,format=raw,discard=unmap,file=/dev/fdset/3",
             "-device", "nvme,drive=disk0,serial=11111111222233334444,bootindex=1",
             "-add-fd", "fd=10,set=4",
-            "-drive", "if=none,id=disk1,media=cdrom,format=raw,readonly=on,file=/dev/fdset/4",
+            "-drive", "if=none,id=disk1,media=cdrom,format=raw,readonly=on,file.locking=off,file=/dev/fdset/4",
             "-device", "usb-storage,drive=disk1,removable=on,bus=xhci.0,bootindex=0",
             "-netdev", "user,id=net0",
             "-device", "virtio-net-pci,netdev=net0,mac=02:11:22:33:44:55",

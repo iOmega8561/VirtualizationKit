@@ -90,20 +90,45 @@ actor QMPClient {
         let socket = self.socket
 
         Thread.detachNewThread {
+            defer { lineContinuation.finish() }
+
             var buffer = Data()
+            let maxLineSize = 1024 * 1024 // 1 MiB
 
-            while let chunk = try? socket.read(upTo: 65536) {
-                buffer.append(chunk)
+            do {
+                while true {
+                    let chunk = try socket.read(upTo: 65536)
+                    buffer.append(chunk)
 
-                while let newline = buffer.firstIndex(of: 0x0A) {
-                    let line = Data(buffer[buffer.startIndex..<newline])
-                    buffer.removeSubrange(buffer.startIndex...newline)
+                    while let newline = buffer.firstIndex(of: 0x0A) {
+                        let lineSize = newline - buffer.startIndex
 
-                    if !line.isEmpty { lineContinuation.yield(line) }
+                        guard lineSize <= maxLineSize else {
+                            VZKitLogger.default.error("[QMP] Protocol error: oversized message")
+                            socket.shutdown()
+                            return
+                        }
+
+                        let line = Data(buffer[buffer.startIndex..<newline])
+                        buffer.removeSubrange(buffer.startIndex...newline)
+
+                        if !line.isEmpty {
+                            lineContinuation.yield(line)
+                        }
+                    }
+
+                    // Prevent unlimited buffering if QEMU never sends a newline.
+                    guard buffer.count <= maxLineSize else {
+                        VZKitLogger.default.error("[QMP] Protocol error: oversized message")
+                        socket.shutdown()
+                        return
+                    }
                 }
+            } catch UnixSocketError.closed {
+                // Normal EOF or local shutdown.
+            } catch {
+                VZKitLogger.default.error("[QMP] Socket read ended: \(error.localizedDescription)")
             }
-
-            lineContinuation.finish()
         }
 
         receiveTask = Task { [weak self] in
@@ -120,7 +145,6 @@ actor QMPClient {
     /// - Throws: `UnixSocketError.closed` if the emulator goes away first, which is what happens when
     ///   it rejects its command line.
     func negotiate() async throws {
-
         if !hasGreeting {
             try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, any Error>) in
                 if isClosed {

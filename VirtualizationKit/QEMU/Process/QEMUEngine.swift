@@ -546,7 +546,8 @@ actor QEMUEngine {
                     "driver": .string("file"),
                     "node-name": .string(base + "-file"),
                     "filename": .string("/dev/fdset/\(descriptorSet)"),
-                    "read-only": .bool(true)
+                    "read-only": .bool(true),
+                    "locking": .string("off")
                 ])
             ], in: session)
 
